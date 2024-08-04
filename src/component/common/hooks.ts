@@ -1,0 +1,209 @@
+import { isObject } from 'lodash';
+import debounce from 'lodash/debounce';
+import { useEffect, useState } from 'react';
+import { FieldErrors } from 'react-hook-form';
+import { INFINITE_PREFIX, cache as globalCache, mutate as globalMutate } from 'swr/_internal';
+import useSWRImmutable from 'swr/immutable';
+import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite';
+
+interface PaginateProps {
+  page: number;
+  pages: number;
+}
+
+interface InfinitePaginationProps<T, K extends PaginateProps> {
+  apiOptions: T;
+  apiService: (options: T) => Promise<K>;
+  infiniteScrollRef?: React.MutableRefObject<HTMLDivElement | null>;
+  observerOptions?: IntersectionObserverInit;
+  swrInfiniteOption?: SWRInfiniteConfiguration<K>;
+}
+
+export const useInfinitePagination = <T, K extends PaginateProps>(options: InfinitePaginationProps<T, K>) => {
+  const { data, isValidating, isLoading, size, setSize, mutate } = useSWRInfinite<K>(
+    (index, prev) => {
+      // return null if apiOptions is empty
+      if (!options.apiOptions || !Object.values(options.apiOptions as object).filter((v) => v).length) return null;
+      if (prev && prev.page == prev.pages) return null;
+      return `${options.apiService.name}?${Object.entries(options.apiOptions as object)
+        .map(([key, value]) => `${key}=${value}`)
+        .sort()
+        .join('&')}:${index + 1}`;
+    },
+    async (key) => {
+      const page = key.split(':')[1];
+      const opts = options.apiOptions;
+      (Object.keys(opts as object) as Array<keyof T>).forEach((key) => !opts[key] && delete opts[key]);
+      return await options.apiService({ page, ...opts });
+    },
+    {
+      revalidateOnFocus: false,
+      // revalidateOnReconnect: false,
+      // revalidateFirstPage: false,
+      // revalidateOnMount: false,
+      // revalidateIfStale: false,
+      initialSize: 1,
+      // keepPreviousData: true,
+      ...options.swrInfiniteOption,
+    },
+  );
+
+  useEffect(() => {
+    if (!options.infiniteScrollRef?.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // check if data is empty or data is fully loaded
+        const current = options.infiniteScrollRef?.current;
+        if (!data || data.length >= data[0].pages) {
+          if (current) current.style.display = 'none';
+          return;
+        } else {
+          if (current) current.style.display = 'flex';
+        }
+        if (isLoading || isValidating) return;
+        if (entries.length > 1) return;
+        entries[0].isIntersecting && setSize(size + 1);
+      },
+      { threshold: 0.5, ...options.observerOptions },
+    );
+    observer.observe(options.infiniteScrollRef.current);
+    return () => observer.disconnect();
+  }, [data, data?.length, options.infiniteScrollRef?.current, isLoading, isValidating]); // eslint-disable-line
+
+  return { data, isValidating, isLoading, size, setSize, mutate };
+};
+
+export const useDebounce = (value: string, delay: number): string => {
+  const [debouncedValue, setDebouncedValue] = useState<string>(value);
+  useEffect(() => {
+    const handler = debounce((val: string) => {
+      setDebouncedValue(val);
+    }, delay);
+    handler(value);
+    return () => {
+      handler.cancel();
+    };
+  }, [value, delay]);
+  return debouncedValue;
+};
+
+export const useServiceImmutable = <T, K>(apiService: (params: T) => Promise<K>, params: T | null) => {
+  const getSortedParamsKey = (params: T) => {
+    return JSON.stringify(Object.fromEntries(Object.entries(params as object).sort()));
+  };
+  const { data, mutate, isValidating, isLoading, error } = useSWRImmutable<K>(
+    () => {
+      // Explicit undefined argument means apiService's params is empty
+      if (params === undefined) return apiService.name;
+      return params && Object.values(params as object).filter((v) => v).length > 0
+        ? `${apiService.name}/${getSortedParamsKey(params)}`
+        : null;
+    },
+    async () => {
+      return await apiService(params as T);
+    },
+    { keepPreviousData: true },
+  );
+  return { data, mutate, isValidating, isLoading, error };
+};
+
+export const useFixMouseLeave = (containerRef: React.RefObject<HTMLDivElement>, handler: () => void) => {
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const { clientX, clientY } = e;
+        const { top, left, right, bottom } = containerRef.current.getBoundingClientRect();
+        if (clientX < left || clientX > right || clientY < top || clientY > bottom) {
+          handler();
+        }
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [containerRef, handler]);
+};
+
+export const useScrollToFirstError = (errors: FieldErrors) => {
+  useEffect(() => {
+    const findFirstErrorElement = (err: FieldErrors, parentPath: string = ''): HTMLElement | null => {
+      for (const key in err) {
+        if (Object.prototype.hasOwnProperty.call(err, key)) {
+          const error = err[key];
+          const currentPath = parentPath ? `${parentPath}.${key}` : key;
+          if (isObject(error)) {
+            if (error.ref) {
+              const element = document.getElementsByName(currentPath)[0];
+              if (element instanceof HTMLElement) {
+                return element;
+              }
+            } else {
+              const nestedElement = findFirstErrorElement(error as FieldErrors, currentPath);
+              if (nestedElement) {
+                return nestedElement;
+              }
+            }
+          }
+        }
+      }
+      return null;
+    };
+    if (errors) {
+      const firstErrorElement = findFirstErrorElement(errors);
+      if (firstErrorElement) {
+        setTimeout(() => {
+          firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorElement.focus({ preventScroll: true });
+        }, 0);
+      }
+    }
+  }, [errors]);
+};
+
+type NestedItem<T> = T & { [field: string]: Array<T> };
+
+export const updateInfiniteCache = <T extends { id: number | string }>(
+  listService: () => Promise<{ items: T[]; page: number; total: number }>,
+  item: Partial<T | NestedItem<T>>,
+  mode: 'update' | 'create' | 'delete',
+  children?: string,
+  isPin?: boolean,
+) => {
+  const updateNestedItems = (items: T[]): T[] => {
+    let found = undefined
+    const newItems = items
+      .map((i) => {
+        if (i.id === item.id) {
+          // need to merge item with i to keep the nested items ?
+          found = { ...i, ...item };
+          return mode === 'delete' ? null : found;
+        }
+        if (children && Array.isArray(i[children as keyof T])) {
+          return { ...i, [children]: updateNestedItems(i[children as keyof T] as Array<T>) };
+        }
+        return i;
+      })
+      .filter(Boolean) as T[];
+    return isPin && found ? [found, ...newItems.filter((i) => i.id !== item.id)] : newItems;
+  };
+
+  Array.from(globalCache.keys()).forEach((key) => {
+    if (key.startsWith(`${INFINITE_PREFIX}${listService.name}`)) {
+      const data: Array<{ items: T[]; page: number; total: number }> = globalCache.get(key)?.data;
+      let updated = data;
+
+      if (mode === 'update' || mode === 'delete') {
+        updated = data.map((d) => ({
+          ...d,
+          items: updateNestedItems(d.items),
+          total: mode === 'delete' ? d.total - 1 : d.total,
+        }));
+      } else if (mode === 'create') {
+        updated = [{ ...data[0], items: [item as T, ...data[0].items], total: data[0].total + 1 }, ...data.slice(1)];
+      }
+
+      globalMutate(key, updated, { revalidate: false });
+    }
+  });
+};
