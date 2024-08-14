@@ -17,7 +17,6 @@ const tabs: Array<Array<string>> = [
   [t('Video'), 'video'],
   [t('Short'), 'short'],
   [t('Playlist'), 'playlist'],
-  [t('History'), 'history'],
   [t('Quiz'), 'quiz'],
   [t('Survey'), 'survey'],
   [t('Exam'), 'exam'],

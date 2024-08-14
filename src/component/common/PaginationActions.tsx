@@ -1,11 +1,11 @@
 import { RefreshOutlined, SortOutlined } from '@mui/icons-material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { FormControl, IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
+import { CircularProgress, FormControl, IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import GradientCircularProgress from './GradientCircularProgress';
+// import GradientCircularProgress from './GradientCircularProgress';
 
 interface ActionProps {
   ordering?: string;
@@ -79,7 +79,7 @@ const SimpleSearch = ({ search, setSearch }: ActionProps) => {
             position="end"
             onClick={() => {
               setSearchInput('');
-              setSearch && setSearch('');
+              setSearch?.('');
             }}
             sx={{ cursor: 'pointer' }}
           >
@@ -104,22 +104,36 @@ const SimpleSearch = ({ search, setSearch }: ActionProps) => {
 
 const InfiniteScrollIndicator = forwardRef((props: { show: boolean; small?: boolean }, ref: React.Ref<HTMLDivElement>) => {
   // From https://github.com/mui/material-ui/issues/9496#issuecomment-959408221
+  // TODO
   return (
-    <Box
-      ref={ref}
-      sx={{
-        width: '100%',
-        minHeight: props.small ? `${1.8 + 2}em` : `${2.5 + 2}em`,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        // position: 'absolute',
-        zIndex: -1,
-        my: 3,
-      }}
-    >
-      {props.show && <GradientCircularProgress size={props.small ? '1.8em' : '2.5em'} />}
-    </Box>
+    <>
+      <svg width={0} height={0}>
+        <defs>
+          <linearGradient id="my_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#e01cd5" />
+            <stop offset="100%" stopColor="#1CB5E0" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <Box
+        ref={ref}
+        sx={{
+          width: '100%',
+          minHeight: props.small ? `${1.8 + 2}em` : `${2.5 + 2}em`,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {props.show && (
+          <CircularProgress
+            disableShrink
+            sx={{ 'svg circle': { stroke: 'url(#my_gradient)' } }}
+            size={props.small ? '1.8em' : '2.5em'}
+          />
+        )}
+      </Box>
+    </>
   );
 });
 

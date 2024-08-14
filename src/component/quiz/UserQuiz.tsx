@@ -6,7 +6,7 @@ import SaveQuizDialog from './SaveQuizDialog';
 
 const UserQuiz = () => {
   const { t } = useTranslation('quiz');
-  const sharedItemTabKey = 'submitter';
+  const sharedItemTabKey = 'bookmarker';
 
   return (
     <GridInfiniteScrollPage<QuizDisplayResponse, QuizGetDisplayData>

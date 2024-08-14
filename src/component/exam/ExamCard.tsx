@@ -68,6 +68,7 @@ const ExamCard = ({ exam, hideAvatar }: Props) => {
                 e.stopPropagation();
                 setCommentDialogOpen((prev) => !prev);
               }}
+              sx={{ py: 0 }}
             >
               {t('Q&A')}
             </Button>
@@ -85,6 +86,7 @@ const ExamCard = ({ exam, hideAvatar }: Props) => {
         }
         autoColor
         actionMenu={<ExamActionMenu exam={exam} />}
+        sx={{ '& .card-content': { flexGrow: 0 } }}
       />
       {readyDialogOpen && <ExamReadyDialog open={readyDialogOpen} setOpen={setReadyDialogOpen} exam={exam} />}
       {gradingNotificationOpen && (

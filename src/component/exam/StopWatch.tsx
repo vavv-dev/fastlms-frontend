@@ -91,7 +91,7 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
     }
 
     return () => {
-      interval && clearInterval(interval);
+      if (interval) clearInterval(interval);
     };
   }, [exam?.id]); // eslint-disable-line
 

@@ -106,7 +106,7 @@ const quizSchema: yup.ObjectSchema<QuizResourceUpdateRequest> = yup.object({
     .label(t('Failure message'))
     .meta({ control: 'editor', placeholderText: t('Optional') }),
   embed: yup.object().default({}).label(t('Embed')).meta({ hidden: true, control: 'text' }),
-  questions: yup.array().of(questionSchema).label(t('Questions')).default([]),
+  questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
 });
 
 interface Props {

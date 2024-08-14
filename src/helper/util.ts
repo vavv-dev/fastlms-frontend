@@ -109,6 +109,7 @@ export function parseJwt(token: string) {
   try {
     return JSON.parse(atob(token.split('.')[1]));
   } catch (e) {
+    void e;
     return null;
   }
 }
@@ -116,24 +117,27 @@ export function parseJwt(token: string) {
 /**
  * Format a number as a human-readable string
  * @param num - The number to format
- * @returns { count: number, symbol: string }
+ * @returns string
  */
-export function humanNumber(keyPrefix: string, num: number): [string, { count: number; ns: string }] {
+export function humanNumber(
+  num: number,
+  t: (key: string, options?: { count?: number; unit?: string; ns?: string }) => string,
+): string {
   const digits = 1;
   const lookup = [
-    { value: 1e9, symbol: 'b' },
-    { value: 1e7, symbol: 'tm' },
-    { value: 1e6, symbol: 'm' },
-    { value: 1e4, symbol: 'tk' },
-    { value: 1e3, symbol: 'k' },
+    { value: 1e8, unit: 'hm' },
+    { value: 1e7, unit: 'tm' },
+    { value: 1e6, unit: 'm' },
+    { value: 1e4, unit: 'tk' },
+    { value: 1e3, unit: 'k' },
   ];
   const item = lookup.find((item) => num >= item.value);
 
   if (item) {
     const count = (num / item.value).toFixed(digits);
-    return [`${keyPrefix} {{ count }}${item.symbol}`, { count: parseFloat(count), ns: 'common' }];
+    return t('humanNumber', { count: parseFloat(count), unit: t(`unit.${item.unit}`, { ns: 'common' }), ns: 'common' });
   } else {
-    return [`${keyPrefix} {{ count}}`, { count: num, ns: 'common' }];
+    return num.toString();
   }
 }
 

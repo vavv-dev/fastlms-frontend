@@ -1,7 +1,7 @@
 import { isObject } from 'lodash';
 import debounce from 'lodash/debounce';
-import { useEffect, useState } from 'react';
-import { FieldErrors } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+import { FieldErrors, FieldValues, UseFormWatch } from 'react-hook-form';
 import { INFINITE_PREFIX, cache as globalCache, mutate as globalMutate } from 'swr/_internal';
 import useSWRImmutable from 'swr/immutable';
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite';
@@ -62,7 +62,7 @@ export const useInfinitePagination = <T, K extends PaginateProps>(options: Infin
         }
         if (isLoading || isValidating) return;
         if (entries.length > 1) return;
-        entries[0].isIntersecting && setSize(size + 1);
+        if (entries[0].isIntersecting) setSize(size + 1);
       },
       { threshold: 0.5, ...options.observerOptions },
     );
@@ -87,7 +87,7 @@ export const useDebounce = (value: string, delay: number): string => {
   return debouncedValue;
 };
 
-export const useServiceImmutable = <T, K>(apiService: (params: T) => Promise<K>, params: T | null) => {
+export const useServiceImmutable = <T, K>(apiService: (params: T) => Promise<K>, params: T | null | undefined) => {
   const getSortedParamsKey = (params: T) => {
     return JSON.stringify(Object.fromEntries(Object.entries(params as object).sort()));
   };
@@ -171,7 +171,7 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
   isPin?: boolean,
 ) => {
   const updateNestedItems = (items: T[]): T[] => {
-    let found = undefined
+    let found = undefined;
     const newItems = items
       .map((i) => {
         if (i.id === item.id) {
@@ -206,4 +206,29 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
       globalMutate(key, updated, { revalidate: false });
     }
   });
+};
+
+export const useScrollToNewElement = <T extends FieldValues>(watch: UseFormWatch<T>) => {
+  const prevLengthRef = useRef<Record<string, number>>({});
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (!name || !value || !Array.isArray(value[name])) {
+        return;
+      }
+      const currentLength = value[name].length;
+      const prevLength = prevLengthRef.current[name] || 0;
+      if (currentLength > prevLength) {
+        const newIndex = currentLength - 1;
+        const firstField = Object.keys(value[name][0])[0];
+        requestAnimationFrame(() => {
+          const newElement = document.querySelector(`[name="${name}.${newIndex}.${firstField}"]`);
+          if (newElement) {
+            newElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      }
+      prevLengthRef.current[name] = currentLength;
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 };

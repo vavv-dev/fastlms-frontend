@@ -1,5 +1,5 @@
 import { ExamDisplayResponse, examDeleteResource, examGetDisplay, examToggleAction } from '@/api';
-import { DeleteResourceDialog, updateInfiniteCache } from '@/component/common';
+import { DeleteResourceDialog, createToggleAction } from '@/component/common';
 import ResourceActionMenu from '@/component/common/ResourceActionMenu';
 import { userState } from '@/store';
 import { ListAltOutlined } from '@mui/icons-material';
@@ -12,22 +12,16 @@ import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SaveExamDialog from './SaveExamDialog';
-import SubmissionListDialog from './SubmissionListDialog';
+import ReportDialog from './ReportDialog';
+
+const toggleAction = createToggleAction<ExamDisplayResponse>(examToggleAction, examGetDisplay);
 
 const ExamActionMenu = ({ exam }: { exam: ExamDisplayResponse }) => {
   const { t } = useTranslation('exam');
   const user = useAtomValue(userState);
   const [saveExamDialogOpen, setSaveExamDialogOpen] = useState(false);
   const [deleteExamDialogOpen, setDeleteExamDialogOpen] = useState(false);
-  const [submissionListDialogOpen, setSubmissionListDialogOpen] = useState(false);
-
-  const toggleAction = (action: 'bookmark' | 'like' | 'flag') => {
-    examToggleAction({ id: exam.id, action })
-      .then(() =>
-        updateInfiniteCache<ExamDisplayResponse>(examGetDisplay, { id: exam.id, bookmarked: !exam.bookmarked }, 'update'),
-      )
-      .catch((error) => console.error(error));
-  };
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
 
   if (!user) return null;
 
@@ -35,13 +29,13 @@ const ExamActionMenu = ({ exam }: { exam: ExamDisplayResponse }) => {
     <>
       <ResourceActionMenu
         menuItems={[
-          <MenuItem key="bookmark" onClick={() => toggleAction('bookmark')}>
+          <MenuItem key="bookmark" onClick={() => toggleAction('bookmark', exam)}>
             <ListItemIcon>{exam.bookmarked ? <BookmarkRemoveOutlinedIcon /> : <BookmarkAddOutlinedIcon />}</ListItemIcon>
             {exam.bookmarked ? t('Remove bookmark') : t('Add bookmark')}
           </MenuItem>,
 
           user.username === exam?.owner.username && [
-            <MenuItem key="submission-list" onClick={() => setSubmissionListDialogOpen(true)}>
+            <MenuItem key="submission-list" onClick={() => setReportDialogOpen(true)}>
               <ListItemIcon>
                 <ListAltOutlined />
               </ListItemIcon>
@@ -74,9 +68,7 @@ const ExamActionMenu = ({ exam }: { exam: ExamDisplayResponse }) => {
           listService={examGetDisplay}
         />
       )}
-      {submissionListDialogOpen && (
-        <SubmissionListDialog open={submissionListDialogOpen} setOpen={setSubmissionListDialogOpen} exam={exam} />
-      )}
+      {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} exam={exam} />}
     </>
   );
 };

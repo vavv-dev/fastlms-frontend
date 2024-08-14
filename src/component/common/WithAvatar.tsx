@@ -1,3 +1,4 @@
+import { textEllipsisCss } from '@/helper/util';
 import { homeUserState } from '@/store';
 import { Avatar, Box, SxProps, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
@@ -41,13 +42,27 @@ const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, color, sx,
           sx={{ mt: children ? '3px' : 0, width: avatarSize, height: avatarSize, '& img': { cursor: 'pointer' } }}
         />
       )}
-      <Box sx={{ flexGrow: 1, display: 'grid', minHeight: avatarSize, alignItems: 'center' }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: 'grid',
+          minHeight: avatarSize,
+          alignItems: 'center',
+          '& .MuiTypography-root': textEllipsisCss(1),
+        }}
+      >
         {!(hideAvatar && homeUser) && (
           <Typography
             onClick={goToHome}
             variant={nameVariant}
             color={color || 'text.primary'}
-            sx={{ width: 'fit-content', fontWeight: 'bold', lineHeight: 1.4, cursor: 'pointer' }}
+            sx={{
+              width: 'fit-content',
+              fontWeight: 'bold',
+              lineHeight: 1.4,
+              cursor: 'pointer',
+              '&:hover': { color: 'primary.main' },
+            }}
           >
             {name}
           </Typography>

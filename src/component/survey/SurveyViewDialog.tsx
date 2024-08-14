@@ -144,7 +144,7 @@ const SurveyViewDialog = ({ open, setOpen, surveyId }: IProps) => {
                       >
                         {t('Paticipate to survey')}
                       </Button>
-                    ) : (
+                    ) : survey.submission_count ? (
                       <Button
                         onClick={() => setShowResult(!showResult)}
                         startIcon={<BarChartOutlined />}
@@ -154,7 +154,7 @@ const SurveyViewDialog = ({ open, setOpen, surveyId }: IProps) => {
                       >
                         {t('View survey result')}
                       </Button>
-                    )}
+                    ) : undefined}
                   </TableCell>
                 </TableRow>
               </TableBody>

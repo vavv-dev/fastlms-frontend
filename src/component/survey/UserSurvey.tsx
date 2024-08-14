@@ -6,7 +6,7 @@ import SurveyCard from './SurveyCard';
 
 const UserSurvey = () => {
   const { t } = useTranslation('survey');
-  const sharedItemTabKey = 'submitter';
+  const sharedItemTabKey = 'bookmarker';
 
   return (
     <GridInfiniteScrollPage<SurveyDisplayResponse, SurveyGetDisplayData>

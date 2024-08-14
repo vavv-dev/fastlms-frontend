@@ -1,39 +1,39 @@
 import {
-  SurveyDisplayResponse,
-  SurveyGetSurveySubmissionsData,
-  SurveySubmissionResponse,
-  surveyDownloadSurveySubmissions,
-  surveyGetSurveySubmissions,
+  VideoDisplayResponse,
+  VideoGetVideoReportData,
+  VideoReportResponse,
+  videoDownloadVideoReport,
+  videoGetVideoReport,
 } from '@/api';
 import { BaseDialog, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
-import { base64XlsxDownload, formatDatetimeLocale } from '@/helper/util';
+import { base64XlsxDownload, formatDatetimeLocale, toFixedHuman } from '@/helper/util';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface IProps {
-  survey: SurveyDisplayResponse;
+  video: VideoDisplayResponse;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-const SubmissionListDialog = ({ open, setOpen, survey }: IProps) => {
-  const { t } = useTranslation('survey');
+const ReportDialog = ({ open, setOpen, video }: IProps) => {
+  const { t } = useTranslation('video');
   const [asOf, setAsOf] = useState<string>('');
   const [upTo, setUpTo] = useState<string>('');
 
   const downlaodXlsxFile = async () => {
-    if (!survey) return;
-    const text = await surveyDownloadSurveySubmissions({
-      id: survey.id,
+    if (!video) return;
+    const text = await videoDownloadVideoReport({
+      id: video.id,
       asOf: String(new Date(asOf).getTime() || '') || null,
       upTo: String(new Date(upTo).getTime() || '') || null,
     });
-    const filename = `${survey.title}.${asOf || 'all'}~${upTo || new Date().toISOString().slice(0, 16)}.xlsx`;
+    const filename = `${video.title}.${asOf || 'all'}~${upTo || new Date().toISOString().slice(0, 16)}.xlsx`;
     base64XlsxDownload(text, filename);
   };
 
-  if (!survey) return null;
+  if (!video) return null;
 
   return (
     <BaseDialog
@@ -41,14 +41,14 @@ const SubmissionListDialog = ({ open, setOpen, survey }: IProps) => {
       open={open}
       setOpen={setOpen}
       maxWidth="md"
-      title={survey.title}
+      title={video.title}
       actions={<Button onClick={downlaodXlsxFile}>{t('Download report')}</Button>}
       renderContent={() => (
-        <GridInfiniteScrollPage<SurveySubmissionResponse, SurveyGetSurveySubmissionsData>
+        <GridInfiniteScrollPage<VideoReportResponse, VideoGetVideoReportData>
           pageKey="answerlist"
-          apiService={surveyGetSurveySubmissions}
+          apiService={videoGetVideoReport}
           apiOptions={{
-            id: survey.id,
+            id: video.id,
             asOf: String(new Date(asOf).getTime() || ''),
             upTo: String(new Date(upTo).getTime() || ''),
           }}
@@ -78,20 +78,22 @@ const SubmissionListDialog = ({ open, setOpen, survey }: IProps) => {
                 <Table size="small" sx={{ tableLayout: 'fixed', '& *': { whiteSpace: 'noWrap' }, '& td': { px: 1 } }}>
                   <TableHead>
                     <TableRow>
-                      {[t('User'), t('End time'), t('Status')].map((label) => (
+                      {[t('User'), t('First watch'), t('Last watch'), t('Progress'), t('Status')].map((label) => (
                         <TableCell key={label}>{label}</TableCell>
                       ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {data?.map((pagination, i) =>
-                      pagination.items?.map((submission: SurveySubmissionResponse) => (
+                      pagination.items?.map((watch: VideoReportResponse) => (
                         <TableRow key={i}>
                           <TableCell>
-                            <WithAvatar {...submission.user} variant="small" />
+                            <WithAvatar {...watch.user} variant="small" />
                           </TableCell>
-                          <TableCell>{formatDatetimeLocale(submission.end_time)}</TableCell>
-                          <TableCell>{submission.status && t('Submitted')}</TableCell>
+                          <TableCell>{formatDatetimeLocale(watch.first_watch)}</TableCell>
+                          <TableCell>{formatDatetimeLocale(watch.watched_at)}</TableCell>
+                          <TableCell>{toFixedHuman(watch.progress, 1)}%</TableCell>
+                          <TableCell>{watch.passed ? t('Passed') : ''}</TableCell>
                         </TableRow>
                       )),
                     )}
@@ -108,4 +110,4 @@ const SubmissionListDialog = ({ open, setOpen, survey }: IProps) => {
   );
 };
 
-export default SubmissionListDialog;
+export default ReportDialog;

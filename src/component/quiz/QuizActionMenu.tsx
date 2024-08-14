@@ -1,5 +1,5 @@
 import { QuizDisplayResponse, quizDeleteResource, quizGetDisplay, quizToggleAction } from '@/api';
-import { DeleteResourceDialog, updateInfiniteCache } from '@/component/common';
+import { DeleteResourceDialog, createToggleAction } from '@/component/common';
 import ResourceActionMenu from '@/component/common/ResourceActionMenu';
 import { userState } from '@/store';
 import { ListAltOutlined } from '@mui/icons-material';
@@ -11,23 +11,17 @@ import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ReportDialog from './ReportDialog';
 import SaveQuizDialog from './SaveQuizDialog';
-import SubmissionListDialog from './SubmissionListDialog';
+
+const toggleAction = createToggleAction<QuizDisplayResponse>(quizToggleAction, quizGetDisplay);
 
 const QuizActionMenu = ({ quiz }: { quiz: QuizDisplayResponse }) => {
   const { t } = useTranslation('quiz');
   const user = useAtomValue(userState);
   const [saveQuizDialogOpen, setSaveQuizDialogOpen] = useState(false);
   const [deleteQuizDialogOpen, setDeleteQuizDialogOpen] = useState(false);
-  const [submissionListDialogOpen, setSubmissionListDialogOpen] = useState(false);
-
-  const toggleAction = (action: 'bookmark' | 'like' | 'flag') => {
-    quizToggleAction({ id: quiz.id, action })
-      .then(() =>
-        updateInfiniteCache<QuizDisplayResponse>(quizGetDisplay, { id: quiz.id, bookmarked: !quiz.bookmarked }, 'update'),
-      )
-      .catch((error) => console.error(error));
-  };
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
 
   if (!user) return null;
 
@@ -35,13 +29,13 @@ const QuizActionMenu = ({ quiz }: { quiz: QuizDisplayResponse }) => {
     <>
       <ResourceActionMenu
         menuItems={[
-          <MenuItem key="bookmark" onClick={() => toggleAction('bookmark')}>
+          <MenuItem key="bookmark" onClick={() => toggleAction('bookmark', quiz)}>
             <ListItemIcon>{quiz.bookmarked ? <BookmarkRemoveOutlinedIcon /> : <BookmarkAddOutlinedIcon />}</ListItemIcon>
             {quiz.bookmarked ? t('Remove bookmark') : t('Add bookmark')}
           </MenuItem>,
 
           user.username === quiz?.owner.username && [
-            <MenuItem key="submission-list" onClick={() => setSubmissionListDialogOpen(true)}>
+            <MenuItem key="submission-list" onClick={() => setReportDialogOpen(true)}>
               <ListItemIcon>
                 <ListAltOutlined />
               </ListItemIcon>
@@ -74,9 +68,7 @@ const QuizActionMenu = ({ quiz }: { quiz: QuizDisplayResponse }) => {
           listService={quizGetDisplay}
         />
       )}
-      {submissionListDialogOpen && (
-        <SubmissionListDialog open={submissionListDialogOpen} setOpen={setSubmissionListDialogOpen} quiz={quiz} />
-      )}
+      {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} quiz={quiz} />}
     </>
   );
 };

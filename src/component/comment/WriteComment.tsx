@@ -97,7 +97,7 @@ const WriteComment = ({ url, parent, comment, onClose, autoFocus, question }: Pr
         }
 
         reset();
-        onClose && onClose();
+        onClose?.();
 
         // update comment count locally
         threadMutate(
@@ -198,7 +198,7 @@ const WriteComment = ({ url, parent, comment, onClose, autoFocus, question }: Pr
                         size="small"
                         onClick={() => {
                           reset();
-                          onClose && onClose();
+                          onClose?.();
                         }}
                       >
                         <Close fontSize="small" />

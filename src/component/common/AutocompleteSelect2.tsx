@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useServiceImmutable } from './hooks';
 
 interface Props<T extends { id: string | number }> {
-  service: (params: { ordering: string }) => Promise<T[]>;
+  service: (params: object) => Promise<T[]>;
   labelField: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -28,21 +28,24 @@ interface Props<T extends { id: string | number }> {
   multiple?: boolean;
   onSelect: (params: T[]) => void;
   selectionLimit?: number;
+  excludes?: Set<string | number>;
 }
 
-const AutocompleteSelect = <T extends { id: string | number }>({
+const AutocompleteSelect2 = <T extends { id: string | number }>({
   service,
   labelField,
   open,
   setOpen,
   placeholder,
+  multiple = true,
   onSelect,
   selectionLimit,
+  excludes = new Set(),
 }: Props<T>) => {
   const { t } = useTranslation('common');
   const [value, setValue] = useState<T[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const { data, mutate } = useServiceImmutable<{ ordering: string }, T[]>(service, { ordering: labelField as string });
+  const { data, mutate } = useServiceImmutable<object, T[]>(service, undefined);
 
   const matcher = (v: string) => {
     const noSpace = v.replace(/\s/g, '');
@@ -53,7 +56,14 @@ const AutocompleteSelect = <T extends { id: string | number }>({
     <Dialog
       transitionDuration={0}
       scroll="body"
-      PaperProps={{ sx: { mt: '50px', verticalAlign: 'top', maxWidth: '800px' } }}
+      PaperProps={{
+        sx: {
+          mt: '50px',
+          verticalAlign: 'top',
+          maxWidth: '800px',
+          borderRadius: '8px',
+        },
+      }}
       open={open}
       onClose={() => setOpen(false)}
       fullWidth
@@ -62,7 +72,7 @@ const AutocompleteSelect = <T extends { id: string | number }>({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Autocomplete
             size="small"
-            multiple
+            multiple={multiple}
             getOptionDisabled={() => (selectionLimit ? (value.length >= selectionLimit ? true : false) : false)}
             value={value}
             onChange={(_, newValue) => setValue(newValue as T[])}
@@ -72,7 +82,7 @@ const AutocompleteSelect = <T extends { id: string | number }>({
             openOnFocus
             disableCloseOnSelect
             autoHighlight
-            options={data || []}
+            options={data ? data.filter((d) => !excludes.has(d.id)) : []}
             getOptionLabel={(option) => (option instanceof Object ? (option[labelField as keyof T] as string) : option)}
             renderInput={(params) => <TextField autoFocus placeholder={placeholder} {...params} />}
             renderOption={(props, option, { inputValue, selected }) => {
@@ -106,7 +116,14 @@ const AutocompleteSelect = <T extends { id: string | number }>({
           />
           <Tooltip title={t('Add')} arrow>
             <span>
-              <IconButton disabled={!value.length} onClick={() => onSelect(value)} color="primary">
+              <IconButton
+                disabled={!value.length}
+                onClick={() => {
+                  onSelect(value);
+                  setOpen(false);
+                }}
+                color="primary"
+              >
                 <AddCircle />
               </IconButton>
             </span>
@@ -122,7 +139,7 @@ const AutocompleteSelect = <T extends { id: string | number }>({
   );
 };
 
-export default AutocompleteSelect;
+export default AutocompleteSelect2;
 
 const CustomPaper = (props: PaperProps) => {
   return (
@@ -145,5 +162,19 @@ const CustomPaper = (props: PaperProps) => {
 const CustomPopper = ({ anchorEl, open, ...props }: PopperProps) => {
   const dialogAnchorEl = document.querySelector('#dialog-anchor');
   if (dialogAnchorEl && props.style) props.style.width = dialogAnchorEl.clientWidth || 0;
-  return <Popper open={open} anchorEl={dialogAnchorEl || anchorEl} {...props} />;
+  return (
+    <Popper
+      open={open}
+      anchorEl={dialogAnchorEl || anchorEl}
+      {...props}
+      sx={{
+        '& .MuiPaper-root.MuiAutocomplete-paper': {
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderBottomLeftRadius: '8px',
+          borderBottomRightRadius: '8px',
+        },
+      }}
+    />
+  );
 };

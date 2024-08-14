@@ -1,39 +1,39 @@
 import {
-  ExamDisplayResponse,
-  ExamGetExamSubmissionsData,
-  ExamSubmissionResponse,
-  examDownloadExamSubmissions,
-  examGetExamSubmissions,
+  QuizDisplayResponse,
+  QuizGetQuizReportData,
+  QuizReportResponse,
+  quizDownloadQuizReport,
+  quizGetQuizReport,
 } from '@/api';
 import { BaseDialog, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
-import { base64XlsxDownload, formatDatetimeLocale } from '@/helper/util';
+import { base64XlsxDownload, formatDatetimeLocale, toFixedHuman } from '@/helper/util';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface IProps {
-  exam: ExamDisplayResponse;
+  quiz: QuizDisplayResponse;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-const SubmissionListDialog = ({ open, setOpen, exam }: IProps) => {
-  const { t } = useTranslation('exam');
+const ReportDialog = ({ open, setOpen, quiz }: IProps) => {
+  const { t } = useTranslation('quiz');
   const [asOf, setAsOf] = useState<string>('');
   const [upTo, setUpTo] = useState<string>('');
 
   const downlaodXlsxFile = async () => {
-    if (!exam) return;
-    const text = await examDownloadExamSubmissions({
-      id: exam.id,
+    if (!quiz) return;
+    const text = await quizDownloadQuizReport({
+      id: quiz.id,
       asOf: String(new Date(asOf).getTime() || '') || null,
       upTo: String(new Date(upTo).getTime() || '') || null,
     });
-    const filename = `${exam.title}.${asOf || 'all'}~${upTo || new Date().toISOString().slice(0, 16)}.xlsx`;
+    const filename = `${quiz.title}.${asOf || 'all'}~${upTo || new Date().toISOString().slice(0, 16)}.xlsx`;
     base64XlsxDownload(text, filename);
   };
 
-  if (!exam) return null;
+  if (!quiz) return null;
 
   return (
     <BaseDialog
@@ -41,14 +41,14 @@ const SubmissionListDialog = ({ open, setOpen, exam }: IProps) => {
       open={open}
       setOpen={setOpen}
       maxWidth="md"
-      title={exam.title}
+      title={quiz.title}
       actions={<Button onClick={downlaodXlsxFile}>{t('Download report')}</Button>}
       renderContent={() => (
-        <GridInfiniteScrollPage<ExamSubmissionResponse, ExamGetExamSubmissionsData>
+        <GridInfiniteScrollPage<QuizReportResponse, QuizGetQuizReportData>
           pageKey="answerlist"
-          apiService={examGetExamSubmissions}
+          apiService={quizGetQuizReport}
           apiOptions={{
-            id: exam.id,
+            id: quiz.id,
             asOf: String(new Date(asOf).getTime() || ''),
             upTo: String(new Date(upTo).getTime() || ''),
           }}
@@ -85,14 +85,14 @@ const SubmissionListDialog = ({ open, setOpen, exam }: IProps) => {
                   </TableHead>
                   <TableBody>
                     {data?.map((pagination, i) =>
-                      pagination.items?.map((submission: ExamSubmissionResponse) => (
+                      pagination.items?.map((submission: QuizReportResponse) => (
                         <TableRow key={i}>
                           <TableCell>
                             <WithAvatar {...submission.user} variant="small" />
                           </TableCell>
                           <TableCell>{formatDatetimeLocale(submission.start_time)}</TableCell>
                           <TableCell>{formatDatetimeLocale(submission.end_time)}</TableCell>
-                          <TableCell>{submission.score}</TableCell>
+                          <TableCell>{toFixedHuman(submission.score, 1)}</TableCell>
                           <TableCell>{submission.status && t(submission.status)}</TableCell>
                         </TableRow>
                       )),
@@ -110,4 +110,4 @@ const SubmissionListDialog = ({ open, setOpen, exam }: IProps) => {
   );
 };
 
-export default SubmissionListDialog;
+export default ReportDialog;

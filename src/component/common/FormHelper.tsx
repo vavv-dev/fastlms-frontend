@@ -208,12 +208,12 @@ export const TextFieldControl = ({
             {...props}
             onFocus={(e) => {
               setFocused(true);
-              focusSelect && e.target.select();
+              if (focusSelect) e.target.select();
             }}
             onBlur={(e) => {
               setFocused(false);
               field.onBlur();
-              props.onBlur && props.onBlur(e);
+              if (props.onBlur) props.onBlur(e);
             }}
             onInput={(e) => {
               if (type == 'number') {
@@ -273,7 +273,7 @@ export const FileFieldControl = ({ name, label, control, helperText, InputLabelP
               {field.value?.[0] ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckOutlined />
-                  {field.value?.[0]?.name}
+                  {typeof field.value === 'string' ? field.value.split('/').pop() : field.value?.[0]?.name}
                   <Close
                     fontSize="small"
                     onClick={(e) => {
@@ -283,7 +283,7 @@ export const FileFieldControl = ({ name, label, control, helperText, InputLabelP
                   />
                 </Box>
               ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1 }}>
                   <PhotoSizeSelectActualOutlinedIcon fontSize="small" />
                   {t('Choose file')}
                 </Box>

@@ -15,6 +15,7 @@ import { ExamView, UserExam, UserGrading } from '@/component/exam';
 import { BaseLayout } from '@/component/layout';
 import { UserQuiz } from '@/component/quiz';
 import { UserSurvey } from '@/component/survey';
+import { PlaylistView, SearchBox, UserPlaylist, UserVideo, VideoSearchResult, VideoView } from '@/component/video';
 import { userState } from '@/store';
 import { modeState, themeConfig } from '@/theme';
 import { ThemeProvider } from '@emotion/react';
@@ -41,9 +42,13 @@ const App = () => {
     createRoutesFromElements(
       <>
         <Route element={<Protected />}>
-          <Route path="/" element={<BaseLayout />}>
+          <Route path="/" element={<BaseLayout searchBar={<SearchBox />} />}>
             {/* user home */}
             <Route path="u/:username" element={<HomeLayout />}>
+              {['video', 'short'].map((videoKind) => (
+                <Route key={videoKind} path={videoKind} element={<UserVideo />} />
+              ))}
+              <Route path="playlist" element={<UserPlaylist />} />
               <Route path="quiz" element={<UserQuiz />} />
               <Route path="survey" element={<UserSurvey />} />
               <Route path="exam" element={<UserExam />} />
@@ -54,9 +59,15 @@ const App = () => {
             </Route>
 
             {/* top level page with drawer */}
+            <Route path="playlist/:playlistId" element={<PlaylistView />} />
+            <Route path="video/search" element={<VideoSearchResult />} />
           </Route>
 
           {/* top level page without drawer */}
+          <Route path="/" element={<BaseLayout searchBar={<SearchBox />} hideDrawer={true} />}>
+            <Route path="video/:videoId" element={<VideoView />} />
+          </Route>
+          {/* top level page without drawer, search bar */}
           <Route path="/" element={<BaseLayout hideDrawer={true} />}>
             <Route path="exam/:examId/assess" element={<ExamView />} />
           </Route>

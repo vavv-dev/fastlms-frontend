@@ -8,6 +8,22 @@ export type Body_AccountUpdateMe = {
     thumbnail?: (Blob | File) | null;
 };
 
+export type Body_PlaylistCreateResource = {
+    thumbnail?: (Blob | File) | string | null;
+    title: string;
+    description?: string;
+    is_public: boolean;
+    featured: boolean;
+};
+
+export type Body_PlaylistUpdateResource = {
+    title?: string;
+    description?: string;
+    is_public?: boolean;
+    featured?: boolean;
+    thumbnail?: (Blob | File) | string | null;
+};
+
 export type Body_PublicLogin = {
     grant_type?: string | null;
     username: string;
@@ -15,6 +31,15 @@ export type Body_PublicLogin = {
     scope?: string;
     client_id?: string | null;
     client_secret?: string | null;
+};
+
+export type Body_VideoUpdateResource = {
+    title?: string;
+    description?: string;
+    is_public?: boolean;
+    featured?: boolean;
+    passing_percent?: number;
+    thumbnail?: (Blob | File) | string | null;
 };
 
 export type CommentAuthor = {
@@ -221,6 +246,14 @@ export type ExamQuestionFinding = {
 
 export type ExamQuestionKind = 'single_selection' | 'ox_selection' | 'text_input' | 'number_input' | 'essay';
 
+export type ExamReportResponse = {
+    user: ExamSubmissionUser;
+    start_time: string | null;
+    end_time: string | null;
+    score: number | null;
+    status: string | null;
+};
+
 export type ExamResourceCreateRequest = {
     title: string;
     description: string;
@@ -330,14 +363,6 @@ export type ExamResourceUpdateRequest = {
     questions?: Array<ExamResourceQuestionUpdate>;
 };
 
-export type ExamSubmissionResponse = {
-    user: ExamSubmissionUser;
-    start_time: string | null;
-    end_time: string | null;
-    score: number | null;
-    status: string | null;
-};
-
 export type ExamSubmissionUser = {
     id: number;
     username: string;
@@ -347,6 +372,10 @@ export type ExamSubmissionUser = {
 
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
+};
+
+export type ImportYoutubeRequest = {
+    youtube_id: string;
 };
 
 export type LearningResourceKind = 'video' | 'short' | 'quiz' | 'survey' | 'exam' | 'course' | 'group' | 'post';
@@ -375,8 +404,16 @@ export type Paginated_ExamGradingSubmissionReponse_ = {
     pages: number;
 };
 
-export type Paginated_ExamSubmissionResponse_ = {
-    items: Array<ExamSubmissionResponse>;
+export type Paginated_ExamReportResponse_ = {
+    items: Array<ExamReportResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_PlaylistDisplayResponse_ = {
+    items: Array<PlaylistDisplayResponse>;
     total: number;
     page: number;
     size: number;
@@ -391,8 +428,8 @@ export type Paginated_QuizDisplayResponse_ = {
     pages: number;
 };
 
-export type Paginated_QuizSubmissionResponse_ = {
-    items: Array<QuizSubmissionResponse>;
+export type Paginated_QuizReportResponse_ = {
+    items: Array<QuizReportResponse>;
     total: number;
     page: number;
     size: number;
@@ -407,8 +444,8 @@ export type Paginated_SurveyDisplayResponse_ = {
     pages: number;
 };
 
-export type Paginated_SurveySubmissionResponse_ = {
-    items: Array<SurveySubmissionResponse>;
+export type Paginated_SurveyReportResponse_ = {
+    items: Array<SurveyReportResponse>;
     total: number;
     page: number;
     size: number;
@@ -423,6 +460,30 @@ export type Paginated_ThreadResponse_ = {
     pages: number;
 };
 
+export type Paginated_VideoDisplayResponse_ = {
+    items: Array<VideoDisplayResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_VideoReportResponse_ = {
+    items: Array<VideoReportResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_VideoSearchResultResponse_ = {
+    items: Array<VideoSearchResultResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
 export type PasswordResetConfirmRequest = {
     token: string;
     new_password: string;
@@ -431,6 +492,86 @@ export type PasswordResetConfirmRequest = {
 export type PasswordResetRequest = {
     email: string;
     confirm_url: string;
+};
+
+export type PlaylistDisplayResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: PlaylistOwner;
+    thumbnail: string;
+    uploader: string;
+    duration: number;
+    video_count: number;
+    progress: number | null;
+    passed: boolean | null;
+    passed_str: string | null;
+    modified: string;
+    live_count: number;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+};
+
+export type PlaylistOwner = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
+export type PlaylistResourceResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: PlaylistOwner;
+    uploader: string;
+    thumbnail: (Blob | File) | string;
+};
+
+export type PlaylistResumeResponse = {
+    video_id: string;
+};
+
+export type PlaylistVideoItem = {
+    playlist_id: string;
+    video_id: string;
+    order: number | null;
+};
+
+export type PlaylistVideoRequest = {
+    videos: Array<PlaylistVideoItem>;
+};
+
+export type PlaylistViewResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: PlaylistOwner;
+    thumbnail: string;
+    uploader: string;
+    duration: number;
+    video_count: number;
+    progress: number | null;
+    passed: boolean | null;
+    passed_str: string | null;
+    modified: string;
+    live_count: number;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
 };
 
 export type QuizAsseccQuestion = {
@@ -527,6 +668,21 @@ export type QuizQuestionFinding = {
 
 export type QuizQuestionKind = 'single_selection' | 'number_input';
 
+export type QuizReportResponse = {
+    user: QuizReportUser;
+    start_time: string | null;
+    end_time: string | null;
+    score: number | null;
+    status: SubmissionStatus | null;
+};
+
+export type QuizReportUser = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
 export type QuizResourceCreateRequest = {
     title: string;
     description: string;
@@ -602,21 +758,6 @@ export type QuizResourceUpdateRequest = {
     randomize?: boolean;
     enable_finding?: boolean;
     questions?: Array<QuizResourceQuestionUpdate>;
-};
-
-export type QuizSubmissionResponse = {
-    user: QuizSubmissionUser;
-    start_time: string | null;
-    end_time: string | null;
-    score: number | null;
-    status: SubmissionStatus | null;
-};
-
-export type QuizSubmissionUser = {
-    id: number;
-    username: string;
-    name: string;
-    thumbnail: string;
 };
 
 export type ResendVerificationEmailRequest = {
@@ -708,6 +849,19 @@ export type SurveyQuestionFinding = {
 
 export type SurveyQuestionKind = 'single_selection' | 'multiple_selection' | 'number_input' | 'text_input';
 
+export type SurveyReportResponse = {
+    user: SurveyReportUser;
+    end_time: string | null;
+    status: SubmissionStatus | null;
+};
+
+export type SurveyReportUser = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
 export type SurveyResourceCreateRequest = {
     title: string;
     description: string;
@@ -776,19 +930,6 @@ export type SurveyResourceUpdateRequest = {
     questions?: Array<SurveyResourceQuestionUpdate>;
 };
 
-export type SurveySubmissionResponse = {
-    user: SurveySubmissionUser;
-    end_time: string | null;
-    status: SubmissionStatus | null;
-};
-
-export type SurveySubmissionUser = {
-    id: number;
-    username: string;
-    name: string;
-    thumbnail: string;
-};
-
 export type ThreadCreateRequest = {
     owner_id: number;
     thumbnail?: string;
@@ -839,6 +980,149 @@ export type ValidationError = {
     loc: Array<(string | number)>;
     msg: string;
     type: string;
+};
+
+export type VideoDisplayResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: VideoOwner;
+    thumbnail: string;
+    uploader: string;
+    duration: number | null;
+    passing_percent: number;
+    watch_count: number;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    progress: number | null;
+    passed: boolean | null;
+    modified: string;
+    is_live: boolean;
+    video_kind?: VideoKind | null;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+};
+
+export type VideoKind = 'video' | 'short';
+
+export type VideoOwner = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
+export type VideoReportResponse = {
+    user: VideoReportUser;
+    first_watch: string | null;
+    watched_at: string | null;
+    progress: number | null;
+    passed: boolean | null;
+};
+
+export type VideoReportUser = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
+export type VideoResourceResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: VideoOwner;
+    kind: LearningResourceKind;
+    video_kind: VideoKind;
+    passing_percent: number;
+    uploader: string;
+    thumbnail: (Blob | File) | string;
+};
+
+export type VideoSearchResultResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: VideoOwner;
+    thumbnail: string;
+    uploader: string;
+    duration: number | null;
+    passing_percent: number;
+    watch_count: number;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    progress: number | null;
+    passed: boolean | null;
+    modified: string;
+    is_live: boolean;
+    video_kind?: VideoKind | null;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+    relevance: number;
+    found_subtitles?: Array<VideoSearchSubtitle>;
+};
+
+export type VideoSearchSubtitle = {
+    start: string;
+    text: string;
+};
+
+export type VideoSelectResponse = {
+    id: string;
+    title: string;
+    thumbnail: string;
+};
+
+export type VideoSubtitleResponse = {
+    lang: string;
+    content: string;
+};
+
+export type VideoViewResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: VideoOwner;
+    uploader: string;
+    duration: number | null;
+    passing_percent: number;
+    watch_count: number;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    progress: number | null;
+    passed: boolean | null;
+    last_position: number | null;
+    modified: string;
+    video_kind: VideoKind;
+    thumbnail: string;
+    tag_names: Array<(string)>;
+    is_live: boolean;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+};
+
+export type WatchStartRequest = {
+    first_watch: string;
+};
+
+export type WatchUpdateRequest = {
+    watch_bitmap?: (Blob | File) | null;
+    length?: number | null;
+    last_position: number;
 };
 
 export type PublicCreateUserData = {
@@ -981,15 +1265,243 @@ export type CommentToggleActionData = {
 
 export type CommentToggleActionResponse = unknown;
 
+export type VideoGetDisplayData = {
+    accessToken?: string | null;
+    bookmarker?: number | null;
+    orderBy?: 'watched_at' | 'title' | 'modified';
+    owner?: number | null;
+    page?: number;
+    playlistId?: string | null;
+    refreshToken?: string | null;
+    search?: string | null;
+    size?: number;
+    tag?: string | null;
+    videoKind?: VideoKind | null;
+};
+
+export type VideoGetDisplayResponse = Paginated_VideoDisplayResponse_;
+
+export type VideoImportYoutubeVideoData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    requestBody: ImportYoutubeRequest;
+};
+
+export type VideoImportYoutubeVideoResponse = VideoDisplayResponse;
+
+export type VideoUpdatePlaylistVideosData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    requestBody: PlaylistVideoRequest;
+};
+
+export type VideoUpdatePlaylistVideosResponse = unknown;
+
+export type VideoAutocompleteData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+};
+
+export type VideoAutocompleteResponse = Array<VideoSelectResponse>;
+
+export type VideoGetViewData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoGetViewResponse = VideoViewResponse;
+
+export type VideoGetSubtitlesData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoGetSubtitlesResponse = Array<VideoSubtitleResponse>;
+
+export type VideoGetResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoGetResourceResponse = VideoResourceResponse;
+
+export type VideoUpdateResourceData = {
+    accessToken?: string | null;
+    formData?: Body_VideoUpdateResource;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoUpdateResourceResponse = VideoResourceResponse;
+
+export type VideoDeleteResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoDeleteResourceResponse = unknown;
+
+export type VideoGetWatchBitmapData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoGetWatchBitmapResponse = (Blob | File);
+
+export type VideoStartWatchData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+    requestBody: WatchStartRequest;
+};
+
+export type VideoStartWatchResponse = unknown;
+
+export type VideoUpdateWatchData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+    requestBody: WatchUpdateRequest;
+};
+
+export type VideoUpdateWatchResponse = unknown;
+
+export type VideoEndWatchData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoEndWatchResponse = unknown;
+
+export type VideoGetVideoReportData = {
+    accessToken?: string | null;
+    asOf?: string | null;
+    id: string;
+    orderBy?: 'first_watch' | 'last_watch';
+    page?: number;
+    refreshToken?: string | null;
+    search?: string | null;
+    size?: number;
+    upTo?: string | null;
+};
+
+export type VideoGetVideoReportResponse = Paginated_VideoReportResponse_;
+
+export type VideoDownloadVideoReportData = {
+    accessToken?: string | null;
+    asOf?: string | null;
+    id: string;
+    orderBy?: 'first_watch' | 'last_watch';
+    refreshToken?: string | null;
+    search?: string | null;
+    upTo?: string | null;
+};
+
+export type VideoDownloadVideoReportResponse = string;
+
+export type VideoToggleActionData = {
+    accessToken?: string | null;
+    action: 'bookmark' | 'like' | 'flag';
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type VideoToggleActionResponse = unknown;
+
+export type PlaylistGetDisplayData = {
+    accessToken?: string | null;
+    bookmarker?: number | null;
+    orderBy?: 'title' | 'modified';
+    owner?: number | null;
+    page?: number;
+    refreshToken?: string | null;
+    search?: string | null;
+    size?: number;
+};
+
+export type PlaylistGetDisplayResponse = Paginated_PlaylistDisplayResponse_;
+
+export type PlaylistImportYoutubePlaylistData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    requestBody: ImportYoutubeRequest;
+};
+
+export type PlaylistImportYoutubePlaylistResponse = PlaylistDisplayResponse;
+
+export type PlaylistGetViewData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type PlaylistGetViewResponse = PlaylistViewResponse;
+
+export type PlaylistResumePlaylistData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type PlaylistResumePlaylistResponse = PlaylistResumeResponse;
+
+export type PlaylistGetResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type PlaylistGetResourceResponse = PlaylistResourceResponse;
+
+export type PlaylistUpdateResourceData = {
+    accessToken?: string | null;
+    formData?: Body_PlaylistUpdateResource;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type PlaylistUpdateResourceResponse = PlaylistResourceResponse;
+
+export type PlaylistDeleteResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type PlaylistDeleteResourceResponse = unknown;
+
+export type PlaylistCreateResourceData = {
+    accessToken?: string | null;
+    formData: Body_PlaylistCreateResource;
+    refreshToken?: string | null;
+};
+
+export type PlaylistCreateResourceResponse = PlaylistResourceResponse;
+
+export type PlaylistToggleActionData = {
+    accessToken?: string | null;
+    action: 'bookmark' | 'like' | 'flag';
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type PlaylistToggleActionResponse = unknown;
+
 export type QuizGetDisplayData = {
     accessToken?: string | null;
+    bookmarker?: number | null;
     orderBy?: 'created' | 'submission_count';
     owner?: number | null;
     page?: number;
     refreshToken?: string | null;
     search?: string | null;
     size?: number;
-    submitter?: number | null;
 };
 
 export type QuizGetDisplayResponse = Paginated_QuizDisplayResponse_;
@@ -1060,7 +1572,7 @@ export type QuizDeleteAssessData = {
 
 export type QuizDeleteAssessResponse = unknown;
 
-export type QuizGetQuizSubmissionsData = {
+export type QuizGetQuizReportData = {
     accessToken?: string | null;
     asOf?: string | null;
     id: string;
@@ -1072,9 +1584,9 @@ export type QuizGetQuizSubmissionsData = {
     upTo?: string | null;
 };
 
-export type QuizGetQuizSubmissionsResponse = Paginated_QuizSubmissionResponse_;
+export type QuizGetQuizReportResponse = Paginated_QuizReportResponse_;
 
-export type QuizDownloadQuizSubmissionsData = {
+export type QuizDownloadQuizReportData = {
     accessToken?: string | null;
     asOf?: string | null;
     id: string;
@@ -1084,7 +1596,7 @@ export type QuizDownloadQuizSubmissionsData = {
     upTo?: string | null;
 };
 
-export type QuizDownloadQuizSubmissionsResponse = string;
+export type QuizDownloadQuizReportResponse = string;
 
 export type QuizToggleActionData = {
     accessToken?: string | null;
@@ -1104,13 +1616,13 @@ export type QuizGetOwnedQuestionsResponse = Array<QuizResourceQuestionResource>;
 
 export type SurveyGetDisplayData = {
     accessToken?: string | null;
+    bookmarker?: number | null;
     orderBy?: 'created' | 'submission_count';
     owner?: number | null;
     page?: number;
     refreshToken?: string | null;
     search?: string | null;
     size?: number;
-    submitter?: number | null;
 };
 
 export type SurveyGetDisplayResponse = Paginated_SurveyDisplayResponse_;
@@ -1181,7 +1693,7 @@ export type SurveyDeleteAssessData = {
 
 export type SurveyDeleteAssessResponse = unknown;
 
-export type SurveyGetSurveySubmissionsData = {
+export type SurveyGetSurveyReportData = {
     accessToken?: string | null;
     asOf?: string | null;
     id: string;
@@ -1193,9 +1705,9 @@ export type SurveyGetSurveySubmissionsData = {
     upTo?: string | null;
 };
 
-export type SurveyGetSurveySubmissionsResponse = Paginated_SurveySubmissionResponse_;
+export type SurveyGetSurveyReportResponse = Paginated_SurveyReportResponse_;
 
-export type SurveyDownloadSurveySubmissionsData = {
+export type SurveyDownloadSurveyReportData = {
     accessToken?: string | null;
     asOf?: string | null;
     id: string;
@@ -1205,7 +1717,7 @@ export type SurveyDownloadSurveySubmissionsData = {
     upTo?: string | null;
 };
 
-export type SurveyDownloadSurveySubmissionsResponse = string;
+export type SurveyDownloadSurveyReportResponse = string;
 
 export type SurveyToggleActionData = {
     accessToken?: string | null;
@@ -1225,13 +1737,13 @@ export type SurveyGetOwnedQuestionsResponse = Array<SurveyResourceQuestionResour
 
 export type ExamGetDisplayData = {
     accessToken?: string | null;
+    bookmarker?: number | null;
     orderBy?: 'created' | 'submission_count';
     owner?: number | null;
     page?: number;
     refreshToken?: string | null;
     search?: string | null;
     size?: number;
-    submitter?: number | null;
 };
 
 export type ExamGetDisplayResponse = Paginated_ExamDisplayResponse_;
@@ -1331,7 +1843,7 @@ export type ExamSubmitGradingData = {
 
 export type ExamSubmitGradingResponse = ExamAssessResponse;
 
-export type ExamGetExamSubmissionsData = {
+export type ExamGetExamReportData = {
     accessToken?: string | null;
     asOf?: string | null;
     id: string;
@@ -1343,9 +1855,9 @@ export type ExamGetExamSubmissionsData = {
     upTo?: string | null;
 };
 
-export type ExamGetExamSubmissionsResponse = Paginated_ExamSubmissionResponse_;
+export type ExamGetExamReportResponse = Paginated_ExamReportResponse_;
 
-export type ExamDownloadExamSubmissionsData = {
+export type ExamDownloadExamReportData = {
     accessToken?: string | null;
     asOf?: string | null;
     id: string;
@@ -1355,7 +1867,18 @@ export type ExamDownloadExamSubmissionsData = {
     upTo?: string | null;
 };
 
-export type ExamDownloadExamSubmissionsResponse = string;
+export type ExamDownloadExamReportResponse = string;
+
+export type ExamGetGradingSubmissionsData = {
+    accessToken?: string | null;
+    orderBy?: 'end_time' | 'start_time';
+    page?: number;
+    refreshToken?: string | null;
+    search?: string | null;
+    size?: number;
+};
+
+export type ExamGetGradingSubmissionsResponse = Paginated_ExamGradingSubmissionReponse_;
 
 export type ExamToggleActionData = {
     accessToken?: string | null;
@@ -1373,18 +1896,24 @@ export type ExamGetOwnedQuestionsData = {
 
 export type ExamGetOwnedQuestionsResponse = Array<ExamResourceQuestionResource>;
 
-export type ExamGetGradingSubmissionsData = {
+export type SearchSearchVideoContentData = {
     accessToken?: string | null;
-    asOf?: string | null;
-    orderBy?: 'end_time' | 'start_time';
+    orderBy?: 'modified' | 'title' | 'relevance';
     page?: number;
+    q: string;
     refreshToken?: string | null;
-    search?: string | null;
     size?: number;
-    upTo?: string | null;
 };
 
-export type ExamGetGradingSubmissionsResponse = Paginated_ExamGradingSubmissionReponse_;
+export type SearchSearchVideoContentResponse = Paginated_VideoSearchResultResponse_;
+
+export type SearchSuggestVideoKeywordsData = {
+    accessToken?: string | null;
+    q?: string;
+    refreshToken?: string | null;
+};
+
+export type SearchSuggestVideoKeywordsResponse = Array<(string)>;
 
 export type $OpenApiTs = {
     '/api/v2/account/user': {
@@ -1647,6 +2176,367 @@ export type $OpenApiTs = {
             };
         };
     };
+    '/api/v2/video/video/display': {
+        get: {
+            req: VideoGetDisplayData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Paginated_VideoDisplayResponse_;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/import/youtubevideo': {
+        post: {
+            req: VideoImportYoutubeVideoData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: VideoDisplayResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/video': {
+        patch: {
+            req: VideoUpdatePlaylistVideosData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/autocomplete': {
+        get: {
+            req: VideoAutocompleteData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Array<VideoSelectResponse>;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}/view': {
+        get: {
+            req: VideoGetViewData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: VideoViewResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}/subtitles': {
+        get: {
+            req: VideoGetSubtitlesData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Array<VideoSubtitleResponse>;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}': {
+        get: {
+            req: VideoGetResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: VideoResourceResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        patch: {
+            req: VideoUpdateResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: VideoResourceResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        delete: {
+            req: VideoDeleteResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}/watch': {
+        get: {
+            req: VideoGetWatchBitmapData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: (Blob | File);
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        post: {
+            req: VideoStartWatchData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        patch: {
+            req: VideoUpdateWatchData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        delete: {
+            req: VideoEndWatchData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}/report': {
+        get: {
+            req: VideoGetVideoReportData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Paginated_VideoReportResponse_;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}/report/download': {
+        get: {
+            req: VideoDownloadVideoReportData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: string;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/video/{id}/{action}': {
+        patch: {
+            req: VideoToggleActionData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/display': {
+        get: {
+            req: PlaylistGetDisplayData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Paginated_PlaylistDisplayResponse_;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/import/youtubeplaylist': {
+        post: {
+            req: PlaylistImportYoutubePlaylistData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: PlaylistDisplayResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/{id}/view': {
+        get: {
+            req: PlaylistGetViewData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: PlaylistViewResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/{id}/resume': {
+        get: {
+            req: PlaylistResumePlaylistData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: PlaylistResumeResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/{id}': {
+        get: {
+            req: PlaylistGetResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: PlaylistResourceResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        patch: {
+            req: PlaylistUpdateResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: PlaylistResourceResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+        delete: {
+            req: PlaylistDeleteResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist': {
+        post: {
+            req: PlaylistCreateResourceData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: PlaylistResourceResponse;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/video/playlist/{id}/{action}': {
+        patch: {
+            req: PlaylistToggleActionData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: unknown;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
     '/api/v2/quiz/quiz/display': {
         get: {
             req: QuizGetDisplayData;
@@ -1772,14 +2662,14 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/quiz/quiz/{id}/submission': {
+    '/api/v2/quiz/quiz/{id}/report': {
         get: {
-            req: QuizGetQuizSubmissionsData;
+            req: QuizGetQuizReportData;
             res: {
                 /**
                  * Successful Response
                  */
-                200: Paginated_QuizSubmissionResponse_;
+                200: Paginated_QuizReportResponse_;
                 /**
                  * Validation Error
                  */
@@ -1787,9 +2677,9 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/quiz/quiz/{id}/submission/download': {
+    '/api/v2/quiz/quiz/{id}/report/download': {
         get: {
-            req: QuizDownloadQuizSubmissionsData;
+            req: QuizDownloadQuizReportData;
             res: {
                 /**
                  * Successful Response
@@ -1957,14 +2847,14 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/survey/survey/{id}/submission': {
+    '/api/v2/survey/survey/{id}/report': {
         get: {
-            req: SurveyGetSurveySubmissionsData;
+            req: SurveyGetSurveyReportData;
             res: {
                 /**
                  * Successful Response
                  */
-                200: Paginated_SurveySubmissionResponse_;
+                200: Paginated_SurveyReportResponse_;
                 /**
                  * Validation Error
                  */
@@ -1972,9 +2862,9 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/survey/survey/{id}/submission/download': {
+    '/api/v2/survey/survey/{id}/report/download': {
         get: {
-            req: SurveyDownloadSurveySubmissionsData;
+            req: SurveyDownloadSurveyReportData;
             res: {
                 /**
                  * Successful Response
@@ -2183,14 +3073,14 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/exam/exam/{id}/submission': {
+    '/api/v2/exam/exam/{id}/report': {
         get: {
-            req: ExamGetExamSubmissionsData;
+            req: ExamGetExamReportData;
             res: {
                 /**
                  * Successful Response
                  */
-                200: Paginated_ExamSubmissionResponse_;
+                200: Paginated_ExamReportResponse_;
                 /**
                  * Validation Error
                  */
@@ -2198,14 +3088,29 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/exam/exam/{id}/submission/download': {
+    '/api/v2/exam/exam/{id}/report/download': {
         get: {
-            req: ExamDownloadExamSubmissionsData;
+            req: ExamDownloadExamReportData;
             res: {
                 /**
                  * Successful Response
                  */
                 200: string;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/exam/submission': {
+        get: {
+            req: ExamGetGradingSubmissionsData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Paginated_ExamGradingSubmissionReponse_;
                 /**
                  * Validation Error
                  */
@@ -2243,14 +3148,29 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/api/v2/exam/submission': {
+    '/api/v2/search/videocontent': {
         get: {
-            req: ExamGetGradingSubmissionsData;
+            req: SearchSearchVideoContentData;
             res: {
                 /**
                  * Successful Response
                  */
-                200: Paginated_ExamGradingSubmissionReponse_;
+                200: Paginated_VideoSearchResultResponse_;
+                /**
+                 * Validation Error
+                 */
+                422: HTTPValidationError;
+            };
+        };
+    };
+    '/api/v2/search/videosuggestion': {
+        get: {
+            req: SearchSuggestVideoKeywordsData;
+            res: {
+                /**
+                 * Successful Response
+                 */
+                200: Array<(string)>;
                 /**
                  * Validation Error
                  */

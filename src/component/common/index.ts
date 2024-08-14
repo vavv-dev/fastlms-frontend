@@ -18,6 +18,7 @@ import ResourceActionMenu from './ResourceActionMenu';
 import SaveResourceDialog from './SaveResourceDialog';
 import WithAvatar from './WithAvatar';
 import { updateInfiniteCache, useDebounce, useFixMouseLeave, useInfinitePagination, useServiceImmutable } from './hooks';
+import createToggleAction from './toggleUserAction';
 
 export {
   AutocompleteSelect2,
@@ -37,6 +38,7 @@ export {
   TextEditorControl,
   TextFieldControl,
   WithAvatar,
+  createToggleAction,
   updateInfiniteCache,
   useDebounce,
   useFixMouseLeave,
@@ -46,20 +48,6 @@ export {
 
 // gettext no-op
 void [
-  i18next.t('Views {{ count }}', { count: 0 }),
-  i18next.t('Views {{ count }}k', { count: 0 }),
-  i18next.t('Views {{ count }}tk', { count: 0 }),
-  i18next.t('Views {{ count }}m', { count: 0 }),
-  i18next.t('Views {{ count }}tm', { count: 0 }),
-  i18next.t('Views {{ count }}b', { count: 0 }),
-
-  i18next.t('Likes {{ count }}', { count: 0 }),
-  i18next.t('Likes {{ count }}k', { count: 0 }),
-  i18next.t('Likes {{ count }}tk', { count: 0 }),
-  i18next.t('Likes {{ count }}m', { count: 0 }),
-  i18next.t('Likes {{ count }}tm', { count: 0 }),
-  i18next.t('Likes {{ count }}b', { count: 0 }),
-
   i18next.t('Past seconds {{ num }}', { num: 0 }),
   i18next.t('Past minutes {{ num }}', { num: 0 }),
   i18next.t('Past hours {{ num }}', { num: 0 }),
@@ -67,4 +55,11 @@ void [
   i18next.t('Past weeks {{ num }}', { num: 0 }),
   i18next.t('Past months {{ num }}', { num: 0 }),
   i18next.t('Past years {{ num }}', { num: 0 }),
+
+  i18next.t('humanNumber'),
+  i18next.t('unit.k'),
+  i18next.t('unit.tk'),
+  i18next.t('unit.m'),
+  i18next.t('unit.tm'),
+  i18next.t('unit.hm'),
 ];

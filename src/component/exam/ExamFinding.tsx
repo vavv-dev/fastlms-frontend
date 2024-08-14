@@ -27,11 +27,13 @@ const ExamFinding = ({ examId }: { examId: string }) => {
 
   return (
     <>
-      <Box sx={{ textAlign: 'right' }}>
-        <Button onClick={() => setShowAllQuestions(!showAllQuestions)}>
-          {showAllQuestions ? t('Show submitted questions only') : t('Show all questions')}
-        </Button>
-      </Box>
+      {submittedQuestions.length != findingItem.length && (
+        <Box sx={{ textAlign: 'right' }}>
+          <Button onClick={() => setShowAllQuestions(!showAllQuestions)}>
+            {showAllQuestions ? t('Show submitted questions only') : t('Show all questions')}
+          </Button>
+        </Box>
+      )}
       <Stack
         spacing={3}
         divider={<Divider />}

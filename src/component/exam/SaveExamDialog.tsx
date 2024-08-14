@@ -78,13 +78,15 @@ const questionSchema: yup.ObjectSchema<ExamResourceQuestionUpdate> = yup.object(
   keywords: yup.string().default('').label(t('Keywords')).meta({ control: 'text' }),
 });
 
+const N_VALIDATION = t(`Input number of question kind to issue.`);
+
 const questionCompositionSchema: yup.ObjectSchema<ExamResourceQuestionComposition> = yup
   .object({
-    single_selection: yup.number().default(0).label(t('Single selection')).meta({ control: 'number', grid: 3 }),
-    ox_selection: yup.number().default(0).label(t('OX selection')).meta({ control: 'number', grid: 3 }),
-    text_input: yup.number().default(0).label(t('Text input')).meta({ control: 'number', grid: 3 }),
-    number_input: yup.number().default(0).label(t('Number input')).meta({ control: 'number', grid: 3 }),
-    essay: yup.number().default(0).label(t('Essay')).meta({ control: 'number', grid: 3 }),
+    single_selection: yup.number().typeError(N_VALIDATION).label(t('Single selection')).meta({ control: 'number', grid: 3 }),
+    ox_selection: yup.number().typeError(N_VALIDATION).label(t('OX selection')).meta({ control: 'number', grid: 3 }),
+    text_input: yup.number().typeError(N_VALIDATION).label(t('Text input')).meta({ control: 'number', grid: 3 }),
+    number_input: yup.number().typeError(N_VALIDATION).label(t('Number input')).meta({ control: 'number', grid: 3 }),
+    essay: yup.number().typeError(N_VALIDATION).label(t('Essay')).meta({ control: 'number', grid: 3 }),
   })
   .label(t('Question composition'));
 
@@ -158,7 +160,7 @@ const examSchema: yup.ObjectSchema<ExamResourceUpdateRequest> = yup.object({
     .meta({ control: 'editor', placeholderText: t('Optional') }),
   embed: yup.object().default({}).label(t('Embed')).meta({ hidden: true, control: 'text' }),
   question_composition: questionCompositionSchema,
-  questions: yup.array().of(questionSchema).label(t('Questions')).default([]),
+  questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
 });
 
 interface Props {

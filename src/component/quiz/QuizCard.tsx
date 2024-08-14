@@ -1,10 +1,7 @@
 import { QuizDisplayResponse } from '@/api';
 import ResourceCard from '@/component/common/ResourceCard';
-import { snackbarMessageState } from '@/component/layout';
 import { formatRelativeTime, textEllipsisCss } from '@/helper/util';
-import { ReplyAllOutlined } from '@mui/icons-material';
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { useSetAtom } from 'jotai';
+import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import QuizActionMenu from './QuizActionMenu';
@@ -17,7 +14,6 @@ interface IProps {
 
 const QuizCard = ({ quiz, hideAvatar }: IProps) => {
   const { t } = useTranslation('quiz');
-  const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const [quizViewDialogOpen, setQuizViewDialogOpen] = useState(false);
 
   return (
@@ -31,20 +27,6 @@ const QuizCard = ({ quiz, hideAvatar }: IProps) => {
             <Typography variant="subtitle1" sx={{ my: 2, lineHeight: 1.3, whiteSpace: 'pre-wrap', ...textEllipsisCss(3) }}>
               {quiz.description}
             </Typography>
-            <Tooltip title={t('Share quiz link')} arrow>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(`${window.location.origin}/quiz/${quiz.id}`).then(() => {
-                    setSnackbarMessage({ message: t('Quiz link copied'), duration: 2000 });
-                  });
-                }}
-                sx={{ position: 'absolute', right: 4, bottom: 4 }}
-              >
-                <ReplyAllOutlined fontSize="small" />
-              </IconButton>
-            </Tooltip>
           </Box>
         }
         score={quiz.score}

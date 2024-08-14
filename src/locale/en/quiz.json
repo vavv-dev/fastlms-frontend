@@ -1,6 +1,7 @@
 {
   "Add bookmark": "Add bookmark",
   "As of": "As of",
+  "At least one question is required": "At least one question is required",
   "Back": "Back",
   "Back to the quiz": "Back to the quiz",
   "Congratulations! You have passed the quiz.": "Congratulations! You have passed the quiz.",
@@ -38,7 +39,6 @@
   "Questions": "Questions",
   "Quiz": "Quiz",
   "Quiz I answered": "Quiz I answered",
-  "Quiz link copied": "Quiz link copied",
   "Quiz result finding": "Quiz result finding",
   "Recently created": "Recently created",
   "Remove bookmark": "Remove bookmark",
@@ -48,7 +48,6 @@
   "Select the correct answer.": "Select the correct answer.",
   "Selection question's choices are at least 2.": "Selection question's choices are at least 2.",
   "Selections": "Selections",
-  "Share quiz link": "Share quiz link",
   "Single selection": "Single selection",
   "Sorry! You have failed the quiz. Please try again after resetting the submission.": "Sorry! You have failed the quiz. Please try again after resetting the submission.",
   "Start date": "Start date",

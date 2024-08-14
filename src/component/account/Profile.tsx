@@ -52,7 +52,7 @@ const Profile = () => {
     })
       .then((user) => {
         setUser(user);
-        user?.username === homeUser?.username && setHomeUser(user);
+        if (user?.username === homeUser?.username) setHomeUser(user);
         setSnackbarMessage({ message: t('Profile information has been updated.'), duration: 3000 });
       })
       .catch((error) => {

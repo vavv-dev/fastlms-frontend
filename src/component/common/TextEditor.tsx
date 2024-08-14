@@ -58,12 +58,14 @@ const TextEditor = ({
   const rteRef = useRef<RichTextEditorRef>(null);
   const [linkBubbleMenuOpen, setLinkBubbleMenuOpen] = useState(false);
   const linkBubbleMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (!rteRef.current?.editor) return;
-    rteRef.current.editor.commands.setContent(initialValue);
-    // do not add initialValue to the dependencies
-  }, [rteRef.current?.editor]); // eslint-disable-line
+    if (!rteRef.current?.editor || initialized || !initialValue) return;
+    const content = initialValue.replace(/\n/g, '<br>');
+    rteRef.current.editor.commands.setContent(content);
+    setInitialized(true);
+  }, [rteRef.current?.editor, initialValue]); // eslint-disable-line
 
   return (
     <Box

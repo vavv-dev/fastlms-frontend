@@ -1,5 +1,5 @@
 import { CommentDisplayResponse, commentGetDisplay, commentToggleAction, commentUpdateResource } from '@/api';
-import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
+import { WithAvatar, createToggleAction, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
 import { formatRelativeTime } from '@/helper/util';
 import { userState } from '@/store';
 import {
@@ -33,24 +33,7 @@ const CommentBox = ({ url, comment, setParentHover }: Props) => {
   const [showReplies, setShowReplies] = useState(true);
   const [hover, setHover] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
-
-  const toggleAction = (action: 'like' | 'flag') => {
-    if (!user) return;
-    commentToggleAction({ id: comment.id, action }).then(() => {
-      const update = { ...comment };
-      switch (action) {
-        case 'like':
-          update.liked = !comment.liked;
-          update.like_count = comment.like_count + (comment.liked ? -1 : 1);
-          break;
-        case 'flag':
-          update.flagged = !comment.flagged;
-          update.flag_count = comment.flag_count + (comment.flagged ? -1 : 1);
-          break;
-      }
-      updateInfiniteCache<CommentDisplayResponse>(commentGetDisplay, update, 'update', 'children');
-    });
-  };
+  const toggleAction = createToggleAction<CommentDisplayResponse>(commentToggleAction, commentGetDisplay);
 
   const toggleSolved = () => {
     commentUpdateResource({
@@ -76,12 +59,12 @@ const CommentBox = ({ url, comment, setParentHover }: Props) => {
       sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', position: 'relative', pt: 2 }}
       onMouseEnter={() => {
         setHover(true);
-        setParentHover && setParentHover(false);
+        setParentHover?.(false);
       }}
       onMouseLeave={(e) => {
         if (e.relatedTarget === window) return;
         setHover(false);
-        setParentHover && setParentHover(true);
+        setParentHover?.(true);
       }}
     >
       <WithAvatar
@@ -127,7 +110,7 @@ const CommentBox = ({ url, comment, setParentHover }: Props) => {
               {!!comment.flag_count && (
                 <Tooltip title={t('Flagged')} arrow>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton onClick={() => toggleAction('flag')}>
+                    <IconButton onClick={() => toggleAction('flag', comment)}>
                       <Flag fontSize="small" color="error" />
                     </IconButton>
                     {comment.flag_count.toLocaleString()}
@@ -137,7 +120,7 @@ const CommentBox = ({ url, comment, setParentHover }: Props) => {
 
               {/* like comment */}
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton onClick={() => toggleAction('like')}>
+                <IconButton onClick={() => toggleAction('like', comment)}>
                   {comment.liked ? <ThumbUp fontSize="small" color="info" /> : <ThumbUpOutlined fontSize="small" />}
                 </IconButton>
                 {!!comment.like_count && comment.like_count.toLocaleString()}

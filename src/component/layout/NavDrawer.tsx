@@ -62,7 +62,7 @@ const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   ); // eslint-disable-line,
 
   useEffect(() => {
-    hideDrawer && setNavOpen(false);
+    if (hideDrawer) setNavOpen(false);
   }, [hideDrawer]); // eslint-disable-line
 
   useEffect(() => {
@@ -96,7 +96,7 @@ const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
                 disablePadding
                 onClick={() => {
                   navigate(path || '/');
-                  matches && setNavOpen(false);
+                  if (matches) setNavOpen(false);
                 }}
               >
                 <ListItemButton sx={{ py: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

@@ -12,7 +12,7 @@ import SaveExamDialog from './SaveExamDialog';
 const UserExam = () => {
   const { t } = useTranslation('exam');
   const navigate = useNavigate();
-  const sharedItemTabKey = 'submitter';
+  const sharedItemTabKey = 'bookmarker';
   const user = useAtomValue(userState);
   const homeUser = useAtomValue(homeUserState);
   const owner = user && user.id == homeUser?.id;

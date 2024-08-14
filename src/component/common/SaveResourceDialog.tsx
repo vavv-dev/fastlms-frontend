@@ -3,6 +3,7 @@ import {
   AutocompleteSelect2,
   BaseDialog,
   CheckboxControl,
+  FileFieldControl,
   Form,
   SelectControl,
   TextEditorControl,
@@ -34,6 +35,7 @@ import { Path, PathValue, Resolver, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import { SchemaDescription } from 'yup';
+import { useScrollToNewElement } from './hooks';
 
 type DeepRemoveUndefined<T> = T extends object
   ? {
@@ -49,8 +51,8 @@ interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { 
   fieldSchema: yup.ObjectSchema<T>;
   retrieveService: (params: { id: string }) => Promise<K>;
   listService: () => Promise<any>; // eslint-disable-line
-  createService: (params: { requestBody: DeepRemoveUndefined<T> }) => Promise<K> | CancelablePromise<K>;
-  partialUpdateService: (params: { id: string; requestBody: T }) => Promise<K>;
+  createService?: (params: { requestBody: DeepRemoveUndefined<T> }) => Promise<K> | CancelablePromise<K>;
+  partialUpdateService: (params: { id: string; requestBody: T; formData: T }) => Promise<K>;
   copyAutocomplete?: {
     [key: string]: {
       service: (params: object) => Promise<any>; // eslint-disable-line
@@ -83,12 +85,15 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
 
   // dynamic copy service
   const [autocompleteOpen, setAutocompleteOpen] = useState<string>('');
-  const { handleSubmit, control, formState, reset, getValues, setValue, setError } = useForm<T>({
+  const { handleSubmit, control, formState, reset, getValues, setValue, setError, watch } = useForm<T>({
     mode: 'onBlur',
     reValidateMode: 'onSubmit',
     resolver: yupResolver(fieldSchema) as unknown as Resolver<T>,
     defaultValues: fieldSchema.getDefault(),
   });
+
+  // scroll to newly added element
+  useScrollToNewElement<T>(watch);
 
   useEffect(() => {
     if (retrieveError) {
@@ -120,12 +125,21 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
       transformed[key] = new Date(browerDate as string).toISOString();
     });
 
-    (!editKey ? createService : partialUpdateService)({
+    const service = editKey ? partialUpdateService : createService;
+    if (!service) return;
+
+    console.log(formState.errors);
+
+    service({
       id: editKey || '',
+      // Dangerous trick.
+      // This will be selected by the partialUpdateService's params type.
       requestBody: transformed as DeepRemoveUndefined<T> & T,
+      formData: transformed as DeepRemoveUndefined<T> & T,
     })
       .then((saved) => {
-        editKey ? resourceMutate({ ...resource, ...saved }, { revalidate: false }) : setEditKey(saved.id);
+        if (editKey) resourceMutate({ ...resource, ...saved }, { revalidate: false });
+        else setEditKey(saved.id);
 
         // update list cache
         updateInfiniteCache<T & { id: string }>(listService, saved, editKey ? 'update' : 'create');
@@ -156,7 +170,7 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
   const getDatetimeFields = () => {
     return Object.entries(fieldSchema.fields).reduce(
       (acc, [key, field]) => {
-        field.describe().meta?.control === 'datetime-local' && acc.push(key as keyof T);
+        if (field.describe().meta?.control === 'datetime-local') acc.push(key as keyof T);
         return acc;
       },
       [] as (keyof T)[],
@@ -196,6 +210,8 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
         );
       case 'select':
         return <SelectControl {...props} margin={margin} options={fieldData.meta?.options || []} />;
+      case 'file':
+        return <FileFieldControl {...props} inputProps={{ accept: fieldData.meta.accept }} />;
       default:
         return (
           <TextFieldControl
@@ -219,14 +235,7 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
         <>
           <Button
             disabled={!formState.isDirty}
-            onClick={() => {
-              resource
-                ? reset({
-                    ...resource,
-                    ...fixDatetimeDispaly(resource),
-                  })
-                : reset();
-            }}
+            onClick={() => (resource ? reset({ ...resource, ...fixDatetimeDispaly(resource) }) : reset())}
             color="primary"
           >
             {t('Reset')}
@@ -258,8 +267,14 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
                 );
               } else if (fieldData.type == 'array') {
                 const arrayValues = getValues(key as Path<T>) as [];
+                const arrayFieldError = formState.errors[key as keyof typeof formState.errors];
                 return (
                   <Grid item xs={12} key={key}>
+                    {arrayFieldError?.message && (
+                      <Typography color="error" variant="caption">
+                        {t(arrayFieldError.message as string)}
+                      </Typography>
+                    )}
                     <TableContainer
                       sx={{
                         '& th': { whiteSpace: 'nowrap' },
@@ -271,7 +286,7 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
                         '& .MuiCheckbox-root': { p: 0 },
                         // this cause the td width flickering
                         // '& .MuiTableRow-root .MuiTableCell-root:last-child': { padding: '0.5em' },
-                        '& .MuiFormHelperText-root': { ...textEllipsisCss(2), lineHeight: '1em' },
+                        '& .MuiFormHelperText-root': { ...textEllipsisCss(1), lineHeight: '1em' },
                       }}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

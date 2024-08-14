@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { PublicCreateUserData, PublicCreateUserResponse, PublicVerifyEmailData, PublicVerifyEmailResponse, PublicResendVerificationEmailData, PublicResendVerificationEmailResponse, PublicLoginData, PublicLoginResponse, AccountLogoutData, AccountLogoutResponse, PublicPasswordResetData, PublicPasswordResetResponse, PublicPasswordResetConfirmData, PublicPasswordResetConfirmResponse, AccountGetMeData, AccountGetMeResponse, AccountUpdateMeData, AccountUpdateMeResponse, AccountGetUserData, AccountGetUserResponse, AccountGetUserByUsernameData, AccountGetUserByUsernameResponse, CommentGetThreadData, CommentGetThreadResponse, CommentGetThreadsData, CommentGetThreadsResponse, CommentCreateThreadData, CommentCreateThreadResponse, CommentGetDisplayData, CommentGetDisplayResponse, CommentCreateResourceData, CommentCreateResourceResponse, CommentUpdateResourceData, CommentUpdateResourceResponse, CommentToggleActionData, CommentToggleActionResponse, QuizGetDisplayData, QuizGetDisplayResponse, QuizGetResourceData, QuizGetResourceResponse, QuizUpdateResourceData, QuizUpdateResourceResponse, QuizDeleteResourceData, QuizDeleteResourceResponse, QuizCreateResourceData, QuizCreateResourceResponse, QuizGetAssessData, QuizGetAssessResponse, QuizReadyAssessData, QuizReadyAssessResponse, QuizSubmitAssessData, QuizSubmitAssessResponse, QuizDeleteAssessData, QuizDeleteAssessResponse, QuizGetQuizSubmissionsData, QuizGetQuizSubmissionsResponse, QuizDownloadQuizSubmissionsData, QuizDownloadQuizSubmissionsResponse, QuizToggleActionData, QuizToggleActionResponse, QuizGetOwnedQuestionsData, QuizGetOwnedQuestionsResponse, SurveyGetDisplayData, SurveyGetDisplayResponse, SurveyGetResourceData, SurveyGetResourceResponse, SurveyUpdateResourceData, SurveyUpdateResourceResponse, SurveyDeleteResourceData, SurveyDeleteResourceResponse, SurveyCreateResourceData, SurveyCreateResourceResponse, SurveyGetAssessData, SurveyGetAssessResponse, SurveyReadyAssessData, SurveyReadyAssessResponse, SurveySubmitAssessData, SurveySubmitAssessResponse, SurveyDeleteAssessData, SurveyDeleteAssessResponse, SurveyGetSurveySubmissionsData, SurveyGetSurveySubmissionsResponse, SurveyDownloadSurveySubmissionsData, SurveyDownloadSurveySubmissionsResponse, SurveyToggleActionData, SurveyToggleActionResponse, SurveyGetOwnedQuestionsData, SurveyGetOwnedQuestionsResponse, ExamGetDisplayData, ExamGetDisplayResponse, ExamGetResourceData, ExamGetResourceResponse, ExamUpdateResourceData, ExamUpdateResourceResponse, ExamDeleteResourceData, ExamDeleteResourceResponse, ExamCreateResourceData, ExamCreateResourceResponse, ExamGetAssessData, ExamGetAssessResponse, ExamReadyAssessData, ExamReadyAssessResponse, ExamStartAssessData, ExamStartAssessResponse, ExamSubmitAssessData, ExamSubmitAssessResponse, ExamDeleteAssessData, ExamDeleteAssessResponse, ExamGetGradingData, ExamGetGradingResponse, ExamSubmitGradingData, ExamSubmitGradingResponse, ExamGetExamSubmissionsData, ExamGetExamSubmissionsResponse, ExamDownloadExamSubmissionsData, ExamDownloadExamSubmissionsResponse, ExamToggleActionData, ExamToggleActionResponse, ExamGetOwnedQuestionsData, ExamGetOwnedQuestionsResponse, ExamGetGradingSubmissionsData, ExamGetGradingSubmissionsResponse } from './types.gen';
+import type { PublicCreateUserData, PublicCreateUserResponse, PublicVerifyEmailData, PublicVerifyEmailResponse, PublicResendVerificationEmailData, PublicResendVerificationEmailResponse, PublicLoginData, PublicLoginResponse, AccountLogoutData, AccountLogoutResponse, PublicPasswordResetData, PublicPasswordResetResponse, PublicPasswordResetConfirmData, PublicPasswordResetConfirmResponse, AccountGetMeData, AccountGetMeResponse, AccountUpdateMeData, AccountUpdateMeResponse, AccountGetUserData, AccountGetUserResponse, AccountGetUserByUsernameData, AccountGetUserByUsernameResponse, CommentGetThreadData, CommentGetThreadResponse, CommentGetThreadsData, CommentGetThreadsResponse, CommentCreateThreadData, CommentCreateThreadResponse, CommentGetDisplayData, CommentGetDisplayResponse, CommentCreateResourceData, CommentCreateResourceResponse, CommentUpdateResourceData, CommentUpdateResourceResponse, CommentToggleActionData, CommentToggleActionResponse, VideoGetDisplayData, VideoGetDisplayResponse, VideoImportYoutubeVideoData, VideoImportYoutubeVideoResponse, VideoUpdatePlaylistVideosData, VideoUpdatePlaylistVideosResponse, VideoAutocompleteData, VideoAutocompleteResponse, VideoGetViewData, VideoGetViewResponse, VideoGetSubtitlesData, VideoGetSubtitlesResponse, VideoGetResourceData, VideoGetResourceResponse, VideoUpdateResourceData, VideoUpdateResourceResponse, VideoDeleteResourceData, VideoDeleteResourceResponse, VideoGetWatchBitmapData, VideoGetWatchBitmapResponse, VideoStartWatchData, VideoStartWatchResponse, VideoUpdateWatchData, VideoUpdateWatchResponse, VideoEndWatchData, VideoEndWatchResponse, VideoGetVideoReportData, VideoGetVideoReportResponse, VideoDownloadVideoReportData, VideoDownloadVideoReportResponse, VideoToggleActionData, VideoToggleActionResponse, PlaylistGetDisplayData, PlaylistGetDisplayResponse, PlaylistImportYoutubePlaylistData, PlaylistImportYoutubePlaylistResponse, PlaylistGetViewData, PlaylistGetViewResponse, PlaylistResumePlaylistData, PlaylistResumePlaylistResponse, PlaylistGetResourceData, PlaylistGetResourceResponse, PlaylistUpdateResourceData, PlaylistUpdateResourceResponse, PlaylistDeleteResourceData, PlaylistDeleteResourceResponse, PlaylistCreateResourceData, PlaylistCreateResourceResponse, PlaylistToggleActionData, PlaylistToggleActionResponse, QuizGetDisplayData, QuizGetDisplayResponse, QuizGetResourceData, QuizGetResourceResponse, QuizUpdateResourceData, QuizUpdateResourceResponse, QuizDeleteResourceData, QuizDeleteResourceResponse, QuizCreateResourceData, QuizCreateResourceResponse, QuizGetAssessData, QuizGetAssessResponse, QuizReadyAssessData, QuizReadyAssessResponse, QuizSubmitAssessData, QuizSubmitAssessResponse, QuizDeleteAssessData, QuizDeleteAssessResponse, QuizGetQuizReportData, QuizGetQuizReportResponse, QuizDownloadQuizReportData, QuizDownloadQuizReportResponse, QuizToggleActionData, QuizToggleActionResponse, QuizGetOwnedQuestionsData, QuizGetOwnedQuestionsResponse, SurveyGetDisplayData, SurveyGetDisplayResponse, SurveyGetResourceData, SurveyGetResourceResponse, SurveyUpdateResourceData, SurveyUpdateResourceResponse, SurveyDeleteResourceData, SurveyDeleteResourceResponse, SurveyCreateResourceData, SurveyCreateResourceResponse, SurveyGetAssessData, SurveyGetAssessResponse, SurveyReadyAssessData, SurveyReadyAssessResponse, SurveySubmitAssessData, SurveySubmitAssessResponse, SurveyDeleteAssessData, SurveyDeleteAssessResponse, SurveyGetSurveyReportData, SurveyGetSurveyReportResponse, SurveyDownloadSurveyReportData, SurveyDownloadSurveyReportResponse, SurveyToggleActionData, SurveyToggleActionResponse, SurveyGetOwnedQuestionsData, SurveyGetOwnedQuestionsResponse, ExamGetDisplayData, ExamGetDisplayResponse, ExamGetResourceData, ExamGetResourceResponse, ExamUpdateResourceData, ExamUpdateResourceResponse, ExamDeleteResourceData, ExamDeleteResourceResponse, ExamCreateResourceData, ExamCreateResourceResponse, ExamGetAssessData, ExamGetAssessResponse, ExamReadyAssessData, ExamReadyAssessResponse, ExamStartAssessData, ExamStartAssessResponse, ExamSubmitAssessData, ExamSubmitAssessResponse, ExamDeleteAssessData, ExamDeleteAssessResponse, ExamGetGradingData, ExamGetGradingResponse, ExamSubmitGradingData, ExamSubmitGradingResponse, ExamGetExamReportData, ExamGetExamReportResponse, ExamDownloadExamReportData, ExamDownloadExamReportResponse, ExamGetGradingSubmissionsData, ExamGetGradingSubmissionsResponse, ExamToggleActionData, ExamToggleActionResponse, ExamGetOwnedQuestionsData, ExamGetOwnedQuestionsResponse, SearchSearchVideoContentData, SearchSearchVideoContentResponse, SearchSuggestVideoKeywordsData, SearchSuggestVideoKeywordsResponse } from './types.gen';
 
 /**
  * Create User
@@ -411,7 +411,665 @@ export const commentToggleAction = (data: CommentToggleActionData): CancelablePr
  * @param data The data for the request.
  * @param data.search
  * @param data.owner
- * @param data.submitter
+ * @param data.bookmarker
+ * @param data.videoKind
+ * @param data.tag
+ * @param data.playlistId
+ * @param data.orderBy
+ * @param data.page
+ * @param data.size
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns Paginated_VideoDisplayResponse_ Successful Response
+ * @throws ApiError
+ */
+export const videoGetDisplay = (data: VideoGetDisplayData = {}): CancelablePromise<VideoGetDisplayResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/display',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    query: {
+        search: data.search,
+        owner: data.owner,
+        bookmarker: data.bookmarker,
+        video_kind: data.videoKind,
+        tag: data.tag,
+        playlist_id: data.playlistId,
+        order_by: data.orderBy,
+        page: data.page,
+        size: data.size
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Import Youtube Video
+ * @param data The data for the request.
+ * @param data.requestBody
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns VideoDisplayResponse Successful Response
+ * @throws ApiError
+ */
+export const videoImportYoutubeVideo = (data: VideoImportYoutubeVideoData): CancelablePromise<VideoImportYoutubeVideoResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/api/v2/video/video/import/youtubevideo',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Update Playlist Videos
+ * @param data The data for the request.
+ * @param data.requestBody
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const videoUpdatePlaylistVideos = (data: VideoUpdatePlaylistVideosData): CancelablePromise<VideoUpdatePlaylistVideosResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/api/v2/video/playlist/video',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Autocomplete
+ * @param data The data for the request.
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns VideoSelectResponse Successful Response
+ * @throws ApiError
+ */
+export const videoAutocomplete = (data: VideoAutocompleteData = {}): CancelablePromise<VideoAutocompleteResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/autocomplete',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get View
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns VideoViewResponse Successful Response
+ * @throws ApiError
+ */
+export const videoGetView = (data: VideoGetViewData): CancelablePromise<VideoGetViewResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/{id}/view',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Subtitles
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns VideoSubtitleResponse Successful Response
+ * @throws ApiError
+ */
+export const videoGetSubtitles = (data: VideoGetSubtitlesData): CancelablePromise<VideoGetSubtitlesResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/{id}/subtitles',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Resource
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns VideoResourceResponse Successful Response
+ * @throws ApiError
+ */
+export const videoGetResource = (data: VideoGetResourceData): CancelablePromise<VideoGetResourceResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/{id}',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Update Resource
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @param data.formData
+ * @returns VideoResourceResponse Successful Response
+ * @throws ApiError
+ */
+export const videoUpdateResource = (data: VideoUpdateResourceData): CancelablePromise<VideoUpdateResourceResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/api/v2/video/video/{id}',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    formData: data.formData,
+    mediaType: 'multipart/form-data',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Delete Resource
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const videoDeleteResource = (data: VideoDeleteResourceData): CancelablePromise<VideoDeleteResourceResponse> => { return __request(OpenAPI, {
+    method: 'DELETE',
+    url: '/api/v2/video/video/{id}',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Watch Bitmap
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns binary Successful Response
+ * @throws ApiError
+ */
+export const videoGetWatchBitmap = (data: VideoGetWatchBitmapData): CancelablePromise<VideoGetWatchBitmapResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/{id}/watch',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Start Watch
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.requestBody
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const videoStartWatch = (data: VideoStartWatchData): CancelablePromise<VideoStartWatchResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/api/v2/video/video/{id}/watch',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Update Watch
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.requestBody
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const videoUpdateWatch = (data: VideoUpdateWatchData): CancelablePromise<VideoUpdateWatchResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/api/v2/video/video/{id}/watch',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * End Watch
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const videoEndWatch = (data: VideoEndWatchData): CancelablePromise<VideoEndWatchResponse> => { return __request(OpenAPI, {
+    method: 'DELETE',
+    url: '/api/v2/video/video/{id}/watch',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Video Report
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.search
+ * @param data.asOf
+ * @param data.upTo
+ * @param data.orderBy
+ * @param data.page
+ * @param data.size
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns Paginated_VideoReportResponse_ Successful Response
+ * @throws ApiError
+ */
+export const videoGetVideoReport = (data: VideoGetVideoReportData): CancelablePromise<VideoGetVideoReportResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/{id}/report',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    query: {
+        search: data.search,
+        as_of: data.asOf,
+        up_to: data.upTo,
+        order_by: data.orderBy,
+        page: data.page,
+        size: data.size
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Download Video Report
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.search
+ * @param data.asOf
+ * @param data.upTo
+ * @param data.orderBy
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns string Successful Response
+ * @throws ApiError
+ */
+export const videoDownloadVideoReport = (data: VideoDownloadVideoReportData): CancelablePromise<VideoDownloadVideoReportResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/video/{id}/report/download',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    query: {
+        search: data.search,
+        as_of: data.asOf,
+        up_to: data.upTo,
+        order_by: data.orderBy
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Toggle Action
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.action
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const videoToggleAction = (data: VideoToggleActionData): CancelablePromise<VideoToggleActionResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/api/v2/video/video/{id}/{action}',
+    path: {
+        id: data.id,
+        action: data.action
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Display
+ * @param data The data for the request.
+ * @param data.search
+ * @param data.owner
+ * @param data.bookmarker
+ * @param data.orderBy
+ * @param data.page
+ * @param data.size
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns Paginated_PlaylistDisplayResponse_ Successful Response
+ * @throws ApiError
+ */
+export const playlistGetDisplay = (data: PlaylistGetDisplayData = {}): CancelablePromise<PlaylistGetDisplayResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/playlist/display',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    query: {
+        search: data.search,
+        owner: data.owner,
+        bookmarker: data.bookmarker,
+        order_by: data.orderBy,
+        page: data.page,
+        size: data.size
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Import Youtube Playlist
+ * @param data The data for the request.
+ * @param data.requestBody
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns PlaylistDisplayResponse Successful Response
+ * @throws ApiError
+ */
+export const playlistImportYoutubePlaylist = (data: PlaylistImportYoutubePlaylistData): CancelablePromise<PlaylistImportYoutubePlaylistResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/api/v2/video/playlist/import/youtubeplaylist',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    body: data.requestBody,
+    mediaType: 'application/json',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get View
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns PlaylistViewResponse Successful Response
+ * @throws ApiError
+ */
+export const playlistGetView = (data: PlaylistGetViewData): CancelablePromise<PlaylistGetViewResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/playlist/{id}/view',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Resume Playlist
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns PlaylistResumeResponse Successful Response
+ * @throws ApiError
+ */
+export const playlistResumePlaylist = (data: PlaylistResumePlaylistData): CancelablePromise<PlaylistResumePlaylistResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/playlist/{id}/resume',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Resource
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns PlaylistResourceResponse Successful Response
+ * @throws ApiError
+ */
+export const playlistGetResource = (data: PlaylistGetResourceData): CancelablePromise<PlaylistGetResourceResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/video/playlist/{id}',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Update Resource
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @param data.formData
+ * @returns PlaylistResourceResponse Successful Response
+ * @throws ApiError
+ */
+export const playlistUpdateResource = (data: PlaylistUpdateResourceData): CancelablePromise<PlaylistUpdateResourceResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/api/v2/video/playlist/{id}',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    formData: data.formData,
+    mediaType: 'multipart/form-data',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Delete Resource
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const playlistDeleteResource = (data: PlaylistDeleteResourceData): CancelablePromise<PlaylistDeleteResourceResponse> => { return __request(OpenAPI, {
+    method: 'DELETE',
+    url: '/api/v2/video/playlist/{id}',
+    path: {
+        id: data.id
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Create Resource
+ * @param data The data for the request.
+ * @param data.formData
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns PlaylistResourceResponse Successful Response
+ * @throws ApiError
+ */
+export const playlistCreateResource = (data: PlaylistCreateResourceData): CancelablePromise<PlaylistCreateResourceResponse> => { return __request(OpenAPI, {
+    method: 'POST',
+    url: '/api/v2/video/playlist',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    formData: data.formData,
+    mediaType: 'multipart/form-data',
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Toggle Action
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.action
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const playlistToggleAction = (data: PlaylistToggleActionData): CancelablePromise<PlaylistToggleActionResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/api/v2/video/playlist/{id}/{action}',
+    path: {
+        id: data.id,
+        action: data.action
+    },
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Display
+ * @param data The data for the request.
+ * @param data.search
+ * @param data.owner
+ * @param data.bookmarker
  * @param data.orderBy
  * @param data.page
  * @param data.size
@@ -430,7 +1088,7 @@ export const quizGetDisplay = (data: QuizGetDisplayData = {}): CancelablePromise
     query: {
         search: data.search,
         owner: data.owner,
-        submitter: data.submitter,
+        bookmarker: data.bookmarker,
         order_by: data.orderBy,
         page: data.page,
         size: data.size
@@ -638,7 +1296,7 @@ export const quizDeleteAssess = (data: QuizDeleteAssessData): CancelablePromise<
 }); };
 
 /**
- * Get Quiz Submissions
+ * Get Quiz Report
  * @param data The data for the request.
  * @param data.id
  * @param data.search
@@ -649,12 +1307,12 @@ export const quizDeleteAssess = (data: QuizDeleteAssessData): CancelablePromise<
  * @param data.size
  * @param data.accessToken
  * @param data.refreshToken
- * @returns Paginated_QuizSubmissionResponse_ Successful Response
+ * @returns Paginated_QuizReportResponse_ Successful Response
  * @throws ApiError
  */
-export const quizGetQuizSubmissions = (data: QuizGetQuizSubmissionsData): CancelablePromise<QuizGetQuizSubmissionsResponse> => { return __request(OpenAPI, {
+export const quizGetQuizReport = (data: QuizGetQuizReportData): CancelablePromise<QuizGetQuizReportResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/quiz/quiz/{id}/submission',
+    url: '/api/v2/quiz/quiz/{id}/report',
     path: {
         id: data.id
     },
@@ -676,7 +1334,7 @@ export const quizGetQuizSubmissions = (data: QuizGetQuizSubmissionsData): Cancel
 }); };
 
 /**
- * Download Quiz Submissions
+ * Download Quiz Report
  * @param data The data for the request.
  * @param data.id
  * @param data.search
@@ -688,9 +1346,9 @@ export const quizGetQuizSubmissions = (data: QuizGetQuizSubmissionsData): Cancel
  * @returns string Successful Response
  * @throws ApiError
  */
-export const quizDownloadQuizSubmissions = (data: QuizDownloadQuizSubmissionsData): CancelablePromise<QuizDownloadQuizSubmissionsResponse> => { return __request(OpenAPI, {
+export const quizDownloadQuizReport = (data: QuizDownloadQuizReportData): CancelablePromise<QuizDownloadQuizReportResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/quiz/quiz/{id}/submission/download',
+    url: '/api/v2/quiz/quiz/{id}/report/download',
     path: {
         id: data.id
     },
@@ -760,7 +1418,7 @@ export const quizGetOwnedQuestions = (data: QuizGetOwnedQuestionsData = {}): Can
  * @param data The data for the request.
  * @param data.search
  * @param data.owner
- * @param data.submitter
+ * @param data.bookmarker
  * @param data.orderBy
  * @param data.page
  * @param data.size
@@ -779,7 +1437,7 @@ export const surveyGetDisplay = (data: SurveyGetDisplayData = {}): CancelablePro
     query: {
         search: data.search,
         owner: data.owner,
-        submitter: data.submitter,
+        bookmarker: data.bookmarker,
         order_by: data.orderBy,
         page: data.page,
         size: data.size
@@ -987,7 +1645,7 @@ export const surveyDeleteAssess = (data: SurveyDeleteAssessData): CancelableProm
 }); };
 
 /**
- * Get Survey Submissions
+ * Get Survey Report
  * @param data The data for the request.
  * @param data.id
  * @param data.search
@@ -998,12 +1656,12 @@ export const surveyDeleteAssess = (data: SurveyDeleteAssessData): CancelableProm
  * @param data.size
  * @param data.accessToken
  * @param data.refreshToken
- * @returns Paginated_SurveySubmissionResponse_ Successful Response
+ * @returns Paginated_SurveyReportResponse_ Successful Response
  * @throws ApiError
  */
-export const surveyGetSurveySubmissions = (data: SurveyGetSurveySubmissionsData): CancelablePromise<SurveyGetSurveySubmissionsResponse> => { return __request(OpenAPI, {
+export const surveyGetSurveyReport = (data: SurveyGetSurveyReportData): CancelablePromise<SurveyGetSurveyReportResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/survey/survey/{id}/submission',
+    url: '/api/v2/survey/survey/{id}/report',
     path: {
         id: data.id
     },
@@ -1025,7 +1683,7 @@ export const surveyGetSurveySubmissions = (data: SurveyGetSurveySubmissionsData)
 }); };
 
 /**
- * Download Survey Submissions
+ * Download Survey Report
  * @param data The data for the request.
  * @param data.id
  * @param data.search
@@ -1037,9 +1695,9 @@ export const surveyGetSurveySubmissions = (data: SurveyGetSurveySubmissionsData)
  * @returns string Successful Response
  * @throws ApiError
  */
-export const surveyDownloadSurveySubmissions = (data: SurveyDownloadSurveySubmissionsData): CancelablePromise<SurveyDownloadSurveySubmissionsResponse> => { return __request(OpenAPI, {
+export const surveyDownloadSurveyReport = (data: SurveyDownloadSurveyReportData): CancelablePromise<SurveyDownloadSurveyReportResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/survey/survey/{id}/submission/download',
+    url: '/api/v2/survey/survey/{id}/report/download',
     path: {
         id: data.id
     },
@@ -1109,7 +1767,7 @@ export const surveyGetOwnedQuestions = (data: SurveyGetOwnedQuestionsData = {}):
  * @param data The data for the request.
  * @param data.search
  * @param data.owner
- * @param data.submitter
+ * @param data.bookmarker
  * @param data.orderBy
  * @param data.page
  * @param data.size
@@ -1128,7 +1786,7 @@ export const examGetDisplay = (data: ExamGetDisplayData = {}): CancelablePromise
     query: {
         search: data.search,
         owner: data.owner,
-        submitter: data.submitter,
+        bookmarker: data.bookmarker,
         order_by: data.orderBy,
         page: data.page,
         size: data.size
@@ -1421,7 +2079,7 @@ export const examSubmitGrading = (data: ExamSubmitGradingData): CancelablePromis
 }); };
 
 /**
- * Get Exam Submissions
+ * Get Exam Report
  * @param data The data for the request.
  * @param data.id
  * @param data.search
@@ -1432,12 +2090,12 @@ export const examSubmitGrading = (data: ExamSubmitGradingData): CancelablePromis
  * @param data.size
  * @param data.accessToken
  * @param data.refreshToken
- * @returns Paginated_ExamSubmissionResponse_ Successful Response
+ * @returns Paginated_ExamReportResponse_ Successful Response
  * @throws ApiError
  */
-export const examGetExamSubmissions = (data: ExamGetExamSubmissionsData): CancelablePromise<ExamGetExamSubmissionsResponse> => { return __request(OpenAPI, {
+export const examGetExamReport = (data: ExamGetExamReportData): CancelablePromise<ExamGetExamReportResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/exam/exam/{id}/submission',
+    url: '/api/v2/exam/exam/{id}/report',
     path: {
         id: data.id
     },
@@ -1459,7 +2117,7 @@ export const examGetExamSubmissions = (data: ExamGetExamSubmissionsData): Cancel
 }); };
 
 /**
- * Download Exam Submissions
+ * Download Exam Report
  * @param data The data for the request.
  * @param data.id
  * @param data.search
@@ -1471,9 +2129,9 @@ export const examGetExamSubmissions = (data: ExamGetExamSubmissionsData): Cancel
  * @returns string Successful Response
  * @throws ApiError
  */
-export const examDownloadExamSubmissions = (data: ExamDownloadExamSubmissionsData): CancelablePromise<ExamDownloadExamSubmissionsResponse> => { return __request(OpenAPI, {
+export const examDownloadExamReport = (data: ExamDownloadExamReportData): CancelablePromise<ExamDownloadExamReportResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/exam/exam/{id}/submission/download',
+    url: '/api/v2/exam/exam/{id}/report/download',
     path: {
         id: data.id
     },
@@ -1486,6 +2144,36 @@ export const examDownloadExamSubmissions = (data: ExamDownloadExamSubmissionsDat
         as_of: data.asOf,
         up_to: data.upTo,
         order_by: data.orderBy
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Get Grading Submissions
+ * @param data The data for the request.
+ * @param data.search
+ * @param data.orderBy
+ * @param data.page
+ * @param data.size
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns Paginated_ExamGradingSubmissionReponse_ Successful Response
+ * @throws ApiError
+ */
+export const examGetGradingSubmissions = (data: ExamGetGradingSubmissionsData = {}): CancelablePromise<ExamGetGradingSubmissionsResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/exam/submission',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    query: {
+        search: data.search,
+        order_by: data.orderBy,
+        page: data.page,
+        size: data.size
     },
     errors: {
         422: 'Validation Error'
@@ -1539,33 +2227,53 @@ export const examGetOwnedQuestions = (data: ExamGetOwnedQuestionsData = {}): Can
 }); };
 
 /**
- * Get Grading Submissions
+ * Search Video Content
  * @param data The data for the request.
- * @param data.search
- * @param data.asOf
- * @param data.upTo
+ * @param data.q
  * @param data.orderBy
  * @param data.page
  * @param data.size
  * @param data.accessToken
  * @param data.refreshToken
- * @returns Paginated_ExamGradingSubmissionReponse_ Successful Response
+ * @returns Paginated_VideoSearchResultResponse_ Successful Response
  * @throws ApiError
  */
-export const examGetGradingSubmissions = (data: ExamGetGradingSubmissionsData = {}): CancelablePromise<ExamGetGradingSubmissionsResponse> => { return __request(OpenAPI, {
+export const searchSearchVideoContent = (data: SearchSearchVideoContentData): CancelablePromise<SearchSearchVideoContentResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v2/exam/submission',
+    url: '/api/v2/search/videocontent',
     cookies: {
         access_token: data.accessToken,
         refresh_token: data.refreshToken
     },
     query: {
-        search: data.search,
-        as_of: data.asOf,
-        up_to: data.upTo,
+        q: data.q,
         order_by: data.orderBy,
         page: data.page,
         size: data.size
+    },
+    errors: {
+        422: 'Validation Error'
+    }
+}); };
+
+/**
+ * Suggest Video Keywords
+ * @param data The data for the request.
+ * @param data.q
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns string Successful Response
+ * @throws ApiError
+ */
+export const searchSuggestVideoKeywords = (data: SearchSuggestVideoKeywordsData = {}): CancelablePromise<SearchSuggestVideoKeywordsResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v2/search/videosuggestion',
+    cookies: {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken
+    },
+    query: {
+        q: data.q
     },
     errors: {
         422: 'Validation Error'

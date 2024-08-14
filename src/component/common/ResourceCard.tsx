@@ -1,13 +1,14 @@
 import { WithAvatar, useFixMouseLeave } from '@/component/common';
 import { generateRandomDarkColor, textEllipsisCss } from '@/helper/util';
 import { BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, LinearProgress, Stack, Typography, darken, useTheme } from '@mui/material';
-import { useRef, useState } from 'react';
+import { Box, BoxProps, LinearProgress, Stack, Typography, darken, useTheme } from '@mui/material';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
   resource: {
     title: string;
+    description?: string;
     is_public?: boolean;
     bookmarked: boolean;
     owner: {
@@ -26,6 +27,8 @@ interface Props {
   autoColor?: boolean;
   actionMenu?: React.ReactNode;
   footer?: React.ReactNode;
+  sx?: BoxProps['sx'];
+  showDescription?: boolean;
 }
 
 const ResourceCard = ({
@@ -40,10 +43,12 @@ const ResourceCard = ({
   score,
   passed,
   footer,
+  sx,
+  showDescription,
 }: Props) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
-  const color = autoColor ? generateRandomDarkColor(resource.title, 1, 0.1) : 'inherit';
+  const color = autoColor ? generateRandomDarkColor(resource.title, 1, 0.1) : theme.palette.action.selected;
   const cardRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState(false);
 
@@ -52,46 +57,52 @@ const ResourceCard = ({
     setHover(false);
   });
 
-  const Banner = () => (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: color,
-        border: `1px solid ${darken(color, 0.5)}`,
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius / 2,
-        gap: 1.5,
-        overflow: 'hidden',
-      }}
-    >
-      {!resource.is_public && (
-        <Box
-          sx={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            top: 0,
-            right: 0,
-            background: 'rgba(0,0,0,0.7)',
-            color: 'white',
-            zIndex: 3,
-            p: 1,
-          }}
-        >
-          {t('Not public')}
+  const Banner = useMemo(
+    () => (
+      <Box
+        className="card-banner"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          bgcolor: color,
+          border: `1px solid ${darken(color, 0.5)}`,
+          position: 'relative',
+          borderRadius: theme.shape.borderRadius / 2,
+          gap: 1.5,
+          overflow: 'hidden',
+        }}
+      >
+        {banner}
+        <Box sx={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden', borderRadius: 'inherit' }}>
+          {score != null && (
+            <LinearProgress
+              variant="determinate"
+              value={score}
+              sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', bgcolor: 'action.disalbedBackground' }}
+              color={passed ? 'success' : 'warning'}
+            />
+          )}
+          {!resource.is_public && (
+            <Box
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                top: 0,
+                right: 0,
+                background: 'rgba(0,0,0,0.6)',
+                color: 'white',
+                zIndex: 3,
+                p: 1,
+              }}
+            >
+              {t('Not public')}
+            </Box>
+          )}
         </Box>
-      )}
-      {banner}
-      {typeof score == 'number' && (
-        <LinearProgress
-          variant="determinate"
-          value={score}
-          sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', bgcolor: 'action.disalbedBackground' }}
-          color={passed ? 'success' : 'warning'}
-        />
-      )}
-    </Box>
+      </Box>
+    ),
+    [banner, color, passed, resource.is_public, score, t, theme],
   );
 
   return (
@@ -102,31 +113,58 @@ const ResourceCard = ({
         onClick(e);
       }}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      sx={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 1 }}
+      onMouseLeave={(e) => {
+        if (e.relatedTarget == window) return;
+        setHover(false);
+      }}
+      sx={{
+        cursor: 'pointer',
+        display: 'flex',
+        gap: 1,
+        '& .card-content': {
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.5,
+          width: '100%',
+        },
+        flexDirection: 'column',
+        ...sx,
+      }}
     >
-      {bannerPlace === 'top' && <Banner />}
-      <Typography variant="subtitle2" sx={{ fontWeight: '600', mt: 1, lineHeight: 1.2, ...textEllipsisCss(1) }}>
-        {resource.title}
-      </Typography>
-      <WithAvatar
-        name={resource.owner.name}
-        username={resource.owner.username}
-        thumbnail={resource.owner.thumbnail}
-        hideAvatar={hideAvatar}
-        sx={bannerPlace === 'bottom' ? { flexGrow: 0, mb: 1 } : {}}
-      >
-        <Stack sx={{ color: 'text.secondary', fontSize: '0.9rem' }} direction="row" spacing={1}>
-          {avatarChildren?.map((child, i) => (
-            <Typography key={i} component="div" variant="subtitle2">
-              {child}
-            </Typography>
-          ))}
-          {resource.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
-        </Stack>
-        <Box sx={{ display: !hover ? 'none' : 'block', position: 'absolute', right: '-8px' }}>{actionMenu}</Box>
-      </WithAvatar>
-      {bannerPlace === 'bottom' && <Banner />}
+      {bannerPlace === 'top' && Banner}
+      <Box className="card-content">
+        <Typography
+          className="content-title"
+          variant="subtitle2"
+          sx={{ fontWeight: '600', mt: 1, pr: '3px', lineHeight: 1.2, ...textEllipsisCss(2) }}
+        >
+          {resource.title}
+        </Typography>
+        <WithAvatar
+          name={resource.owner.name}
+          username={resource.owner.username}
+          thumbnail={resource.owner.thumbnail}
+          hideAvatar={hideAvatar}
+          sx={bannerPlace === 'bottom' ? { flexGrow: 0, mb: 1 } : {}}
+        >
+          <Stack sx={{ color: 'text.secondary', fontSize: '0.9rem' }} direction="row" spacing={1}>
+            {avatarChildren?.map((child, i) => (
+              <Typography key={i} component="div" variant="subtitle2">
+                {child}
+              </Typography>
+            ))}
+            {resource.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
+          </Stack>
+          <Box sx={{ display: !hover ? 'none' : 'block', position: 'absolute', right: '-8px' }}>{actionMenu}</Box>
+        </WithAvatar>
+        {showDescription && (
+          <Typography variant="body2" sx={{ color: 'text.secondary', ...textEllipsisCss(2) }}>
+            {resource.description}
+          </Typography>
+        )}
+      </Box>
+      {bannerPlace === 'bottom' && Banner}
       {footer}
     </Box>
   );

@@ -1,7 +1,7 @@
 import 'yup';
 
 declare module 'yup' {
-  export interface CustomSchemaMetadata {
+  interface CustomSchemaMetadata {
     control:
       | 'text'
       | 'checkbox'
@@ -21,10 +21,11 @@ declare module 'yup' {
     hidden?: boolean;
     grid?: number;
     options?: { label: string; value: string }[];
+    accept?: string;
   }
 
-  export interface SchemaRefDescription {
-    meta: CustomSchemaMetadata;
-    label: string;
+  interface SchemaRefDescription {
+    meta?: CustomSchemaMetadata;
+    label?: string;
   }
 }
