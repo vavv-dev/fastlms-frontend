@@ -131,7 +131,7 @@ const Subtitle = ({ videoId }: { videoId: string }) => {
         tracksRef.current = {};
 
         subtitles.forEach((result) => {
-          parser.parse(result.content).cues.forEach((cue: ICue) => {
+          parser.parse(result.lines).cues.forEach((cue: ICue) => {
             const startTime = Math.floor(cue.startTime);
             if (!tracksRef.current[startTime]) {
               tracksRef.current[startTime] = {};

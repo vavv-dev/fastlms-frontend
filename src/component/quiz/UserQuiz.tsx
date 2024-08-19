@@ -1,4 +1,4 @@
-import { QuizDisplayResponse, quizGetDisplay, QuizGetDisplayData } from '@/api';
+import { QuizDisplayResponse, quizGetDisplays, QuizGetDisplaysData } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
 import { useTranslation } from 'react-i18next';
 import QuizCard from './QuizCard';
@@ -9,7 +9,7 @@ const UserQuiz = () => {
   const sharedItemTabKey = 'bookmarker';
 
   return (
-    <GridInfiniteScrollPage<QuizDisplayResponse, QuizGetDisplayData>
+    <GridInfiniteScrollPage<QuizDisplayResponse, QuizGetDisplaysData>
       pageKey="quiz"
       tabConfig={{
         sharedItemTabKey,
@@ -21,7 +21,7 @@ const UserQuiz = () => {
         { value: 'submission_count', label: t('Submission asc') },
       ]}
       CreateItemComponent={SaveQuizDialog}
-      apiService={quizGetDisplay}
+      apiService={quizGetDisplays}
       renderItem={({ data, tab }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => <QuizCard key={item.id} quiz={item} hideAvatar={tab != sharedItemTabKey} />),

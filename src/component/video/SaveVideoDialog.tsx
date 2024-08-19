@@ -1,4 +1,4 @@
-import { Body_VideoUpdateResource, VideoResourceResponse, videoGetDisplay, videoGetResource, videoUpdateResource } from '@/api';
+import { Body_VideoUpdateResource, VideoResourceResponse, videoGetDisplays, videoGetResource, videoUpdateResource } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
 import i18next from '@/i18n';
 import { useTranslation } from 'react-i18next';
@@ -71,7 +71,7 @@ const SaveVideoDialog = ({ open, setOpen, videoId }: Props) => {
       resourceId={videoId}
       fieldSchema={videoSchema}
       retrieveService={videoGetResource}
-      listService={videoGetDisplay}
+      listService={videoGetDisplays}
       partialUpdateService={videoUpdateResource}
     />
   );

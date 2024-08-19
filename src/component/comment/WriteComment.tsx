@@ -4,7 +4,7 @@ import {
   CommentResourceCreateRequest,
   ThreadResponse,
   commentCreateResource,
-  commentGetDisplay,
+  commentGetDisplays,
   commentGetThread,
   commentUpdateResource,
 } from '@/api';
@@ -91,9 +91,9 @@ const WriteComment = ({ url, parent, comment, onClose, autoFocus, question }: Pr
         if (!comment && parent?.id) {
           // fix cast CommentResource to CommentDisplayResponse
           parent.children = [updated as CommentDisplayResponse, ...(parent.children || [])];
-          updateInfiniteCache<CommentDisplayResponse>(commentGetDisplay, parent, 'update');
+          updateInfiniteCache<CommentDisplayResponse>(commentGetDisplays, parent, 'update');
         } else {
-          updateInfiniteCache<CommentDisplayResponse>(commentGetDisplay, updated, comment ? 'update' : 'create', 'children');
+          updateInfiniteCache<CommentDisplayResponse>(commentGetDisplays, updated, comment ? 'update' : 'create', 'children');
         }
 
         reset();

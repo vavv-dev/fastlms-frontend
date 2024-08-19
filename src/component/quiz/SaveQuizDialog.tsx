@@ -3,7 +3,7 @@ import {
   QuizResourceResponse,
   QuizResourceUpdateRequest,
   quizCreateResource,
-  quizGetDisplay,
+  quizGetDisplays,
   quizGetOwnedQuestions,
   quizGetResource,
   quizUpdateResource,
@@ -105,7 +105,6 @@ const quizSchema: yup.ObjectSchema<QuizResourceUpdateRequest> = yup.object({
     .default('')
     .label(t('Failure message'))
     .meta({ control: 'editor', placeholderText: t('Optional') }),
-  embed: yup.object().default({}).label(t('Embed')).meta({ hidden: true, control: 'text' }),
   questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
 });
 
@@ -128,7 +127,7 @@ const SaveQuizDialog = ({ open, setOpen, quizId }: Props) => {
       resourceId={quizId}
       fieldSchema={quizSchema}
       retrieveService={quizGetResource}
-      listService={quizGetDisplay}
+      listService={quizGetDisplays}
       createService={quizCreateResource}
       partialUpdateService={quizUpdateResource}
       copyAutocomplete={{

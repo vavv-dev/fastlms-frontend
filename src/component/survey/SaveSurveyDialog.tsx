@@ -3,7 +3,7 @@ import {
   SurveyResourceResponse,
   SurveyResourceUpdateRequest,
   surveyCreateResource,
-  surveyGetDisplay,
+  surveyGetDisplays,
   surveyGetOwnedQuestions,
   surveyGetResource,
   surveyUpdateResource,
@@ -100,7 +100,6 @@ const surveySchema: yup.ObjectSchema<SurveyResourceUpdateRequest> = yup.object({
     .default('')
     .label(t('Complete message'))
     .meta({ control: 'editor', placeholderText: t('Optional') }),
-  embed: yup.object().default({}).label(t('Embed')).meta({ hidden: true, control: 'text' }),
   questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
 });
 
@@ -123,7 +122,7 @@ const SaveSurveyDialog = ({ open, setOpen, surveyId }: Props) => {
       resourceId={surveyId}
       fieldSchema={surveySchema}
       retrieveService={surveyGetResource}
-      listService={surveyGetDisplay}
+      listService={surveyGetDisplays}
       createService={surveyCreateResource}
       partialUpdateService={surveyUpdateResource}
       copyAutocomplete={{

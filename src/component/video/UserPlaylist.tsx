@@ -1,4 +1,4 @@
-import { PlaylistDisplayResponse, playlistGetDisplay, PlaylistGetDisplayData } from '@/api';
+import { PlaylistDisplayResponse, playlistGetDisplays, PlaylistGetDisplaysData } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
 import { CloudDownloadOutlined, PlaylistAddOutlined } from '@mui/icons-material';
 import { Box, ListItemIcon, ListItemText, Menu, MenuItem, MenuList, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ const UserPlaylist = () => {
   const sharedItemTabKey = 'bookmarker';
 
   return (
-    <GridInfiniteScrollPage<PlaylistDisplayResponse, PlaylistGetDisplayData>
+    <GridInfiniteScrollPage<PlaylistDisplayResponse, PlaylistGetDisplaysData>
       pageKey="playlist"
       tabConfig={{
         sharedItemTabKey,
@@ -25,7 +25,7 @@ const UserPlaylist = () => {
         { value: 'title', label: t('Title asc') },
       ]}
       CreateItemComponent={CreateOptions}
-      apiService={playlistGetDisplay}
+      apiService={playlistGetDisplays}
       renderItem={({ data, tab }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => <PlaylistCard key={item.id} playlist={item} hideAvatar={tab != sharedItemTabKey} />),

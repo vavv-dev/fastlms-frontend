@@ -1,4 +1,4 @@
-import { VideoDisplayResponse, videoGetDisplay, VideoGetDisplayData } from '@/api';
+import { VideoDisplayResponse, videoGetDisplays, VideoGetDisplaysData } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useLocation } from 'react-router-dom';
@@ -16,7 +16,7 @@ const UserVideo = () => {
   }
 
   return (
-    <GridInfiniteScrollPage<VideoDisplayResponse, VideoGetDisplayData>
+    <GridInfiniteScrollPage<VideoDisplayResponse, VideoGetDisplaysData>
       pageKey="video"
       tabConfig={{
         sharedItemTabKey,
@@ -28,7 +28,7 @@ const UserVideo = () => {
         { value: 'title', label: t('Title asc') },
       ]}
       CreateItemComponent={({ open, setOpen }) => <ImportYoutubeDialog open={open} setOpen={setOpen} kind={'video'} />}
-      apiService={videoGetDisplay}
+      apiService={videoGetDisplays}
       apiOptions={{ videoKind: videoKind }}
       renderItem={({ data, tab }) =>
         data?.map((pagination) =>

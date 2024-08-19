@@ -4,7 +4,7 @@ import {
   ExamResourceResponse,
   ExamResourceUpdateRequest,
   examCreateResource,
-  examGetDisplay,
+  examGetDisplays,
   examGetOwnedQuestions,
   examGetResource,
   examUpdateResource,
@@ -158,7 +158,6 @@ const examSchema: yup.ObjectSchema<ExamResourceUpdateRequest> = yup.object({
     .default('')
     .label(t('Failure message'))
     .meta({ control: 'editor', placeholderText: t('Optional') }),
-  embed: yup.object().default({}).label(t('Embed')).meta({ hidden: true, control: 'text' }),
   question_composition: questionCompositionSchema,
   questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
 });
@@ -182,7 +181,7 @@ const SaveExamDialog = ({ open, setOpen, examId }: Props) => {
       resourceId={examId}
       fieldSchema={examSchema}
       retrieveService={examGetResource}
-      listService={examGetDisplay}
+      listService={examGetDisplays}
       createService={examCreateResource}
       partialUpdateService={examUpdateResource}
       copyAutocomplete={{

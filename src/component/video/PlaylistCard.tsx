@@ -1,11 +1,11 @@
-import { PlaylistDisplayResponse, playlistGetDisplay, playlistResumePlaylist, playlistToggleAction } from '@/api';
+import { PlaylistDisplayResponse, playlistGetDisplays, playlistResumePlaylist, playlistToggleAction } from '@/api';
 import ResourceCard from '@/component/common/ResourceCard';
 import { formatDuration, formatRelativeTime } from '@/helper/util';
 import { Box, BoxProps, Button, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { createToggleAction } from '@/component/common';
 import PlaylistActionMenu from './PlaylistActionMenu';
-import { createToggleAction } from '../common';
 
 interface IProps {
   playlist: PlaylistDisplayResponse;
@@ -13,7 +13,7 @@ interface IProps {
   sx?: BoxProps['sx'];
 }
 
-const toggleAction = createToggleAction<PlaylistDisplayResponse>(playlistToggleAction, playlistGetDisplay);
+const toggleAction = createToggleAction<PlaylistDisplayResponse>(playlistToggleAction, playlistGetDisplays);
 
 const PlaylistCard = ({ playlist, hideAvatar }: IProps) => {
   const { t } = useTranslation('video');

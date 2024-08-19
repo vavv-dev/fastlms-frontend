@@ -1,6 +1,5 @@
-import { VideoDisplayResponse, videoDeleteResource, videoGetDisplay, videoToggleAction } from '@/api';
-import { DeleteResourceDialog, createToggleAction } from '@/component/common';
-import ResourceActionMenu from '@/component/common/ResourceActionMenu';
+import { VideoDisplayResponse, videoDeleteResource, videoGetDisplays, videoToggleAction } from '@/api';
+import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
 import { ListAltOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
@@ -14,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import ReportDialog from './ReportDialog';
 import SaveVideoDialog from './SaveVideoDialog';
 
-const toggleAction = createToggleAction<VideoDisplayResponse>(videoToggleAction, videoGetDisplay);
+const toggleAction = createToggleAction<VideoDisplayResponse>(videoToggleAction, videoGetDisplays);
 
 const VideoActionMenu = ({ video }: { video: VideoDisplayResponse }) => {
   const { t } = useTranslation('video');
@@ -65,7 +64,7 @@ const VideoActionMenu = ({ video }: { video: VideoDisplayResponse }) => {
           setOpen={setDeleteVideoDialogOpen}
           resourceId={video.id}
           destroyService={videoDeleteResource}
-          listService={videoGetDisplay}
+          listService={videoGetDisplays}
         />
       )}
       {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} video={video} />}

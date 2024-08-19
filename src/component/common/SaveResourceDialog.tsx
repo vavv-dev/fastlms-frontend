@@ -13,7 +13,7 @@ import {
 } from '@/component/common';
 import { textEllipsisCss } from '@/helper/util';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AddCircleOutlineOutlined, Close, ContentCopyOutlined } from '@mui/icons-material';
+import { AddCircleOutlineOutlined, Close, ContentCopyOutlined, DragHandleOutlined } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -29,10 +29,23 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  useTheme,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Path, PathValue, Resolver, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import {
+  Control,
+  FieldError,
+  FieldErrors,
+  FieldValues,
+  Path,
+  PathValue,
+  Resolver,
+  UseFormGetValues,
+  UseFormSetValue,
+  useForm,
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { List, arrayMove } from 'react-movable';
 import * as yup from 'yup';
 import { SchemaDescription } from 'yup';
 import { useScrollToNewElement } from './hooks';
@@ -42,6 +55,17 @@ type DeepRemoveUndefined<T> = T extends object
       [P in keyof T]-?: DeepRemoveUndefined<NonNullable<T[P]>>;
     }
   : NonNullable<T>;
+
+interface CopyAutocomplete {
+  [key: string]: {
+    service: (params: object) => Promise<any>; // eslint-disable-line
+    labelField: string;
+    groudField?: string;
+    mode?: 'select' | 'copy';
+    action?: React.ReactNode;
+    hideAddButton?: boolean;
+  };
+}
 
 interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { id: string }> {
   title: string;
@@ -53,12 +77,7 @@ interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { 
   listService: () => Promise<any>; // eslint-disable-line
   createService?: (params: { requestBody: DeepRemoveUndefined<T> }) => Promise<K> | CancelablePromise<K>;
   partialUpdateService: (params: { id: string; requestBody: T; formData: T }) => Promise<K>;
-  copyAutocomplete?: {
-    [key: string]: {
-      service: (params: object) => Promise<any>; // eslint-disable-line
-      labelField: string;
-    };
-  };
+  copyAutocomplete?: CopyAutocomplete;
   maxWidth?: DialogProps['maxWidth'];
 }
 
@@ -84,7 +103,6 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
   } = useServiceImmutable<{ id: string }, T>(retrieveService, editKey ? { id: editKey } : null);
 
   // dynamic copy service
-  const [autocompleteOpen, setAutocompleteOpen] = useState<string>('');
   const { handleSubmit, control, formState, reset, getValues, setValue, setError, watch } = useForm<T>({
     mode: 'onBlur',
     reValidateMode: 'onSubmit',
@@ -127,8 +145,6 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
 
     const service = editKey ? partialUpdateService : createService;
     if (!service) return;
-
-    console.log(formState.errors);
 
     service({
       id: editKey || '',
@@ -177,55 +193,6 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
     );
   };
 
-  const DrawField = (
-    containerRef: React.MutableRefObject<HTMLDivElement | null>,
-    key: string,
-    fieldData: SchemaDescription,
-    hideLabel?: boolean,
-    margin: FormControlProps['margin'] = 'dense',
-  ) => {
-    // function type is faster then jsx. why???
-    const required = (fieldData as SchemaDescription).tests.some((test) => test.name === 'required');
-    const props = {
-      name: key,
-      type: fieldData.meta?.control,
-      control: control,
-      label: !hideLabel ? fieldData.label || '' : '',
-      InputLabelProps: { shrink: true },
-      helperText: (formState.errors[key as keyof T]?.message as string) || fieldData.meta?.helperText,
-      required,
-    };
-
-    switch (fieldData.meta?.control) {
-      case 'checkbox':
-        return <CheckboxControl {...props} margin={margin} />;
-      case 'editor':
-        return (
-          <TextEditorControl
-            containerRef={containerRef}
-            {...props}
-            margin={margin}
-            placeholder={fieldData.meta?.placeholderText}
-          />
-        );
-      case 'select':
-        return <SelectControl {...props} margin={margin} options={fieldData.meta?.options || []} />;
-      case 'file':
-        return <FileFieldControl {...props} inputProps={{ accept: fieldData.meta.accept }} />;
-      default:
-        return (
-          <TextFieldControl
-            {...props}
-            margin={margin}
-            focusSelect
-            focusMultiLine
-            multiline={fieldData.meta?.multiline}
-            placeholder={fieldData.meta?.placeholderText}
-          />
-        );
-    }
-  };
-
   return (
     <BaseDialog
       open={open}
@@ -259,139 +226,42 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       {Object.entries(fieldData.fields).map(([innerKey, _innerFieldData]) => (
                         <Box key={`${key}.${innerKey}`} sx={{ display: 'flex', flexGrow: 1 }}>
-                          {DrawField(containerRef, `${key}.${innerKey}`, _innerFieldData as SchemaDescription)}
+                          <DrawField
+                            containerRef={containerRef}
+                            name={`${key}.${innerKey}` as Path<T>}
+                            fieldData={_innerFieldData as SchemaDescription}
+                            control={control}
+                            formState={formState}
+                          />
                         </Box>
                       ))}
                     </Box>
                   </Grid>
                 );
               } else if (fieldData.type == 'array') {
-                const arrayValues = getValues(key as Path<T>) as [];
-                const arrayFieldError = formState.errors[key as keyof typeof formState.errors];
                 return (
-                  <Grid item xs={12} key={key}>
-                    {arrayFieldError?.message && (
-                      <Typography color="error" variant="caption">
-                        {t(arrayFieldError.message as string)}
-                      </Typography>
-                    )}
-                    <TableContainer
-                      sx={{
-                        '& th': { whiteSpace: 'nowrap' },
-                        '& fieldset': { border: 'none' },
-                        '& .MuiInput-underline:not(.Mui-error):before': { borderBottom: 'none' },
-                        '& .MuiInput-underline:hover:not(.Mui-disabled):not(.Mui-error):before': { borderBottom: 'none' },
-                        '& input[type="text"]:focus, & textarea:focus': { minWidth: '400px' },
-                        '& .MuiSelect-select': { p: 0, pr: '2em' },
-                        '& .MuiCheckbox-root': { p: 0 },
-                        // this cause the td width flickering
-                        // '& .MuiTableRow-root .MuiTableCell-root:last-child': { padding: '0.5em' },
-                        '& .MuiFormHelperText-root': { ...textEllipsisCss(1), lineHeight: '1em' },
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="caption">{fieldData.label}</Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        {copyAutocomplete?.[key] && (
-                          <Tooltip
-                            title={t('Copy')}
-                            arrow
-                            onClick={() => setAutocompleteOpen(autocompleteOpen == key ? '' : key)}
-                          >
-                            <IconButton color="primary">
-                              <ContentCopyOutlined />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        <Tooltip title={t('Add')} arrow>
-                          <IconButton
-                            color="primary"
-                            onClick={() => {
-                              const defaultValue = field.innerType.getDefault();
-                              setValue(key as Path<T>, [...arrayValues, defaultValue] as PathValue<T, Path<T>>, {
-                                shouldDirty: true,
-                                shouldValidate: true,
-                              });
-                            }}
-                          >
-                            <AddCircleOutlineOutlined />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                      <Table size="small">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>#</TableCell>
-                            {Object.entries(fieldData.innerType.fields).map(([innerKey, _innerFieldData]) => {
-                              const innerFieldData = _innerFieldData as SchemaDescription;
-                              if (innerFieldData.meta?.hidden) return null;
-                              return <TableCell key={`${key}.${innerKey}`}>{innerFieldData.label}</TableCell>;
-                            })}
-                            <TableCell />
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {arrayValues?.map((_, i) => (
-                            <TableRow hover key={`${key}.${i}`}>
-                              <TableCell>{i + 1}</TableCell>
-                              {Object.entries(fieldData.innerType.fields).map(([innerKey, _innerFieldData]) => {
-                                const innerFieldData = _innerFieldData as SchemaDescription;
-                                if (innerFieldData.meta?.hidden) return null;
-
-                                return (
-                                  <TableCell key={`${key}.${i}.${innerKey}`}>
-                                    {DrawField(containerRef, `${key}.${i}.${innerKey}`, innerFieldData, true, 'none')}
-                                  </TableCell>
-                                );
-                              })}
-                              <TableCell sx={{ width: '3em' }}>
-                                <IconButton
-                                  onClick={() => {
-                                    // fix. force re-render when last element is removed
-                                    const remains = arrayValues.filter((_, j) => i !== j);
-                                    if (remains.length == 0) {
-                                      setValue(key as Path<T>, null as PathValue<T, Path<T>>, {
-                                        shouldDirty: true,
-                                        shouldValidate: true,
-                                      });
-                                    }
-                                    setValue(key as Path<T>, remains as PathValue<T, Path<T>>, {
-                                      shouldDirty: true,
-                                      shouldValidate: true,
-                                    });
-                                  }}
-                                >
-                                  <Close fontSize="small" />
-                                </IconButton>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-
-                    {copyAutocomplete?.[key]?.service && autocompleteOpen == key && (
-                      <AutocompleteSelect2
-                        service={copyAutocomplete[key].service}
-                        labelField={copyAutocomplete[key].labelField}
-                        open={autocompleteOpen == key}
-                        setOpen={() => setAutocompleteOpen(autocompleteOpen == key ? '' : key)}
-                        placeholder={`${t('Copy')} ${fieldData.label}`}
-                        onSelect={(selected) => {
-                          setValue(
-                            key as Path<T>,
-                            [...(arrayValues || []), ...selected.map((s) => ({ ...s, id: undefined }))] as PathValue<T, Path<T>>,
-                            { shouldDirty: true, shouldValidate: true },
-                          );
-                        }}
-                      />
-                    )}
-                  </Grid>
+                  <ArrayFieldTable
+                    key={key}
+                    fieldKey={key as Path<T>}
+                    fieldData={fieldData}
+                    control={control}
+                    formState={formState}
+                    getValues={getValues}
+                    setValue={setValue}
+                    containerRef={containerRef}
+                    copyAutocomplete={copyAutocomplete}
+                  />
                 );
               } else {
                 return (
                   <Grid item xs={fieldData.meta?.grid || 12} key={key}>
-                    {DrawField(containerRef, key, fieldData)}
+                    <DrawField
+                      containerRef={containerRef}
+                      name={key as Path<T>}
+                      fieldData={fieldData}
+                      control={control}
+                      formState={formState}
+                    />
                   </Grid>
                 );
               }
@@ -404,3 +274,301 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
 };
 
 export default SaveResourceDialog;
+
+interface DrawFieldProps<T extends FieldValues> {
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
+  name: Path<T>;
+  fieldData: SchemaDescription;
+  hideLabel?: boolean;
+  margin?: FormControlProps['margin'];
+  control: Control<T>;
+  formState: {
+    errors: FieldErrors<T>;
+  };
+}
+
+const DrawField = <T extends FieldValues>({
+  containerRef,
+  name,
+  fieldData,
+  hideLabel = false,
+  margin = 'dense',
+  control,
+  formState,
+}: DrawFieldProps<T>) => {
+  const required = fieldData.tests.some((test) => test.name === 'required');
+  const props = {
+    name,
+    type: fieldData.meta?.control,
+    control,
+    label: !hideLabel ? fieldData.label || '' : '',
+    InputLabelProps: { shrink: true },
+    helperText: (formState.errors[name]?.message as string) || fieldData.meta?.helperText,
+    required,
+    readOnly: fieldData.meta?.readOnly,
+  };
+
+  switch (fieldData.meta?.control) {
+    case 'checkbox':
+      return <CheckboxControl {...props} margin={margin} />;
+    case 'editor':
+      return (
+        <TextEditorControl
+          containerRef={containerRef}
+          {...props}
+          margin={margin}
+          placeholder={fieldData.meta?.placeholderText}
+        />
+      );
+    case 'select':
+      return <SelectControl {...props} margin={margin} options={fieldData.meta?.options || []} />;
+    case 'file':
+      return <FileFieldControl {...props} inputProps={{ accept: fieldData.meta?.accept }} />;
+    default:
+      return (
+        <TextFieldControl
+          {...props}
+          margin={margin}
+          focusSelect
+          focusMultiLine
+          multiline={fieldData.meta?.multiline}
+          placeholder={fieldData.meta?.placeholderText}
+        />
+      );
+  }
+};
+
+interface ArrayFieldTableProps<T extends FieldValues> {
+  fieldKey: Path<T>;
+  fieldData: SchemaDescription & {
+    innerType: {
+      fields: Record<string, SchemaDescription>;
+      default: Record<string, unknown>;
+    };
+  };
+  control: Control<T>;
+  formState: {
+    errors: FieldErrors<T>;
+  };
+  getValues: UseFormGetValues<T>;
+  setValue: UseFormSetValue<T>;
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
+  copyAutocomplete?: CopyAutocomplete;
+}
+
+const ArrayFieldTable = <T extends FieldValues>({
+  fieldKey,
+  fieldData,
+  control,
+  formState,
+  getValues,
+  setValue,
+  containerRef,
+  copyAutocomplete,
+}: ArrayFieldTableProps<T>) => {
+  const { t } = useTranslation('common');
+  const theme = useTheme();
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState<string>('');
+  const arrayValues = getValues(fieldKey) || [];
+  const arrayFieldError = formState.errors[fieldKey as keyof typeof formState.errors] as FieldError;
+  const [cellWidths, setCellWidths] = useState<string[]>([]);
+
+  const handleReorder = (oldIndex: number, newIndex: number) => {
+    const newOrder = arrayMove(arrayValues, oldIndex, newIndex);
+    setValue(fieldKey, newOrder as PathValue<T, Path<T>>, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  return (
+    <Grid item xs={12}>
+      {arrayFieldError?.message && (
+        <Typography color="error" variant="caption">
+          {t(arrayFieldError.message as string)}
+        </Typography>
+      )}
+      {arrayFieldError?.root?.message && (
+        <Typography color="error" variant="caption">
+          {t(arrayFieldError.root.message as string)}
+        </Typography>
+      )}
+      <TableContainer
+        sx={{
+          '& th': { whiteSpace: 'nowrap' },
+          '& fieldset': { border: 'none' },
+          '& .MuiInput-underline:not(.Mui-error):before': { borderBottom: 'none' },
+          '& .MuiInput-underline:hover:not(.Mui-disabled):not(.Mui-error):before': { borderBottom: 'none' },
+          '& input[type="text"]:focus, & textarea:focus': { minWidth: '400px' },
+          '& .MuiSelect-select': { p: 0, pr: '2em' },
+          '& .MuiCheckbox-root': { p: 0 },
+          '& .MuiFormHelperText-root': { ...textEllipsisCss(1), lineHeight: '1em' },
+          '& input': { textOverflow: 'ellipsis' },
+          // fix table cell width infinite flickering
+          '& .MuiInputBase-inputMultiline': { overflow: 'hidden !important' },
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="caption">{fieldData.label}</Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          {copyAutocomplete?.[fieldKey] && (
+            <>
+              {copyAutocomplete[fieldKey].action && copyAutocomplete?.[fieldKey].action}
+              <Tooltip
+                title={t('Copy')}
+                arrow
+                onClick={() => setAutocompleteOpen(autocompleteOpen === fieldKey ? '' : fieldKey)}
+              >
+                <IconButton color="primary">
+                  <ContentCopyOutlined />
+                </IconButton>
+              </Tooltip>
+              {!copyAutocomplete[fieldKey].hideAddButton && (
+                <Tooltip title={t('Add')} arrow>
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      const defaultValue = fieldData.innerType.default;
+                      setValue(fieldKey, [...(arrayValues || []), defaultValue] as PathValue<T, Path<T>>, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }}
+                  >
+                    <AddCircleOutlineOutlined />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </>
+          )}
+        </Box>
+        <List
+          lockVertically
+          values={arrayValues}
+          onChange={({ oldIndex, newIndex }) => handleReorder(oldIndex, newIndex)}
+          renderList={({ children, props }) => (
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell>#</TableCell>
+                  {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) => {
+                    if (innerFieldData.meta?.hidden) return null;
+                    return <TableCell key={`${fieldKey}.${innerKey}`}>{innerFieldData.label}</TableCell>;
+                  })}
+                  <TableCell />
+                </TableRow>
+              </TableHead>
+              <TableBody {...props}>{children}</TableBody>
+            </Table>
+          )}
+          beforeDrag={({ elements, index }) => {
+            const cells = Array.from(elements[index].children);
+            setCellWidths(cells.map((cell) => window.getComputedStyle(cell).width));
+          }}
+          renderItem={({ value, props, isDragged }) => {
+            const index = arrayValues.findIndex((item) => item === value);
+            const row = (
+              <TableRow
+                {...props}
+                key={`${fieldKey}.${index}`}
+                sx={{
+                  zIndex: isDragged ? theme.zIndex.modal + 1 : 'auto',
+                  boxShadow: isDragged ? theme.shadows[4] : 'none',
+                  '& > td': isDragged
+                    ? {
+                        ...cellWidths.reduce((acc, width, i) => ({ ...acc, [`&:nth-of-type(${i + 1})`]: { width } }), {}),
+                        '& .MuiInput-underline:not(.Mui-error):before': { borderBottom: 'none' },
+                        '& .MuiInput-underline:hover:not(.Mui-disabled):not(.Mui-error):before': { borderBottom: 'none' },
+                        '& input[type="text"]:focus, & textarea:focus': { minWidth: '400px' },
+                        '& .MuiSelect-select': { p: 0, pr: '2em' },
+                        '& .MuiCheckbox-root': { p: 0 },
+                        '& .MuiFormHelperText-root': { ...textEllipsisCss(1), lineHeight: '1em' },
+                        backgroundColor: theme.palette.action.hover,
+                      }
+                    : {},
+                }}
+              >
+                {/* do not remove framgment. it's required for forwardRef key */}
+                <>
+                  <TableCell data-movable-handle sx={{ width: '2em', cursor: isDragged ? 'grabbing' : 'grab' }}>
+                    <DragHandleOutlined fontSize="small" />
+                  </TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) => {
+                    if (innerFieldData.meta?.hidden) return null;
+                    return (
+                      <TableCell key={`${fieldKey}.${index}.${innerKey}`}>
+                        <DrawField
+                          containerRef={containerRef}
+                          name={`${fieldKey}.${index}.${innerKey}` as Path<T>}
+                          fieldData={innerFieldData}
+                          hideLabel
+                          margin="none"
+                          control={control}
+                          formState={formState}
+                        />
+                      </TableCell>
+                    );
+                  })}
+                  <TableCell sx={{ width: '3em' }}>
+                    <IconButton
+                      onClick={() => {
+                        const remains = arrayValues.filter((_, j) => j !== index);
+                        if (remains.length === 0) {
+                          setValue(fieldKey, null as PathValue<T, Path<T>>, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                        } else {
+                          setValue(fieldKey, remains as PathValue<T, Path<T>>, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                        }
+                      }}
+                    >
+                      <Close fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </>
+              </TableRow>
+            );
+
+            return isDragged ? (
+              <Table>
+                <TableBody sx={{ '& td': { py: '.5em' } }}>{row}</TableBody>
+              </Table>
+            ) : (
+              row
+            );
+          }}
+        />
+      </TableContainer>
+
+      {copyAutocomplete?.[fieldKey]?.service && autocompleteOpen === fieldKey && (
+        <AutocompleteSelect2
+          service={copyAutocomplete[fieldKey].service}
+          labelField={copyAutocomplete[fieldKey].labelField}
+          groupField={copyAutocomplete[fieldKey].groudField}
+          open={autocompleteOpen === fieldKey}
+          setOpen={() => setAutocompleteOpen(autocompleteOpen === fieldKey ? '' : fieldKey)}
+          placeholder={`${t('Copy')} ${fieldData.label}`}
+          onSelect={(selected) => {
+            setValue(
+              fieldKey,
+              [
+                ...(arrayValues || []),
+                ...selected.map((s) => ({
+                  ...s,
+                  id: copyAutocomplete[fieldKey].mode === 'select' ? s.id : undefined,
+                })),
+              ] as PathValue<T, Path<T>>,
+              { shouldDirty: true, shouldValidate: true },
+            );
+          }}
+        />
+      )}
+    </Grid>
+  );
+};

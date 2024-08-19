@@ -1,6 +1,5 @@
-import { QuizDisplayResponse, quizDeleteResource, quizGetDisplay, quizToggleAction } from '@/api';
-import { DeleteResourceDialog, createToggleAction } from '@/component/common';
-import ResourceActionMenu from '@/component/common/ResourceActionMenu';
+import { QuizDisplayResponse, quizDeleteResource, quizGetDisplays, quizToggleAction } from '@/api';
+import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
 import { ListAltOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
@@ -14,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import ReportDialog from './ReportDialog';
 import SaveQuizDialog from './SaveQuizDialog';
 
-const toggleAction = createToggleAction<QuizDisplayResponse>(quizToggleAction, quizGetDisplay);
+const toggleAction = createToggleAction<QuizDisplayResponse>(quizToggleAction, quizGetDisplays);
 
 const QuizActionMenu = ({ quiz }: { quiz: QuizDisplayResponse }) => {
   const { t } = useTranslation('quiz');
@@ -65,7 +64,7 @@ const QuizActionMenu = ({ quiz }: { quiz: QuizDisplayResponse }) => {
           setOpen={setDeleteQuizDialogOpen}
           resourceId={quiz.id}
           destroyService={quizDeleteResource}
-          listService={quizGetDisplay}
+          listService={quizGetDisplays}
         />
       )}
       {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} quiz={quiz} />}

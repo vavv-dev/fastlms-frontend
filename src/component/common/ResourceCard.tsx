@@ -1,5 +1,5 @@
 import { WithAvatar, useFixMouseLeave } from '@/component/common';
-import { generateRandomDarkColor, textEllipsisCss } from '@/helper/util';
+import { decodeURLText, generateRandomDarkColor, stripHtml, textEllipsisCss } from '@/helper/util';
 import { BookmarkBorderOutlined } from '@mui/icons-material';
 import { Box, BoxProps, LinearProgress, Stack, Typography, darken, useTheme } from '@mui/material';
 import { useMemo, useRef, useState } from 'react';
@@ -17,7 +17,7 @@ interface Props {
       thumbnail?: string | null;
     };
   };
-  onClick: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
   banner?: React.ReactNode;
   bannerPlace?: 'top' | 'bottom';
   score: number | null;
@@ -58,50 +58,51 @@ const ResourceCard = ({
   });
 
   const Banner = useMemo(
-    () => (
-      <Box
-        className="card-banner"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          bgcolor: color,
-          border: `1px solid ${darken(color, 0.5)}`,
-          position: 'relative',
-          borderRadius: theme.shape.borderRadius / 2,
-          gap: 1.5,
-          overflow: 'hidden',
-        }}
-      >
-        {banner}
-        <Box sx={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden', borderRadius: 'inherit' }}>
-          {score != null && (
-            <LinearProgress
-              variant="determinate"
-              value={score}
-              sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', bgcolor: 'action.disalbedBackground' }}
-              color={passed ? 'success' : 'warning'}
-            />
-          )}
-          {!resource.is_public && (
-            <Box
-              sx={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                top: 0,
-                right: 0,
-                background: 'rgba(0,0,0,0.6)',
-                color: 'white',
-                zIndex: 3,
-                p: 1,
-              }}
-            >
-              {t('Not public')}
-            </Box>
-          )}
+    () =>
+      !banner ? null : (
+        <Box
+          className="card-banner"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            bgcolor: color,
+            border: `1px solid ${darken(color, 0.5)}`,
+            position: 'relative',
+            borderRadius: theme.shape.borderRadius / 2,
+            gap: 1.5,
+            overflow: 'hidden',
+          }}
+        >
+          {banner}
+          <Box sx={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden', borderRadius: 'inherit' }}>
+            {score != null && (
+              <LinearProgress
+                variant="determinate"
+                value={score}
+                sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', bgcolor: 'action.disalbedBackground' }}
+                color={passed ? 'success' : 'warning'}
+              />
+            )}
+            {!resource.is_public && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  top: 0,
+                  right: 0,
+                  background: 'rgba(0,0,0,0.6)',
+                  color: 'white',
+                  zIndex: 3,
+                  p: 1,
+                }}
+              >
+                {t('Not public')}
+              </Box>
+            )}
+          </Box>
         </Box>
-      </Box>
-    ),
+      ),
     [banner, color, passed, resource.is_public, score, t, theme],
   );
 
@@ -109,8 +110,10 @@ const ResourceCard = ({
     <Box
       ref={cardRef}
       onClick={(e) => {
-        e.stopPropagation();
-        onClick(e);
+        if (onClick) {
+          e.stopPropagation();
+          onClick(e);
+        }
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={(e) => {
@@ -118,7 +121,7 @@ const ResourceCard = ({
         setHover(false);
       }}
       sx={{
-        cursor: 'pointer',
+        cursor: onClick && 'pointer',
         display: 'flex',
         gap: 1,
         '& .card-content': {
@@ -160,7 +163,7 @@ const ResourceCard = ({
         </WithAvatar>
         {showDescription && (
           <Typography variant="body2" sx={{ color: 'text.secondary', ...textEllipsisCss(2) }}>
-            {resource.description}
+            {stripHtml(decodeURLText(resource.description))}
           </Typography>
         )}
       </Box>

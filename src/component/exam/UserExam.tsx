@@ -1,4 +1,4 @@
-import { ExamDisplayResponse, ExamGetDisplayData, examGetDisplay } from '@/api';
+import { ExamDisplayResponse, ExamGetDisplaysData, examGetDisplays } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
 import { homeUserState, userState } from '@/store';
 import { GradingOutlined } from '@mui/icons-material';
@@ -18,7 +18,7 @@ const UserExam = () => {
   const owner = user && user.id == homeUser?.id;
 
   return (
-    <GridInfiniteScrollPage<ExamDisplayResponse, ExamGetDisplayData>
+    <GridInfiniteScrollPage<ExamDisplayResponse, ExamGetDisplaysData>
       pageKey="exam"
       tabConfig={{
         sharedItemTabKey,
@@ -30,7 +30,7 @@ const UserExam = () => {
         { value: 'submission_count', label: t('Submission count') },
       ]}
       CreateItemComponent={SaveExamDialog}
-      apiService={examGetDisplay}
+      apiService={examGetDisplays}
       renderItem={({ data, tab }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => <ExamCard key={item.id} exam={item} hideAvatar={tab != sharedItemTabKey} />),

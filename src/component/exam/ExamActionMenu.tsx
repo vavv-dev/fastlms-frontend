@@ -1,6 +1,5 @@
-import { ExamDisplayResponse, examDeleteResource, examGetDisplay, examToggleAction } from '@/api';
-import { DeleteResourceDialog, createToggleAction } from '@/component/common';
-import ResourceActionMenu from '@/component/common/ResourceActionMenu';
+import { ExamDisplayResponse, examDeleteResource, examGetDisplays, examToggleAction } from '@/api';
+import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
 import { ListAltOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
@@ -11,10 +10,10 @@ import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import SaveExamDialog from './SaveExamDialog';
 import ReportDialog from './ReportDialog';
+import SaveExamDialog from './SaveExamDialog';
 
-const toggleAction = createToggleAction<ExamDisplayResponse>(examToggleAction, examGetDisplay);
+const toggleAction = createToggleAction<ExamDisplayResponse>(examToggleAction, examGetDisplays);
 
 const ExamActionMenu = ({ exam }: { exam: ExamDisplayResponse }) => {
   const { t } = useTranslation('exam');
@@ -65,7 +64,7 @@ const ExamActionMenu = ({ exam }: { exam: ExamDisplayResponse }) => {
           setOpen={setDeleteExamDialogOpen}
           resourceId={exam.id}
           destroyService={examDeleteResource}
-          listService={examGetDisplay}
+          listService={examGetDisplays}
         />
       )}
       {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} exam={exam} />}

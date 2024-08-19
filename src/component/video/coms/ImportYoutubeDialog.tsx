@@ -2,9 +2,9 @@ import {
   ImportYoutubeRequest,
   PlaylistDisplayResponse,
   VideoDisplayResponse,
-  playlistGetDisplay,
+  playlistGetDisplays,
   playlistImportYoutubePlaylist,
-  videoGetDisplay,
+  videoGetDisplays,
   videoImportYoutubeVideo,
 } from '@/api';
 import { BaseDialog, Form, TextFieldControl, updateInfiniteCache } from '@/component/common';
@@ -33,7 +33,7 @@ interface Props {
 const ImportYoutubeDialog = ({ open, setOpen, kind }: Props) => {
   const { t } = useTranslation('video');
   const user = useAtomValue(userState);
-  const { handleSubmit, control, setError, formState, reset, clearErrors } = useForm({
+  const { handleSubmit, control, setError, formState, reset, clearErrors } = useForm<ImportYoutubeRequest>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
   });
@@ -51,9 +51,9 @@ const ImportYoutubeDialog = ({ open, setOpen, kind }: Props) => {
         closeDialog();
 
         if (kind == 'video' || kind == 'short') {
-          updateInfiniteCache<VideoDisplayResponse>(videoGetDisplay, imported as VideoDisplayResponse, 'create');
+          updateInfiniteCache<VideoDisplayResponse>(videoGetDisplays, imported as VideoDisplayResponse, 'create');
         } else {
-          updateInfiniteCache<PlaylistDisplayResponse>(playlistGetDisplay, imported as PlaylistDisplayResponse, 'create');
+          updateInfiniteCache<PlaylistDisplayResponse>(playlistGetDisplays, imported as PlaylistDisplayResponse, 'create');
         }
       })
       .catch((error) => setError('root.server', error.body));

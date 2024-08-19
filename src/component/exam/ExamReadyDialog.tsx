@@ -1,4 +1,4 @@
-import { ExamAssessReadyRequest, ExamDisplayResponse, examGetDisplay, examReadyAssess } from '@/api';
+import { ExamAssessReadyRequest, ExamDisplayResponse, examGetDisplays, examReadyAssess } from '@/api';
 import { BaseDialog, CheckboxControl, Form, GradientCircularProgress, updateInfiniteCache } from '@/component/common';
 import i18next from '@/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -51,7 +51,7 @@ const ExamReadyDialog = ({ open, setOpen, exam }: Props) => {
       requestBody: data,
     })
       .then(async (updated) => {
-        updateInfiniteCache<ExamDisplayResponse>(examGetDisplay, updated, 'update');
+        updateInfiniteCache<ExamDisplayResponse>(examGetDisplays, updated, 'update');
         // Attention before starting the exam!!!
         await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate(`/exam/${exam.id}/assess`);

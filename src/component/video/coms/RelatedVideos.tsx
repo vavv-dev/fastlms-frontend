@@ -1,4 +1,4 @@
-import { VideoGetViewData, VideoGetViewResponse, videoGetDisplay, videoGetView } from '@/api';
+import { VideoGetViewData, VideoGetViewResponse, videoGetDisplays, videoGetView } from '@/api';
 import { InfiniteScrollIndicator, useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { Box, Tab, Tabs } from '@mui/material';
 import { useRef, useState } from 'react';
@@ -19,7 +19,7 @@ const RelatedVideos = ({ videoId }: { videoId: string }) => {
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
   const { data, isLoading, isValidating } = useInfinitePagination({
     apiOptions: { tag: encodeURIComponent(tagName || `all:${videoId}`) },
-    apiService: videoGetDisplay,
+    apiService: videoGetDisplays,
     infiniteScrollRef,
   });
 

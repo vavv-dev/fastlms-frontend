@@ -4,7 +4,7 @@ import {
   QuizGetAssessData,
   quizDeleteAssess,
   quizGetAssess,
-  quizGetDisplay,
+  quizGetDisplays,
 } from '@/api';
 import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { formatDatetimeLocale } from '@/helper/util';
@@ -35,7 +35,7 @@ const QuizResult = ({ quizId }: { quizId: string }) => {
     quizDeleteAssess({ id: quiz.id }).then(() => {
       const cleaned = { ...quiz, submission: null, score: null, passed: null, status: null };
       mutate(cleaned, { revalidate: false });
-      updateInfiniteCache<QuizDisplayResponse>(quizGetDisplay, cleaned, 'update');
+      updateInfiniteCache<QuizDisplayResponse>(quizGetDisplays, cleaned, 'update');
     });
   };
 

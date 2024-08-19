@@ -120,9 +120,10 @@ export function parseJwt(token: string) {
  * @returns string
  */
 export function humanNumber(
-  num: number,
+  num: number | null | undefined,
   t: (key: string, options?: { count?: number; unit?: string; ns?: string }) => string,
 ): string {
+  if (num == null || num == undefined) return '0';
   const digits = 1;
   const lookup = [
     { value: 1e8, unit: 'hm' },
@@ -241,4 +242,42 @@ export const toFixedHuman = (num: number | null | undefined, decimalPlaces: numb
     return '';
   }
   return parseFloat(num.toFixed(decimalPlaces)).toString();
+};
+
+/**
+ * Format a number as a human-readable string
+ * @param num - The number to format
+ * @returns The formatted number string
+ */
+export const decodeURLText = (text: string | null | undefined): string => {
+  if (!text) return '';
+  const decodeIfValid = (str: string) => {
+    try {
+      return decodeURIComponent(str);
+    } catch (e) {
+      void e;
+      return str;
+    }
+  };
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text
+    .split(urlRegex)
+    .map((part) => {
+      if (part.match(urlRegex)) {
+        const decodedUrl = decodeIfValid(part);
+        return ` <a href="${decodedUrl}" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">${decodedUrl}</a> `;
+      }
+      return part;
+    })
+    .join('');
+};
+
+/**
+ * @param html - The html string to strip
+ * @returns The stripped html string
+ */
+export const stripHtml = (html: string | null | undefined): string => {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
 };

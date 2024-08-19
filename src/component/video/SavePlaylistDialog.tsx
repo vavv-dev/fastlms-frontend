@@ -1,4 +1,11 @@
-import { Body_PlaylistUpdateResource, playlistCreateResource, PlaylistResourceResponse, playlistGetDisplay, playlistGetResource, playlistUpdateResource } from '@/api';
+import {
+  Body_PlaylistUpdateResource,
+  PlaylistResourceResponse,
+  playlistCreateResource,
+  playlistGetDisplays,
+  playlistGetResource,
+  playlistUpdateResource,
+} from '@/api';
 import { SaveResourceDialog } from '@/component/common';
 import i18next from '@/i18n';
 import { useTranslation } from 'react-i18next';
@@ -62,12 +69,11 @@ const SavePlaylistDialog = ({ open, setOpen, playlistId }: Props) => {
       resourceId={playlistId}
       fieldSchema={playlistSchema}
       retrieveService={playlistGetResource}
-      listService={playlistGetDisplay}
-      createService={playlistCreateResource as any}  // eslint-disable-line
+      listService={playlistGetDisplays}
+      createService={playlistCreateResource as any} // eslint-disable-line
       partialUpdateService={playlistUpdateResource}
     />
   );
 };
 
 export default SavePlaylistDialog;
-

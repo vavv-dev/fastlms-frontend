@@ -1,3 +1,4 @@
+import SurveyViewDialog from './SurveyViewDialog';
 import UserSurvey from './UserSurvey';
 
-export { UserSurvey };
+export { SurveyViewDialog, UserSurvey };

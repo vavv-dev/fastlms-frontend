@@ -3,7 +3,7 @@ import {
   QuizDisplayResponse,
   QuizGetAssessData,
   quizGetAssess,
-  quizGetDisplay,
+  quizGetDisplays,
   quizSubmitAssess,
 } from '@/api';
 import { Form, SelectGroupControl, TextFieldControl, updateInfiniteCache, useServiceImmutable } from '@/component/common';
@@ -81,7 +81,7 @@ const QuizForm = ({ quizId }: { quizId: string }) => {
     })
       .then(async (updated: QuizAssessResponse) => {
         await mutate(updated, { revalidate: false });
-        updateInfiniteCache<QuizDisplayResponse>(quizGetDisplay, updated, 'update');
+        updateInfiniteCache<QuizDisplayResponse>(quizGetDisplays, updated, 'update');
       })
       .catch((error) => {
         setError('root.server', error.body);

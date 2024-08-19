@@ -22,6 +22,7 @@ import { useServiceImmutable } from './hooks';
 interface Props<T extends { id: string | number }> {
   service: (params: object) => Promise<T[]>;
   labelField: string;
+  groupField?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   placeholder: string;
@@ -34,6 +35,7 @@ interface Props<T extends { id: string | number }> {
 const AutocompleteSelect2 = <T extends { id: string | number }>({
   service,
   labelField,
+  groupField,
   open,
   setOpen,
   placeholder,
@@ -113,6 +115,7 @@ const AutocompleteSelect2 = <T extends { id: string | number }>({
             PaperComponent={CustomPaper}
             PopperComponent={CustomPopper}
             sx={{ flexGrow: 1, overflow: 'hidden', '& .MuiChip-root ': { maxWidth: '40%' } }}
+            groupBy={groupField ? (option) => option[groupField as keyof T] as string : undefined}
           />
           <Tooltip title={t('Add')} arrow>
             <span>

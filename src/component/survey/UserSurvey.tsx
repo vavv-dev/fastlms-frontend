@@ -1,4 +1,4 @@
-import { SurveyDisplayResponse, SurveyGetDisplayData, surveyGetDisplay } from '@/api';
+import { SurveyDisplayResponse, SurveyGetDisplaysData, surveyGetDisplays } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
 import { useTranslation } from 'react-i18next';
 import SaveSurveyDialog from './SaveSurveyDialog';
@@ -9,7 +9,7 @@ const UserSurvey = () => {
   const sharedItemTabKey = 'bookmarker';
 
   return (
-    <GridInfiniteScrollPage<SurveyDisplayResponse, SurveyGetDisplayData>
+    <GridInfiniteScrollPage<SurveyDisplayResponse, SurveyGetDisplaysData>
       pageKey="survey"
       tabConfig={{
         sharedItemTabKey,
@@ -21,7 +21,7 @@ const UserSurvey = () => {
         { value: 'submission_count', label: t('Submission count') },
       ]}
       CreateItemComponent={SaveSurveyDialog}
-      apiService={surveyGetDisplay}
+      apiService={surveyGetDisplays}
       renderItem={({ data, tab }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => <SurveyCard key={item.id} survey={item} hideAvatar={tab != sharedItemTabKey} />),

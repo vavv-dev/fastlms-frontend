@@ -1,6 +1,5 @@
-import { SurveyDisplayResponse, surveyDeleteResource, surveyGetDisplay, surveyToggleAction } from '@/api';
-import { DeleteResourceDialog, createToggleAction } from '@/component/common';
-import ResourceActionMenu from '@/component/common/ResourceActionMenu';
+import { SurveyDisplayResponse, surveyDeleteResource, surveyGetDisplays, surveyToggleAction } from '@/api';
+import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
 import { ListAltOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
@@ -11,14 +10,14 @@ import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import SaveSurveyDialog from './SaveSurveyDialog';
 import ReportDialog from './ReportDialog';
+import SaveSurveyDialog from './SaveSurveyDialog';
 
 interface Props {
   survey: SurveyDisplayResponse;
 }
 
-const toggleAction = createToggleAction<SurveyDisplayResponse>(surveyToggleAction, surveyGetDisplay);
+const toggleAction = createToggleAction<SurveyDisplayResponse>(surveyToggleAction, surveyGetDisplays);
 
 const SurveyActionMenu = ({ survey }: Props) => {
   const { t } = useTranslation('survey');
@@ -71,7 +70,7 @@ const SurveyActionMenu = ({ survey }: Props) => {
           setOpen={setDeleteSurveyDialogOpen}
           resourceId={survey.id}
           destroyService={surveyDeleteResource}
-          listService={surveyGetDisplay}
+          listService={surveyGetDisplays}
         />
       )}
       {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} survey={survey} />}

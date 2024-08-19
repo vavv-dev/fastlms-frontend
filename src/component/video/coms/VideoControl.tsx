@@ -2,7 +2,7 @@ import {
   VideoDisplayResponse,
   VideoGetViewData,
   VideoGetViewResponse,
-  videoGetDisplay,
+  videoGetDisplays,
   videoGetView,
   videoToggleAction,
 } from '@/api';
@@ -28,7 +28,7 @@ const VideoControl = ({ videoId }: { videoId: string }) => {
   const user = useAtomValue(userState);
   const { data: video } = useServiceImmutable<VideoGetViewData, VideoGetViewResponse>(videoGetView, { id: videoId });
   const [collapse, setCollapse] = useState(true);
-  const toggleAction = createToggleAction<VideoDisplayResponse>(videoToggleAction, videoGetDisplay);
+  const toggleAction = createToggleAction<VideoDisplayResponse>(videoToggleAction, videoGetDisplays);
 
   if (!video) return null;
 

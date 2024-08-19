@@ -13,6 +13,7 @@ import { UserComment } from '@/component/comment';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamView, UserExam, UserGrading } from '@/component/exam';
 import { BaseLayout } from '@/component/layout';
+import { UserContent, UserLesson } from '@/component/lesson';
 import { UserQuiz } from '@/component/quiz';
 import { UserSurvey } from '@/component/survey';
 import { PlaylistView, SearchBox, UserPlaylist, UserVideo, VideoSearchResult, VideoView } from '@/component/video';
@@ -52,10 +53,12 @@ const App = () => {
               <Route path="quiz" element={<UserQuiz />} />
               <Route path="survey" element={<UserSurvey />} />
               <Route path="exam" element={<UserExam />} />
+              <Route path="lesson" element={<UserLesson />} />
               <Route path="comment" element={<UserComment />} />
               <Route path="profile" element={<Profile />} />
               {/* hidden tabs */}
               <Route path="exam/grading" element={<UserGrading />} />
+              <Route path="lesson/content" element={<UserContent />} />
             </Route>
 
             {/* top level page with drawer */}

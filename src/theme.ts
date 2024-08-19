@@ -12,6 +12,7 @@ declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xs: true;
     sm: true;
+    smm: true;
     md: true;
     playerSplit: true;
     lg: true;
@@ -32,6 +33,7 @@ const themeConfig = (mode: 'light' | 'dark') => ({
     values: {
       xs: 0,
       sm: 600,
+      smm: 700,
       md: 900,
       playerSplit: 1000,
       lg: 1280,

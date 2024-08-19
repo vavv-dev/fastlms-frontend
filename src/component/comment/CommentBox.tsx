@@ -1,4 +1,4 @@
-import { CommentDisplayResponse, commentGetDisplay, commentToggleAction, commentUpdateResource } from '@/api';
+import { CommentDisplayResponse, commentGetDisplays, commentToggleAction, commentUpdateResource } from '@/api';
 import { WithAvatar, createToggleAction, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
 import { formatRelativeTime } from '@/helper/util';
 import { userState } from '@/store';
@@ -33,7 +33,7 @@ const CommentBox = ({ url, comment, setParentHover }: Props) => {
   const [showReplies, setShowReplies] = useState(true);
   const [hover, setHover] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
-  const toggleAction = createToggleAction<CommentDisplayResponse>(commentToggleAction, commentGetDisplay);
+  const toggleAction = createToggleAction<CommentDisplayResponse>(commentToggleAction, commentGetDisplays);
 
   const toggleSolved = () => {
     commentUpdateResource({
@@ -41,7 +41,7 @@ const CommentBox = ({ url, comment, setParentHover }: Props) => {
       requestBody: { solved: !comment.solved },
     }).then(() => {
       updateInfiniteCache<CommentDisplayResponse>(
-        commentGetDisplay,
+        commentGetDisplays,
         { ...comment, solved: !comment.solved },
         'update',
         'children',

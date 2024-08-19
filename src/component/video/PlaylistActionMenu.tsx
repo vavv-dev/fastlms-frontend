@@ -1,7 +1,7 @@
-import { PlaylistDisplayResponse, playlistDeleteResource, playlistGetDisplay, playlistToggleAction } from '@/api';
-import { DeleteResourceDialog, createToggleAction } from '@/component/common';
-import ResourceActionMenu from '@/component/common/ResourceActionMenu';
+import { PlaylistDisplayResponse, playlistDeleteResource, playlistGetDisplays, playlistToggleAction } from '@/api';
+import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
+import { ListAltOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import BookmarkRemoveOutlinedIcon from '@mui/icons-material/BookmarkRemoveOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -11,9 +11,8 @@ import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SavePlaylistDialog from './SavePlaylistDialog';
-import { ListAltOutlined } from '@mui/icons-material';
 
-const toggleAction = createToggleAction<PlaylistDisplayResponse>(playlistToggleAction, playlistGetDisplay);
+const toggleAction = createToggleAction<PlaylistDisplayResponse>(playlistToggleAction, playlistGetDisplays);
 
 const PlaylistActionMenu = ({ playlist }: { playlist: PlaylistDisplayResponse }) => {
   const { t } = useTranslation('video');
@@ -65,7 +64,7 @@ const PlaylistActionMenu = ({ playlist }: { playlist: PlaylistDisplayResponse })
           setOpen={setDeletePlaylistDialogOpen}
           resourceId={playlist.id}
           destroyService={playlistDeleteResource}
-          listService={playlistGetDisplay}
+          listService={playlistGetDisplays}
         />
       )}
     </>

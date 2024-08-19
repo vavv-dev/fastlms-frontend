@@ -13,8 +13,6 @@ const UserGrading = () => {
   const { t } = useTranslation('exam');
   const user = useAtomValue(userState);
   const homeUser = useAtomValue(homeUserState);
-  const [selectedGrading, setSelectedGrading] = useState<[string, number] | null>(null);
-  const [gradingDialogOpen, setGradingDialogOpen] = useState(false);
 
   // redirect 401
   if (!user || user.username !== homeUser?.username) return <Navigate to="/error/401" replace />;
@@ -46,25 +44,11 @@ const UserGrading = () => {
               <TableBody>
                 {data?.map((pagination) =>
                   pagination.items?.map((row, i) => (
-                    <TableRow
-                      onClick={() => {
-                        setSelectedGrading([row.exam.id, row.user.id]);
-                        setGradingDialogOpen(true);
-                      }}
+                    <ExamGradingRow
                       key={row.id}
-                      sx={{ '&:hover': { bgcolor: 'action.hover' }, cursor: 'pointer' }}
-                    >
-                      <TableCell align="center">{pagination.total - (pagination.page - 1) * pagination.size - i}</TableCell>
-                      <TableCell>
-                        <WithAvatar variant="small" {...row.user} />
-                      </TableCell>
-                      <TableCell>{row.exam.title}</TableCell>
-                      <TableCell>{t(row.exam.exam_kind)}</TableCell>
-                      <TableCell>{formatDatetimeLocale(row.end_time)}</TableCell>
-                      <TableCell>{toFixedHuman(row.score, 1)}</TableCell>
-                      <TableCell>{t(row.status || '')}</TableCell>
-                      <TableCell>{row.graded_time && formatDatetimeLocale(row.graded_time)}</TableCell>
-                    </TableRow>
+                      row={row}
+                      line={pagination.total - (pagination.page - 1) * pagination.size - i}
+                    />
                   )),
                 )}
               </TableBody>
@@ -73,16 +57,35 @@ const UserGrading = () => {
         )}
         gridBoxSx={{ gap: '1em 1em', gridTemplateColumns: '1fr' }}
       />
-      {selectedGrading && gradingDialogOpen && (
-        <GradingDialog
-          open={gradingDialogOpen}
-          setOpen={setGradingDialogOpen}
-          examId={selectedGrading[0]}
-          userId={selectedGrading[1]}
-        />
-      )}
     </>
   );
 };
 
 export default UserGrading;
+
+const ExamGradingRow = ({ row, line }: { row: ExamGradingSubmissionReponse; line: number }) => {
+  const { t } = useTranslation('exam');
+  const [gradingDialogOpen, setGradingDialogOpen] = useState(false);
+
+  return (
+    <TableRow
+      onClick={() => setGradingDialogOpen(true)}
+      key={row.id}
+      sx={{ '&:hover': { bgcolor: 'action.hover' }, cursor: 'pointer' }}
+    >
+      <TableCell align="center">{line}</TableCell>
+      <TableCell>
+        <WithAvatar variant="small" {...row.user} />
+      </TableCell>
+      <TableCell>{row.exam.title}</TableCell>
+      <TableCell>{t(row.exam.exam_kind)}</TableCell>
+      <TableCell>{formatDatetimeLocale(row.end_time)}</TableCell>
+      <TableCell>{toFixedHuman(row.score, 1)}</TableCell>
+      <TableCell>{t(row.status || '')}</TableCell>
+      <TableCell>{row.graded_time && formatDatetimeLocale(row.graded_time)}</TableCell>
+      {gradingDialogOpen && (
+        <GradingDialog open={gradingDialogOpen} setOpen={setGradingDialogOpen} examId={row.exam.id} userId={row.user.id} />
+      )}
+    </TableRow>
+  );
+};

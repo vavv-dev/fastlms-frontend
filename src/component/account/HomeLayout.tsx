@@ -20,6 +20,7 @@ const tabs: Array<Array<string>> = [
   [t('Quiz'), 'quiz'],
   [t('Survey'), 'survey'],
   [t('Exam'), 'exam'],
+  [t('Lesson'), 'lesson'],
   [t('Course'), 'course'],
   [t('Comment'), 'comment'],
   [t('Profile'), 'profile'],
@@ -85,7 +86,7 @@ const HomeLayout = () => {
           borderBottom: 1,
           borderColor: 'divider',
           position: 'sticky',
-          top: ((theme.mixins.toolbar.minHeight as number) || 0) - 80 - 36 * 2,
+          top: ((theme.mixins.toolbar.minHeight as number) || 0) - 80 - 36 * 1 - 10,
           zIndex: 4,
         }}
       >

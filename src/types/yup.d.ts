@@ -22,6 +22,7 @@ declare module 'yup' {
     grid?: number;
     options?: { label: string; value: string }[];
     accept?: string;
+    readOnly?: boolean;
   }
 
   interface SchemaRefDescription {

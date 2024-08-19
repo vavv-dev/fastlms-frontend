@@ -14,7 +14,7 @@ import { useRef, useState } from 'react';
 
 interface Props extends Omit<DialogProps, 'title'> {
   setOpen: (open: boolean) => void;
-  title: React.ReactNode;
+  title?: React.ReactNode;
   headerButtons?: React.ReactNode;
   renderContent: (ref: React.RefObject<HTMLDivElement>) => React.ReactNode;
   actions?: React.ReactNode;
@@ -50,21 +50,23 @@ const BaseDialog = ({
       {...props}
       open={open}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography component="span" variant="subtitle2" color="text.secondary">
-          {title}
-        </Typography>
-        <Box sx={{ flexGrow: 1 }} />
-        {headerButtons}
-        {maxWidth != false && maxWidth != ('sm' as DialogProps['maxWidth']) && (
-          <IconButton onClick={() => setForceFullWidth(!forceFullWidth)}>
-            {!forceFullWidth ? <FullscreenOutlined fontSize="small" /> : <FullscreenExitOutlined fontSize="small" />}
+      {title && (
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography component="span" variant="subtitle2" color="text.secondary">
+            {title}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          {headerButtons}
+          {maxWidth != false && maxWidth != ('sm' as DialogProps['maxWidth']) && (
+            <IconButton onClick={() => setForceFullWidth(!forceFullWidth)}>
+              {!forceFullWidth ? <FullscreenOutlined fontSize="small" /> : <FullscreenExitOutlined fontSize="small" />}
+            </IconButton>
+          )}
+          <IconButton onClick={() => setOpen(false)}>
+            <Close fontSize="small" />
           </IconButton>
-        )}
-        <IconButton onClick={() => setOpen(false)}>
-          <Close fontSize="small" />
-        </IconButton>
-      </DialogTitle>
+        </DialogTitle>
+      )}
       <DialogContent sx={{ minHeight: minHeight }}>{renderContent(ref)}</DialogContent>
       {actions && <DialogActions>{actions}</DialogActions>}
     </Dialog>

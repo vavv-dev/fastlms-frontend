@@ -3,7 +3,7 @@ import {
   ExamDisplayResponse,
   ExamGetAssessData,
   examGetAssess,
-  examGetDisplay,
+  examGetDisplays,
   examSubmitAssess,
 } from '@/api';
 import {
@@ -126,7 +126,7 @@ const ExamForm = ({ examId }: { examId: string }) => {
       .then(async (updated) => {
         // Attention exam end!!!
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        updateInfiniteCache<ExamDisplayResponse>(examGetDisplay, updated, 'update');
+        updateInfiniteCache<ExamDisplayResponse>(examGetDisplays, updated, 'update');
         await mutate(updated, { revalidate: false });
       })
       .catch((error) => {

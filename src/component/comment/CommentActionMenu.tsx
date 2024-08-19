@@ -2,7 +2,7 @@ import {
   CommentDisplayResponse,
   CommentGetThreadData,
   ThreadResponse,
-  commentGetDisplay,
+  commentGetDisplays,
   commentGetThread,
   commentToggleAction,
   commentUpdateResource,
@@ -34,7 +34,7 @@ const CommentActionMenu = ({ url, comment, onEdit }: Props) => {
     }).then(() => {
       const isPin = field === 'pinned' && !comment[field];
       updateInfiniteCache<CommentDisplayResponse>(
-        commentGetDisplay,
+        commentGetDisplays,
         { ...comment, [field]: !comment[field] },
         'update',
         'children',
@@ -46,7 +46,7 @@ const CommentActionMenu = ({ url, comment, onEdit }: Props) => {
   const toggleFlag = () => {
     commentToggleAction({ id: comment.id, action: 'flag' }).then(() => {
       updateInfiniteCache<CommentDisplayResponse>(
-        commentGetDisplay,
+        commentGetDisplays,
         { ...comment, flagged: !comment.flagged, flag_count: comment.flag_count + (comment.flagged ? -1 : 1) },
         'update',
         'children',

@@ -394,6 +394,7 @@ interface ISelectControlProps extends FormControlProps {
   defaultValue?: string;
   disabled?: boolean;
   disableUnderline?: boolean;
+  readOnly?: boolean;
 }
 
 export const SelectControl = ({
@@ -419,7 +420,7 @@ export const SelectControl = ({
       render={({ field: { ...field }, fieldState: { error } }) => (
         <FormControl variant={variant} margin={props.margin || 'dense'}>
           {label && <InputLabel required={required}>{label}</InputLabel>}
-          <Select disableUnderline={disableUnderline} disabled={disabled} {...field}>
+          <Select disableUnderline={disableUnderline} disabled={disabled} inputProps={{ readOnly: props.readOnly }} {...field}>
             {options?.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}

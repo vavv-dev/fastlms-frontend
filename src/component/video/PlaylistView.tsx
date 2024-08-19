@@ -1,14 +1,14 @@
 import {
   PlaylistGetViewData,
   PlaylistViewResponse,
-  VideoGetDisplayData,
-  VideoGetDisplayResponse,
-  VideoSelectResponse,
+  VideoGetDisplaysData,
+  VideoGetDisplaysResponse,
+  VideoSelectorResponse,
   playlistGetView,
   playlistResumePlaylist,
-  videoAutocomplete,
-  videoGetDisplay,
-  videoUpdatePlaylistVideos,
+  playlistUpdatePlaylistVideos,
+  videoGetDisplays,
+  videoVideoSelector,
 } from '@/api';
 import { AutocompleteSelect2, WithAvatar, useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { formatDuration, generateRandomDarkColor } from '@/helper/util';
@@ -48,9 +48,9 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
     playlistGetView,
     { id: playlistId },
   );
-  const { data: videoPages, mutate: videoPagesMutate } = useInfinitePagination<VideoGetDisplayData, VideoGetDisplayResponse>({
+  const { data: videoPages, mutate: videoPagesMutate } = useInfinitePagination<VideoGetDisplaysData, VideoGetDisplaysResponse>({
     apiOptions: { playlistId },
-    apiService: videoGetDisplay,
+    apiService: videoGetDisplays,
   });
   const [videoSelectOpen, setVideoSelectOpen] = useState(false);
 
@@ -67,9 +67,9 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
     videoPagesMutate();
   };
 
-  const addVideos = (selected: Array<VideoSelectResponse>) => {
+  const addVideos = (selected: Array<VideoSelectorResponse>) => {
     if (!playlist) return;
-    videoUpdatePlaylistVideos({
+    playlistUpdatePlaylistVideos({
       requestBody: {
         videos: selected.map((v, i) => ({
           playlist_id: playlistId,
@@ -221,8 +221,8 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
         )}
       </Box>
       {videoSelectOpen && (
-        <AutocompleteSelect2<VideoSelectResponse>
-          service={videoAutocomplete}
+        <AutocompleteSelect2<VideoSelectorResponse>
+          service={videoVideoSelector}
           labelField="title"
           open={videoSelectOpen}
           setOpen={setVideoSelectOpen}

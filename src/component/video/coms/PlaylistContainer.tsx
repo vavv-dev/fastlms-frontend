@@ -1,10 +1,10 @@
 import {
   VideoDisplayResponse,
-  VideoGetDisplayData,
-  VideoGetDisplayResponse,
+  VideoGetDisplaysData,
+  VideoGetDisplaysResponse,
   playlistGetView,
-  videoGetDisplay,
-  videoUpdatePlaylistVideos,
+  playlistUpdatePlaylistVideos,
+  videoGetDisplays,
 } from '@/api';
 import { InfiniteScrollIndicator, useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { formatDuration, textEllipsisCss, toFixedHuman } from '@/helper/util';
@@ -22,11 +22,11 @@ import VideoCard from '../VideoCard';
 
 interface IProps {
   playlistId: string;
-  embed?: boolean;
+  sidebar?: boolean;
   sx?: BoxProps['sx'];
 }
 
-const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
+const PlaylistContainer = ({ playlistId, sidebar, sx, ...props }: IProps) => {
   const { t } = useTranslation('video');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -41,9 +41,9 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
   const [videos, setVideos] = useState<VideoDisplayResponse[]>([]);
   const [order, setOrder] = useState<string[]>([]);
   const { data: playlist } = useServiceImmutable(playlistGetView, { id: playlistId });
-  const { data, isLoading, isValidating } = useInfinitePagination<VideoGetDisplayData, VideoGetDisplayResponse>({
+  const { data, isLoading, isValidating } = useInfinitePagination<VideoGetDisplaysData, VideoGetDisplaysResponse>({
     apiOptions: { playlistId },
-    apiService: videoGetDisplay,
+    apiService: videoGetDisplays,
     infiniteScrollRef,
   });
 
@@ -59,7 +59,7 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
     const videoId = order[oldIndex];
     setOrder(newIndex === -1 ? arrayRemove(order, oldIndex) : arrayMove(order, oldIndex, newIndex));
 
-    videoUpdatePlaylistVideos({
+    playlistUpdatePlaylistVideos({
       requestBody: {
         videos: [
           {
@@ -98,11 +98,11 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
   return (
     <Box
       sx={{
-        flexGrow: embed? 0 : 1,
+        flexGrow: sidebar ? 0 : 1,
         display: 'flex',
         flexDirection: 'column',
         maxHeight: 'auto',
-        ...(embed && {
+        ...(sidebar && {
           borderRadius: theme.shape.borderRadius / 2,
           border: `1px solid ${theme.palette.divider}`,
           overflow: 'hidden',
@@ -111,7 +111,7 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
       }}
       {...props}
     >
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', ...(embed ? { px: '1em', py: '.5em' } : { p: '1em', pt: 0 }) }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', ...(sidebar ? { px: '1em', py: '.5em' } : { p: '1em', pt: 0 }) }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
           <Box
             onClick={goToPlaylist}
@@ -119,7 +119,7 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
               textDecoration: 'none',
               color: 'inherit',
               fontSize: '1.2em',
-              cursor: embed ? 'pointer' : 'default',
+              cursor: sidebar ? 'pointer' : 'default',
               minHeight: '34px',
               ...textEllipsisCss(1),
             }}
@@ -161,7 +161,7 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
             return (
               <Box sx={{ display: 'flex', flexDirection: 'column', py: '4px', maxHeight: '100%' }} {...props}>
                 {children}
-                <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} small={embed} />
+                <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} small={sidebar} />
               </Box>
             );
           }}
@@ -175,7 +175,7 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
                   ref={active ? activeVideoRef : undefined}
                   sx={{
                     display: 'flex',
-                    py: embed ? '.2em' : '.3em',
+                    py: sidebar ? '.2em' : '.3em',
                     ...((isDragged || isSelected) && {
                       bgcolor: theme.palette.action.hover,
                       zIndex: theme.zIndex.tooltip + 1,
@@ -203,7 +203,7 @@ const PlaylistContainer = ({ playlistId, embed, sx, ...props }: IProps) => {
                       hideAvatar
                     />
 
-                    {!embed && user && user.username === playlist.owner.username ? (
+                    {!sidebar && user && user.username === playlist.owner.username ? (
                       <Box
                         data-movable-handle
                         tabIndex={-1}

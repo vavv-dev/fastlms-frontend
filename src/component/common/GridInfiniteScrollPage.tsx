@@ -138,7 +138,7 @@ const GridInfiteScrollPage = <Item, Params extends { orderBy?: string }>({
           </Box>
 
           {CreateItemComponent && isOwner && tab === 'owner' && (
-            <Box sx={{ position: 'relative' }}>
+            <Box className="create-resource-button" sx={{ position: 'relative' }}>
               <Button
                 onClick={() => setCreateItemDialogOpen(true)}
                 sx={{

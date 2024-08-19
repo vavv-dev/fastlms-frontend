@@ -8,6 +8,26 @@ export type Body_AccountUpdateMe = {
     thumbnail?: (Blob | File) | null;
 };
 
+export type Body_ContentCreateResource = {
+    title: string;
+    is_public: boolean;
+    featured: boolean;
+    index_page: string;
+    duration: number;
+    passing_percent: number;
+    thumbnail?: (Blob | File) | string | null;
+};
+
+export type Body_ContentUpdateResource = {
+    title?: string;
+    is_public?: boolean;
+    featured?: boolean;
+    index_page?: string;
+    duration?: number;
+    passing_percent?: number;
+    thumbnail?: (Blob | File) | string | null;
+};
+
 export type Body_PlaylistCreateResource = {
     thumbnail?: (Blob | File) | string | null;
     title: string;
@@ -99,6 +119,63 @@ export type CommentUpdateRequest = {
     solved?: boolean;
     pinned?: boolean;
     deleted?: boolean | null;
+};
+
+export type ContentDisplayResponse = {
+    id: string;
+    title: string;
+    is_public: boolean;
+    featured: boolean;
+    modified: string;
+    duration: number;
+    passing_percent: number;
+    thumbnail: string;
+    uploaded: boolean;
+    owner: ContentOwner;
+};
+
+export type ContentOwner = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
+export type ContentResourceResponse = {
+    id: string;
+    title: string;
+    is_public: boolean;
+    featured: boolean;
+    duration: number;
+    passing_percent: number;
+    index_page: string;
+    modified: string;
+    uploaded: boolean;
+    thumbnail: (Blob | File) | string;
+    owner: ContentOwner;
+};
+
+export type ContentResourceUpdateRequest = {
+    title?: string | null;
+    is_public?: boolean | null;
+    featured?: boolean | null;
+    index_page?: string | null;
+    duration?: number | null;
+    passing_percent?: number | null;
+    uploaded?: boolean | null;
+};
+
+export type ContentViewResponse = {
+    id: string;
+    title: string;
+    is_public: boolean;
+    featured: boolean;
+    modified: string;
+    duration: number;
+    passing_percent: number;
+    thumbnail: string;
+    uploaded: boolean;
+    owner: ContentOwner;
 };
 
 export type ExamAsseccQuestion = {
@@ -378,10 +455,103 @@ export type ImportYoutubeRequest = {
     youtube_id: string;
 };
 
-export type LearningResourceKind = 'video' | 'short' | 'quiz' | 'survey' | 'exam' | 'course' | 'group' | 'post';
+export type LearningResourceKind = 'video' | 'short' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course' | 'group' | 'post' | 'content';
+
+export type LessonDisplayResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: LessonOwner;
+    resources: Array<LessonResource>;
+    progress: number | null;
+    passed: boolean | null;
+    modified: string;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+};
+
+export type LessonOwner = {
+    id: number;
+    username: string;
+    name: string;
+    thumbnail: string;
+};
+
+export type LessonResource = {
+    kind: 'video' | 'quiz' | 'survey' | 'exam' | 'content';
+    id: string;
+    title: string;
+};
+
+export type kind = 'video' | 'quiz' | 'survey' | 'exam' | 'content';
+
+export type LessonResourceCreateRequest = {
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    resources: Array<LessonResource>;
+};
+
+export type LessonResourceResponse = {
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    resources: Array<LessonResource>;
+    id: string;
+    owner: LessonOwner;
+};
+
+export type LessonResourceSelectorResponse = {
+    kind: 'quiz' | 'survey' | 'video' | 'exam' | 'content';
+    id: string;
+    title: string;
+};
+
+export type LessonResourceUpdateRequest = {
+    title?: string;
+    description?: string;
+    is_public?: boolean;
+    featured?: boolean;
+    resources?: Array<LessonResource>;
+};
+
+export type LessonViewResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: LessonOwner;
+    resources: Array<LessonResource>;
+    progress: number | null;
+    passed: boolean | null;
+    modified: string;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+};
 
 export type Paginated_CommentDisplayResponse_ = {
     items: Array<CommentDisplayResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_ContentDisplayResponse_ = {
+    items: Array<ContentDisplayResponse>;
     total: number;
     page: number;
     size: number;
@@ -406,6 +576,14 @@ export type Paginated_ExamGradingSubmissionReponse_ = {
 
 export type Paginated_ExamReportResponse_ = {
     items: Array<ExamReportResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_LessonDisplayResponse_ = {
+    items: Array<LessonDisplayResponse>;
     total: number;
     page: number;
     size: number;
@@ -470,14 +648,6 @@ export type Paginated_VideoDisplayResponse_ = {
 
 export type Paginated_VideoReportResponse_ = {
     items: Array<VideoReportResponse>;
-    total: number;
-    page: number;
-    size: number;
-    pages: number;
-};
-
-export type Paginated_VideoSearchResultResponse_ = {
-    items: Array<VideoSearchResultResponse>;
     total: number;
     page: number;
     size: number;
@@ -1045,39 +1215,7 @@ export type VideoResourceResponse = {
     thumbnail: (Blob | File) | string;
 };
 
-export type VideoSearchResultResponse = {
-    id: string;
-    title: string;
-    description: string;
-    is_public: boolean;
-    featured: boolean;
-    owner: VideoOwner;
-    thumbnail: string;
-    uploader: string;
-    duration: number | null;
-    passing_percent: number;
-    watch_count: number;
-    bookmark_count: number;
-    like_count: number;
-    flag_count: number;
-    progress: number | null;
-    passed: boolean | null;
-    modified: string;
-    is_live: boolean;
-    video_kind?: VideoKind | null;
-    bookmarked: boolean;
-    liked: boolean;
-    flagged: boolean;
-    relevance: number;
-    found_subtitles?: Array<VideoSearchSubtitle>;
-};
-
-export type VideoSearchSubtitle = {
-    start: string;
-    text: string;
-};
-
-export type VideoSelectResponse = {
+export type VideoSelectorResponse = {
     id: string;
     title: string;
     thumbnail: string;
@@ -1085,7 +1223,7 @@ export type VideoSelectResponse = {
 
 export type VideoSubtitleResponse = {
     lang: string;
-    content: string;
+    lines: string;
 };
 
 export type VideoViewResponse = {
@@ -1227,7 +1365,7 @@ export type CommentCreateThreadData = {
 
 export type CommentCreateThreadResponse = ThreadResponse;
 
-export type CommentGetDisplayData = {
+export type CommentGetDisplaysData = {
     accessToken?: string | null;
     orderBy?: 'created' | 'like_count';
     page?: number;
@@ -1237,7 +1375,7 @@ export type CommentGetDisplayData = {
     threadId?: number | null;
 };
 
-export type CommentGetDisplayResponse = Paginated_CommentDisplayResponse_;
+export type CommentGetDisplaysResponse = Paginated_CommentDisplayResponse_;
 
 export type CommentCreateResourceData = {
     accessToken?: string | null;
@@ -1265,7 +1403,7 @@ export type CommentToggleActionData = {
 
 export type CommentToggleActionResponse = unknown;
 
-export type VideoGetDisplayData = {
+export type VideoGetDisplaysData = {
     accessToken?: string | null;
     bookmarker?: number | null;
     orderBy?: 'watched_at' | 'title' | 'modified';
@@ -1279,7 +1417,7 @@ export type VideoGetDisplayData = {
     videoKind?: VideoKind | null;
 };
 
-export type VideoGetDisplayResponse = Paginated_VideoDisplayResponse_;
+export type VideoGetDisplaysResponse = Paginated_VideoDisplayResponse_;
 
 export type VideoImportYoutubeVideoData = {
     accessToken?: string | null;
@@ -1288,21 +1426,6 @@ export type VideoImportYoutubeVideoData = {
 };
 
 export type VideoImportYoutubeVideoResponse = VideoDisplayResponse;
-
-export type VideoUpdatePlaylistVideosData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
-    requestBody: PlaylistVideoRequest;
-};
-
-export type VideoUpdatePlaylistVideosResponse = unknown;
-
-export type VideoAutocompleteData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
-};
-
-export type VideoAutocompleteResponse = Array<VideoSelectResponse>;
 
 export type VideoGetViewData = {
     accessToken?: string | null;
@@ -1414,7 +1537,14 @@ export type VideoToggleActionData = {
 
 export type VideoToggleActionResponse = unknown;
 
-export type PlaylistGetDisplayData = {
+export type VideoVideoSelectorData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+};
+
+export type VideoVideoSelectorResponse = Array<VideoSelectorResponse>;
+
+export type PlaylistGetDisplaysData = {
     accessToken?: string | null;
     bookmarker?: number | null;
     orderBy?: 'title' | 'modified';
@@ -1425,7 +1555,7 @@ export type PlaylistGetDisplayData = {
     size?: number;
 };
 
-export type PlaylistGetDisplayResponse = Paginated_PlaylistDisplayResponse_;
+export type PlaylistGetDisplaysResponse = Paginated_PlaylistDisplayResponse_;
 
 export type PlaylistImportYoutubePlaylistData = {
     accessToken?: string | null;
@@ -1434,6 +1564,14 @@ export type PlaylistImportYoutubePlaylistData = {
 };
 
 export type PlaylistImportYoutubePlaylistResponse = PlaylistDisplayResponse;
+
+export type PlaylistUpdatePlaylistVideosData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    requestBody: PlaylistVideoRequest;
+};
+
+export type PlaylistUpdatePlaylistVideosResponse = unknown;
 
 export type PlaylistGetViewData = {
     accessToken?: string | null;
@@ -1493,7 +1631,7 @@ export type PlaylistToggleActionData = {
 
 export type PlaylistToggleActionResponse = unknown;
 
-export type QuizGetDisplayData = {
+export type QuizGetDisplaysData = {
     accessToken?: string | null;
     bookmarker?: number | null;
     orderBy?: 'created' | 'submission_count';
@@ -1504,7 +1642,7 @@ export type QuizGetDisplayData = {
     size?: number;
 };
 
-export type QuizGetDisplayResponse = Paginated_QuizDisplayResponse_;
+export type QuizGetDisplaysResponse = Paginated_QuizDisplayResponse_;
 
 export type QuizGetResourceData = {
     accessToken?: string | null;
@@ -1614,7 +1752,7 @@ export type QuizGetOwnedQuestionsData = {
 
 export type QuizGetOwnedQuestionsResponse = Array<QuizResourceQuestionResource>;
 
-export type SurveyGetDisplayData = {
+export type SurveyGetDisplaysData = {
     accessToken?: string | null;
     bookmarker?: number | null;
     orderBy?: 'created' | 'submission_count';
@@ -1625,7 +1763,7 @@ export type SurveyGetDisplayData = {
     size?: number;
 };
 
-export type SurveyGetDisplayResponse = Paginated_SurveyDisplayResponse_;
+export type SurveyGetDisplaysResponse = Paginated_SurveyDisplayResponse_;
 
 export type SurveyGetResourceData = {
     accessToken?: string | null;
@@ -1735,7 +1873,7 @@ export type SurveyGetOwnedQuestionsData = {
 
 export type SurveyGetOwnedQuestionsResponse = Array<SurveyResourceQuestionResource>;
 
-export type ExamGetDisplayData = {
+export type ExamGetDisplaysData = {
     accessToken?: string | null;
     bookmarker?: number | null;
     orderBy?: 'created' | 'submission_count';
@@ -1746,7 +1884,7 @@ export type ExamGetDisplayData = {
     size?: number;
 };
 
-export type ExamGetDisplayResponse = Paginated_ExamDisplayResponse_;
+export type ExamGetDisplaysResponse = Paginated_ExamDisplayResponse_;
 
 export type ExamGetResourceData = {
     accessToken?: string | null;
@@ -1896,16 +2034,155 @@ export type ExamGetOwnedQuestionsData = {
 
 export type ExamGetOwnedQuestionsResponse = Array<ExamResourceQuestionResource>;
 
-export type SearchSearchVideoContentData = {
+export type LessonGetDisplaysData = {
     accessToken?: string | null;
-    orderBy?: 'modified' | 'title' | 'relevance';
+    bookmarker?: number | null;
+    orderBy?: 'title' | 'modified';
+    owner?: number | null;
     page?: number;
-    q: string;
     refreshToken?: string | null;
+    search?: string | null;
     size?: number;
 };
 
-export type SearchSearchVideoContentResponse = Paginated_VideoSearchResultResponse_;
+export type LessonGetDisplaysResponse = Paginated_LessonDisplayResponse_;
+
+export type LessonGetViewData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type LessonGetViewResponse = LessonViewResponse;
+
+export type LessonGetResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type LessonGetResourceResponse = LessonResourceResponse;
+
+export type LessonUpdateResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+    requestBody: LessonResourceUpdateRequest;
+};
+
+export type LessonUpdateResourceResponse = LessonResourceResponse;
+
+export type LessonDeleteResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type LessonDeleteResourceResponse = unknown;
+
+export type LessonCreateResourceData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    requestBody: LessonResourceCreateRequest;
+};
+
+export type LessonCreateResourceResponse = LessonResourceResponse;
+
+export type LessonToggleActionData = {
+    accessToken?: string | null;
+    action: 'bookmark' | 'like' | 'flag';
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type LessonToggleActionResponse = unknown;
+
+export type LessonResourceSelectorData = {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+};
+
+export type LessonResourceSelectorResponse2 = Array<LessonResourceSelectorResponse>;
+
+export type ContentGetDisplaysData = {
+    accessToken?: string | null;
+    orderBy?: 'title' | 'modified';
+    owner?: number | null;
+    page?: number;
+    refreshToken?: string | null;
+    search?: string | null;
+    size?: number;
+};
+
+export type ContentGetDisplaysResponse = Paginated_ContentDisplayResponse_;
+
+export type ContentGetViewData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type ContentGetViewResponse = ContentViewResponse;
+
+export type ContentGetResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type ContentGetResourceResponse = ContentResourceResponse;
+
+export type ContentUpdateResourceData = {
+    accessToken?: string | null;
+    formData?: Body_ContentUpdateResource;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type ContentUpdateResourceResponse = ContentResourceResponse;
+
+export type ContentDeleteResourceData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type ContentDeleteResourceResponse = unknown;
+
+export type ContentCreateResourceData = {
+    accessToken?: string | null;
+    formData: Body_ContentCreateResource;
+    refreshToken?: string | null;
+};
+
+export type ContentCreateResourceResponse = ContentResourceResponse;
+
+export type ContentUpdateResource2Data = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+    requestBody: ContentResourceUpdateRequest;
+};
+
+export type ContentUpdateResource2Response = ContentResourceResponse;
+
+export type ContentPresignedUploadUrlData = {
+    accessToken?: string | null;
+    contentId: string;
+    contentType: string;
+    filename: string;
+    refreshToken?: string | null;
+};
+
+export type ContentPresignedUploadUrlResponse = string;
+
+export type ContentContentIframeData = {
+    accessToken?: string | null;
+    id: string;
+    refreshToken?: string | null;
+};
+
+export type ContentContentIframeResponse = string;
 
 export type SearchSuggestVideoKeywordsData = {
     accessToken?: string | null;
@@ -1914,1268 +2191,3 @@ export type SearchSuggestVideoKeywordsData = {
 };
 
 export type SearchSuggestVideoKeywordsResponse = Array<(string)>;
-
-export type $OpenApiTs = {
-    '/api/v2/account/user': {
-        post: {
-            req: PublicCreateUserData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/account/user/verifyemail': {
-        get: {
-            req: PublicVerifyEmailData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        post: {
-            req: PublicResendVerificationEmailData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/account/login': {
-        post: {
-            req: PublicLoginData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: AccountLogoutData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/account/password/reset': {
-        post: {
-            req: PublicPasswordResetData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: PublicPasswordResetConfirmData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/account/user/me': {
-        get: {
-            req: AccountGetMeData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: AccountUpdateMeData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/account/user/{id}': {
-        get: {
-            req: AccountGetUserData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/account/user/{username}/': {
-        get: {
-            req: AccountGetUserByUsernameData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: UserResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/comment/thread/{url}': {
-        get: {
-            req: CommentGetThreadData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ThreadResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/comment/thread': {
-        get: {
-            req: CommentGetThreadsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_ThreadResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        post: {
-            req: CommentCreateThreadData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ThreadResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/comment/comment/display': {
-        get: {
-            req: CommentGetDisplayData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_CommentDisplayResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/comment/comment': {
-        post: {
-            req: CommentCreateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: CommentResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/comment/comment/{id}': {
-        patch: {
-            req: CommentUpdateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: CommentResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/comment/comment/{id}/{action}': {
-        patch: {
-            req: CommentToggleActionData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/display': {
-        get: {
-            req: VideoGetDisplayData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_VideoDisplayResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/import/youtubevideo': {
-        post: {
-            req: VideoImportYoutubeVideoData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: VideoDisplayResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/video': {
-        patch: {
-            req: VideoUpdatePlaylistVideosData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/autocomplete': {
-        get: {
-            req: VideoAutocompleteData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<VideoSelectResponse>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}/view': {
-        get: {
-            req: VideoGetViewData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: VideoViewResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}/subtitles': {
-        get: {
-            req: VideoGetSubtitlesData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<VideoSubtitleResponse>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}': {
-        get: {
-            req: VideoGetResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: VideoResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: VideoUpdateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: VideoResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: VideoDeleteResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}/watch': {
-        get: {
-            req: VideoGetWatchBitmapData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: (Blob | File);
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        post: {
-            req: VideoStartWatchData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: VideoUpdateWatchData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: VideoEndWatchData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}/report': {
-        get: {
-            req: VideoGetVideoReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_VideoReportResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}/report/download': {
-        get: {
-            req: VideoDownloadVideoReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: string;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/video/{id}/{action}': {
-        patch: {
-            req: VideoToggleActionData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/display': {
-        get: {
-            req: PlaylistGetDisplayData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_PlaylistDisplayResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/import/youtubeplaylist': {
-        post: {
-            req: PlaylistImportYoutubePlaylistData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: PlaylistDisplayResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/{id}/view': {
-        get: {
-            req: PlaylistGetViewData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: PlaylistViewResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/{id}/resume': {
-        get: {
-            req: PlaylistResumePlaylistData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: PlaylistResumeResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/{id}': {
-        get: {
-            req: PlaylistGetResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: PlaylistResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: PlaylistUpdateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: PlaylistResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: PlaylistDeleteResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist': {
-        post: {
-            req: PlaylistCreateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: PlaylistResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/video/playlist/{id}/{action}': {
-        patch: {
-            req: PlaylistToggleActionData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz/display': {
-        get: {
-            req: QuizGetDisplayData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_QuizDisplayResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz/{id}': {
-        get: {
-            req: QuizGetResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: QuizResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: QuizUpdateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: QuizResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: QuizDeleteResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz': {
-        post: {
-            req: QuizCreateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: QuizResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz/{id}/assess': {
-        get: {
-            req: QuizGetAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: QuizAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        post: {
-            req: QuizReadyAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: QuizAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: QuizSubmitAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: QuizAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: QuizDeleteAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz/{id}/report': {
-        get: {
-            req: QuizGetQuizReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_QuizReportResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz/{id}/report/download': {
-        get: {
-            req: QuizDownloadQuizReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: string;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/quiz/{id}/{action}': {
-        patch: {
-            req: QuizToggleActionData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/quiz/question/': {
-        get: {
-            req: QuizGetOwnedQuestionsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<QuizResourceQuestionResource>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey/display': {
-        get: {
-            req: SurveyGetDisplayData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_SurveyDisplayResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey/{id}': {
-        get: {
-            req: SurveyGetResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: SurveyResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: SurveyUpdateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: SurveyResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: SurveyDeleteResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey': {
-        post: {
-            req: SurveyCreateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: SurveyResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey/{id}/assess': {
-        get: {
-            req: SurveyGetAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: SurveyAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        post: {
-            req: SurveyReadyAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: SurveyAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: SurveySubmitAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: SurveyAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: SurveyDeleteAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey/{id}/report': {
-        get: {
-            req: SurveyGetSurveyReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_SurveyReportResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey/{id}/report/download': {
-        get: {
-            req: SurveyDownloadSurveyReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: string;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/survey/{id}/{action}': {
-        patch: {
-            req: SurveyToggleActionData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/survey/question/': {
-        get: {
-            req: SurveyGetOwnedQuestionsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<SurveyResourceQuestionResource>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/display': {
-        get: {
-            req: ExamGetDisplayData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_ExamDisplayResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/{id}': {
-        get: {
-            req: ExamGetResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: ExamUpdateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: ExamDeleteResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam': {
-        post: {
-            req: ExamCreateResourceData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamResourceResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/{id}/assess': {
-        get: {
-            req: ExamGetAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        post: {
-            req: ExamReadyAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        put: {
-            req: ExamStartAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: ExamSubmitAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        delete: {
-            req: ExamDeleteAssessData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/{id}/grading/{user_id}': {
-        get: {
-            req: ExamGetGradingData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-        patch: {
-            req: ExamSubmitGradingData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: ExamAssessResponse;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/{id}/report': {
-        get: {
-            req: ExamGetExamReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_ExamReportResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/{id}/report/download': {
-        get: {
-            req: ExamDownloadExamReportData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: string;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/submission': {
-        get: {
-            req: ExamGetGradingSubmissionsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_ExamGradingSubmissionReponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/exam/{id}/{action}': {
-        patch: {
-            req: ExamToggleActionData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: unknown;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/exam/question/': {
-        get: {
-            req: ExamGetOwnedQuestionsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<ExamResourceQuestionResource>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/search/videocontent': {
-        get: {
-            req: SearchSearchVideoContentData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Paginated_VideoSearchResultResponse_;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-    '/api/v2/search/videosuggestion': {
-        get: {
-            req: SearchSuggestVideoKeywordsData;
-            res: {
-                /**
-                 * Successful Response
-                 */
-                200: Array<(string)>;
-                /**
-                 * Validation Error
-                 */
-                422: HTTPValidationError;
-            };
-        };
-    };
-};

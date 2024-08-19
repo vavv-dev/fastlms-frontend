@@ -22,11 +22,13 @@ const ExamCard = ({ exam, hideAvatar }: Props) => {
   const [gradingNotificationOpen, setGradingNotificationOpen] = useState(false);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
 
+  console.log(exam.status);
+
   const onClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     switch (exam.status) {
-      case null:
+      case null || undefined:
         setReadyDialogOpen(true);
         break;
       case 'grading':

@@ -77,7 +77,6 @@ const Video = () => {
           {playlistId && (
             <PlaylistContainer
               playlistId={playlistId}
-              embed
               sx={{
                 maxHeight: playerHeight || '200px',
                 '& .card-banner': {
@@ -89,6 +88,7 @@ const Video = () => {
                 '& .card-content .MuiTypography-root': { mt: 0 },
                 '& .card-content .content-title': { ...textEllipsisCss(1) },
               }}
+              sidebar
             />
           )}
           <RelatedVideos videoId={video.id} />

@@ -1,4 +1,4 @@
-import { CommentGetThreadData, ThreadResponse, commentCreateThread, commentGetDisplay, commentGetThread } from '@/api';
+import { CommentGetThreadData, ThreadResponse, commentCreateThread, commentGetDisplays, commentGetThread } from '@/api';
 import { InfiniteScrollIndicator, useInfinitePagination } from '@/component/common';
 import { useServiceImmutable } from '@/component/common/hooks';
 import { Box, Typography, useTheme } from '@mui/material';
@@ -19,7 +19,7 @@ const CommentThread = ({ question, sticky, ...threadData }: ICommentThreadProps)
   } = useServiceImmutable<CommentGetThreadData, ThreadResponse>(commentGetThread, { url: threadData.url });
   const { data, isLoading, isValidating } = useInfinitePagination({
     apiOptions: { threadId: thread?.id },
-    apiService: commentGetDisplay,
+    apiService: commentGetDisplays,
     infiniteScrollRef,
   });
 
