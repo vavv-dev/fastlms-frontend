@@ -29,7 +29,7 @@ const schema: yup.ObjectSchema<PasswordResetConfirmRequest2> = yup.object({
     .default(''),
 });
 
-const PasswordResetConfirm = () => {
+export const PasswordResetConfirm = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -103,5 +103,3 @@ const PasswordResetConfirm = () => {
     </Container>
   );
 };
-
-export default PasswordResetConfirm;

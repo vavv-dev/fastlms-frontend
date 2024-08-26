@@ -1,9 +1,9 @@
 import {
-  QuizDisplayResponse,
-  QuizGetQuizReportData,
-  QuizReportResponse,
-  quizDownloadQuizReport,
-  quizGetQuizReport,
+  QuizDisplayResponse as DisplayResponse,
+  QuizGetQuizReportData as GetReportData,
+  QuizReportResponse as ReportResponse,
+  quizDownloadQuizReport as downloadReport,
+  quizGetQuizReport as getReport,
 } from '@/api';
 import { BaseDialog, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
 import { base64XlsxDownload, formatDatetimeLocale, toFixedHuman } from '@/helper/util';
@@ -11,29 +11,29 @@ import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, Ta
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface IProps {
-  quiz: QuizDisplayResponse;
+interface Props {
+  data: DisplayResponse;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-const ReportDialog = ({ open, setOpen, quiz }: IProps) => {
+export const ReportDialog = ({ open, setOpen, data }: Props) => {
   const { t } = useTranslation('quiz');
   const [asOf, setAsOf] = useState<string>('');
   const [upTo, setUpTo] = useState<string>('');
 
   const downlaodXlsxFile = async () => {
-    if (!quiz) return;
-    const text = await quizDownloadQuizReport({
-      id: quiz.id,
+    if (!data) return;
+    const text = await downloadReport({
+      id: data.id,
       asOf: String(new Date(asOf).getTime() || '') || null,
       upTo: String(new Date(upTo).getTime() || '') || null,
     });
-    const filename = `${quiz.title}.${asOf || 'all'}~${upTo || new Date().toISOString().slice(0, 16)}.xlsx`;
+    const filename = `${data.title}.${asOf || 'all'}~${upTo || new Date().toISOString().slice(0, 16)}.xlsx`;
     base64XlsxDownload(text, filename);
   };
 
-  if (!quiz) return null;
+  if (!data) return null;
 
   return (
     <BaseDialog
@@ -41,14 +41,14 @@ const ReportDialog = ({ open, setOpen, quiz }: IProps) => {
       open={open}
       setOpen={setOpen}
       maxWidth="md"
-      title={quiz.title}
+      title={data.title}
       actions={<Button onClick={downlaodXlsxFile}>{t('Download report')}</Button>}
       renderContent={() => (
-        <GridInfiniteScrollPage<QuizReportResponse, QuizGetQuizReportData>
+        <GridInfiniteScrollPage<ReportResponse, GetReportData>
           pageKey="answerlist"
-          apiService={quizGetQuizReport}
+          apiService={getReport}
           apiOptions={{
-            id: quiz.id,
+            id: data.id,
             asOf: String(new Date(asOf).getTime() || ''),
             upTo: String(new Date(upTo).getTime() || ''),
           }}
@@ -85,7 +85,7 @@ const ReportDialog = ({ open, setOpen, quiz }: IProps) => {
                   </TableHead>
                   <TableBody>
                     {data?.map((pagination, i) =>
-                      pagination.items?.map((submission: QuizReportResponse) => (
+                      pagination.items?.map((submission: ReportResponse) => (
                         <TableRow key={i}>
                           <TableCell>
                             <WithAvatar {...submission.user} variant="small" />
@@ -109,5 +109,3 @@ const ReportDialog = ({ open, setOpen, quiz }: IProps) => {
     />
   );
 };
-
-export default ReportDialog;

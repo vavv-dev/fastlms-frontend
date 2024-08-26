@@ -1,4 +1,4 @@
-import { PasswordResetRequest, publicPasswordReset, } from '@/api';
+import { PasswordResetRequest, publicPasswordReset } from '@/api';
 import { Form, TextFieldControl } from '@/component/common';
 import i18next from '@/i18n';
 import { userState } from '@/store';
@@ -19,7 +19,7 @@ const schema: yup.ObjectSchema<PasswordResetRequest> = yup.object({
   confirm_url: yup.string().default(`${window.location.origin}/password-reset-confirm`),
 });
 
-const PasswordReset = () => {
+export const PasswordReset = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -92,5 +92,3 @@ const PasswordReset = () => {
     </Container>
   );
 };
-
-export default PasswordReset;

@@ -2,7 +2,7 @@ import 'yup';
 
 declare module 'yup' {
   interface CustomSchemaMetadata {
-    control:
+    control?:
       | 'text'
       | 'checkbox'
       | 'select'
@@ -23,6 +23,7 @@ declare module 'yup' {
     options?: { label: string; value: string }[];
     accept?: string;
     readOnly?: boolean;
+    orderable?: boolean;
   }
 
   interface SchemaRefDescription {

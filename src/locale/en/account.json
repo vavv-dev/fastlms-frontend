@@ -12,6 +12,7 @@
   "Enter your email which you used to join.": "Enter your email which you used to join.",
   "Enter your new password.": "Enter your new password.",
   "Exam": "Exam",
+  "File size must be less than {{ max }} MB.": "File size must be less than {{ max }} MB.",
   "Forgot password?": "Forgot password?",
   "Home": "Home",
   "Invalid email": "Invalid email",

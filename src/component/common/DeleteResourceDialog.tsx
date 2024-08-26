@@ -3,10 +3,10 @@ import { Button, DialogContentText } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import BaseDialog from './BaseDialog';
+import { BaseDialog } from './BaseDialog';
 import { updateInfiniteCache } from './hooks';
 
-interface DeleteResourceDialogProps {
+interface Props {
   title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -15,7 +15,7 @@ interface DeleteResourceDialogProps {
   listService: () => Promise<any>; // eslint-disable-line
 }
 
-const DeleteResourceDialog = ({ title, open, setOpen, resourceId, destroyService, listService }: DeleteResourceDialogProps) => {
+export const DeleteResourceDialog = ({ title, open, setOpen, resourceId, destroyService, listService }: Props) => {
   const { t } = useTranslation('common');
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const cancelRef = useRef(false);
@@ -69,5 +69,3 @@ const DeleteResourceDialog = ({ title, open, setOpen, resourceId, destroyService
     />
   );
 };
-
-export default DeleteResourceDialog;

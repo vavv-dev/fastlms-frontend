@@ -1,7 +1,7 @@
 import { ApiError, Body_PublicLogin, accountGetMe, publicLogin } from '@/api';
 import { Form, TextFieldControl } from '@/component/common';
 import i18next from '@/i18n';
-import { accountProcessingState, userState } from '@/store';
+import { accountProcessingState, loginExpireState, userState } from '@/store';
 import { yupResolver } from '@hookform/resolvers/yup';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Avatar, Box, Button, Container, Typography, useTheme } from '@mui/material';
@@ -26,13 +26,14 @@ const schema: yup.ObjectSchema<Body_PublicLogin> = yup.object({
   client_secret: yup.string(),
 });
 
-const Login = () => {
+export const Login = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useAtom(userState);
   const setProcessing = useSetAtom(accountProcessingState);
+  const setLoginExipire = useSetAtom(loginExpireState);
 
   const { handleSubmit, control, setError, formState } = useForm<Body_PublicLogin>({
     resolver: yupResolver(schema),
@@ -46,7 +47,8 @@ const Login = () => {
     publicLogin({
       formData: { username: username, password: password },
     })
-      .then(async () => {
+      .then(async (r) => {
+        setLoginExipire(r.refresh_token_expire);
         const me = await accountGetMe();
         setUser(me);
       })
@@ -93,7 +95,7 @@ const Login = () => {
         </Form>
 
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: theme.typography.body2 }}>
-          <Box onClick={() => navigate('/reset-password')} sx={{ cursor: 'pointer' }}>
+          <Box onClick={() => navigate('/password-reset')} sx={{ cursor: 'pointer' }}>
             {t('Forgot password?')}
           </Box>
           <Box onClick={() => navigate('/join')} sx={{ cursor: 'pointer' }}>
@@ -105,4 +107,3 @@ const Login = () => {
   );
 };
 
-export default Login;

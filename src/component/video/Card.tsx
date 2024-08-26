@@ -1,0 +1,89 @@
+import {
+  VideoDisplayResponse as DisplayResponse,
+  videoGetDisplays as getDisplays,
+  videoUpdateResource as updateResource,
+} from '@/api';
+import { ResourceCard } from '@/component/common/ResourceCard';
+import { formatDuration, formatRelativeTime, humanNumber } from '@/helper/util';
+import { StreamOutlined } from '@mui/icons-material';
+import { Box, BoxProps, Typography, useTheme } from '@mui/material';
+import { useAtomValue } from 'jotai';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { activeVideoIdState as activeIdState } from '.';
+import { ActionMenu } from './ActionMenu';
+
+interface Props {
+  data: DisplayResponse;
+  hideAvatar?: boolean;
+  to?: string;
+  sx?: BoxProps['sx'];
+  showDescription?: boolean;
+}
+
+export const Card = ({ data, hideAvatar, to, sx, showDescription }: Props) => {
+  const { t } = useTranslation('video');
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const activeId = useAtomValue(activeIdState);
+
+  return (
+    <ResourceCard
+      resource={data}
+      onClick={() => navigate(to || `/video/${data.id}`)}
+      banner={
+        <>
+          <Box
+            component="img"
+            alt={data.title}
+            src={data.thumbnail}
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              aspectRatio: data.video_kind == 'short' ? '9 / 16' : '16 / 9',
+            }}
+          />
+
+          {(data.duration != null || data.is_live) && (
+            <Typography
+              variant="caption"
+              sx={{
+                position: 'absolute',
+                bottom: 6,
+                right: 6,
+                px: '6px',
+                borderRadius: '4px',
+                fontWeight: '600',
+                zIndex: 2,
+                color: theme.palette.common.white,
+                bgcolor: data.is_live ? theme.palette.error.dark : 'rgba(0, 0, 0, 0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              {data.duration ? (
+                formatDuration(data.duration)
+              ) : (
+                <>
+                  <StreamOutlined fontSize="small" />
+                  {t('Live')}
+                </>
+              )}
+            </Typography>
+          )}
+        </>
+      }
+      score={data.progress}
+      passed={data.passed}
+      avatarChildren={[t(...formatRelativeTime(data.modified)), `${t('Views')} ${humanNumber(data.watch_count)}`]}
+      hideAvatar={hideAvatar}
+      actionMenu={<ActionMenu data={data} />}
+      sx={{ ...sx, bgcolor: activeId === data.id ? theme.palette.action.selected : 'transparent' }}
+      showDescription={showDescription}
+      partialUpdateService={updateResource}
+      listService={getDisplays}
+    />
+  );
+};

@@ -1,12 +1,12 @@
 import { AccountGetUserByUsernameData, UserResponse, accountGetUserByUsername, accountUpdateMe } from '@/api';
 import { useServiceImmutable } from '@/component/common';
-import { formatRelativeTime } from '@/helper/util';
+import { formatRelativeTime, imageToBase64 } from '@/helper/util';
 import i18next from '@/i18n';
 import { homeUserState, userState } from '@/store';
 import EditIcon from '@mui/icons-material/Edit';
 import { Avatar, Box, IconButton, Input, InputLabel, Stack, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { useAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ const tabs: Array<Array<string>> = [
   [t('Profile'), 'profile'],
 ];
 
-const HomeLayout = () => {
+export const HomeLayout = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ const HomeLayout = () => {
   const { username } = useParams();
   const [user, setUser] = useAtom(userState);
   const [homeUser, setHomeUser] = useAtom(homeUserState);
+  const [avatarError, setAvatarError] = useState<string>('');
   const { data, mutate } = useServiceImmutable<AccountGetUserByUsernameData, UserResponse>(accountGetUserByUsername, {
     username: username || '',
   });
@@ -41,16 +42,28 @@ const HomeLayout = () => {
   // current tab
   const tabIndex = tabs.findIndex(([, path]) => pathname.includes(`/u/${username}/${path}`));
 
+  const showAvatarError = (message: string) => {
+    setAvatarError(message);
+    setTimeout(() => setAvatarError(''), 3000);
+  };
+
   const changeAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAvatarError('');
     const thumbnail = event.target.files?.[0];
     if (!thumbnail || !username) return;
-
+    if (thumbnail.size > 1 * 1024 * 1024) {
+      event.target.value = '';
+      showAvatarError(t('File size must be less than {{ max }} MB.', { max: 1 }));
+      return;
+    }
     accountUpdateMe({
-      formData: { thumbnail: thumbnail },
-    }).then((update) => {
-      setUser(update);
-      mutate((prev: UserResponse | undefined) => ({ ...prev, ...update }), { revalidate: false });
-    });
+      requestBody: { thumbnail: await imageToBase64(thumbnail) },
+    })
+      .then((update) => {
+        setUser(update);
+        mutate((prev: UserResponse | undefined) => ({ ...prev, ...update }), { revalidate: false });
+      })
+      .catch((error) => showAvatarError(error.message));
   };
 
   useEffect(() => {
@@ -103,7 +116,7 @@ const HomeLayout = () => {
             {homeUser.username != user?.username ? (
               <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 80, height: 80 }} />
             ) : (
-              <InputLabel htmlFor="avatar-file" sx={{ position: 'relative' }}>
+              <InputLabel htmlFor="avatar-file" sx={{ position: 'relative', overflow: 'visible' }}>
                 <Input
                   onChange={changeAvatar}
                   inputProps={{ accept: 'image/*' }}
@@ -114,9 +127,14 @@ const HomeLayout = () => {
                 <IconButton component="span" sx={{ p: 0 }}>
                   <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 80, height: 80 }} />
                 </IconButton>
-                <Box sx={{ position: 'absolute', bottom: 0, right: 0, lineHeight: 1, cursor: 'pointer' }}>
+                <Box sx={{ position: 'absolute', bottom: 0, left: 0, lineHeight: 1, cursor: 'pointer' }}>
                   <EditIcon />
                 </Box>
+                {avatarError && (
+                  <Typography variant="caption" sx={{ color: 'error.main', position: 'absolute', bottom: '-1.5em', left: 0 }}>
+                    {avatarError}
+                  </Typography>
+                )}
               </InputLabel>
             )}
           </Box>
@@ -157,5 +175,3 @@ const HomeLayout = () => {
     </>
   );
 };
-
-export default HomeLayout;

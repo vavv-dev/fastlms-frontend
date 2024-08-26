@@ -6,7 +6,7 @@ interface Props {
   menuItems: React.ReactNode;
 }
 
-const ResourceActionMenu = ({ menuItems }: Props) => {
+export const ResourceActionMenu = ({ menuItems }: Props) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -38,5 +38,3 @@ const ResourceActionMenu = ({ menuItems }: Props) => {
     </>
   );
 };
-
-export default ResourceActionMenu;

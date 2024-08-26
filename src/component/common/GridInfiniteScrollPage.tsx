@@ -44,7 +44,7 @@ interface GridInfiniteScrollPageProps<Item, Params extends { orderBy?: string }>
   extraAction?: React.ReactNode | ((tab: string | undefined) => React.ReactNode);
 }
 
-const GridInfiteScrollPage = <Item, Params extends { orderBy?: string }>({
+export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }>({
   pageKey,
   tabConfig,
   orderingOptions,
@@ -165,5 +165,3 @@ const GridInfiteScrollPage = <Item, Params extends { orderBy?: string }>({
     </Box>
   );
 };
-
-export default GridInfiteScrollPage;

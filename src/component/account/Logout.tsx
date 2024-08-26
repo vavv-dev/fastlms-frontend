@@ -4,7 +4,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
+export const Logout = () => {
   const navigate = useNavigate();
 
   const [user, setUser] = useAtom(userState);
@@ -38,4 +38,3 @@ const Logout = () => {
   return <></>;
 };
 
-export default Logout;

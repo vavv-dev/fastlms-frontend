@@ -1,8 +1,9 @@
 import i18next from '@/i18n';
-import AutocompleteSelect2 from './AutocompleteSelect2';
-import BaseDialog from './BaseDialog';
-import DeleteResourceDialog from './DeleteResourceDialog';
-import {
+
+export { AutocompleteSelect2 } from './AutocompleteSelect2';
+export { BaseDialog } from './BaseDialog';
+export { DeleteResourceDialog } from './DeleteResourceDialog';
+export {
   CheckboxControl,
   FileFieldControl,
   Form,
@@ -11,40 +12,16 @@ import {
   TextEditorControl,
   TextFieldControl,
 } from './FormHelper';
-import GradientCircularProgress from './GradientCircularProgress';
-import GridInfiniteScrollPage from './GridInfiniteScrollPage';
-import { InfiniteScrollIndicator, PaginationActions } from './PaginationActions';
-import ResourceActionMenu from './ResourceActionMenu';
-import SaveResourceDialog from './SaveResourceDialog';
-import WithAvatar from './WithAvatar';
-import { updateInfiniteCache, useDebounce, useFixMouseLeave, useInfinitePagination, useServiceImmutable } from './hooks';
-import createToggleAction from './toggleUserAction';
-
-export {
-  AutocompleteSelect2,
-  BaseDialog,
-  CheckboxControl,
-  DeleteResourceDialog,
-  FileFieldControl,
-  Form,
-  GradientCircularProgress,
-  GridInfiniteScrollPage,
-  InfiniteScrollIndicator,
-  PaginationActions,
-  ResourceActionMenu,
-  SaveResourceDialog,
-  SelectControl,
-  SelectGroupControl,
-  TextEditorControl,
-  TextFieldControl,
-  WithAvatar,
-  createToggleAction,
-  updateInfiniteCache,
-  useDebounce,
-  useFixMouseLeave,
-  useInfinitePagination,
-  useServiceImmutable,
-};
+export { GradientCircularProgress } from './GradientCircularProgress';
+export { GridInfiniteScrollPage } from './GridInfiniteScrollPage';
+export { InfiniteScrollIndicator, PaginationActions } from './PaginationActions';
+export { ResourceActionMenu } from './ResourceActionMenu';
+export { ResourceCard } from './ResourceCard';
+export { SaveResourceDialog } from './SaveResourceDialog';
+export { WithAvatar } from './WithAvatar';
+export { updateInfiniteCache, useDebounce, useFixMouseLeave, useInfinitePagination, useServiceImmutable } from './hooks';
+export { createToggleAction } from './toggleUserAction';
+export { uppyFamily } from './uppy';
 
 // gettext no-op
 void [

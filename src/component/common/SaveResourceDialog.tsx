@@ -42,6 +42,7 @@ import {
   Resolver,
   UseFormGetValues,
   UseFormSetValue,
+  useController,
   useForm,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -76,12 +77,12 @@ interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { 
   retrieveService: (params: { id: string }) => Promise<K>;
   listService: () => Promise<any>; // eslint-disable-line
   createService?: (params: { requestBody: DeepRemoveUndefined<T> }) => Promise<K> | CancelablePromise<K>;
-  partialUpdateService: (params: { id: string; requestBody: T; formData: T }) => Promise<K>;
+  partialUpdateService: (params: { id: string; requestBody: T }) => Promise<K>;
   copyAutocomplete?: CopyAutocomplete;
   maxWidth?: DialogProps['maxWidth'];
 }
 
-const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: string }>({
+export const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: string }>({
   title,
   open,
   setOpen,
@@ -132,7 +133,7 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
     }
   }, [open, reset, fieldSchema]);
 
-  const saveResource = (data: T) => {
+  const saveResource = async (data: T) => {
     // transform datetime-local to ISO string
     const datetimeFields = getDatetimeFields();
     const transformed = { ...data };
@@ -146,12 +147,16 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
     const service = editKey ? partialUpdateService : createService;
     if (!service) return;
 
+    // resolve base64 image
+    for (const key in transformed) {
+      if (transformed[key] instanceof Promise) {
+        transformed[key] = await transformed[key];
+      }
+    }
+
     service({
       id: editKey || '',
-      // Dangerous trick.
-      // This will be selected by the partialUpdateService's params type.
       requestBody: transformed as DeepRemoveUndefined<T> & T,
-      formData: transformed as DeepRemoveUndefined<T> & T,
     })
       .then((saved) => {
         if (editKey) resourceMutate({ ...resource, ...saved }, { revalidate: false });
@@ -176,6 +181,8 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
           const tzOffset = datetime.getTimezoneOffset() * 60000;
           const localDatetiem = new Date(datetime.getTime() - tzOffset);
           acc[key] = new Date(localDatetiem).toISOString().slice(0, 16);
+        } else {
+          acc[key] = '';
         }
         return acc;
       },
@@ -273,7 +280,18 @@ const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: st
   );
 };
 
-export default SaveResourceDialog;
+interface DrawFieldProps<T extends FieldValues> {
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
+  name: Path<T>;
+  fieldData: SchemaDescription;
+  hideLabel?: boolean;
+  margin?: FormControlProps['margin'];
+  control: Control<T>;
+  formState: {
+    errors: FieldErrors<T>;
+  };
+  lazy?: boolean;
+}
 
 interface DrawFieldProps<T extends FieldValues> {
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -285,6 +303,7 @@ interface DrawFieldProps<T extends FieldValues> {
   formState: {
     errors: FieldErrors<T>;
   };
+  lazy?: boolean;
 }
 
 const DrawField = <T extends FieldValues>({
@@ -295,8 +314,24 @@ const DrawField = <T extends FieldValues>({
   margin = 'dense',
   control,
   formState,
+  lazy = false,
 }: DrawFieldProps<T>) => {
-  const required = fieldData.tests.some((test) => test.name === 'required');
+  const { t } = useTranslation('common');
+  const [isActive, setIsActive] = useState(!lazy);
+  const { field } = useController({ name, control });
+
+  const handleActivation = (event: React.MouseEvent | React.KeyboardEvent) => {
+    setIsActive(true);
+    event.persist();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleActivation(event);
+    }
+  };
+
+  const required = !fieldData.optional && !fieldData.nullable;
   const props = {
     name,
     type: fieldData.meta?.control,
@@ -308,34 +343,62 @@ const DrawField = <T extends FieldValues>({
     readOnly: fieldData.meta?.readOnly,
   };
 
-  switch (fieldData.meta?.control) {
-    case 'checkbox':
-      return <CheckboxControl {...props} margin={margin} />;
-    case 'editor':
-      return (
-        <TextEditorControl
-          containerRef={containerRef}
-          {...props}
-          margin={margin}
-          placeholder={fieldData.meta?.placeholderText}
-        />
-      );
-    case 'select':
-      return <SelectControl {...props} margin={margin} options={fieldData.meta?.options || []} />;
-    case 'file':
-      return <FileFieldControl {...props} inputProps={{ accept: fieldData.meta?.accept }} />;
-    default:
-      return (
-        <TextFieldControl
-          {...props}
-          margin={margin}
-          focusSelect
-          focusMultiLine
-          multiline={fieldData.meta?.multiline}
-          placeholder={fieldData.meta?.placeholderText}
-        />
-      );
+  if (lazy && !isActive) {
+    return (
+      <Box
+        onClick={handleActivation}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        sx={{
+          width: '100%',
+          minHeight: '1.5em',
+          cursor: 'text',
+          ...textEllipsisCss(1),
+          '&:focus': {
+            outline: '2px solid #1976d2',
+            outlineOffset: '2px',
+          },
+        }}
+      >
+        {field.value && typeof field.value === 'string' ? t(field.value) : field.value || ''}
+      </Box>
+    );
   }
+
+  const renderControl = () => {
+    switch (fieldData.meta?.control) {
+      case 'checkbox':
+        return <CheckboxControl autoFocus {...props} margin={margin} />;
+      case 'editor':
+        return (
+          <TextEditorControl
+            autoFocus
+            containerRef={containerRef}
+            {...props}
+            margin={margin}
+            placeholder={fieldData.meta?.placeholderText}
+          />
+        );
+      case 'select':
+        return <SelectControl autoFocus {...props} margin={margin} options={fieldData.meta?.options || []} />;
+      case 'file':
+        return <FileFieldControl autoFocus {...props} inputProps={{ accept: fieldData.meta?.accept }} />;
+      default:
+        return (
+          <TextFieldControl
+            autoFocus
+            {...props}
+            margin={margin}
+            focusSelect
+            focusMultiLine
+            multiline={fieldData.meta?.multiline}
+            placeholder={fieldData.meta?.placeholderText}
+          />
+        );
+    }
+  };
+
+  return renderControl();
 };
 
 interface ArrayFieldTableProps<T extends FieldValues> {
@@ -443,6 +506,7 @@ const ArrayFieldTable = <T extends FieldValues>({
           )}
         </Box>
         <List
+          disabled={!fieldData.meta?.orderable}
           lockVertically
           values={arrayValues}
           onChange={({ oldIndex, newIndex }) => handleReorder(oldIndex, newIndex)}
@@ -452,10 +516,11 @@ const ArrayFieldTable = <T extends FieldValues>({
                 <TableRow>
                   <TableCell></TableCell>
                   <TableCell>#</TableCell>
-                  {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) => {
-                    if (innerFieldData.meta?.hidden) return null;
-                    return <TableCell key={`${fieldKey}.${innerKey}`}>{innerFieldData.label}</TableCell>;
-                  })}
+                  {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) =>
+                    innerFieldData.meta?.hidden ? null : (
+                      <TableCell key={`${fieldKey}.${innerKey}`}>{innerFieldData.label}</TableCell>
+                    ),
+                  )}
                   <TableCell />
                 </TableRow>
               </TableHead>
@@ -491,13 +556,14 @@ const ArrayFieldTable = <T extends FieldValues>({
               >
                 {/* do not remove framgment. it's required for forwardRef key */}
                 <>
-                  <TableCell data-movable-handle sx={{ width: '2em', cursor: isDragged ? 'grabbing' : 'grab' }}>
-                    <DragHandleOutlined fontSize="small" />
-                  </TableCell>
+                  {fieldData.meta?.orderable && (
+                    <TableCell data-movable-handle sx={{ width: '2em', cursor: isDragged ? 'grabbing' : 'grab' }}>
+                      <DragHandleOutlined fontSize="small" />
+                    </TableCell>
+                  )}
                   <TableCell>{index + 1}</TableCell>
-                  {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) => {
-                    if (innerFieldData.meta?.hidden) return null;
-                    return (
+                  {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) =>
+                    innerFieldData.meta?.hidden ? null : (
                       <TableCell key={`${fieldKey}.${index}.${innerKey}`}>
                         <DrawField
                           containerRef={containerRef}
@@ -507,10 +573,11 @@ const ArrayFieldTable = <T extends FieldValues>({
                           margin="none"
                           control={control}
                           formState={formState}
+                          lazy={true}
                         />
                       </TableCell>
-                    );
-                  })}
+                    ),
+                  )}
                   <TableCell sx={{ width: '3em' }}>
                     <IconButton
                       onClick={() => {
@@ -567,6 +634,7 @@ const ArrayFieldTable = <T extends FieldValues>({
               { shouldDirty: true, shouldValidate: true },
             );
           }}
+          excludes={new Set(arrayValues.map((v) => v['id']))}
         />
       )}
     </Grid>

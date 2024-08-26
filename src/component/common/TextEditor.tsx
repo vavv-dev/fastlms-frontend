@@ -43,7 +43,7 @@ interface TextEditorProps {
   sx?: SxProps;
 }
 
-const TextEditor = ({
+export const TextEditor = ({
   initialValue,
   placeholder,
   borderColor,
@@ -206,5 +206,3 @@ const TextEditor = ({
     </Box>
   );
 };
-
-export default TextEditor;

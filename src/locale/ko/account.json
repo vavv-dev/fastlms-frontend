@@ -12,6 +12,7 @@
   "Enter your email which you used to join.": "가입 시 사용한 이메일을 입력해주세요.",
   "Enter your new password.": "새로운 비밀번호를 입력해주세요",
   "Exam": "시험",
+  "File size must be less than {{ max }} MB.": "파일 크기는 {{ max }} MB 이하여야 합니다.",
   "Forgot password?": "비밀번호 찾기",
   "Home": "홈",
   "Invalid email": "유효하지 않은 이메일",

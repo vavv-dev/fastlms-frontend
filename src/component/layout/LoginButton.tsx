@@ -1,14 +1,15 @@
 import { accountProcessingState, userState } from '@/store';
 import ContactMailOutlined from '@mui/icons-material/ContactMailOutlined';
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
-import { Avatar, Button, CircularProgress, IconButton, ListItemButton, ListItemText, Menu } from '@mui/material';
+import { Avatar, Button, CircularProgress, IconButton, ListItemButton, ListItemText, Menu, useTheme } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-const LoginButton = () => {
+export const LoginButton = () => {
   const { t } = useTranslation('layout');
+  const theme = useTheme();
   const user = useAtomValue(userState);
   const processing = useAtomValue(accountProcessingState);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -50,29 +51,32 @@ const LoginButton = () => {
             onClick={() => setAnchorEl(null)}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: 'visible',
-                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                mt: 1.5,
-                '& .MuiAvatar-root': {
-                  width: 32,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                '&::before': {
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  top: 0,
-                  right: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: 'background.paper',
-                  transform: 'translateY(-50%) rotate(45deg)',
-                  zIndex: 0,
+            sx={{ '& .MuiPaper-root': { borderRadius: theme.shape.borderRadius / 2 } }}
+            slotProps={{
+              paper: {
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '&::before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
                 },
               },
             }}
@@ -89,5 +93,3 @@ const LoginButton = () => {
     </>
   );
 };
-
-export default LoginButton;

@@ -1,6 +1,6 @@
 import { CircularProgress, CircularProgressProps } from '@mui/material';
 
-const GradientCircularProgress = ({ sx, ...props }: CircularProgressProps) => {
+export const GradientCircularProgress = ({ sx, ...props }: CircularProgressProps) => {
   return (
     <>
       <svg width={0} height={0}>
@@ -15,5 +15,3 @@ const GradientCircularProgress = ({ sx, ...props }: CircularProgressProps) => {
     </>
   );
 };
-
-export default GradientCircularProgress;

@@ -1,4 +1,4 @@
-import { Body_AccountUpdateMe, accountUpdateMe } from '@/api';
+import { UserUpdateRequest, accountUpdateMe } from '@/api';
 import { Form, TextFieldControl as Text, TextEditorControl } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
 import i18next from '@/i18n';
@@ -17,7 +17,7 @@ const t = (key: string) => i18next.t(key, { ns: 'account' });
 
 const REQUIRED_FIELD = t('This field is required.');
 
-const schema: yup.ObjectSchema<Body_AccountUpdateMe> = yup.object({
+const schema: yup.ObjectSchema<UserUpdateRequest> = yup.object({
   name: yup.string().required(REQUIRED_FIELD).default(''),
   username: yup.string(),
   email: yup.string().email(t('Invalid email')).required(REQUIRED_FIELD).default(''),
@@ -25,14 +25,14 @@ const schema: yup.ObjectSchema<Body_AccountUpdateMe> = yup.object({
   thumbnail: yup.mixed(),
 });
 
-const Profile = () => {
+export const Profile = () => {
   const { t } = useTranslation('account');
   const navigate = useNavigate();
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const [user, setUser] = useAtom(userState);
   const [homeUser, setHomeUser] = useAtom(homeUserState);
 
-  const { handleSubmit, control, setError, formState, reset } = useForm<Body_AccountUpdateMe>({
+  const { handleSubmit, control, setError, formState, reset } = useForm<UserUpdateRequest>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
   });
@@ -45,11 +45,9 @@ const Profile = () => {
     });
   }, [user, reset]);
 
-  const updateProfile = ({ name, email, description }: Body_AccountUpdateMe) => {
+  const updateProfile = ({ name, email, description }: UserUpdateRequest) => {
     setSnackbarMessage(null);
-    accountUpdateMe({
-      formData: { name, email, description },
-    })
+    accountUpdateMe({ requestBody: { name, email, description } })
       .then((user) => {
         setUser(user);
         if (user?.username === homeUser?.username) setHomeUser(user);
@@ -99,5 +97,3 @@ const Profile = () => {
     </Box>
   );
 };
-
-export default Profile;

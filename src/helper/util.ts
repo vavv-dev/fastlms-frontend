@@ -1,3 +1,7 @@
+import i18next from '@/i18n';
+
+const t = (key: string, options?: Record<string, string | number>) => i18next.t(key, { ...options, ns: 'common' });
+
 /**
  * Get from local storage with default value
  * @param key - The key to get from local storage
@@ -119,10 +123,7 @@ export function parseJwt(token: string) {
  * @param num - The number to format
  * @returns string
  */
-export function humanNumber(
-  num: number | null | undefined,
-  t: (key: string, options?: { count?: number; unit?: string; ns?: string }) => string,
-): string {
+export function humanNumber(num: number | null | undefined): string {
   if (num == null || num == undefined) return '0';
   const digits = 1;
   const lookup = [
@@ -136,7 +137,7 @@ export function humanNumber(
 
   if (item) {
     const count = (num / item.value).toFixed(digits);
-    return t('humanNumber', { count: parseFloat(count), unit: t(`unit.${item.unit}`, { ns: 'common' }), ns: 'common' });
+    return t('humanNumber', { count: parseFloat(count), unit: t(`unit.${item.unit}`) });
   } else {
     return num.toString();
   }
@@ -280,4 +281,62 @@ export const stripHtml = (html: string | null | undefined): string => {
   if (!html) return '';
   const doc = new DOMParser().parseFromString(html, 'text/html');
   return doc.body.textContent || '';
+};
+
+/**
+ * @param file - The file to convert to base64
+ * @returns The base64 string
+ */
+export const imageToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.match(/image.*/)) {
+      reject(new Error('Please select an image file.'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e: ProgressEvent<FileReader>) {
+      if (!e.target || !e.target.result) {
+        reject(new Error('Failed to read file.'));
+        return;
+      }
+
+      if (typeof e.target.result === 'string') {
+        resolve(e.target.result);
+      } else {
+        const bytes = new Uint8Array(e.target.result);
+        const base64 = btoa(String.fromCharCode.apply(null, Array.from(bytes)));
+        const dataUrl = `data:${file.type};base64,${base64}`;
+        resolve(dataUrl);
+      }
+    };
+
+    reader.onerror = function (error) {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
+
+export const base64ThumbnailSchema = (
+  yup: any, // eslint-disable-line
+) =>
+  yup
+    .mixed()
+    .meta({ control: 'file', grid: 6, accept: 'image/*' })
+    .label(t('Select thumbnail'))
+    // if unchanged, set empty string
+    .transform(async (value: string | File[]) => (typeof value === 'string' ? undefined : await imageToBase64(value[0])))
+    .test('fileSize', t('File size is too large. Max size is 1MB.'), async (value: string | Promise<string>) => {
+      if (!value) return true;
+      const resoluvedValue = await value;
+      if (!resoluvedValue) return true;
+      return resoluvedValue.length <= 1024 * 1024 * 1.33; // 1MB of base64 string
+    });
+
+export const datetimeLocalString = () => {
+  const datetime = new Date();
+  const tzOffset = datetime.getTimezoneOffset() * 60000;
+  return new Date(datetime.getTime() - tzOffset).toISOString().slice(0, 16);
 };

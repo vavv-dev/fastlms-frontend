@@ -6,10 +6,11 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { alertState, navState } from '.';
-import LoginButton from './LoginButton';
+import { LoginButton } from './LoginButton';
 import imgUrl from './assets/logo.svg';
+import { NotificationButton } from './NotificationButton';
 
-const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
+export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
   const [navOpen, setNavOpen] = useAtom(navState);
   const [themeMode, setThemeMode] = useAtom(modeState);
   const [alert, setAert] = useAtom(alertState);
@@ -41,6 +42,7 @@ const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
             <IconButton onClick={() => setThemeMode(themeMode === 'dark' ? 'light' : 'dark')}>
               {themeMode === 'dark' ? <Brightness7 /> : <Brightness4 />}
             </IconButton>
+            <NotificationButton />
             <LoginButton />
           </Box>
         </Toolbar>
@@ -58,5 +60,3 @@ const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
     </Box>
   );
 };
-
-export default TopBar;

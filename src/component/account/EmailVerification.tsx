@@ -21,7 +21,7 @@ const schema: yup.ObjectSchema<ResendVerificationEmailRequest> = yup.object({
   email_verification_url: yup.string().default(`${window.location.origin}/email-verification`),
 });
 
-const EmailVerification = () => {
+export const EmailVerification = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -108,5 +108,3 @@ const EmailVerification = () => {
     </Container>
   );
 };
-
-export default EmailVerification;

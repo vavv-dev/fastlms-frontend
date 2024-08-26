@@ -1,4 +1,10 @@
-import { ExamAssessResponse, ExamGetAssessData, examGetAssess, examStartAssess, examSubmitAssess } from '@/api';
+import {
+  ExamAssessResponse as AssessResponse,
+  ExamGetAssessData as GetAssessData,
+  examGetAssess as getAssess,
+  examStartAssess as startAssess,
+  examSubmitAssess as submitAssess,
+} from '@/api';
 import { useServiceImmutable } from '@/component/common';
 import { alertState, snackbarMessageState } from '@/component/layout';
 import { formatDuration } from '@/helper/util';
@@ -9,20 +15,20 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-interface StopWatchProps {
-  examId: string;
+interface Props {
+  id: string;
   getValues: (name: string) => Array<{ id: number; answer: string }>;
 }
 
-const StopWatch = ({ examId, getValues }: StopWatchProps) => {
+export const StopWatch = ({ id, getValues }: Props) => {
   const { t } = useTranslation('exam');
-  const { data: exam, mutate } = useServiceImmutable<ExamGetAssessData, ExamAssessResponse>(examGetAssess, { id: examId });
+  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
   const [remainSeconds, setRemainSeconds] = useState<number>(0);
   const navigate = useNavigate();
   const pathnameRef = useRef<string>(window.location.pathname);
   const setAlert = useSetAtom(alertState);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
-  const submission = exam?.submission;
+  const submission = data?.submission;
 
   const createMessage = useMemo(() => {
     return (title: string, duration: number, remain: number, severity: string) => (
@@ -36,7 +42,7 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
     );
   }, [t]);
 
-  const globalExamAlert = useMemo(() => {
+  const globalAlert = useMemo(() => {
     return (id: string, title: string) => (
       <Box
         sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
@@ -51,12 +57,12 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
   }, [t, navigate]);
 
   useEffect(() => {
-    if (!exam || !exam.duration || !submission || submission.end_time) return;
+    if (!data || !data.duration || !submission || submission.end_time) return;
     const start = submission.start_time ? new Date(submission.start_time).getTime() : new Date().getTime();
 
     const updateWatch = () => {
-      if (!exam.duration) return;
-      const duration = exam.duration * 60; // minutes to seconds
+      if (!data.duration) return;
+      const duration = data.duration * 60; // minutes to seconds
       const remain = Math.ceil((start + duration * 1000 - new Date().getTime()) / 1000);
       if (remain < -1) clearInterval(interval);
       setRemainSeconds(remain);
@@ -64,7 +70,7 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
       // update alert
       if (remain >= 0) {
         const severity = remain / 60 < 5 ? 'warning' : 'info';
-        const message = createMessage(exam.title, duration, remain, severity);
+        const message = createMessage(data.title, duration, remain, severity);
         setAlert({ open: true, message: message, severity: severity, hideClose: true, duration: 2000 });
       }
     };
@@ -74,10 +80,10 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
 
     // save client start time
     if (!submission.start_time) {
-      examStartAssess({
-        id: examId,
+      startAssess({
+        id: id,
         requestBody: {
-          // real exam time
+          // real time
           start_time: String(new Date(start).getTime() / 1000),
         },
       })
@@ -93,19 +99,19 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [exam?.id]); // eslint-disable-line
+  }, [data?.id]); // eslint-disable-line
 
   useEffect(() => {
-    if (!exam || !exam.duration || !submission || submission.end_time) return;
+    if (!data || !data.duration || !submission || submission.end_time) return;
     const pathnameRefVal = pathnameRef.current;
     return () => {
       // set global alert
       if (pathnameRefVal !== window.location.pathname) {
-        if (!submission.end_time && exam.duration) {
+        if (!submission.end_time && data.duration) {
           const start = submission.start_time ? new Date(submission.start_time).getTime() : new Date().getTime();
-          const remain = Math.ceil((start + exam.duration * 60 * 1000 - new Date().getTime()) / 1000);
+          const remain = Math.ceil((start + data.duration * 60 * 1000 - new Date().getTime()) / 1000);
           if (remain > 0) {
-            const message = globalExamAlert(exam.id, exam.title);
+            const message = globalAlert(data.id, data.title);
             setAlert({ open: true, message: message, severity: 'warning', duration: remain * 1000 });
           }
         }
@@ -114,11 +120,11 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
   }, [pathnameRef.current]); // eslint-disable-line
 
   useEffect(() => {
-    if (!exam || !exam.duration || !submission || submission.end_time) return;
+    if (!data || !data.duration || !submission || submission.end_time) return;
     if (remainSeconds <= -1) {
       // force submit
-      examSubmitAssess({
-        id: examId,
+      submitAssess({
+        id: id,
         requestBody: {
           answers: getValues('answers')
             .filter((answer) => !!answer.answer)
@@ -136,12 +142,10 @@ const StopWatch = ({ examId, getValues }: StopWatchProps) => {
     }
   }, [remainSeconds]); // eslint-disable-line
 
-  if (!exam || !exam.duration || !submission || submission.end_time) {
+  if (!data || !data.duration || !submission || submission.end_time) {
     return null;
   }
 
   // as JSX
   return null;
 };
-
-export default StopWatch;

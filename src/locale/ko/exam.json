@@ -76,6 +76,7 @@
   "Question {{ num }}. is not answered": "{{ num }}번 문제가 응답되지 않았습니다",
   "Questions": "문제",
   "Recently created": "최근 생성",
+  "Recently modified": "최근 수정",
   "Reference": "참고",
   "Reference location": "참고 위치",
   "Remove bookmark": "북마크 삭제",

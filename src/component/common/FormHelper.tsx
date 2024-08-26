@@ -30,9 +30,9 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import TextEditor from './TextEditor';
+import { TextEditor } from './TextEditor';
 
-interface IFormProps {
+interface FormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   formState: any; // eslint-disable-line
   setError: any; // eslint-disable-line
@@ -41,7 +41,7 @@ interface IFormProps {
   id?: string;
 }
 
-export const Form: React.FC<IFormProps> = ({ onSubmit, formState, setError, children, disabled, id }) => {
+export const Form: React.FC<FormProps> = ({ onSubmit, formState, setError, children, disabled, id }) => {
   const [noneFieldErrors, setNoneFieldErrors] = useState<string[]>([]);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export const Form: React.FC<IFormProps> = ({ onSubmit, formState, setError, chil
   );
 };
 
-interface ICheckboxControlProps extends Omit<FormControlProps, 'defaultValue'> {
+interface CheckboxControlProps extends Omit<FormControlProps, 'defaultValue'> {
   name: string;
   label: string | JSX.Element;
   control: any; // eslint-disable-line
@@ -103,7 +103,7 @@ interface ICheckboxControlProps extends Omit<FormControlProps, 'defaultValue'> {
   defaultValue?: boolean;
 }
 
-export const CheckboxControl = ({ name, label, control, helperText, defaultValue = false, ...props }: ICheckboxControlProps) => {
+export const CheckboxControl = ({ name, label, control, helperText, defaultValue = false, ...props }: CheckboxControlProps) => {
   return (
     <Controller
       name={name}
@@ -128,7 +128,7 @@ export const CheckboxControl = ({ name, label, control, helperText, defaultValue
   );
 };
 
-interface ITextFieldControlProps extends Omit<TextFieldProps, 'type'> {
+interface TextFieldControlProps extends Omit<TextFieldProps, 'type'> {
   name: string;
   control: any; // eslint-disable-line
   type?: string;
@@ -159,7 +159,7 @@ export const TextFieldControl = ({
   disabled,
   fullWidth = true,
   ...props
-}: ITextFieldControlProps) => {
+}: TextFieldControlProps) => {
   const { t } = useTranslation('common');
   const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -232,7 +232,7 @@ export const TextFieldControl = ({
   );
 };
 
-interface IFileFieldControlProps extends Omit<InputProps, 'type'> {
+interface FileFieldControlProps extends Omit<InputProps, 'type'> {
   name: string;
   label: string;
   control: any; // eslint-disable-line
@@ -241,7 +241,7 @@ interface IFileFieldControlProps extends Omit<InputProps, 'type'> {
   InputLabelProps?: InputLabelProps;
 }
 
-export const FileFieldControl = ({ name, label, control, helperText, InputLabelProps, ...props }: IFileFieldControlProps) => {
+export const FileFieldControl = ({ name, label, control, helperText, InputLabelProps, ...props }: FileFieldControlProps) => {
   const { t } = useTranslation('common');
   const inputRef = useRef(null);
 
@@ -257,9 +257,10 @@ export const FileFieldControl = ({ name, label, control, helperText, InputLabelP
               variant={props.variant || 'standard'}
               shrink={true}
               htmlFor={name}
+              sx={{ overflow: 'visible' }}
               {...InputLabelProps}
             >
-              {label}
+              {label} {props.required ? '*' : `(${t('Optional')})`}
             </InputLabel>
           )}
           <Box sx={{ mt: 1, display: 'flex', alignItems: 'flex-end' }}>
@@ -310,7 +311,7 @@ export const FileFieldControl = ({ name, label, control, helperText, InputLabelP
   );
 };
 
-interface ITextEditorControlProps extends Omit<FormControlProps, 'type'> {
+interface TextEditorControlProps extends Omit<FormControlProps, 'type'> {
   name: string;
   label?: string;
   formLabel?: string;
@@ -337,7 +338,7 @@ export const TextEditorControl = ({
   disableFormLabelFocus = false,
   sx,
   ...props
-}: ITextEditorControlProps) => {
+}: TextEditorControlProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
 
@@ -384,7 +385,7 @@ export const TextEditorControl = ({
   );
 };
 
-interface ISelectControlProps extends FormControlProps {
+interface SelectControlProps extends FormControlProps {
   name: string;
   label?: React.ReactNode;
   options: { label: string; value: string }[];
@@ -409,7 +410,7 @@ export const SelectControl = ({
   variant = 'standard',
   disableUnderline = false,
   ...props
-}: ISelectControlProps) => {
+}: SelectControlProps) => {
   // form fieldset's disabled not affect mui select
   // https://github.com/mui/material-ui/issues/39634
   return (
@@ -436,7 +437,7 @@ export const SelectControl = ({
   );
 };
 
-interface ISelectGroupControlProps extends FormControlProps {
+interface SelectGroupControlProps extends FormControlProps {
   name: string;
   formLabel?: React.ReactNode;
   defaultValue?: string;
@@ -459,7 +460,7 @@ export const SelectGroupControl = ({
   helperText,
   disabled,
   kind,
-}: ISelectGroupControlProps) => {
+}: SelectGroupControlProps) => {
   return (
     <Controller
       name={name}

@@ -32,7 +32,7 @@ interface Props<T extends { id: string | number }> {
   excludes?: Set<string | number>;
 }
 
-const AutocompleteSelect2 = <T extends { id: string | number }>({
+export const AutocompleteSelect2 = <T extends { id: string | number }>({
   service,
   labelField,
   groupField,
@@ -141,8 +141,6 @@ const AutocompleteSelect2 = <T extends { id: string | number }>({
     </Dialog>
   );
 };
-
-export default AutocompleteSelect2;
 
 const CustomPaper = (props: PaperProps) => {
   return (

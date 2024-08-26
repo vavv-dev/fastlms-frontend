@@ -3,10 +3,15 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { alertState, snackbarMessageState, spacerRefState } from '.';
-import NavDrawer from './NavDrawer';
-import TopBar from './TopBar';
+import { NavDrawer } from './NavDrawer';
+import { TopBar } from './TopBar';
 
-const BaseLayout = ({ searchBar, hideDrawer = false }: { searchBar?: React.ReactNode; hideDrawer?: boolean }) => {
+interface Props {
+  searchBar?: React.ReactNode;
+  hideDrawer?: boolean;
+}
+
+export const BaseLayout = ({ searchBar, hideDrawer = false }: Props) => {
   const { t } = useTranslation('layout');
   const [snackbarMessage, setSnackbarMessage] = useAtom(snackbarMessageState);
   const alert = useAtomValue(alertState);
@@ -44,5 +49,3 @@ const BaseLayout = ({ searchBar, hideDrawer = false }: { searchBar?: React.React
     </>
   );
 };
-
-export default BaseLayout;

@@ -1,4 +1,2 @@
-import SurveyViewDialog from './SurveyViewDialog';
-import UserSurvey from './UserSurvey';
-
-export { SurveyViewDialog, UserSurvey };
+export { Displays as SurveyDisplays } from './Displays';
+export { ViewDialog as SurveyViewDialog } from './ViewDialog';

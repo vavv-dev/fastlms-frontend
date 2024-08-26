@@ -9,15 +9,16 @@ import {
   PasswordResetConfirm,
   Profile,
 } from '@/component/account';
-import { UserComment } from '@/component/comment';
+import { CommentDisplays } from '@/component/comment';
+import { CourseView, CourseDisplays } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
-import { ExamView, UserExam, UserGrading } from '@/component/exam';
+import { ExamDisplays, ExamView, GradingDisplays } from '@/component/exam';
 import { BaseLayout } from '@/component/layout';
-import { UserContent, UserLesson } from '@/component/lesson';
-import { UserQuiz } from '@/component/quiz';
-import { UserSurvey } from '@/component/survey';
-import { PlaylistView, SearchBox, UserPlaylist, UserVideo, VideoSearchResult, VideoView } from '@/component/video';
-import { userState } from '@/store';
+import { ContentDisplays, LessonDisplays } from '@/component/lesson';
+import { QuizDisplays } from '@/component/quiz';
+import { SurveyDisplays } from '@/component/survey';
+import { PlaylistDisplays, PlaylistView, SearchInput, VideoDisplays, VideoView } from '@/component/video';
+import { loginExpireState, userChannelState, userState } from '@/store';
 import { modeState, themeConfig } from '@/theme';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, createTheme } from '@mui/material';
@@ -35,7 +36,9 @@ import {
   useNavigate,
 } from 'react-router-dom';
 
-const App = () => {
+const CHANNEL_SOCKET_URL = import.meta.env.VITE_CHANNEL_SOCKET_URL || '';
+
+export const App = () => {
   const mode = useAtomValue(modeState);
   const theme = React.useMemo(() => createTheme(themeConfig(mode)), [mode]);
 
@@ -43,36 +46,39 @@ const App = () => {
     createRoutesFromElements(
       <>
         <Route element={<Protected />}>
-          <Route path="/" element={<BaseLayout searchBar={<SearchBox />} />}>
+          <Route path="/" element={<BaseLayout searchBar={<SearchInput />} />}>
             {/* user home */}
             <Route path="u/:username" element={<HomeLayout />}>
               {['video', 'short'].map((videoKind) => (
-                <Route key={videoKind} path={videoKind} element={<UserVideo />} />
+                <Route key={videoKind} path={videoKind} element={<VideoDisplays />} />
               ))}
-              <Route path="playlist" element={<UserPlaylist />} />
-              <Route path="quiz" element={<UserQuiz />} />
-              <Route path="survey" element={<UserSurvey />} />
-              <Route path="exam" element={<UserExam />} />
-              <Route path="lesson" element={<UserLesson />} />
-              <Route path="comment" element={<UserComment />} />
+              <Route path="playlist" element={<PlaylistDisplays />} />
+              <Route path="quiz" element={<QuizDisplays />} />
+              <Route path="survey" element={<SurveyDisplays />} />
+              <Route path="exam" element={<ExamDisplays />} />
+              <Route path="lesson" element={<LessonDisplays />} />
+              <Route path="course" element={<CourseDisplays />} />
+              <Route path="comment" element={<CommentDisplays />} />
               <Route path="profile" element={<Profile />} />
-              {/* hidden tabs */}
-              <Route path="exam/grading" element={<UserGrading />} />
-              <Route path="lesson/content" element={<UserContent />} />
+              <Route path="exam/grading" element={<GradingDisplays />} />
+              <Route path="lesson/content" element={<ContentDisplays />} />
             </Route>
 
             {/* top level page with drawer */}
-            <Route path="playlist/:playlistId" element={<PlaylistView />} />
+            <Route path="playlist/:id" element={<PlaylistView />} />
+            <Route path="course/:id" element={<CourseView />} />
+            {/*
             <Route path="video/search" element={<VideoSearchResult />} />
+            */}
           </Route>
 
           {/* top level page without drawer */}
-          <Route path="/" element={<BaseLayout searchBar={<SearchBox />} hideDrawer={true} />}>
-            <Route path="video/:videoId" element={<VideoView />} />
+          <Route path="/" element={<BaseLayout searchBar={<SearchInput />} hideDrawer={true} />}>
+            <Route path="video/:id" element={<VideoView />} />
           </Route>
           {/* top level page without drawer, search bar */}
           <Route path="/" element={<BaseLayout hideDrawer={true} />}>
-            <Route path="exam/:examId/assess" element={<ExamView />} />
+            <Route path="exam/:id/assess" element={<ExamView />} />
           </Route>
         </Route>
 
@@ -102,23 +108,48 @@ const App = () => {
   );
 };
 
-export default App;
-
 const Protected: React.FC<RouteProps> = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userState);
+  const loginExpire = useAtomValue(loginExpireState);
+  const [userChannel, setUserChannel] = useAtom(userChannelState);
 
   const forceLogout = useCallback(() => {
     setUser(null);
     navigate('/login', { state: { from: location.pathname }, replace: true });
   }, [setUser, navigate, location.pathname]);
 
+  // force logout at refresh token expire
+  useEffect(() => {
+    if (loginExpire) {
+      const now = new Date();
+      const expireDate = new Date(loginExpire);
+      if (now > expireDate) {
+        forceLogout();
+      } else {
+        const timeUntilExpire = expireDate.getTime() - now.getTime();
+        const logoutTimer = setTimeout(forceLogout, timeUntilExpire);
+        return () => clearTimeout(logoutTimer);
+      }
+    }
+  }, [loginExpire, forceLogout]);
+
   useEffect(() => {
     OpenAPI.interceptors.response.use((response) => {
       if (user && response.status === 401) forceLogout();
       return response;
     });
+  }, []); // eslint-disable-line
+
+  useEffect(() => {
+    if (!user || userChannel) return;
+    const socket = new WebSocket(`${CHANNEL_SOCKET_URL}?user_id=${user.id}`);
+    setUserChannel(socket);
+    return () => {
+      socket.close();
+      setUserChannel(null);
+    };
   }, []); // eslint-disable-line
 
   if (!user) {

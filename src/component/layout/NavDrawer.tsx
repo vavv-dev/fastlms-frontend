@@ -40,7 +40,7 @@ import { alertState, navState } from '.';
 
 const drawerWidth = 150;
 
-const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
+export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   const { t } = useTranslation('layout');
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -124,8 +124,6 @@ const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
     </>
   );
 };
-
-export default NavDrawer;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,

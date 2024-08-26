@@ -1,16 +1,10 @@
-import i18next from '@/i18n';
 import { parseLocalStorage } from '@/helper/util';
+import i18next from '@/i18n';
+import { AlertProps } from '@mui/material';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import BaseLayout from './BaseLayout';
-import { AlertProps } from '@mui/material';
 
-/**
- *
- * page component
- *
- */
-export { BaseLayout };
+export { BaseLayout } from './BaseLayout';
 
 /**
  *
@@ -36,12 +30,17 @@ export const alertState = atom<Alert>({
 });
 
 // snackbar message
-interface ISnackBarMessage {
-  message: string;
+interface SnackBarMessage {
+  message: React.ReactNode;
   duration: number;
   action?: React.ReactNode;
 }
-export const snackbarMessageState = atom<ISnackBarMessage | null>(null);
+export const snackbarMessageState = atom<SnackBarMessage | null>(null);
 
 // gettext no-op
-void [i18next.t('Profile', { ns: 'layout' }), i18next.t('Logout', { ns: 'layout' })];
+void [
+  i18next.t('Profile', { ns: 'layout' }),
+  i18next.t('Logout', { ns: 'layout' }),
+  i18next.t('Playlist imported successfully', { ns: 'layout' }),
+  i18next.t('Video imported successfully', { ns: 'layout' }),
+];

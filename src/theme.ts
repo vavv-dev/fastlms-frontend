@@ -90,6 +90,13 @@ const themeConfig = (mode: 'light' | 'dark') => ({
         },
       },
     },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          lineHeight: 1.2,
+        },
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
         root: {

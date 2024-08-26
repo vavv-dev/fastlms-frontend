@@ -1,16 +1,15 @@
 import { LearningResourceKind, ThreadOwner } from '@/api';
 import i18next from '@/i18n';
-import CommentDialog from './CommentDialog';
-import CommentThread from './CommentThread';
-import UserComment from './UserComment';
 
-export { CommentDialog, CommentThread, UserComment };
+export { Displays as CommentDisplays } from './Displays';
+export { Thread } from './Thread';
+export { ThreadDialog } from './ThreadDialog';
 
-export interface ICommentThreadProps {
+export interface ThreadProps {
   url: string;
   title: string;
   owner: ThreadOwner;
-  kind: LearningResourceKind,
+  kind: LearningResourceKind;
   question?: boolean;
   sticky?: boolean;
 }

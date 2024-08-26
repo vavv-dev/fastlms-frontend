@@ -15,7 +15,7 @@ interface Props {
   sx?: SxProps;
 }
 
-const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, color, sx, children }: Props) => {
+export const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, color, sx, children }: Props) => {
   const navigate = useNavigate();
   const userHome = `/u/${username}`;
   const homeUser = useAtomValue(homeUserState);
@@ -72,5 +72,3 @@ const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, color, sx,
     </Box>
   );
 };
-
-export default WithAvatar;

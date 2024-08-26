@@ -1,7 +1,8 @@
 import { CancelablePromise } from '@/api';
 import { updateInfiniteCache } from './hooks';
 
-export const userActions = { bookmark: 'bookmarked', like: 'liked', flag: 'flagged' } as const;
+const userActions = { bookmark: 'bookmarked', like: 'liked', flag: 'flagged' } as const;
+
 type Action = keyof typeof userActions;
 type ActionPast = (typeof userActions)[Action];
 
@@ -20,12 +21,13 @@ type ToggleActionData<IDType extends string | number = string> = {
   refreshToken?: string;
 };
 
-const createToggleAction = <T extends ToggleableItem<string | number>>(
+export const createToggleAction = <T extends ToggleableItem<string | number>>(
   toggleActionFn: (data: ToggleActionData<T['id']>) => CancelablePromise<unknown>,
   getDisplayFn: () => Promise<{ items: T[]; page: number; total: number }>,
 ) => {
   return (action: Action, item: T) => {
     const pastAction = userActions[action];
+    const pastActionCount = item[`${action}_count`] || 0;
     toggleActionFn({ id: item.id, action })
       .then(() =>
         updateInfiniteCache<T>(
@@ -33,7 +35,7 @@ const createToggleAction = <T extends ToggleableItem<string | number>>(
           {
             id: item.id,
             [pastAction]: !item[pastAction],
-            [`${action}_count`]: item[`${action}_count`] + (item[pastAction] ? -1 : 1),
+            [`${action}_count`]: pastActionCount + (item[pastAction] ? -1 : 1),
           } as Partial<T>,
           'update',
         ),
@@ -41,5 +43,3 @@ const createToggleAction = <T extends ToggleableItem<string | number>>(
       .catch(console.error);
   };
 };
-
-export default createToggleAction;

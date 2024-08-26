@@ -1,9 +1,8 @@
 import i18next from '@/i18n';
-import ExamView from './ExamView';
-import UserExam from './UserExam';
-import UserGrading from './UserGrading';
 
-export { ExamView, UserExam, UserGrading };
+export { Display as ExamDisplays } from './Displays';
+export { View as ExamView } from './View';
+export { Displays as GradingDisplays } from './grading/Displays';
 
 // gettext no-op
 void [

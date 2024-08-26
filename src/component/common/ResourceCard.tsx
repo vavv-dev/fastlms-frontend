@@ -1,22 +1,28 @@
-import { WithAvatar, useFixMouseLeave } from '@/component/common';
+import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
 import { decodeURLText, generateRandomDarkColor, stripHtml, textEllipsisCss } from '@/helper/util';
-import { BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, BoxProps, LinearProgress, Stack, Typography, darken, useTheme } from '@mui/material';
-import { useMemo, useRef, useState } from 'react';
+import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
+import { Box, BoxProps, Button, LinearProgress, Stack, Tooltip, Typography, darken, useTheme } from '@mui/material';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
-  resource: {
-    title: string;
-    description?: string;
-    is_public?: boolean;
-    bookmarked: boolean;
-    owner: {
-      name: string;
-      username: string;
-      thumbnail?: string | null;
-    };
+interface ResourceUpdateField {
+  is_public: boolean;
+}
+
+interface Resource extends ResourceUpdateField {
+  id: string;
+  title: string;
+  description?: string;
+  bookmarked: boolean;
+  owner: {
+    name: string;
+    username: string;
+    thumbnail?: string | null;
   };
+}
+
+interface Props {
+  resource: Resource;
   onClick?: (e: React.MouseEvent) => void;
   banner?: React.ReactNode;
   bannerPlace?: 'top' | 'bottom';
@@ -29,9 +35,11 @@ interface Props {
   footer?: React.ReactNode;
   sx?: BoxProps['sx'];
   showDescription?: boolean;
+  partialUpdateService?: (params: { id: string; requestBody: Partial<ResourceUpdateField> }) => Promise<any>; // eslint-disable-line
+  listService?: () => Promise<any>; // eslint-disable-line
 }
 
-const ResourceCard = ({
+export const ResourceCard = ({
   resource,
   onClick,
   banner,
@@ -45,6 +53,8 @@ const ResourceCard = ({
   footer,
   sx,
   showDescription,
+  partialUpdateService,
+  listService,
 }: Props) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
@@ -56,6 +66,20 @@ const ResourceCard = ({
   useFixMouseLeave(cardRef, () => {
     setHover(false);
   });
+
+  const updateField = useCallback(
+    async (params: Partial<ResourceUpdateField>) => {
+      if (partialUpdateService && listService) {
+        await partialUpdateService({
+          id: resource.id,
+          requestBody: params,
+        }).then(() => {
+          updateInfiniteCache(listService, { id: resource.id, is_public: true }, 'update');
+        });
+      }
+    },
+    [partialUpdateService, resource.id, listService],
+  );
 
   const Banner = useMemo(
     () =>
@@ -97,13 +121,27 @@ const ResourceCard = ({
                   p: 1,
                 }}
               >
-                {t('Not public')}
+                <Tooltip title={t('If you change to public, everyone can see this resource.')}>
+                  <Button
+                    size="small"
+                    sx={{ color: 'white', p: 0 }}
+                    onClick={(e) => {
+                      if (partialUpdateService) {
+                        e.stopPropagation();
+                        updateField({ is_public: true });
+                      }
+                    }}
+                    endIcon={<ArrowRight />}
+                  >
+                    {t('Change to public')}
+                  </Button>
+                </Tooltip>
               </Box>
             )}
           </Box>
         </Box>
       ),
-    [banner, color, passed, resource.is_public, score, t, theme],
+    [banner, color, passed, resource.is_public, score, t, theme.shape.borderRadius, updateField, partialUpdateService],
   );
 
   return (
@@ -140,7 +178,7 @@ const ResourceCard = ({
         <Typography
           className="content-title"
           variant="subtitle2"
-          sx={{ fontWeight: '600', mt: 1, pr: '3px', lineHeight: 1.2, ...textEllipsisCss(2) }}
+          sx={{ fontWeight: '600', mt: 1, pr: '3px', lineHeight: 1.3, ...textEllipsisCss(2) }}
         >
           {resource.title}
         </Typography>
@@ -172,5 +210,3 @@ const ResourceCard = ({
     </Box>
   );
 };
-
-export default ResourceCard;

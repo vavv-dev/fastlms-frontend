@@ -22,7 +22,7 @@ interface Props extends Omit<DialogProps, 'title'> {
   props?: DialogProps;
 }
 
-const BaseDialog = ({
+export const BaseDialog = ({
   open,
   fullWidth,
   setOpen,
@@ -44,7 +44,13 @@ const BaseDialog = ({
       fullWidth={fullWidth}
       maxWidth={forceFullWidth ? false : maxWidth}
       onClose={() => setOpen(false)}
-      PaperProps={{ sx: { pb: 1, borderRadius: theme.shape.borderRadius } }}
+      PaperProps={{
+        sx: {
+          overflow: 'unset', // fix. scroll paper empty space
+          pb: 1,
+          borderRadius: theme.shape.borderRadius,
+        },
+      }}
       scroll="paper"
       onClick={(e) => e.stopPropagation()}
       {...props}
@@ -72,5 +78,3 @@ const BaseDialog = ({
     </Dialog>
   );
 };
-
-export default BaseDialog;

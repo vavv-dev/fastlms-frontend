@@ -30,7 +30,7 @@ const schema: yup.ObjectSchema<UserCreateRequest> = yup.object({
   privacy: yup.boolean().oneOf([true], REQUIRED_FIELD).default(false),
 });
 
-const Join = () => {
+export const Join = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -113,5 +113,3 @@ const Join = () => {
     </Container>
   );
 };
-
-export default Join;
