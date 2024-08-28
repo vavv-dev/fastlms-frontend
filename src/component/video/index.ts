@@ -7,6 +7,7 @@ export { View as VideoView } from './View';
 export { Displays as PlaylistDisplays } from './playlist/Displays';
 export { View as PlaylistView } from './playlist/View';
 export { Input as SearchInput } from './search/Input';
+export { SearchResult as VideoSearchResult } from './search/Result';
 
 export const activeVideoIdState = atom<string | null>(null);
 export const playerHeightState = atom<string>('');

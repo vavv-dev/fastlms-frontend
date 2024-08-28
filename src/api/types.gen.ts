@@ -5,12 +5,12 @@ export type Body_CourseCreateEsimsaCourse = {
 };
 
 export type Body_PublicLogin = {
-    grant_type?: string | null;
+    grant_type?: (string | null);
     username: string;
     password: string;
     scope?: string;
-    client_id?: string | null;
-    client_secret?: string | null;
+    client_id?: (string | null);
+    client_secret?: (string | null);
 };
 
 export type CommentAuthor = {
@@ -22,7 +22,7 @@ export type CommentAuthor = {
 
 export type CommentDisplayResponse = {
     id: number;
-    parent_id?: number | null;
+    parent_id?: (number | null);
     thread_id: number;
     content: string;
     is_question: boolean;
@@ -41,7 +41,7 @@ export type CommentDisplayResponse = {
 };
 
 export type CommentResourceCreateRequest = {
-    parent_id?: number | null;
+    parent_id?: (number | null);
     thread_id: number;
     content: string;
     is_question: boolean;
@@ -50,7 +50,7 @@ export type CommentResourceCreateRequest = {
 };
 
 export type CommentResourceResponse = {
-    parent_id?: number | null;
+    parent_id?: (number | null);
     thread_id: number;
     content: string;
     is_question: boolean;
@@ -63,13 +63,13 @@ export type CommentResourceResponse = {
 };
 
 export type CommentUpdateRequest = {
-    parent_id?: number | null;
+    parent_id?: (number | null);
     thread_id?: number;
     content?: string;
     is_question?: boolean;
     solved?: boolean;
     pinned?: boolean;
-    deleted?: boolean | null;
+    deleted?: (boolean | null);
 };
 
 export type ContentDisplayResponse = {
@@ -99,7 +99,7 @@ export type ContentResourceCreateRequest = {
     index_page: string;
     duration: number;
     cutoff_progress: number;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type ContentResourceResponse = {
@@ -123,7 +123,7 @@ export type ContentResourceUpdateRequest = {
     index_page?: string;
     duration?: number;
     cutoff_progress?: number;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
     uploaded?: boolean;
 };
 
@@ -147,7 +147,7 @@ export type CourseDisplayResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     owner: CourseOwner;
     modified: string;
     thumbnail: string;
@@ -168,7 +168,7 @@ export type CourseDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
-    score: number | null;
+    score: (number | null);
     status: null;
 };
 
@@ -197,8 +197,8 @@ export type CourseResourceCreateRequest = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date?: string | null;
-    thumbnail?: string | null;
+    end_date?: (string | null);
+    thumbnail?: (string | null);
     preview: string;
     target: string;
     level: CourseLevel;
@@ -206,7 +206,7 @@ export type CourseResourceCreateRequest = {
     cutoff_percent: number;
     marketing_url: string;
     enrollment_start: string;
-    enrollment_end?: string | null;
+    enrollment_end?: (string | null);
     registration_limit: number;
     entrance_verification: boolean;
     invitation_required: boolean;
@@ -221,8 +221,8 @@ export type CourseResourceResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date?: string | null;
-    thumbnail?: string | null;
+    end_date?: (string | null);
+    thumbnail?: (string | null);
     preview: string;
     target: string;
     level: CourseLevel;
@@ -230,7 +230,7 @@ export type CourseResourceResponse = {
     cutoff_percent: number;
     marketing_url: string;
     enrollment_start: string;
-    enrollment_end?: string | null;
+    enrollment_end?: (string | null);
     registration_limit: number;
     entrance_verification: boolean;
     invitation_required: boolean;
@@ -248,8 +248,8 @@ export type CourseResourceUpdateRequest = {
     is_public?: boolean;
     featured?: boolean;
     start_date?: string;
-    end_date?: string | null;
-    thumbnail?: string | null;
+    end_date?: (string | null);
+    thumbnail?: (string | null);
     preview?: string;
     target?: string;
     level?: CourseLevel;
@@ -257,7 +257,7 @@ export type CourseResourceUpdateRequest = {
     cutoff_percent?: number;
     marketing_url?: string;
     enrollment_start?: string;
-    enrollment_end?: string | null;
+    enrollment_end?: (string | null);
     registration_limit?: number;
     entrance_verification?: boolean;
     invitation_required?: boolean;
@@ -271,7 +271,7 @@ export type CourseViewLesson = {
     title: string;
     description: string;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     resources: Array<CourseViewLessonEmbedResource>;
     thumbnail: string;
 };
@@ -291,12 +291,12 @@ export type CourseViewResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     owner: CourseOwner;
     modified: string;
     thumbnail: string;
     closed: boolean;
-    score: number | null;
+    score: (number | null);
     status: null;
     lessons: Array<CourseViewLesson>;
 };
@@ -321,20 +321,20 @@ export type ExamAssessResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     cutoff_percent: number;
-    submission: ExamAssessSubmission | null;
+    submission: (ExamAssessSubmission | null);
     kind: LearningResourceKind;
     owner: ExamOwner;
-    finding: {
+    finding: ({
     [key: string]: ExamQuestionFinding;
-} | null;
+} | null);
     final_message: string;
     verification_required: boolean;
     duration: number;
     exam_kind: ExamKind;
-    score: number | null;
-    status: SubmissionStatus | null;
+    score: (number | null);
+    status: (SubmissionStatus | null);
 };
 
 export type ExamAssessStartRequest = {
@@ -343,8 +343,8 @@ export type ExamAssessStartRequest = {
 
 export type ExamAssessSubmission = {
     verification_code: string;
-    start_time: string | null;
-    end_time: string | null;
+    start_time: (string | null);
+    end_time: (string | null);
     answers: {
         [key: string]: (string);
     };
@@ -356,7 +356,7 @@ export type ExamAssessSubmission = {
     };
     earned_score: number;
     possible_score: number;
-    graded_time: string | null;
+    graded_time: (string | null);
     questions: Array<ExamAsseccQuestion>;
 };
 
@@ -373,7 +373,7 @@ export type ExamDisplayResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     owner: ExamOwner;
     modified: string;
     submission_count: number;
@@ -393,8 +393,8 @@ export type ExamDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
-    score: number | null;
-    status: SubmissionStatus | null;
+    score: (number | null);
+    status: (SubmissionStatus | null);
 };
 
 export type ExamGradingExam = {
@@ -415,10 +415,10 @@ export type ExamGradingRequest = {
 export type ExamGradingSubmissionReponse = {
     id: string;
     user: ExamSubmissionUser;
-    score: number | null;
-    status: SubmissionStatus | null;
-    end_time: string | null;
-    graded_time: string | null;
+    score: (number | null);
+    status: (SubmissionStatus | null);
+    end_time: (string | null);
+    graded_time: (string | null);
     exam: ExamGradingExam;
 };
 
@@ -449,10 +449,10 @@ export type ExamQuestionKind = 'single_selection' | 'ox_selection' | 'text_input
 
 export type ExamReportResponse = {
     user: ExamSubmissionUser;
-    start_time: string | null;
-    end_time: string | null;
-    score: number | null;
-    status: string | null;
+    start_time: (string | null);
+    end_time: (string | null);
+    score: (number | null);
+    status: (string | null);
 };
 
 export type ExamResourceCreateRequest = {
@@ -461,7 +461,7 @@ export type ExamResourceCreateRequest = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     success_message: string;
     failure_message: string;
     exam_kind: ExamKind;
@@ -472,7 +472,7 @@ export type ExamResourceCreateRequest = {
     enable_finding: boolean;
     verification_required: boolean;
     questions: Array<ExamResourceQuestionCreate>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type ExamResourceQuestionComposition = {
@@ -521,7 +521,7 @@ export type ExamResourceQuestionUpdate = {
     reference?: string;
     keywords?: string;
     weight?: number;
-    id?: number | null;
+    id?: (number | null);
 };
 
 export type ExamResourceResponse = {
@@ -530,7 +530,7 @@ export type ExamResourceResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     success_message: string;
     failure_message: string;
     exam_kind: ExamKind;
@@ -541,7 +541,7 @@ export type ExamResourceResponse = {
     enable_finding: boolean;
     verification_required: boolean;
     questions: Array<ExamResourceQuestionResource>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
     id: string;
     owner: ExamOwner;
     modified: string;
@@ -553,7 +553,7 @@ export type ExamResourceUpdateRequest = {
     is_public?: boolean;
     featured?: boolean;
     start_date?: string;
-    end_date?: string | null;
+    end_date?: (string | null);
     success_message?: string;
     failure_message?: string;
     exam_kind?: ExamKind;
@@ -564,7 +564,7 @@ export type ExamResourceUpdateRequest = {
     enable_finding?: boolean;
     verification_required?: boolean;
     questions?: Array<ExamResourceQuestionUpdate>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type ExamSubmissionUser = {
@@ -591,11 +591,11 @@ export type LessonDisplayResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     owner: LessonOwner;
     resources: Array<LessonEmbedResource>;
-    progress: number | null;
-    passed: boolean | null;
+    progress: (number | null);
+    passed: (boolean | null);
     modified: string;
     thumbnail: string;
     related_courses: Array<LessonRelatedCourse>;
@@ -632,9 +632,9 @@ export type LessonResourceCreateRequest = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     resources: Array<LessonEmbedResource>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type LessonResourceResponse = {
@@ -643,9 +643,9 @@ export type LessonResourceResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     resources: Array<LessonEmbedResource>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
     id: string;
     owner: LessonOwner;
 };
@@ -662,9 +662,9 @@ export type LessonResourceUpdateRequest = {
     is_public?: boolean;
     featured?: boolean;
     start_date?: string;
-    end_date?: string | null;
+    end_date?: (string | null);
     resources?: Array<LessonEmbedResource>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type LessonSelectorResponse = {
@@ -796,6 +796,14 @@ export type Paginated_VideoReportResponse_ = {
     pages: number;
 };
 
+export type Paginated_VideoSearchResultResponse_ = {
+    items: Array<VideoSearchResultResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
 export type PasswordResetConfirmRequest = {
     token: string;
     new_password: string;
@@ -817,9 +825,9 @@ export type PlaylistDisplayResponse = {
     uploader: string;
     duration: number;
     video_count: number;
-    progress: number | null;
-    passed: boolean | null;
-    passed_str: string | null;
+    progress: (number | null);
+    passed: (boolean | null);
+    passed_str: (string | null);
     modified: string;
     live_count: number;
     bookmark_count: number;
@@ -842,7 +850,7 @@ export type PlaylistResourceCreateRequest = {
     description: string;
     is_public: boolean;
     featured: boolean;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type PlaylistResourceResponse = {
@@ -861,7 +869,7 @@ export type PlaylistResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type PlaylistResumeResponse = {
@@ -871,7 +879,7 @@ export type PlaylistResumeResponse = {
 export type PlaylistVideoItem = {
     playlist_id: string;
     video_id: string;
-    order: number | null;
+    order: (number | null);
 };
 
 export type PlaylistVideoRequest = {
@@ -889,9 +897,9 @@ export type PlaylistViewResponse = {
     uploader: string;
     duration: number;
     video_count: number;
-    progress: number | null;
-    passed: boolean | null;
-    passed_str: string | null;
+    progress: (number | null);
+    passed: (boolean | null);
+    passed_str: (string | null);
     modified: string;
     live_count: number;
     bookmark_count: number;
@@ -918,23 +926,23 @@ export type QuizAssessResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     cutoff_percent: number;
-    submission: QuizAssessSubmission | null;
+    submission: (QuizAssessSubmission | null);
     kind: LearningResourceKind;
     owner: QuizOwner;
-    finding: {
+    finding: ({
     [key: string]: QuizQuestionFinding;
-} | null;
+} | null);
     final_message: string;
-    score: number | null;
-    status: SubmissionStatus | null;
+    score: (number | null);
+    status: (SubmissionStatus | null);
 };
 
 export type QuizAssessSubmission = {
     verification_code: string;
-    start_time: string | null;
-    end_time: string | null;
+    start_time: (string | null);
+    end_time: (string | null);
     answers: {
         [key: string]: (string);
     };
@@ -962,7 +970,7 @@ export type QuizDisplayResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     owner: QuizOwner;
     modified: string;
     submission_count: number;
@@ -975,8 +983,8 @@ export type QuizDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
-    score: number | null;
-    status: SubmissionStatus | null;
+    score: (number | null);
+    status: (SubmissionStatus | null);
 };
 
 export type QuizOwner = {
@@ -999,10 +1007,10 @@ export type QuizQuestionKind = 'single_selection' | 'number_input';
 
 export type QuizReportResponse = {
     user: QuizReportUser;
-    start_time: string | null;
-    end_time: string | null;
-    score: number | null;
-    status: SubmissionStatus | null;
+    start_time: (string | null);
+    end_time: (string | null);
+    score: (number | null);
+    status: (SubmissionStatus | null);
 };
 
 export type QuizReportUser = {
@@ -1018,14 +1026,14 @@ export type QuizResourceCreateRequest = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     success_message: string;
     failure_message: string;
     cutoff_percent: number;
     randomize: boolean;
     enable_finding: boolean;
     questions: Array<QuizResourceQuestionCreate>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type QuizResourceQuestionCreate = {
@@ -1054,7 +1062,7 @@ export type QuizResourceQuestionUpdate = {
     selections?: Array<(string)>;
     correct_answer?: string;
     weight?: number;
-    id?: number | null;
+    id?: (number | null);
 };
 
 export type QuizResourceResponse = {
@@ -1063,14 +1071,14 @@ export type QuizResourceResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     success_message: string;
     failure_message: string;
     cutoff_percent: number;
     randomize: boolean;
     enable_finding: boolean;
     questions: Array<QuizResourceQuestionResource>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
     id: string;
     owner: QuizOwner;
     modified: string;
@@ -1083,14 +1091,14 @@ export type QuizResourceUpdateRequest = {
     is_public?: boolean;
     featured?: boolean;
     start_date?: string;
-    end_date?: string | null;
+    end_date?: (string | null);
     success_message?: string;
     failure_message?: string;
     cutoff_percent?: number;
     randomize?: boolean;
     enable_finding?: boolean;
     questions?: Array<QuizResourceQuestionUpdate>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type ResendVerificationEmailRequest = {
@@ -1116,22 +1124,22 @@ export type SurveyAssessResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
-    submission: SurveyAssessSubmission | null;
+    end_date: (string | null);
+    submission: (SurveyAssessSubmission | null);
     kind: LearningResourceKind;
     owner: SurveyOwner;
-    finding: {
+    finding: ({
     [key: string]: SurveyQuestionFinding;
-} | null;
+} | null);
     final_message: string;
-    status: SubmissionStatus | null;
+    status: (SubmissionStatus | null);
     enable_finding: boolean;
     submission_count: number;
 };
 
 export type SurveyAssessSubmission = {
-    start_time: string | null;
-    end_time: string | null;
+    start_time: (string | null);
+    end_time: (string | null);
     answers: {
         [key: string]: (string);
     };
@@ -1151,7 +1159,7 @@ export type SurveyDisplayResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     owner: SurveyOwner;
     modified: string;
     submission_count: number;
@@ -1163,7 +1171,7 @@ export type SurveyDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
-    status: SubmissionStatus | null;
+    status: (SubmissionStatus | null);
 };
 
 export type SurveyOwner = {
@@ -1178,15 +1186,15 @@ export type SurveyQuestionFinding = {
     question: string;
     selections: Array<(string)>;
     occurrences: Array<(number)>;
-    mandatory: boolean | null;
+    mandatory: (boolean | null);
 };
 
 export type SurveyQuestionKind = 'single_selection' | 'multiple_selection' | 'number_input' | 'text_input';
 
 export type SurveyReportResponse = {
     user: SurveyReportUser;
-    end_time: string | null;
-    status: SubmissionStatus | null;
+    end_time: (string | null);
+    status: (SubmissionStatus | null);
 };
 
 export type SurveyReportUser = {
@@ -1202,12 +1210,12 @@ export type SurveyResourceCreateRequest = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     complete_message: string;
     randomize: boolean;
     enable_finding: boolean;
     questions: Array<SurveyResourceQuestionCreate>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type SurveyResourceQuestionCreate = {
@@ -1233,7 +1241,7 @@ export type SurveyResourceQuestionUpdate = {
     kind?: SurveyQuestionKind;
     selections?: Array<(string)>;
     mandatory?: boolean;
-    id?: number | null;
+    id?: (number | null);
 };
 
 export type SurveyResourceResponse = {
@@ -1242,12 +1250,12 @@ export type SurveyResourceResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date: string | null;
+    end_date: (string | null);
     complete_message: string;
     randomize: boolean;
     enable_finding: boolean;
     questions: Array<SurveyResourceQuestionResource>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
     id: string;
     owner: SurveyOwner;
     modified: string;
@@ -1260,12 +1268,12 @@ export type SurveyResourceUpdateRequest = {
     is_public?: boolean;
     featured?: boolean;
     start_date?: string;
-    end_date?: string | null;
+    end_date?: (string | null);
     complete_message?: string;
     randomize?: boolean;
     enable_finding?: boolean;
     questions?: Array<SurveyResourceQuestionUpdate>;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type ThreadCreateRequest = {
@@ -1319,7 +1327,7 @@ export type UserUpdateRequest = {
     email?: string;
     name?: string;
     description?: string;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
 };
 
 export type ValidationError = {
@@ -1337,17 +1345,17 @@ export type VideoDisplayResponse = {
     owner: VideoOwner;
     thumbnail: string;
     uploader: string;
-    duration: number | null;
+    duration: (number | null);
     cutoff_progress: number;
     watch_count: number;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
-    progress: number | null;
-    passed: boolean | null;
+    progress: (number | null);
+    passed: (boolean | null);
     modified: string;
     is_live: boolean;
-    video_kind?: VideoKind | null;
+    video_kind?: (VideoKind | null);
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
@@ -1364,10 +1372,10 @@ export type VideoOwner = {
 
 export type VideoReportResponse = {
     user: VideoReportUser;
-    first_watch: string | null;
-    watched_at: string | null;
-    progress: number | null;
-    passed: boolean | null;
+    first_watch: (string | null);
+    watched_at: (string | null);
+    progress: (number | null);
+    passed: (boolean | null);
 };
 
 export type VideoReportUser = {
@@ -1397,7 +1405,39 @@ export type VideoResourceUpdateRequest = {
     is_public?: boolean;
     featured?: boolean;
     cutoff_progress?: number;
-    thumbnail?: string | null;
+    thumbnail?: (string | null);
+};
+
+export type VideoSearchResultResponse = {
+    id: string;
+    title: string;
+    description: string;
+    is_public: boolean;
+    featured: boolean;
+    owner: VideoOwner;
+    thumbnail: string;
+    uploader: string;
+    duration: (number | null);
+    cutoff_progress: number;
+    watch_count: number;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
+    progress: (number | null);
+    passed: (boolean | null);
+    modified: string;
+    is_live: boolean;
+    video_kind?: (VideoKind | null);
+    bookmarked: boolean;
+    liked: boolean;
+    flagged: boolean;
+    relevance: number;
+    search_subtitles?: Array<VideoSearchSubtitle>;
+};
+
+export type VideoSearchSubtitle = {
+    position: string;
+    line: string;
 };
 
 export type VideoSelectorResponse = {
@@ -1419,15 +1459,15 @@ export type VideoViewResponse = {
     featured: boolean;
     owner: VideoOwner;
     uploader: string;
-    duration: number | null;
+    duration: (number | null);
     cutoff_progress: number;
     watch_count: number;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
-    progress: number | null;
-    passed: boolean | null;
-    last_position: number | null;
+    progress: (number | null);
+    passed: (boolean | null);
+    last_position: (number | null);
     modified: string;
     video_kind: VideoKind;
     thumbnail: string;
@@ -1443,8 +1483,8 @@ export type WatchStartRequest = {
 };
 
 export type WatchUpdateRequest = {
-    watch_bitmap?: (Blob | File) | null;
-    length?: number | null;
+    watch_bitmap?: ((Blob | File) | null);
+    length?: (number | null);
     last_position: number;
 };
 
@@ -1452,988 +1492,999 @@ export type PublicCreateUserData = {
     requestBody: UserCreateRequest;
 };
 
-export type PublicCreateUserResponse = unknown;
+export type PublicCreateUserResponse = (unknown);
 
 export type PublicVerifyEmailData = {
     token: string;
 };
 
-export type PublicVerifyEmailResponse = unknown;
+export type PublicVerifyEmailResponse = (unknown);
 
 export type PublicResendVerificationEmailData = {
     requestBody: ResendVerificationEmailRequest;
 };
 
-export type PublicResendVerificationEmailResponse = unknown;
+export type PublicResendVerificationEmailResponse = (unknown);
 
 export type PublicLoginData = {
     formData: Body_PublicLogin;
 };
 
-export type PublicLoginResponse = LoginResponse;
+export type PublicLoginResponse = (LoginResponse);
 
 export type AccountLogoutData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type AccountLogoutResponse = unknown;
+export type AccountLogoutResponse = (unknown);
 
 export type PublicPasswordResetData = {
     requestBody: PasswordResetRequest;
 };
 
-export type PublicPasswordResetResponse = unknown;
+export type PublicPasswordResetResponse = (unknown);
 
 export type PublicPasswordResetConfirmData = {
     requestBody: PasswordResetConfirmRequest;
 };
 
-export type PublicPasswordResetConfirmResponse = unknown;
+export type PublicPasswordResetConfirmResponse = (unknown);
 
 export type AccountGetMeData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type AccountGetMeResponse = UserResponse;
+export type AccountGetMeResponse = (UserResponse);
 
 export type AccountUpdateMeData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: UserUpdateRequest;
 };
 
-export type AccountUpdateMeResponse = UserResponse;
+export type AccountUpdateMeResponse = (UserResponse);
 
 export type AccountGetUserData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: number;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type AccountGetUserResponse = UserResponse;
+export type AccountGetUserResponse = (UserResponse);
 
 export type AccountGetUserByUsernameData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     username: string;
 };
 
-export type AccountGetUserByUsernameResponse = UserResponse;
+export type AccountGetUserByUsernameResponse = (UserResponse);
 
 export type CommentGetThreadData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     url: string;
 };
 
-export type CommentGetThreadResponse = ThreadResponse;
+export type CommentGetThreadResponse = (ThreadResponse);
 
 export type CommentGetThreadsData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     orderBy?: 'created' | 'comment_count' | 'question_count' | 'unsolved_count';
-    ownerId?: number | null;
+    ownerId?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type CommentGetThreadsResponse = Paginated_ThreadResponse_;
+export type CommentGetThreadsResponse = (Paginated_ThreadResponse_);
 
 export type CommentCreateThreadData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: ThreadCreateRequest;
 };
 
-export type CommentCreateThreadResponse = ThreadResponse;
+export type CommentCreateThreadResponse = (ThreadResponse);
 
 export type CommentGetDisplaysData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     orderBy?: 'created' | 'like_count';
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
-    threadId?: number | null;
+    threadId?: (number | null);
 };
 
-export type CommentGetDisplaysResponse = Paginated_CommentDisplayResponse_;
+export type CommentGetDisplaysResponse = (Paginated_CommentDisplayResponse_);
 
 export type CommentCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: CommentResourceCreateRequest;
 };
 
-export type CommentCreateResourceResponse = CommentResourceResponse;
+export type CommentCreateResourceResponse = (CommentResourceResponse);
 
 export type CommentUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: number;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: CommentUpdateRequest;
 };
 
-export type CommentUpdateResourceResponse = CommentResourceResponse;
+export type CommentUpdateResourceResponse = (CommentResourceResponse);
 
 export type CommentToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: number;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type CommentToggleActionResponse = unknown;
+export type CommentToggleActionResponse = (unknown);
 
 export type VideoGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'watched_at' | 'title' | 'modified';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    playlistId?: string | null;
-    refreshToken?: string | null;
-    search?: string | null;
+    playlistId?: (string | null);
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
-    tag?: string | null;
-    videoKind?: VideoKind | null;
+    tag?: (string | null);
+    videoKind?: (VideoKind | null);
 };
 
-export type VideoGetDisplaysResponse = Paginated_VideoDisplayResponse_;
+export type VideoGetDisplaysResponse = (Paginated_VideoDisplayResponse_);
 
 export type VideoImportYoutubeVideoData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: ImportYoutubeRequest;
 };
 
-export type VideoImportYoutubeVideoResponse = VideoDisplayResponse;
+export type VideoImportYoutubeVideoResponse = (VideoDisplayResponse);
 
 export type VideoGetViewData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoGetViewResponse = VideoViewResponse;
+export type VideoGetViewResponse = (VideoViewResponse);
 
 export type VideoGetSubtitlesData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoGetSubtitlesResponse = Array<VideoSubtitleResponse>;
+export type VideoGetSubtitlesResponse = (Array<VideoSubtitleResponse>);
 
 export type VideoGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoGetResourceResponse = VideoResourceResponse;
+export type VideoGetResourceResponse = (VideoResourceResponse);
 
 export type VideoUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: VideoResourceUpdateRequest;
 };
 
-export type VideoUpdateResourceResponse = VideoResourceResponse;
+export type VideoUpdateResourceResponse = (VideoResourceResponse);
 
 export type VideoDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoDeleteResourceResponse = unknown;
+export type VideoDeleteResourceResponse = (unknown);
 
 export type VideoGetWatchBitmapData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoGetWatchBitmapResponse = (Blob | File);
+export type VideoGetWatchBitmapResponse = ((Blob | File));
 
 export type VideoStartWatchData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: WatchStartRequest;
 };
 
-export type VideoStartWatchResponse = unknown;
+export type VideoStartWatchResponse = (unknown);
 
 export type VideoUpdateWatchData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: WatchUpdateRequest;
 };
 
-export type VideoUpdateWatchResponse = unknown;
+export type VideoUpdateWatchResponse = (unknown);
 
 export type VideoEndWatchData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoEndWatchResponse = unknown;
+export type VideoEndWatchResponse = (unknown);
 
 export type VideoGetVideoReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'first_watch' | 'last_watch';
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
-    upTo?: string | null;
+    upTo?: (string | null);
 };
 
-export type VideoGetVideoReportResponse = Paginated_VideoReportResponse_;
+export type VideoGetVideoReportResponse = (Paginated_VideoReportResponse_);
 
 export type VideoDownloadVideoReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'first_watch' | 'last_watch';
-    refreshToken?: string | null;
-    search?: string | null;
-    upTo?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    upTo?: (string | null);
 };
 
-export type VideoDownloadVideoReportResponse = string;
+export type VideoDownloadVideoReportResponse = (string);
 
 export type VideoToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type VideoToggleActionResponse = unknown;
+export type VideoToggleActionResponse = (unknown);
 
 export type VideoVideoSelectorData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type VideoVideoSelectorResponse = Array<VideoSelectorResponse>;
+export type VideoVideoSelectorResponse = (Array<VideoSelectorResponse>);
 
 export type PlaylistGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'title' | 'modified';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type PlaylistGetDisplaysResponse = Paginated_PlaylistDisplayResponse_;
+export type PlaylistGetDisplaysResponse = (Paginated_PlaylistDisplayResponse_);
 
 export type PlaylistImportYoutubePlaylistData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: ImportYoutubeRequest;
 };
 
-export type PlaylistImportYoutubePlaylistResponse = PlaylistDisplayResponse;
+export type PlaylistImportYoutubePlaylistResponse = (PlaylistDisplayResponse);
 
 export type PlaylistUpdatePlaylistVideosData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: PlaylistVideoRequest;
 };
 
-export type PlaylistUpdatePlaylistVideosResponse = unknown;
+export type PlaylistUpdatePlaylistVideosResponse = (unknown);
 
 export type PlaylistGetViewData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type PlaylistGetViewResponse = PlaylistViewResponse;
+export type PlaylistGetViewResponse = (PlaylistViewResponse);
 
 export type PlaylistResumePlaylistData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type PlaylistResumePlaylistResponse = PlaylistResumeResponse;
+export type PlaylistResumePlaylistResponse = (PlaylistResumeResponse);
 
 export type PlaylistGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type PlaylistGetResourceResponse = PlaylistResourceResponse;
+export type PlaylistGetResourceResponse = (PlaylistResourceResponse);
 
 export type PlaylistUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: PlaylistResourceUpdateRequest;
 };
 
-export type PlaylistUpdateResourceResponse = PlaylistResourceResponse;
+export type PlaylistUpdateResourceResponse = (PlaylistResourceResponse);
 
 export type PlaylistDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type PlaylistDeleteResourceResponse = unknown;
+export type PlaylistDeleteResourceResponse = (unknown);
 
 export type PlaylistCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: PlaylistResourceCreateRequest;
 };
 
-export type PlaylistCreateResourceResponse = PlaylistResourceResponse;
+export type PlaylistCreateResourceResponse = (PlaylistResourceResponse);
 
 export type PlaylistToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type PlaylistToggleActionResponse = unknown;
+export type PlaylistToggleActionResponse = (unknown);
 
 export type QuizGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'created' | 'submission_count';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type QuizGetDisplaysResponse = Paginated_QuizDisplayResponse_;
+export type QuizGetDisplaysResponse = (Paginated_QuizDisplayResponse_);
 
 export type QuizGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type QuizGetResourceResponse = QuizResourceResponse;
+export type QuizGetResourceResponse = (QuizResourceResponse);
 
 export type QuizUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: QuizResourceUpdateRequest;
 };
 
-export type QuizUpdateResourceResponse = QuizResourceResponse;
+export type QuizUpdateResourceResponse = (QuizResourceResponse);
 
 export type QuizDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type QuizDeleteResourceResponse = unknown;
+export type QuizDeleteResourceResponse = (unknown);
 
 export type QuizCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: QuizResourceCreateRequest;
 };
 
-export type QuizCreateResourceResponse = QuizResourceResponse;
+export type QuizCreateResourceResponse = (QuizResourceResponse);
 
 export type QuizGetAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type QuizGetAssessResponse = QuizAssessResponse;
+export type QuizGetAssessResponse = (QuizAssessResponse);
 
 export type QuizReadyAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type QuizReadyAssessResponse = QuizAssessResponse;
+export type QuizReadyAssessResponse = (QuizAssessResponse);
 
 export type QuizSubmitAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: QuizAssessSubmitRequest;
 };
 
-export type QuizSubmitAssessResponse = QuizAssessResponse;
+export type QuizSubmitAssessResponse = (QuizAssessResponse);
 
 export type QuizDeleteAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type QuizDeleteAssessResponse = unknown;
+export type QuizDeleteAssessResponse = (unknown);
 
 export type QuizGetQuizReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'end_time';
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
-    upTo?: string | null;
+    upTo?: (string | null);
 };
 
-export type QuizGetQuizReportResponse = Paginated_QuizReportResponse_;
+export type QuizGetQuizReportResponse = (Paginated_QuizReportResponse_);
 
 export type QuizDownloadQuizReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'end_time';
-    refreshToken?: string | null;
-    search?: string | null;
-    upTo?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    upTo?: (string | null);
 };
 
-export type QuizDownloadQuizReportResponse = string;
+export type QuizDownloadQuizReportResponse = (string);
 
 export type QuizToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type QuizToggleActionResponse = unknown;
+export type QuizToggleActionResponse = (unknown);
 
 export type QuizGetOwnedQuestionsData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type QuizGetOwnedQuestionsResponse = Array<QuizResourceQuestionResource>;
+export type QuizGetOwnedQuestionsResponse = (Array<QuizResourceQuestionResource>);
 
 export type SurveyGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'created' | 'submission_count';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type SurveyGetDisplaysResponse = Paginated_SurveyDisplayResponse_;
+export type SurveyGetDisplaysResponse = (Paginated_SurveyDisplayResponse_);
 
 export type SurveyGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SurveyGetResourceResponse = SurveyResourceResponse;
+export type SurveyGetResourceResponse = (SurveyResourceResponse);
 
 export type SurveyUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: SurveyResourceUpdateRequest;
 };
 
-export type SurveyUpdateResourceResponse = SurveyResourceResponse;
+export type SurveyUpdateResourceResponse = (SurveyResourceResponse);
 
 export type SurveyDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SurveyDeleteResourceResponse = unknown;
+export type SurveyDeleteResourceResponse = (unknown);
 
 export type SurveyCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: SurveyResourceCreateRequest;
 };
 
-export type SurveyCreateResourceResponse = SurveyResourceResponse;
+export type SurveyCreateResourceResponse = (SurveyResourceResponse);
 
 export type SurveyGetAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SurveyGetAssessResponse = SurveyAssessResponse;
+export type SurveyGetAssessResponse = (SurveyAssessResponse);
 
 export type SurveyReadyAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SurveyReadyAssessResponse = SurveyAssessResponse;
+export type SurveyReadyAssessResponse = (SurveyAssessResponse);
 
 export type SurveySubmitAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: SurveyAssessSubmitRequest;
 };
 
-export type SurveySubmitAssessResponse = SurveyAssessResponse;
+export type SurveySubmitAssessResponse = (SurveyAssessResponse);
 
 export type SurveyDeleteAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SurveyDeleteAssessResponse = unknown;
+export type SurveyDeleteAssessResponse = (unknown);
 
 export type SurveyGetSurveyReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'end_time';
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
-    upTo?: string | null;
+    upTo?: (string | null);
 };
 
-export type SurveyGetSurveyReportResponse = Paginated_SurveyReportResponse_;
+export type SurveyGetSurveyReportResponse = (Paginated_SurveyReportResponse_);
 
 export type SurveyDownloadSurveyReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'end_time';
-    refreshToken?: string | null;
-    search?: string | null;
-    upTo?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    upTo?: (string | null);
 };
 
-export type SurveyDownloadSurveyReportResponse = string;
+export type SurveyDownloadSurveyReportResponse = (string);
 
 export type SurveyToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SurveyToggleActionResponse = unknown;
+export type SurveyToggleActionResponse = (unknown);
 
 export type SurveyGetOwnedQuestionsData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type SurveyGetOwnedQuestionsResponse = Array<SurveyResourceQuestionResource>;
+export type SurveyGetOwnedQuestionsResponse = (Array<SurveyResourceQuestionResource>);
 
 export type ExamGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'created' | 'submission_count' | 'title' | 'modified';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type ExamGetDisplaysResponse = Paginated_ExamDisplayResponse_;
+export type ExamGetDisplaysResponse = (Paginated_ExamDisplayResponse_);
 
 export type ExamGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ExamGetResourceResponse = ExamResourceResponse;
+export type ExamGetResourceResponse = (ExamResourceResponse);
 
 export type ExamUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: ExamResourceUpdateRequest;
 };
 
-export type ExamUpdateResourceResponse = ExamResourceResponse;
+export type ExamUpdateResourceResponse = (ExamResourceResponse);
 
 export type ExamDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ExamDeleteResourceResponse = unknown;
+export type ExamDeleteResourceResponse = (unknown);
 
 export type ExamCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: ExamResourceCreateRequest;
 };
 
-export type ExamCreateResourceResponse = ExamResourceResponse;
+export type ExamCreateResourceResponse = (ExamResourceResponse);
 
 export type ExamGetAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ExamGetAssessResponse = ExamAssessResponse;
+export type ExamGetAssessResponse = (ExamAssessResponse);
 
 export type ExamReadyAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: ExamAssessReadyRequest;
 };
 
-export type ExamReadyAssessResponse = ExamAssessResponse;
+export type ExamReadyAssessResponse = (ExamAssessResponse);
 
 export type ExamStartAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: ExamAssessStartRequest;
 };
 
-export type ExamStartAssessResponse = ExamAssessResponse;
+export type ExamStartAssessResponse = (ExamAssessResponse);
 
 export type ExamSubmitAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: ExamAssessSubmitRequest;
 };
 
-export type ExamSubmitAssessResponse = ExamAssessResponse;
+export type ExamSubmitAssessResponse = (ExamAssessResponse);
 
 export type ExamDeleteAssessData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ExamDeleteAssessResponse = unknown;
+export type ExamDeleteAssessResponse = (unknown);
 
 export type ExamGetGradingData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     userId: number;
 };
 
-export type ExamGetGradingResponse = ExamAssessResponse;
+export type ExamGetGradingResponse = (ExamAssessResponse);
 
 export type ExamSubmitGradingData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: ExamGradingRequest;
     userId: number;
 };
 
-export type ExamSubmitGradingResponse = ExamAssessResponse;
+export type ExamSubmitGradingResponse = (ExamAssessResponse);
 
 export type ExamGetExamReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'end_time' | 'start_time';
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
-    upTo?: string | null;
+    upTo?: (string | null);
 };
 
-export type ExamGetExamReportResponse = Paginated_ExamReportResponse_;
+export type ExamGetExamReportResponse = (Paginated_ExamReportResponse_);
 
 export type ExamDownloadExamReportData = {
-    accessToken?: string | null;
-    asOf?: string | null;
+    accessToken?: (string | null);
+    asOf?: (string | null);
     id: string;
     orderBy?: 'end_time' | 'start_time';
-    refreshToken?: string | null;
-    search?: string | null;
-    upTo?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    upTo?: (string | null);
 };
 
-export type ExamDownloadExamReportResponse = string;
+export type ExamDownloadExamReportResponse = (string);
 
 export type ExamGetGradingSubmissionsData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     orderBy?: 'end_time' | 'start_time';
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type ExamGetGradingSubmissionsResponse = Paginated_ExamGradingSubmissionReponse_;
+export type ExamGetGradingSubmissionsResponse = (Paginated_ExamGradingSubmissionReponse_);
 
 export type ExamToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ExamToggleActionResponse = unknown;
+export type ExamToggleActionResponse = (unknown);
 
 export type ExamGetOwnedQuestionsData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type ExamGetOwnedQuestionsResponse = Array<ExamResourceQuestionResource>;
+export type ExamGetOwnedQuestionsResponse = (Array<ExamResourceQuestionResource>);
 
 export type LessonGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'title' | 'modified' | 'created';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type LessonGetDisplaysResponse = Paginated_LessonDisplayResponse_;
+export type LessonGetDisplaysResponse = (Paginated_LessonDisplayResponse_);
 
 export type LessonGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type LessonGetResourceResponse = LessonResourceResponse;
+export type LessonGetResourceResponse = (LessonResourceResponse);
 
 export type LessonUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: LessonResourceUpdateRequest;
 };
 
-export type LessonUpdateResourceResponse = LessonResourceResponse;
+export type LessonUpdateResourceResponse = (LessonResourceResponse);
 
 export type LessonDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type LessonDeleteResourceResponse = unknown;
+export type LessonDeleteResourceResponse = (unknown);
 
 export type LessonCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: LessonResourceCreateRequest;
 };
 
-export type LessonCreateResourceResponse = LessonResourceResponse;
+export type LessonCreateResourceResponse = (LessonResourceResponse);
 
 export type LessonToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type LessonToggleActionResponse = unknown;
+export type LessonToggleActionResponse = (unknown);
 
 export type LessonResourceSelectorData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type LessonResourceSelectorResponse2 = Array<LessonResourceSelectorResponse>;
+export type LessonResourceSelectorResponse2 = (Array<LessonResourceSelectorResponse>);
 
 export type LessonLessonSelectorData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
 };
 
-export type LessonLessonSelectorResponse = Array<LessonSelectorResponse>;
+export type LessonLessonSelectorResponse = (Array<LessonSelectorResponse>);
 
 export type ContentGetDisplaysData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     orderBy?: 'title' | 'modified';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type ContentGetDisplaysResponse = Paginated_ContentDisplayResponse_;
+export type ContentGetDisplaysResponse = (Paginated_ContentDisplayResponse_);
 
 export type ContentGetViewData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ContentGetViewResponse = ContentViewResponse;
+export type ContentGetViewResponse = (ContentViewResponse);
 
 export type ContentGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ContentGetResourceResponse = ContentResourceResponse;
+export type ContentGetResourceResponse = (ContentResourceResponse);
 
 export type ContentUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: ContentResourceUpdateRequest;
 };
 
-export type ContentUpdateResourceResponse = ContentResourceResponse;
+export type ContentUpdateResourceResponse = (ContentResourceResponse);
 
 export type ContentDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ContentDeleteResourceResponse = unknown;
+export type ContentDeleteResourceResponse = (unknown);
 
 export type ContentCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: ContentResourceCreateRequest;
 };
 
-export type ContentCreateResourceResponse = ContentResourceResponse;
+export type ContentCreateResourceResponse = (ContentResourceResponse);
 
 export type ContentPresignedUploadUrlData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     contentId: string;
     contentType: string;
     filename: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ContentPresignedUploadUrlResponse = string;
+export type ContentPresignedUploadUrlResponse = (string);
 
 export type ContentContentIframeData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type ContentContentIframeResponse = string;
+export type ContentContentIframeResponse = (string);
 
 export type CourseGetDisplaysData = {
-    accessToken?: string | null;
-    bookmarker?: number | null;
+    accessToken?: (string | null);
+    bookmarker?: (number | null);
     orderBy?: 'title' | 'modified' | 'created';
-    owner?: number | null;
+    owner?: (number | null);
     page?: number;
-    refreshToken?: string | null;
-    search?: string | null;
+    refreshToken?: (string | null);
+    search?: (string | null);
     size?: number;
 };
 
-export type CourseGetDisplaysResponse = Paginated_CourseDisplayResponse_;
+export type CourseGetDisplaysResponse = (Paginated_CourseDisplayResponse_);
 
 export type CourseGetResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type CourseGetResourceResponse = CourseResourceResponse;
+export type CourseGetResourceResponse = (CourseResourceResponse);
 
 export type CourseUpdateResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
     requestBody: CourseResourceUpdateRequest;
 };
 
-export type CourseUpdateResourceResponse = CourseResourceResponse;
+export type CourseUpdateResourceResponse = (CourseResourceResponse);
 
 export type CourseDeleteResourceData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type CourseDeleteResourceResponse = unknown;
+export type CourseDeleteResourceResponse = (unknown);
 
 export type CourseCreateResourceData = {
-    accessToken?: string | null;
-    refreshToken?: string | null;
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
     requestBody: CourseResourceCreateRequest;
 };
 
-export type CourseCreateResourceResponse = CourseResourceResponse;
+export type CourseCreateResourceResponse = (CourseResourceResponse);
 
 export type CourseGetViewData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type CourseGetViewResponse = CourseViewResponse;
+export type CourseGetViewResponse = (CourseViewResponse);
 
 export type CourseToggleActionData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
     id: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type CourseToggleActionResponse = unknown;
+export type CourseToggleActionResponse = (unknown);
 
 export type CourseCreateEsimsaCourseData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     formData: Body_CourseCreateEsimsaCourse;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type CourseCreateEsimsaCourseResponse = CourseDisplayResponse;
+export type CourseCreateEsimsaCourseResponse = (CourseDisplayResponse);
+
+export type SearchSearchVideoContentData = {
+    accessToken?: (string | null);
+    orderBy?: 'relevance';
+    page?: number;
+    q: string;
+    refreshToken?: (string | null);
+    size?: number;
+};
+
+export type SearchSearchVideoContentResponse = (Paginated_VideoSearchResultResponse_);
 
 export type SearchSuggestVideoKeywordsData = {
-    accessToken?: string | null;
+    accessToken?: (string | null);
     q?: string;
-    refreshToken?: string | null;
+    refreshToken?: (string | null);
 };
 
-export type SearchSuggestVideoKeywordsResponse = Array<(string)>;
+export type SearchSuggestVideoKeywordsResponse = (Array<(string)>);

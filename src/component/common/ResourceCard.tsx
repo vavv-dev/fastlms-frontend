@@ -1,7 +1,7 @@
 import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
 import { decodeURLText, generateRandomDarkColor, stripHtml, textEllipsisCss } from '@/helper/util';
 import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, BoxProps, Button, LinearProgress, Stack, Tooltip, Typography, darken, useTheme } from '@mui/material';
+import { Box, BoxProps, Button, LinearProgress, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -90,7 +90,7 @@ export const ResourceCard = ({
             display: 'flex',
             flexDirection: 'column',
             bgcolor: color,
-            border: `1px solid ${darken(color, 0.5)}`,
+            // border: `1px solid ${darken(color, 0.5)}`,
             position: 'relative',
             borderRadius: theme.shape.borderRadius / 2,
             gap: 1.5,

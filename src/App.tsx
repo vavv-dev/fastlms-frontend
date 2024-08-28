@@ -10,14 +10,14 @@ import {
   Profile,
 } from '@/component/account';
 import { CommentDisplays } from '@/component/comment';
-import { CourseView, CourseDisplays } from '@/component/course';
+import { CourseDisplays, CourseView } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamDisplays, ExamView, GradingDisplays } from '@/component/exam';
 import { BaseLayout } from '@/component/layout';
 import { ContentDisplays, LessonDisplays } from '@/component/lesson';
 import { QuizDisplays } from '@/component/quiz';
 import { SurveyDisplays } from '@/component/survey';
-import { PlaylistDisplays, PlaylistView, SearchInput, VideoDisplays, VideoView } from '@/component/video';
+import { PlaylistDisplays, PlaylistView, SearchInput, VideoDisplays, VideoSearchResult, VideoView } from '@/component/video';
 import { loginExpireState, userChannelState, userState } from '@/store';
 import { modeState, themeConfig } from '@/theme';
 import { ThemeProvider } from '@emotion/react';
@@ -67,9 +67,7 @@ export const App = () => {
             {/* top level page with drawer */}
             <Route path="playlist/:id" element={<PlaylistView />} />
             <Route path="course/:id" element={<CourseView />} />
-            {/*
             <Route path="video/search" element={<VideoSearchResult />} />
-            */}
           </Route>
 
           {/* top level page without drawer */}
@@ -120,7 +118,12 @@ const Protected: React.FC<RouteProps> = () => {
     navigate('/login', { state: { from: location.pathname }, replace: true });
   }, [setUser, navigate, location.pathname]);
 
-  // force logout at refresh token expire
+  /**
+   *
+   * login state
+   *
+   */
+
   useEffect(() => {
     if (loginExpire) {
       const now = new Date();
@@ -142,20 +145,40 @@ const Protected: React.FC<RouteProps> = () => {
     });
   }, []); // eslint-disable-line
 
-  useEffect(() => {
-    if (!user || userChannel) return;
-    const socket = new WebSocket(`${CHANNEL_SOCKET_URL}?user_id=${user.id}`);
-    setUserChannel(socket);
-    return () => {
-      socket.close();
-      setUserChannel(null);
-    };
-  }, []); // eslint-disable-line
+  /**
+   *
+   * websocket channel
+   *
+   */
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
-  }
-  return <Outlet />;
+  const userChannelConnect = useCallback(() => {
+    if (!user || userChannel) {
+      return userChannel;
+    }
+    const socket = new WebSocket(`${CHANNEL_SOCKET_URL}?user_id=${user.id}`);
+    socket.onopen = () => {
+      setUserChannel(socket);
+    };
+    socket.onclose = (e) => {
+      setUserChannel(null);
+      if (e.wasClean) {
+        setTimeout(() => userChannelConnect(), 1 * 1000);
+      }
+    };
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+    return socket;
+  }, [user]); // eslint-disable-line
+
+  useEffect(() => {
+    const socket = userChannelConnect();
+    return () => {
+      if (socket) socket.close();
+    };
+  }, [userChannelConnect]);
+
+  return user ? <Outlet /> : <Navigate to="/login" state={{ from: location.pathname }} replace />;
 };
 
 // api setup

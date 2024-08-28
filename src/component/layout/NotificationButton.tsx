@@ -1,6 +1,6 @@
 import { formatDatetimeLocale } from '@/helper/util';
 import { userChannelState } from '@/store';
-import { ChatBubbleOutlineOutlined, TagFacesOutlined } from '@mui/icons-material';
+import { NotificationsOutlined, TagFacesOutlined } from '@mui/icons-material';
 import { Badge, Box, Divider, IconButton, Popover, Stack, Typography, useTheme } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -44,7 +44,7 @@ export const NotificationButton = () => {
     <>
       <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
         <Badge badgeContent={newNotificationCount} color="error">
-          <ChatBubbleOutlineOutlined />
+          <NotificationsOutlined />
         </Badge>
       </IconButton>
       <Popover
