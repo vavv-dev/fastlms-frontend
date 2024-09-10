@@ -6,12 +6,7 @@ import { alertState, snackbarMessageState, spacerRefState } from '.';
 import { NavDrawer } from './NavDrawer';
 import { TopBar } from './TopBar';
 
-interface Props {
-  searchBar?: React.ReactNode;
-  hideDrawer?: boolean;
-}
-
-export const BaseLayout = ({ searchBar, hideDrawer = false }: Props) => {
+export const BaseLayout = ({ searchBar, hideDrawer = false }: { searchBar?: React.ReactNode; hideDrawer?: boolean }) => {
   const { t } = useTranslation('layout');
   const [snackbarMessage, setSnackbarMessage] = useAtom(snackbarMessageState);
   const alert = useAtomValue(alertState);
@@ -25,7 +20,7 @@ export const BaseLayout = ({ searchBar, hideDrawer = false }: Props) => {
         <Collapse in={alert.open}>
           <Box sx={{ height: 48 }} />
         </Collapse>
-        <Box display="flex">
+        <Box sx={{ display: 'flex' }}>
           <NavDrawer hideDrawer={hideDrawer} />
           <Box sx={{ width: '100%', display: 'flex', flexGrow: 1, flexDirection: 'column', position: 'relative' }}>
             <Outlet />

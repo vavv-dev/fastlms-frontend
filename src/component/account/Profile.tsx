@@ -23,6 +23,7 @@ const schema: yup.ObjectSchema<UserUpdateRequest> = yup.object({
   email: yup.string().email(t('Invalid email')).required(REQUIRED_FIELD).default(''),
   description: yup.string().default(''),
   thumbnail: yup.mixed(),
+  banner: yup.mixed(),
 });
 
 export const Profile = () => {
@@ -64,16 +65,37 @@ export const Profile = () => {
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box sx={{ mx: 'auto', mt: 5, maxWidth: 'sm', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mx: 'auto', mt: 5, maxWidth: 'md', display: 'flex', flexDirection: 'column' }}>
         <Form disabled={!isOwner} onSubmit={handleSubmit(updateProfile)} formState={formState} setError={setError}>
-          <Text InputLabelProps={{ shrink: true }} name="name" required label={t('Name')} control={control} margin="normal" />
-          <Text InputLabelProps={{ shrink: true }} name="email" required label={t('Email')} control={control} margin="normal" />
-          <TextEditorControl disabled={!isOwner} name="description" label={t('Description')} control={control} margin="normal" />
+          <Text
+            slotProps={{ inputLabel: { shrink: true } }}
+            name="name"
+            required
+            label={t('Name')}
+            control={control}
+            margin="normal"
+          />
+          <Text
+            slotProps={{ inputLabel: { shrink: true } }}
+            name="email"
+            required
+            label={t('Email')}
+            control={control}
+            margin="normal"
+          />
+          <TextEditorControl
+            minHeight={'200px'}
+            disabled={!isOwner}
+            name="description"
+            label={t('Description')}
+            control={control}
+            margin="normal"
+          />
 
           {isOwner && (
             <>
               <Button
-                onClick={() => navigate('/reset-password')}
+                onClick={() => navigate('/password-reset')}
                 sx={{ display: 'flex', alignItems: 'center', my: 1, cursor: 'pointer' }}
                 startIcon={<VpnKeyOutlined />}
               >

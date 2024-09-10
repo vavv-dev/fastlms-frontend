@@ -2,8 +2,9 @@ import { VideoGetViewData as GetViewData, VideoGetViewResponse as GetViewRespons
 import { useServiceImmutable } from '@/component/common/hooks';
 import { Box, useTheme } from '@mui/material';
 import { useSetAtom } from 'jotai';
-import { useCallback, useEffect, useRef } from 'react';
-import ReactPlayer from 'react-player/youtube';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import ReactPlayer, { YouTubePlayerProps } from 'react-player/youtube';
+import { useSearchParams } from 'react-router-dom';
 import {
   activeVideoIdState as activeIdState,
   playerHeightState,
@@ -12,8 +13,12 @@ import {
   playerReadyState,
 } from '.';
 
+// For fast switching between videos, do not use state
+const lastPositions = {};
+
 export const Player = ({ id, aspectRatio }: { id: string; aspectRatio?: string }) => {
   const theme = useTheme();
+  const [searchParams] = useSearchParams();
   const setPlayerInstance = useSetAtom(playerInstanceState);
   const setPlayerProgress = useSetAtom(playerProgressState);
   const setPlayerReady = useSetAtom(playerReadyState);
@@ -22,6 +27,7 @@ export const Player = ({ id, aspectRatio }: { id: string; aspectRatio?: string }
   const { data } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
   const ref = useRef<ReactPlayer | null>(null);
   const playerRatio = data?.video_kind === 'video' || data?.is_live ? 16 / 9 : 9 / 16;
+  const lastPositionsRef = useRef<Record<string, number>>(lastPositions);
 
   // player height
   const elementRef = useCallback(
@@ -53,6 +59,10 @@ export const Player = ({ id, aspectRatio }: { id: string; aspectRatio?: string }
     return () => setActiveId(null);
   }, [data?.id]); // eslint-disable-line
 
+  // resume
+  const tParam = searchParams.get('t');
+  const t = useMemo(() => tParam || lastPositionsRef.current[id] || data?.last_position, [tParam, id, data?.last_position]);
+
   if (!data) return null;
 
   return (
@@ -72,17 +82,20 @@ export const Player = ({ id, aspectRatio }: { id: string; aspectRatio?: string }
     >
       <ReactPlayer
         progressInterval={900.0}
-        onProgress={({ playedSeconds }) => setPlayerProgress(playedSeconds)}
+        onProgress={({ playedSeconds }) => {
+          setPlayerProgress(playedSeconds);
+          lastPositionsRef.current[id] = playedSeconds;
+        }}
         onReady={() => setPlayerReady((prev) => ++prev)}
         ref={ref}
-        url={`https://www.youtube.com/watch?v=${id}`}
+        url={`https://www.youtube.com/watch?v=${id}${t ? `&t=${t}` : ''}`}
         {...options}
       />
     </Box>
   );
 };
 
-const options = {
+const options: YouTubePlayerProps = {
   playing: true,
   controls: true,
   width: '100%',

@@ -6,7 +6,8 @@ import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
 } from '@mui/icons-material';
-import { Box, Grid, LinearProgress, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, LinearProgress, Tooltip, Typography, useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useTranslation } from 'react-i18next';
 
@@ -32,7 +33,7 @@ export const FindingQuestionPanel = ({ question, maxOccurrence, totalOccurrence,
             const totalPercentage = totalOccurrence ? ((occurrences?.[i] || 0) / totalOccurrence) * 100 : 0;
 
             return [
-              <Grid key={`selection-${i}`} item xs={8}>
+              <Grid key={`selection-${i}`} size={{ xs: 8 }}>
                 <Tooltip title={selection} placement="top" arrow>
                   <Box
                     sx={{
@@ -64,13 +65,13 @@ export const FindingQuestionPanel = ({ question, maxOccurrence, totalOccurrence,
                         )}
                       </>
                     )}
-                    <Typography variant="body2" color="textSecondary" sx={{ ...textEllipsisCss(1) }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', ...textEllipsisCss(1) }}>
                       {selection}
                     </Typography>
                   </Box>
                 </Tooltip>
               </Grid>,
-              <Grid key={`occurrence-${i}`} item xs={4}>
+              <Grid key={`occurrence-${i}`} size={{ xs: 4 }}>
                 <Tooltip title={`${toFixedHuman(totalPercentage, 1)}%`} placement="top" arrow>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <LinearProgress
@@ -100,7 +101,7 @@ export const FindingQuestionPanel = ({ question, maxOccurrence, totalOccurrence,
         <>
           {answer && (
             <Box>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 {t('My answer')}
               </Typography>
               <Box
@@ -109,7 +110,7 @@ export const FindingQuestionPanel = ({ question, maxOccurrence, totalOccurrence,
               />
             </Box>
           )}
-          <Typography variant="caption" color="primary.main">
+          <Typography variant="caption" sx={{ color: 'primary.main' }}>
             {t('Frequently mentioned items in answers.')}
           </Typography>
           <PieChart

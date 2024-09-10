@@ -3,3 +3,26 @@ body,
 #root {
   height: 100%;
 }
+
+/* remove browser default margin */
+
+p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+/* tiptap styles */
+
+.ProseMirror p:empty::before,
+p:empty:not(.MuiFormHelperText-root)::before {
+  content: '\00a0'; /* Non-breaking space */
+  display: inline-block;
+}
+[data-type='taskList'] {
+  list-style-type: none;
+  padding: 0;
+}
+[data-type='taskItem'] {
+  display: flex;
+  align-items: center;
+}

@@ -3,6 +3,8 @@ import {
   FactCheck,
   FactCheckOutlined,
   HomeOutlined,
+  PeopleAlt,
+  PeopleAltOutlined,
   Poll,
   PollOutlined,
   Quiz,
@@ -31,6 +33,7 @@ import {
   Typography,
   styled,
   useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import { useEffect, useMemo } from 'react';
@@ -42,6 +45,7 @@ const drawerWidth = 150;
 
 export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   const { t } = useTranslation('layout');
+  const theme = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const matches = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
@@ -52,6 +56,7 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   const menuItems: [string, string, React.ElementType, React.ElementType][] = useMemo(
     () => [
       [t('Home'), '', HomeOutlined, Home],
+      [t('Channel'), '/channel', PeopleAltOutlined, PeopleAlt],
       [t('Quiz'), '/quiz', QuizOutlined, Quiz],
       [t('Survey'), '/survey', PollOutlined, Poll],
       [t('Exam'), '/exam', FactCheckOutlined, FactCheck],
@@ -73,11 +78,13 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
 
   return (
     <>
-      <Backdrop
-        sx={{ zIndex: (theme) => theme.zIndex.appBar - 2 }}
-        open={(matches || hideDrawer) && (navOpen || false)}
-        onClick={() => setNavOpen(false)}
-      />
+      {(matches || hideDrawer) && (navOpen || false) && (
+        <Backdrop
+          sx={{ zIndex: theme.zIndex.appBar - 2 }}
+          open={(matches || hideDrawer) && (navOpen || false)}
+          onClick={() => setNavOpen(false)}
+        />
+      )}
       <Drawer
         variant="permanent"
         open={navOpen}
@@ -89,8 +96,9 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
           <Box sx={{ height: 48 }} />
         </Collapse>
         <List>
-          {menuItems.map(([title, path, Icon, IconSeleted], i) =>
-            title ? (
+          {menuItems.map(([title, path, Icon, IconSeleted], i) => {
+            const active = (path && pathname.startsWith(path)) || (!path && pathname == '/');
+            return title ? (
               <ListItem
                 key={i}
                 disablePadding
@@ -98,12 +106,13 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
                   navigate(path || '/');
                   if (matches) setNavOpen(false);
                 }}
+                sx={active ? { bgcolor: theme.palette.action.hover } : {}}
               >
                 <ListItemButton sx={{ py: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ListItemIcon
                     sx={{ color: 'inherit', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}
                   >
-                    {pathname.startsWith(path) ? <IconSeleted /> : <Icon />}
+                    {active ? <IconSeleted /> : <Icon />}
                     {!navOpen && <Typography variant="caption">{title}</Typography>}
                   </ListItemIcon>
                   {navOpen && (
@@ -117,8 +126,8 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
               </ListItem>
             ) : (
               <Divider key={i} />
-            ),
-          )}
+            );
+          })}
         </List>
       </Drawer>
     </>

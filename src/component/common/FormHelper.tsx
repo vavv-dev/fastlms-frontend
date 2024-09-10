@@ -110,7 +110,7 @@ export const CheckboxControl = ({ name, label, control, helperText, defaultValue
       control={control}
       defaultValue={defaultValue}
       render={({ field, fieldState: { error } }) => (
-        <FormControl margin={props.margin || 'dense'} error={!!error} fullWidth sx={{ mt: 1, ...props.sx }}>
+        <FormControl margin={props.margin || 'dense'} error={!!error} fullWidth sx={{ ...props.sx }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <FormControlLabel
               sx={!label ? { ml: 0 } : undefined}
@@ -189,20 +189,22 @@ export const TextFieldControl = ({
             type={type == 'password' ? (showPassword ? 'text' : 'password') : type}
             sx={{ '& .MuiFormHelperText-root': { ml: 0 }, ...sx }}
             helperText={error?.message ? error.message : helperText ? helperText : helperText == null ? '' : ' '}
-            InputProps={{
-              readOnly: props.readOnly,
-              ...(startAdornment && { startAdornment }),
-              ...(endAdornment && { endAdornment }),
-              ...(!endAdornment &&
-                type == 'password' && {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)}>
-                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }),
+            slotProps={{
+              input: {
+                readOnly: props.readOnly,
+                ...(startAdornment && { startAdornment }),
+                ...(endAdornment && { endAdornment }),
+                ...(!endAdornment &&
+                  type == 'password' && {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)}>
+                          {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }),
+              },
             }}
             {...field}
             {...props}
@@ -238,10 +240,10 @@ interface FileFieldControlProps extends Omit<InputProps, 'type'> {
   control: any; // eslint-disable-line
   variant?: 'standard' | 'outlined' | 'filled';
   helperText?: string | null;
-  InputLabelProps?: InputLabelProps;
+  slotProps?: InputProps['slotProps'] & { inputLabel: InputLabelProps };
 }
 
-export const FileFieldControl = ({ name, label, control, helperText, InputLabelProps, ...props }: FileFieldControlProps) => {
+export const FileFieldControl = ({ name, label, control, helperText, slotProps, ...props }: FileFieldControlProps) => {
   const { t } = useTranslation('common');
   const inputRef = useRef(null);
 
@@ -258,7 +260,7 @@ export const FileFieldControl = ({ name, label, control, helperText, InputLabelP
               shrink={true}
               htmlFor={name}
               sx={{ overflow: 'visible' }}
-              {...InputLabelProps}
+              {...slotProps}
             >
               {label} {props.required ? '*' : `(${t('Optional')})`}
             </InputLabel>

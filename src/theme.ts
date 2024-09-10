@@ -14,8 +14,9 @@ declare module '@mui/material/styles' {
     sm: true;
     smm: true;
     md: true;
-    playerSplit: true;
+    mdl: true;
     lg: true;
+    lgx: true;
     xl: true;
     xxl: true;
   }
@@ -35,8 +36,9 @@ const themeConfig = (mode: 'light' | 'dark') => ({
       sm: 600,
       smm: 700,
       md: 900,
-      playerSplit: 1000,
+      mdl: 1000,
       lg: 1280,
+      lgx: 1440,
       xl: 1604,
       xxl: 1754,
     },

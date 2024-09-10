@@ -7,10 +7,12 @@ import {
 } from '@/api';
 
 import { useServiceImmutable } from '@/component/common';
+import { ResourceViewer } from '@/component/lesson';
 import { decodeURLText } from '@/helper/util';
 import { userState } from '@/store';
 import { ArrowDropDown, ArrowDropUp, CheckOutlined } from '@mui/icons-material';
-import { Box, Button, Chip, Grid, IconButton, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@mui/material';
+import { Box, Button, Chip, IconButton, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { useState } from 'react';
@@ -32,7 +34,7 @@ export const View = () => {
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box m="auto" maxWidth="md" sx={{ display: 'flex', flexDirection: 'column', gap: '1em', position: 'relative' }}>
+      <Box sx={{ m: 'auto', maxWidth: 'md', display: 'flex', flexDirection: 'column', gap: '1em', position: 'relative' }}>
         {/* course title */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
           <Typography variant="h4" sx={{ flexGrow: 1, textAlign: 'center' }}>
@@ -114,7 +116,7 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, collapse, ..
           sx={{ whiteSpace: 'pre-wrap', '& p': { my: 0 }, fontSize: '0.9rem' }}
         />
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, my: 3 }}>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {t('Lesson Resources')}
           </Typography>
           <ResourceStepper resources={lesson.resources} />
@@ -143,13 +145,13 @@ const ResourceStepper = ({ resources }: { resources: EmbedResource[] }) => {
           <Step key={resource.id}>
             <StepLabel>
               <Grid container spacing={2} sx={{ alignItems: 'center', pl: 1 }}>
-                <Grid item xs={1}>
+                <Grid size={{ xs: 1 }}>
                   <Typography variant="body2">{t(resource.kind)}</Typography>
                 </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1">{resource.title}</Typography>
+                <Grid size={{ xs: 9 }}>
+                  <ResourceViewer resource={resource} />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid size={{ xs: 2 }}>
                   <Chip icon={<CheckOutlined />} size="small" onClick={handleNext} label={t('Completed')} />
                 </Grid>
               </Grid>

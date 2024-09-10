@@ -48,13 +48,12 @@ export const Finding = ({ id }: { id: string }) => {
 
           return (
             <Box key={id} sx={{ display: 'flex', flexDirection: 'column', gap: 3, '& .percentage': { minWidth: 60 } }}>
-              <Typography>
+              <Typography sx={{ whiteSpace: 'pre-wrap' }}>
                 {`${i + 1}. [${t(kind)}] ${title}`}
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'inline', ml: 1 }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'inline', ml: 1 }}>
                   {t('{{ num }} Points', { num: weight })}
                 </Typography>
               </Typography>
-
               <FindingQuestionPanel
                 question={question}
                 maxOccurrence={maxOccurrence}
@@ -62,20 +61,18 @@ export const Finding = ({ id }: { id: string }) => {
                 answer={answer}
                 isCorrect={isCorrect}
               />
-
               {submittedQuestions.includes(Number(id)) && (
                 <Box sx={{ px: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Typography variant="body1" color="primary">
+                  <Typography variant="body1" sx={{ color: 'primary.main' }}>
                     {t('My points')} {grading?.[id] || 0} / {weight}
                   </Typography>
                   {feedback?.[id] && (
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                       {feedback?.[id]}
                     </Typography>
                   )}
                 </Box>
               )}
-
               <FindingExplanationPanel question={question} />
             </Box>
           );

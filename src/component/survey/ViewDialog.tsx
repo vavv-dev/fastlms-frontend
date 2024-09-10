@@ -7,7 +7,7 @@ import {
 } from '@/api';
 import { BaseDialog, WithAvatar, useServiceImmutable } from '@/component/common';
 import { formatDatetimeLocale } from '@/helper/util';
-import { BarChartOutlined, EditNoteOutlined, KeyboardArrowRight, Refresh } from '@mui/icons-material';
+import { ArrowRight, BarChartOutlined, EditNoteOutlined, KeyboardArrowRight, Refresh } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableContainer, TableRow, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Finding } from './Finding';
 import { Form } from './Form';
+import { VideoPlayer, VideoTracking } from '../video';
 
 interface Props {
   open: boolean;
@@ -58,6 +59,8 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
 
   if (!open || !data) return null;
 
+  const videoId = data.resources?.find((r) => r.kind === 'video')?.id ?? null;
+
   return (
     <BaseDialog
       fullWidth
@@ -76,6 +79,30 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
             '& form, & form > fieldset': { width: '100%' },
           }}
         >
+          {videoId && (
+            <Box sx={{ width: '100%', mb: 3 }}>
+              <VideoPlayer id={videoId} aspectRatio="16 / 9" />
+              <VideoTracking id={videoId} hidden />
+              <Button
+                size="small"
+                sx={{
+                  mt: 0.5,
+                  font: theme.typography.caption,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                onClick={() => {
+                  setOpen(false);
+                  navigate(`/video/${videoId}`);
+                }}
+              >
+                {t('Go to video view')}
+                <ArrowRight fontSize="small" />
+              </Button>
+            </Box>
+          )}
+
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
             {data.title}
             {data.description && (

@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from './Card';
 import { SaveDialog } from './SaveDialog';
 
-export const Display = () => {
+export const Displays = () => {
   const { t } = useTranslation('exam');
   const navigate = useNavigate();
   const sharedItemTabKey = 'bookmarker';
@@ -49,8 +49,7 @@ export const Display = () => {
           lg: 'repeat(4, minmax(251px, 308px))',
         },
       }}
-      extraAction={(tab) =>
-        tab == 'owner' &&
+      extraAction={() =>
         owner && <Chip color="info" onClick={() => navigate('grading')} icon={<GradingOutlined />} label={t('Grade exams')} />
       }
     />

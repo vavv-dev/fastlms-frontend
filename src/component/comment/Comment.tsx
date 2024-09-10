@@ -92,7 +92,7 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
 
             {/* view content */}
             <Collapse in={!inEditing} unmountOnExit>
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.4, display: 'block !important' }}>
                 {data.deleted ? t('Deleted') : data.content}
               </Typography>
             </Collapse>

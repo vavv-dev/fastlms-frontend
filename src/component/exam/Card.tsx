@@ -6,7 +6,18 @@ import {
 import { ThreadDialog } from '@/component/comment';
 import { ResourceCard } from '@/component/common/ResourceCard';
 import { formatDatetimeLocale, formatDuration, formatRelativeTime } from '@/helper/util';
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  BoxProps,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionMenu } from './ActionMenu';
@@ -15,18 +26,20 @@ import { ReadyDialog } from './ReadyDialog';
 interface Props {
   data: DisplayResponse;
   hideAvatar?: boolean;
+  sx?: BoxProps['sx'];
 }
 
-export const Card = ({ data, hideAvatar }: Props) => {
+export const Card = ({ data, hideAvatar, sx }: Props) => {
   const { t } = useTranslation('exam');
   const [readyDialogOpen, setReadyDialogOpen] = useState(false);
   const [threadDialogOpen, setThreadDialogOpen] = useState(false);
 
   return (
-    <>
+    <Box>
       <ResourceCard
         resource={data}
         onClick={() => setReadyDialogOpen(true)}
+        bannerPlace="bottom"
         banner={
           <Box sx={{ p: 2, position: 'relative' }}>
             {data.thumbnail && (
@@ -42,6 +55,32 @@ export const Card = ({ data, hideAvatar }: Props) => {
               />
             )}
             <Info data={data} />
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
+              <Button
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setThreadDialogOpen((prev) => !prev);
+                }}
+                sx={{ py: 0 }}
+              >
+                {t('Q&A')}
+              </Button>
+              {![null, 'passed', 'failed'].includes(data.status) && (
+                <Typography
+                  component="span"
+                  variant="subtitle2"
+                  sx={{
+                    fontSize: 'small',
+                    fontWeight: 600,
+                    mx: 0.5,
+                    color: data.status == 'failed' || data.status == 'timeout' ? 'error.main' : 'success.main',
+                  }}
+                >
+                  {t(data.status || '')}
+                </Typography>
+              )}
+            </Box>
           </Box>
         }
         score={data.score}
@@ -51,35 +90,12 @@ export const Card = ({ data, hideAvatar }: Props) => {
           t('{{ count }} submissions', { count: data.submission_count }),
         ]}
         hideAvatar={hideAvatar}
-        footer={
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Button
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                setThreadDialogOpen((prev) => !prev);
-              }}
-              sx={{ py: 0 }}
-            >
-              {t('Q&A')}
-            </Button>
-            {![null, 'passed', 'failed'].includes(data.status) && (
-              <Typography
-                fontSize="small"
-                component="span"
-                variant="subtitle2"
-                sx={{ fontWeight: 600, mx: 0.5, color: 'success.main' }}
-              >
-                {t(data.status || '')}
-              </Typography>
-            )}
-          </Box>
-        }
         autoColor
         actionMenu={<ActionMenu data={data} />}
-        sx={{ '& .card-content': { flexGrow: 0 } }}
+        sx={{ ...sx, '& .card-content': { flexGrow: 0 } }}
         partialUpdateService={updateResource}
         listService={getDisplays}
+        bannerBorder={!data.thumbnail}
       />
       {readyDialogOpen && <ReadyDialog open={readyDialogOpen} setOpen={setReadyDialogOpen} id={data.id} />}
       {threadDialogOpen && (
@@ -96,7 +112,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
           }}
         />
       )}
-    </>
+    </Box>
   );
 };
 

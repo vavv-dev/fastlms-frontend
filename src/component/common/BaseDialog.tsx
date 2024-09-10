@@ -58,7 +58,7 @@ export const BaseDialog = ({
     >
       {title && (
         <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography component="span" variant="subtitle2" color="text.secondary">
+          <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
             {title}
           </Typography>
           <Box sx={{ flexGrow: 1 }} />

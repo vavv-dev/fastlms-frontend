@@ -8,10 +8,12 @@ import { formatDuration, formatRelativeTime, humanNumber } from '@/helper/util';
 import { StreamOutlined } from '@mui/icons-material';
 import { Box, BoxProps, Typography, useTheme } from '@mui/material';
 import { useAtomValue } from 'jotai';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { activeVideoIdState as activeIdState } from '.';
 import { ActionMenu } from './ActionMenu';
+import { PreviewPlayer } from './PreviewPlayer';
 
 interface Props {
   data: DisplayResponse;
@@ -26,6 +28,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription }: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const activeId = useAtomValue(activeIdState);
+  const [isHover, setIsHover] = useState(false);
 
   return (
     <ResourceCard
@@ -44,6 +47,21 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription }: Props) => {
               aspectRatio: data.video_kind == 'short' ? '9 / 16' : '16 / 9',
             }}
           />
+          <Box
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+          >
+            {isHover && (
+              <PreviewPlayer
+                id={data.id}
+                onClick={() => {
+                  // setIsHover(false);
+                  navigate(to || `/video/${data.id}`);
+                }}
+              />
+            )}
+          </Box>
 
           {(data.duration != null || data.is_live) && (
             <Typography

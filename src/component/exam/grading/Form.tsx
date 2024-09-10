@@ -130,10 +130,9 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
 
   return (
     <CommonForm onSubmit={handleSubmit(submitGradingForm)} formState={formState} setError={setError}>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 3 }}>
+      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 3 }}>
         {t('Among the questions below, please grade the text input questions and essay questions and submit them.')}
       </Typography>
-
       <Stack
         spacing={3}
         divider={<Divider />}
@@ -148,13 +147,12 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
 
           return (
             <Box key={id} sx={{ display: 'flex', flexDirection: 'column', gap: 3, '& .percentage': { minWidth: 60 } }}>
-              <Typography>
+              <Typography sx={{ whiteSpace: 'pre-wrap' }}>
                 {`${i + 1}. [${t(kind)}] ${title}`}
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'inline', ml: 1 }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'inline', ml: 1 }}>
                   {t('{{ num }} Points', { num: weight })}
                 </Typography>
               </Typography>
-
               <FindingQuestionPanel
                 question={question}
                 maxOccurrence={maxOccurrence}
@@ -162,17 +160,16 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
                 answer={answer}
                 isCorrect={isCorrect}
               />
-
               <Box>
                 {grading?.[id] == null && (
-                  <Typography variant="body1" color="primary" sx={{ fontWeight: 700, mb: 1, display: 'flex', gap: 1 }}>
+                  <Typography variant="body1" sx={{ color: 'primary.main', fontWeight: 700, mb: 1, display: 'flex', gap: 1 }}>
                     <ErrorOutlined />
                     {t('Please grade this question.')}
                   </Typography>
                 )}
                 <TextFieldControl
                   label={t('Score for this question.')}
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                   variant="outlined"
                   name={`grading.${i}.score`}
                   control={control}
@@ -181,7 +178,7 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
                 />
                 <TextFieldControl
                   label={t('Comment for this question.')}
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                   variant="outlined"
                   name={`grading.${i}.comment`}
                   control={control}
@@ -190,7 +187,6 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
                   placeholder={t('Optional')}
                 />
               </Box>
-
               <FindingExplanationPanel question={question} />
             </Box>
           );

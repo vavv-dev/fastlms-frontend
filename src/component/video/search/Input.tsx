@@ -5,7 +5,7 @@ import { Search } from '@mui/icons-material';
 import { Autocomplete, Box, InputAdornment, SxProps, TextField } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const Input = ({ sx }: { sx?: SxProps }) => {
   const { t } = useTranslation('video');
@@ -19,6 +19,7 @@ export const Input = ({ sx }: { sx?: SxProps }) => {
   const [hover, setHover] = useState(false);
   const [options, setOptions] = useState<string[]>([]);
   const prevOptions = useRef<string[]>([]);
+  const q = useSearchParams()[0].get('q');
 
   const matcher = (v: string) => {
     const noSpace = v.replace(/\s/g, '');
@@ -30,6 +31,11 @@ export const Input = ({ sx }: { sx?: SxProps }) => {
       setOptions(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!q) return;
+    setValue(q);
+  }, []); // eslint-disable-line
 
   return (
     <Autocomplete
@@ -67,23 +73,25 @@ export const Input = ({ sx }: { sx?: SxProps }) => {
           placeholder={t('Search')}
           variant="outlined"
           {...params}
-          InputProps={{
-            ...params.InputProps,
-            style: { borderRadius: '2em', paddingLeft: '1em' },
-            startAdornment:
-              focus || hover ? (
-                <InputAdornment position="start" sx={{ mr: 0 }}>
-                  <Search />
-                </InputAdornment>
-              ) : undefined,
+          slotProps={{
+            input: {
+              ...params.InputProps,
+              style: { borderRadius: '2em', paddingLeft: '1em' },
+              startAdornment:
+                focus || hover ? (
+                  <InputAdornment position="start" sx={{ mr: 0 }}>
+                    <Search />
+                  </InputAdornment>
+                ) : undefined,
 
-            ...(!(focus || hover) && {
-              endAdornment: (
-                <InputAdornment position="start" sx={{ mr: 0 }}>
-                  <Search />
-                </InputAdornment>
-              ),
-            }),
+              ...(!(focus || hover) && {
+                endAdornment: (
+                  <InputAdornment position="start" sx={{ mr: 0 }}>
+                    <Search />
+                  </InputAdornment>
+                ),
+              }),
+            },
           }}
         />
       )}

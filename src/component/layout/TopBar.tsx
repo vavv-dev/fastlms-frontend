@@ -7,8 +7,8 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { alertState, navState } from '.';
 import { LoginButton } from './LoginButton';
-import imgUrl from './assets/logo.svg';
 import { NotificationButton } from './NotificationButton';
+import imgUrl from './assets/logo.svg';
 
 export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
   const [navOpen, setNavOpen] = useAtom(navState);
@@ -38,7 +38,7 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
           <Box sx={{ flexGrow: 1 }} />
           {searchBar}
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.6 }}>
             <IconButton onClick={() => setThemeMode(themeMode === 'dark' ? 'light' : 'dark')}>
               {themeMode === 'dark' ? <Brightness7 /> : <Brightness4 />}
             </IconButton>

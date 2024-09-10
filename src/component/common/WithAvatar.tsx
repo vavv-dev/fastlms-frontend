@@ -43,6 +43,7 @@ export const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, col
         />
       )}
       <Box
+        className="avatar-children"
         sx={{
           flexGrow: 1,
           display: 'grid',
@@ -55,8 +56,8 @@ export const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, col
           <Typography
             onClick={goToHome}
             variant={nameVariant}
-            color={color || 'text.primary'}
             sx={{
+              color: color || 'text.primary',
               width: 'fit-content',
               fontWeight: 'bold',
               lineHeight: 1.4,

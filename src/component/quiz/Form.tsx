@@ -85,7 +85,7 @@ export const Form = ({ id }: { id: string }) => {
         ),
       },
     })
-      .then(async (updated: AssessResponse) => {
+      .then(async (updated) => {
         await mutate(updated, { revalidate: false });
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })

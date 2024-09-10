@@ -3,17 +3,32 @@ import { useServiceImmutable } from '@/component/common';
 import { formatRelativeTime, imageToBase64 } from '@/helper/util';
 import i18next from '@/i18n';
 import { homeUserState, userState } from '@/store';
-import EditIcon from '@mui/icons-material/Edit';
-import { Avatar, Box, IconButton, Input, InputLabel, Stack, Tab, Tabs, Typography, useTheme } from '@mui/material';
-import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { CloseOutlined, FileUploadOutlined } from '@mui/icons-material';
+import {
+  Avatar,
+  Box,
+  Fade,
+  IconButton,
+  Input,
+  Stack,
+  Tab,
+  Tabs,
+  Theme,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { snackbarMessageState, spacerRefState } from '../layout';
 
 const t = (key: string) => i18next.t(key, { ns: 'account' });
 
 const tabs: Array<Array<string>> = [
-  [t('Home'), 'home'],
+  [t('Home'), ''],
   [t('Video'), 'video'],
   [t('Short'), 'short'],
   [t('Playlist'), 'playlist'],
@@ -23,59 +38,51 @@ const tabs: Array<Array<string>> = [
   [t('Lesson'), 'lesson'],
   [t('Course'), 'course'],
   [t('Comment'), 'comment'],
+  [t('Member'), 'member'],
   [t('Profile'), 'profile'],
 ];
+
+const privateTabs: Array<string> = ['member', 'profile'];
 
 export const HomeLayout = () => {
   const { t } = useTranslation('account');
   const theme = useTheme();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   const { username } = useParams();
   const [user, setUser] = useAtom(userState);
   const [homeUser, setHomeUser] = useAtom(homeUserState);
-  const [avatarError, setAvatarError] = useState<string>('');
   const { data, mutate } = useServiceImmutable<AccountGetUserByUsernameData, UserResponse>(accountGetUserByUsername, {
     username: username || '',
   });
+  const [hover, setHover] = useState(false);
+  const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
-  // current tab
-  const tabIndex = tabs.findIndex(([, path]) => pathname.includes(`/u/${username}/${path}`));
+  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement> | null, field: 'thumbnail' | 'banner') => {
+    const image = e && e.target.files?.[0];
+    if (e && !image) return;
 
-  const showAvatarError = (message: string) => {
-    setAvatarError(message);
-    setTimeout(() => setAvatarError(''), 3000);
-  };
-
-  const changeAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAvatarError('');
-    const thumbnail = event.target.files?.[0];
-    if (!thumbnail || !username) return;
-    if (thumbnail.size > 1 * 1024 * 1024) {
-      event.target.value = '';
-      showAvatarError(t('File size must be less than {{ max }} MB.', { max: 1 }));
+    const max = field === 'thumbnail' ? 1 : 5;
+    if (e && image && image.size > max * 1024 * 1024) {
+      e.target.value = '';
+      setSnackbarMessage({ message: t('File size must be less than {{ max }} MB.', { max }), duration: 3000 });
       return;
     }
-    accountUpdateMe({
-      requestBody: { thumbnail: await imageToBase64(thumbnail) },
-    })
+    accountUpdateMe({ requestBody: { [field]: !e ? '' : await imageToBase64(image as File) } })
       .then((update) => {
         setUser(update);
         mutate((prev: UserResponse | undefined) => ({ ...prev, ...update }), { revalidate: false });
       })
-      .catch((error) => showAvatarError(error.message));
+      .catch((error) => {
+        setSnackbarMessage({ message: error.message, duration: 3000 });
+      })
+      .finally(() => {
+        if (e) e.target.value = '';
+      });
   };
 
   useEffect(() => {
     if (!data) return;
     setHomeUser(data);
   }, [data]); // eslint-disable-line
-
-  useEffect(() => {
-    if (tabIndex === -1) {
-      navigate(`/u/${username}`, { replace: true });
-    }
-  }, [tabIndex]); // eslint-disable-line
 
   useEffect(() => {
     return () => {
@@ -86,25 +93,83 @@ export const HomeLayout = () => {
   // fix. flickering previous user's cache
   if (!homeUser || homeUser?.username != username) return null;
 
+  const isOwner = user?.username === homeUser.username;
+
   return (
     <>
       <Box
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
         sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          p: 3,
-          pb: 0,
+          px: 3,
+          pt: 1,
           bgcolor: 'background.paper',
-          borderBottom: 1,
-          borderColor: 'divider',
-          position: 'sticky',
-          top: ((theme.mixins.toolbar.minHeight as number) || 0) - 80 - 36 * 1 - 10,
           zIndex: 4,
         }}
       >
+        <Box sx={{ maxWidth: 'lg', width: '100%', position: 'relative' }}>
+          {homeUser.banner && (
+            <Box
+              component="img"
+              src={homeUser.banner}
+              sx={{
+                objectFit: 'cover',
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '6.2 / 1',
+                borderRadius: theme.shape.borderRadius,
+              }}
+            />
+          )}
+          {isOwner && (
+            <Fade in={hover}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  transform: 'translateY(100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  zIndex: 4,
+                }}
+              >
+                <Tooltip title={t('Upload banner')}>
+                  <IconButton size="small" component="label" htmlFor="banner-image">
+                    <FileUploadOutlined fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                {!homeUser.banner && (
+                  <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>
+                    {t('Upload banner')}
+                  </Typography>
+                )}
+                {homeUser.banner && (
+                  <Tooltip title={t('Remove banner')}>
+                    <IconButton size="small" onClick={() => uploadImage(null, 'banner')}>
+                      <CloseOutlined fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                <Input
+                  hidden
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => uploadImage(e, 'banner')}
+                  inputProps={{ accept: 'image/*' }}
+                  id="banner-image"
+                  type="file"
+                  sx={{ display: 'none' }}
+                />
+              </Box>
+            </Fade>
+          )}
+        </Box>
+
         <Box
           sx={{
+            py: 2,
             display: 'flex',
             maxWidth: 'sm',
             width: '100%',
@@ -112,66 +177,155 @@ export const HomeLayout = () => {
             alignItems: homeUser.description ? 'flex-start' : 'center',
           }}
         >
-          <Box sx={{ py: 1 }}>
-            {homeUser.username != user?.username ? (
-              <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 80, height: 80 }} />
-            ) : (
-              <InputLabel htmlFor="avatar-file" sx={{ position: 'relative', overflow: 'visible' }}>
-                <Input
-                  onChange={changeAvatar}
-                  inputProps={{ accept: 'image/*' }}
-                  id="avatar-file"
-                  type="file"
-                  sx={{ display: 'none' }}
-                />
-                <IconButton component="span" sx={{ p: 0 }}>
-                  <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 80, height: 80 }} />
-                </IconButton>
-                <Box sx={{ position: 'absolute', bottom: 0, left: 0, lineHeight: 1, cursor: 'pointer' }}>
-                  <EditIcon />
+          <Box
+            sx={{ position: 'relative' }}
+            {...(isOwner && { component: 'label', htmlFor: 'thumbnail-image', sx: { position: 'relative', cursor: 'pointer' } })}
+          >
+            <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 100, height: 100 }} />
+            {isOwner && (
+              <Fade in={hover}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: '-1em',
+                    left: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    zIndex: 4,
+                  }}
+                >
+                  <Tooltip title={t('Upload thumbnail')}>
+                    <IconButton size="small" component="label" htmlFor="thumbnail-image" sx={{ p: 0.5 }}>
+                      <FileUploadOutlined fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  {homeUser.thumbnail && (
+                    <Tooltip title={t('Remove thumbnail')}>
+                      <IconButton size="small" onClick={() => uploadImage(null, 'thumbnail')} sx={{ p: 0.5 }}>
+                        <CloseOutlined fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  <Input
+                    hidden
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => uploadImage(e, 'thumbnail')}
+                    inputProps={{ accept: 'image/*' }}
+                    id="thumbnail-image"
+                    type="file"
+                    sx={{ display: 'none' }}
+                  />
                 </Box>
-                {avatarError && (
-                  <Typography variant="caption" sx={{ color: 'error.main', position: 'absolute', bottom: '-1.5em', left: 0 }}>
-                    {avatarError}
-                  </Typography>
-                )}
-              </InputLabel>
+              </Fade>
             )}
           </Box>
-          <Stack>
+          <Stack spacing={1}>
             <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
               {homeUser.name}
-            </Typography>
-            <Typography variant="caption">
-              {homeUser.username}
-              {homeUser.created && ` • ${t(...formatRelativeTime(new Date(homeUser.created)))}`}
+              <Typography variant="caption">
+                {homeUser.username}
+                {homeUser.created && ` • ${t(...formatRelativeTime(new Date(homeUser.created)))}`}
+              </Typography>
             </Typography>
             <Box dangerouslySetInnerHTML={{ __html: homeUser.description || '' }} />
           </Stack>
         </Box>
-        <Box sx={{ maxWidth: '100%', mt: 2 }}>
-          <Tabs
-            selectionFollowsFocus
-            sx={{ minHeight: 'unset' }}
-            value={tabIndex === -1 ? 0 : tabIndex}
-            role="navigation"
-            variant="scrollable"
-            scrollButtons={true}
-            allowScrollButtonsMobile
-          >
-            {tabs.map(([title, path]) => (
-              <Tab
-                key={path}
-                label={title}
-                iconPosition="start"
-                onClick={() => navigate(`/u/${username}/${path}`)}
-                sx={{ minHeight: 'inherit', cursor: 'pointer', py: '12px', minWidth: 'unset' }}
-              />
-            ))}
-          </Tabs>
-        </Box>
       </Box>
+      <HomeTabs />
       <Outlet />
     </>
+  );
+};
+
+const HomeTabs = () => {
+  const { username } = useParams();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const spacerRef = useAtomValue(spacerRefState);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [isFixed, setIsFixed] = useState(false);
+  const lastScrollY = useRef(0);
+  const user = useAtomValue(userState);
+  const homeUser = useAtomValue(homeUserState);
+
+  // update spacerRef height
+  useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+  // current tab
+  const tabIndex = tabs.findIndex(([, path]) => {
+    return path === '' ? pathname === `/u/${username}` : pathname.startsWith(`/u/${username}/${path}`);
+  });
+
+  useEffect(() => {
+    if (tabIndex === -1) {
+      navigate(`/u/${username}`, { replace: true });
+    }
+  }, [tabIndex, navigate, username]);
+
+  // stick no bouncing tabs
+  useEffect(() => {
+    const handleScroll = () => {
+      if (tabsRef.current && spacerRef) {
+        const tabsRect = tabsRef.current.getBoundingClientRect();
+        const spacerHeight = spacerRef.clientHeight;
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > lastScrollY.current) {
+          // Scrolling down
+          if (tabsRect.top <= spacerHeight) {
+            setIsFixed(true);
+          }
+        } else {
+          // Scrolling up
+          if (tabsRect.top > spacerHeight || currentScrollY <= spacerHeight) {
+            setIsFixed(false);
+          }
+        }
+        lastScrollY.current = currentScrollY;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [spacerRef]);
+
+  const isOwner = user && user.username === homeUser?.username;
+
+  return (
+    <Box
+      ref={tabsRef}
+      sx={{
+        borderBottom: 1,
+        borderColor: 'divider',
+        display: 'flex',
+        justifyContent: 'center',
+        position: isFixed ? 'fixed' : 'sticky',
+        top: spacerRef?.clientHeight,
+        zIndex: 5,
+        bgcolor: 'background.paper',
+        width: ['100%', '-moz-available', '-webkit-fill-available', 'fill-available'],
+      }}
+    >
+      <Tabs
+        selectionFollowsFocus
+        value={tabIndex === -1 ? 0 : tabIndex}
+        role="navigation"
+        variant="scrollable"
+        scrollButtons={true}
+        allowScrollButtonsMobile
+        sx={{ minHeight: 'unset', maxWidth: '100%' }}
+      >
+        {tabs
+          .filter(([, path]) => isOwner || !privateTabs.includes(path))
+          .map(([title, path]) => (
+            <Tab
+              key={path}
+              label={title}
+              iconPosition="start"
+              onClick={() => navigate(`/u/${username}${path ? `/${path}` : ''}`)}
+              sx={{ minHeight: 'inherit', cursor: 'pointer', py: '12px', minWidth: 'unset', fontWeight: 700 }}
+            />
+          ))}
+      </Tabs>
+    </Box>
   );
 };

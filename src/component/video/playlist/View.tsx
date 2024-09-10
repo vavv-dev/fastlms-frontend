@@ -29,7 +29,15 @@ export const View = () => {
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box m="auto" maxWidth="lg" sx={{ display: 'flex', gap: '1em', flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
+      <Box
+        sx={{
+          m: 'auto',
+          maxWidth: 'lg',
+          display: 'flex',
+          gap: '1em',
+          flexWrap: { xs: 'wrap', md: 'nowrap' },
+        }}
+      >
         <PlaylistSidebar playlistId={playlistId} />
         <Videos playlistId={playlistId} />
       </Box>

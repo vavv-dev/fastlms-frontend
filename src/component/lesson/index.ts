@@ -2,6 +2,7 @@ import i18next from '@/i18n';
 
 export { Displays as LessonDisplays } from './Displays';
 export { Displays as ContentDisplays } from './content/Displays';
+export { ResourceViewer } from './ResourceViewer';
 
 const t = i18next.t;
 

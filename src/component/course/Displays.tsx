@@ -5,7 +5,7 @@ import {
   courseGetDisplays as getDisplays,
 } from '@/api';
 import { GridInfiniteScrollPage, updateInfiniteCache } from '@/component/common';
-import { AddOutlined, CloudDownloadOutlined } from '@mui/icons-material';
+import { AddOutlined, CloudUploadOutlined } from '@mui/icons-material';
 import {
   Box,
   Input,
@@ -132,10 +132,12 @@ const CreateOptions = ({ open, setOpen }: { open: boolean; setOpen: (open: boole
           <MenuList dense>
             <MenuItem onClick={() => {}}>
               <ListItemIcon>
-                <CloudDownloadOutlined fontSize="small" />
+                <CloudUploadOutlined fontSize="small" />
               </ListItemIcon>
               <ListItemText>
-                <InputLabel htmlFor="upload-file">{t('Import esimsa course file')}</InputLabel>
+                <InputLabel sx={{ all: 'inherit' }} htmlFor="upload-file">
+                  {t('Import esimsa course file')}
+                </InputLabel>
               </ListItemText>
             </MenuItem>
             <MenuItem onClick={() => setSaveDialogOpen(true)}>

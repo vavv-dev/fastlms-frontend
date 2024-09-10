@@ -7,7 +7,8 @@ import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
 } from '@mui/icons-material';
-import { Box, Grid, LinearProgress, Tooltip, useTheme } from '@mui/material';
+import { Box, LinearProgress, Tooltip, useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +22,6 @@ export const Finding = ({ id }: { id: string }) => {
   return (
     <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2, width: '100%', '& .percentage': { minWidth: 60 } }}>
       <Typography variant="h6">{t('Quiz result finding')}</Typography>
-
       {Object.entries(data.finding).map(([id, _question], i) => {
         const { question, correct_answer, weight, selections, kind, occurrences } = _question;
         const maxOccurrence = Math.max(...occurrences);
@@ -33,7 +33,7 @@ export const Finding = ({ id }: { id: string }) => {
           <Box key={id} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography>
               {`${i + 1}. ${question}`}
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'inline', ml: 1 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', display: 'inline', ml: 1 }}>
                 {t('{{ num }} Points', { num: weight })}
               </Typography>
             </Typography>
@@ -47,7 +47,7 @@ export const Finding = ({ id }: { id: string }) => {
                   const totalPercentage = totalOccurrence ? ((occurrences?.[i] || 0) / totalOccurrence) * 100 : 0;
 
                   return [
-                    <Grid key={`selection-${i}`} item xs={6}>
+                    <Grid key={`selection-${i}`} size={{ xs: 6 }}>
                       <Tooltip title={selection} placement="top" arrow>
                         <Box
                           sx={{
@@ -87,7 +87,7 @@ export const Finding = ({ id }: { id: string }) => {
                         </Box>
                       </Tooltip>
                     </Grid>,
-                    <Grid key={`occurrence-${i}`} item xs={6}>
+                    <Grid key={`occurrence-${i}`} size={{ xs: 6 }}>
                       <Tooltip title={`${toFixedHuman(totalPercentage, 1)}%`} placement="top" arrow>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <LinearProgress
@@ -120,4 +120,3 @@ export const Finding = ({ id }: { id: string }) => {
     </Box>
   );
 };
-

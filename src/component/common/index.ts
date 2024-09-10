@@ -14,6 +14,7 @@ export {
 } from './FormHelper';
 export { GradientCircularProgress } from './GradientCircularProgress';
 export { GridInfiniteScrollPage } from './GridInfiniteScrollPage';
+export { GridSlider } from './GridSlider';
 export { InfiniteScrollIndicator, PaginationActions } from './PaginationActions';
 export { ResourceActionMenu } from './ResourceActionMenu';
 export { ResourceCard } from './ResourceCard';

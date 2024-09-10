@@ -9,16 +9,19 @@ import {
   PasswordResetConfirm,
   Profile,
 } from '@/component/account';
+import { ChannelDisplays, ChannelHome } from '@/component/channel';
 import { CommentDisplays } from '@/component/comment';
 import { CourseDisplays, CourseView } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamDisplays, ExamView, GradingDisplays } from '@/component/exam';
+import { Home } from '@/component/home';
 import { BaseLayout } from '@/component/layout';
 import { ContentDisplays, LessonDisplays } from '@/component/lesson';
+import { InvitationAccept, MemberDisplays } from '@/component/member';
 import { QuizDisplays } from '@/component/quiz';
 import { SurveyDisplays } from '@/component/survey';
 import { PlaylistDisplays, PlaylistView, SearchInput, VideoDisplays, VideoSearchResult, VideoView } from '@/component/video';
-import { loginExpireState, userChannelState, userState } from '@/store';
+import { loginExpireState, userMessageState, userState } from '@/store';
 import { modeState, themeConfig } from '@/theme';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, createTheme } from '@mui/material';
@@ -35,8 +38,9 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
+import './App.css';
 
-const CHANNEL_SOCKET_URL = import.meta.env.VITE_CHANNEL_SOCKET_URL || '';
+const USER_MESSAGE_URL = import.meta.env.VITE_USER_MESSAGE_URL || '';
 
 export const App = () => {
   const mode = useAtomValue(modeState);
@@ -45,13 +49,16 @@ export const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route element={<Protected />}>
-          <Route path="/" element={<BaseLayout searchBar={<SearchInput />} />}>
+        <Route path="/" element={<Protected />}>
+          <Route path="" element={<BaseLayout searchBar={<SearchInput />} />}>
+            <Route path="" element={<Home />} />
+            <Route path="channel" element={<ChannelDisplays />} />
+
             {/* user home */}
             <Route path="u/:username" element={<HomeLayout />}>
-              {['video', 'short'].map((videoKind) => (
-                <Route key={videoKind} path={videoKind} element={<VideoDisplays />} />
-              ))}
+              <Route path="" element={<ChannelHome />} />
+              <Route path="video" element={<VideoDisplays />} />
+              <Route path="short" element={<VideoDisplays />} />
               <Route path="playlist" element={<PlaylistDisplays />} />
               <Route path="quiz" element={<QuizDisplays />} />
               <Route path="survey" element={<SurveyDisplays />} />
@@ -59,6 +66,7 @@ export const App = () => {
               <Route path="lesson" element={<LessonDisplays />} />
               <Route path="course" element={<CourseDisplays />} />
               <Route path="comment" element={<CommentDisplays />} />
+              <Route path="member" element={<MemberDisplays />} />
               <Route path="profile" element={<Profile />} />
               <Route path="exam/grading" element={<GradingDisplays />} />
               <Route path="lesson/content" element={<ContentDisplays />} />
@@ -71,25 +79,26 @@ export const App = () => {
           </Route>
 
           {/* top level page without drawer */}
-          <Route path="/" element={<BaseLayout searchBar={<SearchInput />} hideDrawer={true} />}>
+          <Route path="" element={<BaseLayout searchBar={<SearchInput />} hideDrawer />}>
             <Route path="video/:id" element={<VideoView />} />
           </Route>
           {/* top level page without drawer, search bar */}
-          <Route path="/" element={<BaseLayout hideDrawer={true} />}>
+          <Route path="" element={<BaseLayout hideDrawer />}>
             <Route path="exam/:id/assess" element={<ExamView />} />
           </Route>
         </Route>
 
-        <Route path="/" element={<BaseLayout hideDrawer={true} />}>
+        <Route path="/" element={<BaseLayout hideDrawer />}>
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
           <Route path="join" element={<Join />} />
           <Route path="password-reset" element={<PasswordReset />} />
           <Route path="password-reset-confirm" element={<PasswordResetConfirm />} />
           <Route path="email-verification" element={<EmailVerification />} />
+          <Route path="invitation-accept" element={<InvitationAccept />} />
 
           {/* error */}
-          <Route path="/error/401" element={<Unauthorized />} />
+          <Route path="error/401" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -111,7 +120,7 @@ const Protected: React.FC<RouteProps> = () => {
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userState);
   const loginExpire = useAtomValue(loginExpireState);
-  const [userChannel, setUserChannel] = useAtom(userChannelState);
+  const [userMessage, setUserMessage] = useAtom(userMessageState);
 
   const forceLogout = useCallback(() => {
     setUser(null);
@@ -147,36 +156,36 @@ const Protected: React.FC<RouteProps> = () => {
 
   /**
    *
-   * websocket channel
+   * websocket message
    *
    */
 
-  const userChannelConnect = useCallback(() => {
-    if (!user || userChannel) {
-      return userChannel;
+  const userMessageConnect = useCallback(() => {
+    if (!user || userMessage) {
+      return userMessage;
     }
-    const socket = new WebSocket(`${CHANNEL_SOCKET_URL}?user_id=${user.id}`);
+    const socket = new WebSocket(`${USER_MESSAGE_URL}?user_id=${user.id}`);
     socket.onopen = () => {
-      setUserChannel(socket);
+      setUserMessage(socket);
     };
     socket.onclose = (e) => {
-      setUserChannel(null);
+      setUserMessage(null);
       if (e.wasClean) {
-        setTimeout(() => userChannelConnect(), 1 * 1000);
+        setTimeout(() => userMessageConnect(), 1 * 1000);
       }
     };
     socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.warn('WebSocket error:', error);
     };
     return socket;
   }, [user]); // eslint-disable-line
 
   useEffect(() => {
-    const socket = userChannelConnect();
+    const socket = userMessageConnect();
     return () => {
       if (socket) socket.close();
     };
-  }, [userChannelConnect]);
+  }, [userMessageConnect]);
 
   return user ? <Outlet /> : <Navigate to="/login" state={{ from: location.pathname }} replace />;
 };

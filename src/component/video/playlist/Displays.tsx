@@ -4,7 +4,7 @@ import {
   PlaylistGetDisplaysData as GetDisplaysData,
 } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
-import { CloudDownloadOutlined, PlaylistAddOutlined } from '@mui/icons-material';
+import { CloudUploadOutlined, PlaylistAddOutlined } from '@mui/icons-material';
 import { Box, ListItemIcon, ListItemText, Menu, MenuItem, MenuList, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -81,7 +81,7 @@ const CreateOptions = ({ open, setOpen }: { open: boolean; setOpen: (open: boole
           <MenuList dense>
             <MenuItem onClick={() => setYoutubeImportOpen(true)}>
               <ListItemIcon>
-                <CloudDownloadOutlined fontSize="small" />
+                <CloudUploadOutlined fontSize="small" />
               </ListItemIcon>
               <ListItemText>{t('Import youtube playlist')}</ListItemText>
             </MenuItem>

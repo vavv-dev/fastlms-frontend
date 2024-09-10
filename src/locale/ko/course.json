@@ -52,5 +52,12 @@
   "Thumbnail or description here": "썸네일 또는 설명이 여기에 표시됩니다.",
   "Title": "제목",
   "Title asc": "제목순",
+  "content": "강의 자료",
+  "exam": "시험",
+  "number_input": "숫자 입력",
+  "quiz": "퀴즈",
+  "single_selection": "객관",
+  "survey": "설문 조사",
+  "video": "동영상",
   "{{ count }} enrollments_other": "등록 {{ count }}"
 }

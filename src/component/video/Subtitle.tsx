@@ -183,17 +183,19 @@ export const Subtitle = ({ id }: { id: string }) => {
               placeholder={t('Search')}
               sx={{ display: { xs: 'none', md: 'flex' } }}
               onChange={searchText}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchOutlined />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchOutlined />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </>
         )}
-        <Box flexGrow={1} />
+        <Box sx={{ flexGrow: 1 }} />
         {config.enabled && (
           <FormControlLabel
             control={

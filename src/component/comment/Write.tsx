@@ -144,73 +144,75 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
               multiline
               required
               error={!!error}
-              InputProps={{
-                startAdornment: (
-                  <>
-                    <SelectControl
-                      disableUnderline
-                      name="is_question"
-                      margin="none"
-                      variant="standard"
-                      control={control}
-                      options={[
-                        { value: 'false', label: t('Comment') },
-                        { value: 'true', label: t('Question') },
-                      ]}
-                    />
-                    <ClickAwayListener onClickAway={() => showPicker && setShowPicker(false)}>
-                      <span>
-                        <IconButton onClick={() => setShowPicker((prev) => !prev)}>
-                          <InsertEmoticonOutlined />
-                        </IconButton>
-                        {showPicker && (
-                          <Box
-                            onKeyDown={(e) => e.stopPropagation()}
-                            sx={{ position: 'absolute', left: 0, top: 'calc(100% + 4px)', zIndex: 10 }}
-                          >
-                            <EmojiPicker
-                              theme={mode as Theme}
-                              searchDisabled={false}
-                              lazyLoadEmojis={true}
-                              onEmojiClick={insertEmoji}
-                              previewConfig={{ showPreview: false }}
-                            />
-                          </Box>
-                        )}
-                      </span>
-                    </ClickAwayListener>
-                  </>
-                ),
-                endAdornment: (
-                  <>
-                    {/* save comment */}
-                    <Button
-                      sx={{ whiteSpace: 'nowrap', minWidth: 0, px: 3 }}
-                      type="submit"
-                      disabled={!formState.isDirty || formState.isSubmitting}
-                    >
-                      {t('Save')}
-                    </Button>
-
-                    {/* cancel comment */}
-                    {(data || parent) && (
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          reset();
-                          onClose?.();
-                        }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <>
+                      <SelectControl
+                        disableUnderline
+                        name="is_question"
+                        margin="none"
+                        variant="standard"
+                        control={control}
+                        options={[
+                          { value: 'false', label: t('Comment') },
+                          { value: 'true', label: t('Question') },
+                        ]}
+                      />
+                      <ClickAwayListener onClickAway={() => showPicker && setShowPicker(false)}>
+                        <span>
+                          <IconButton onClick={() => setShowPicker((prev) => !prev)}>
+                            <InsertEmoticonOutlined />
+                          </IconButton>
+                          {showPicker && (
+                            <Box
+                              onKeyDown={(e) => e.stopPropagation()}
+                              sx={{ position: 'absolute', left: 0, top: 'calc(100% + 4px)', zIndex: 10 }}
+                            >
+                              <EmojiPicker
+                                theme={mode as Theme}
+                                searchDisabled={false}
+                                lazyLoadEmojis={true}
+                                onEmojiClick={insertEmoji}
+                                previewConfig={{ showPreview: false }}
+                              />
+                            </Box>
+                          )}
+                        </span>
+                      </ClickAwayListener>
+                    </>
+                  ),
+                  endAdornment: (
+                    <>
+                      {/* save comment */}
+                      <Button
+                        sx={{ whiteSpace: 'nowrap', minWidth: 0, px: 3 }}
+                        type="submit"
+                        disabled={!formState.isDirty || formState.isSubmitting}
                       >
-                        <Close fontSize="small" />
-                      </IconButton>
-                    )}
-                  </>
-                ),
-                inputProps: { maxLength: 500 },
+                        {t('Save')}
+                      </Button>
+
+                      {/* cancel comment */}
+                      {(data || parent) && (
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            reset();
+                            onClose?.();
+                          }}
+                        >
+                          <Close fontSize="small" />
+                        </IconButton>
+                      )}
+                    </>
+                  ),
+                  inputProps: { maxLength: 500 },
+                },
+                inputLabel: { shrink: true },
+                formHelperText: { sx: { lineHeight: 1.2, mt: 0 } },
               }}
-              InputLabelProps={{ shrink: true }}
               helperText={error?.message ? error.message : ' '}
-              FormHelperTextProps={{ sx: { lineHeight: 1.2, mt: 0 } }}
               sx={{
                 flexGrow: 1,
                 mt: 1,

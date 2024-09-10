@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card } from '../Card';
 
-export const SearchResult = () => {
+export const Result = () => {
   const { t } = useTranslation('video');
   const navigate = useNavigate();
   const search = useSearchParams()[0].get('q');
@@ -69,7 +69,7 @@ export const SearchResult = () => {
                     width: '220px',
                     minWidth: '220px',
                     height: 'auto',
-                    '& img': { borderRadius: theme.shape.borderRadius / 2 },
+                    '& img': { borderRadius: theme.shape.borderRadius / 2, aspectRatio: '16 / 9' },
                   },
                   '.content-title': { fontSize: '1em', mb: 0.5, fontWeight: 600, lineHeight: 1.2 },
                 }}
@@ -83,7 +83,13 @@ export const SearchResult = () => {
                     sx={{ px: 0.3 }}
                     label={
                       <Typography variant="subtitle2" sx={{ display: 'flex' }}>
-                        <Box color="primary" sx={{ fontWeight: 700, mr: 1, color: 'primary.dark' }}>
+                        <Box
+                          sx={{
+                            fontWeight: 700,
+                            mr: 1,
+                            color: 'primary.dark',
+                          }}
+                        >
                           {found.position.replace('00:', '')}
                         </Box>
                         <Tooltip title={stripHtml(found.line)}>

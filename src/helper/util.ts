@@ -165,7 +165,7 @@ export function generateRandomDarkColor(seedString: string | undefined, factor =
   const darkerR = Math.floor(r * factor);
   const darkerG = Math.floor(g * factor);
   const darkerB = Math.floor(b * factor);
-  return `rgb(${darkerR}, ${darkerG}, ${darkerB}, ${opacity})`;
+  return `rgba(${darkerR}, ${darkerG}, ${darkerB}, ${opacity})`;
 }
 
 /**
@@ -260,17 +260,11 @@ export const decodeURLText = (text: string | null | undefined): string => {
       return str;
     }
   };
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text
-    .split(urlRegex)
-    .map((part) => {
-      if (part.match(urlRegex)) {
-        const decodedUrl = decodeIfValid(part);
-        return ` <a href="${decodedUrl}" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">${decodedUrl}</a> `;
-      }
-      return part;
-    })
-    .join('');
+  const urlRegex = /(<[^>]+>|^|[\s>])((https?:\/\/[^\s<]+)(?=[^<]*(?:<|$)))/g;
+  return text.replace(urlRegex, (_, before, url) => {
+    const decodedUrl = decodeIfValid(url);
+    return `${before}<a href="${decodedUrl}" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">${decodedUrl}</a>`;
+  });
 };
 
 /**

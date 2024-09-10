@@ -1,6 +1,7 @@
 import i18next from '@/i18n';
 
-export { Display as ExamDisplays } from './Displays';
+export { Card as ExamCard } from './Card';
+export { Displays as ExamDisplays } from './Displays';
 export { View as ExamView } from './View';
 export { Displays as GradingDisplays } from './grading/Displays';
 

@@ -2,12 +2,16 @@ import i18next from '@/i18n';
 import { atom } from 'jotai';
 import ReactPlayer from 'react-player/youtube';
 
+export { Card as VideoCard } from './Card';
 export { Displays as VideoDisplays } from './Displays';
+export { Player as VideoPlayer } from './Player';
+export { Tracking as VideoTracking } from './Tracking';
 export { View as VideoView } from './View';
+export { Card as PlaylistCard } from './playlist/Card';
 export { Displays as PlaylistDisplays } from './playlist/Displays';
 export { View as PlaylistView } from './playlist/View';
 export { Input as SearchInput } from './search/Input';
-export { SearchResult as VideoSearchResult } from './search/Result';
+export { Result as VideoSearchResult } from './search/Result';
 
 export const activeVideoIdState = atom<string | null>(null);
 export const playerHeightState = atom<string>('');

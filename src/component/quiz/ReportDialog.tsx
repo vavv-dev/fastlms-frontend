@@ -61,7 +61,7 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
                   type="datetime-local"
                   value={asOf}
                   onChange={(e) => setAsOf(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
                 ~
                 <TextField
@@ -70,7 +70,7 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
                   type="datetime-local"
                   value={upTo}
                   onChange={(e) => setUpTo(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Box>
 

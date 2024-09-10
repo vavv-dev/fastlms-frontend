@@ -13,7 +13,8 @@ declare module 'yup' {
       | 'number'
       | 'file'
       | 'password'
-      | 'editor';
+      | 'editor'
+      | 'thumbnail';
     multiline?: boolean;
     helperText?: string;
     placeholderText?: string;
@@ -24,6 +25,7 @@ declare module 'yup' {
     accept?: string;
     readOnly?: boolean;
     orderable?: boolean;
+    max?: number;
   }
 
   interface SchemaRefDescription {

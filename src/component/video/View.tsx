@@ -2,7 +2,8 @@ import { VideoGetViewData as GetViewData, VideoGetViewResponse as GetViewRespons
 import { Thread } from '@/component/comment';
 import { useServiceImmutable } from '@/component/common/hooks';
 import { textEllipsisCss } from '@/helper/util';
-import { Box, Grid } from '@mui/material';
+import { Box } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { useAtomValue } from 'jotai';
 import { useLocation, useParams } from 'react-router-dom';
 import { playerHeightState } from '.';
@@ -32,11 +33,10 @@ export const View = () => {
           p: { xs: 0, md: 3 },
           pt: '1em !important',
           gap: { xs: 0, md: 3 },
-          flexWrap: { xs: 'wrap', playerSplit: 'nowrap' },
+          flexWrap: { xs: 'wrap', mdl: 'nowrap' },
         }}
       >
         <Grid
-          item
           sx={{
             flex: '1 1 0',
             display: 'flex',
@@ -64,14 +64,13 @@ export const View = () => {
           )}
         </Grid>
         <Grid
-          item
           sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
             p: { xs: 3, md: 0 },
             width: '100%',
-            maxWidth: { playerSplit: '402px' },
+            maxWidth: { mdl: '402px' },
           }}
         >
           {playlistId && (

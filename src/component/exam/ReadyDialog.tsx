@@ -116,7 +116,7 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
             <Typography variant="subtitle1">
               {t('Grading is in progress. When the grading is completed, you will be notified.')}
             </Typography>
-            <Typography variant="subtitle2" color="textSecondary">
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
               {t('Grading will be completed around 7 days after the exam ended.')}
               {data.end_date && t('The end date is {{ date }}.', { date: formatYYYMMDD(data.end_date) })}
             </Typography>
@@ -208,7 +208,7 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
                 timeout={10}
                 unmountOnExit
               >
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   {t('Entering the exam page...')}
                 </Typography>
               </Zoom>

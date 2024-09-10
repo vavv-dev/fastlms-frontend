@@ -2,14 +2,11 @@ import {
   PlaylistDisplayResponse as DisplayResponse,
   playlistGetDisplays as getDisplays,
   playlistResumePlaylist as resumePlay,
-  playlistToggleAction as toggleAction,
   playlistUpdateResource as updateResource,
 } from '@/api';
-import { createToggleAction } from '@/component/common';
 import { ResourceCard } from '@/component/common/ResourceCard';
 import { formatDuration, formatRelativeTime } from '@/helper/util';
-import { BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, BoxProps, Button, Chip, Typography, useTheme } from '@mui/material';
+import { Box, BoxProps, Button, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
@@ -20,9 +17,7 @@ interface Props {
   sx?: BoxProps['sx'];
 }
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
-
-export const Card = ({ data, hideAvatar }: Props) => {
+export const Card = ({ data, hideAvatar, sx }: Props) => {
   const { t } = useTranslation('video');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -110,9 +105,9 @@ export const Card = ({ data, hideAvatar }: Props) => {
       avatarChildren={[t(...formatRelativeTime(data.modified))]}
       hideAvatar={hideAvatar}
       actionMenu={<ActionMenu data={data} />}
-      sx={{ '& .card-banner': { overflow: 'visible' } }}
+      sx={{ ...sx, '& .card-banner': { overflow: 'visible' } }}
       footer={
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
           <Button
             size="small"
             onClick={(e) => {
@@ -123,17 +118,6 @@ export const Card = ({ data, hideAvatar }: Props) => {
           >
             {t('Resume')}
           </Button>
-          {!data.bookmarked && (
-            <Chip
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                action('bookmark', data);
-              }}
-              icon={<BookmarkBorderOutlined fontSize="small" />}
-              label={t('Bookmark')}
-            />
-          )}
         </Box>
       }
       partialUpdateService={updateResource}

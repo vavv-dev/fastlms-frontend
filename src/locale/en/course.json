@@ -52,6 +52,13 @@
   "Thumbnail or description here": "Thumbnail or description here",
   "Title": "Title",
   "Title asc": "Title asc",
+  "content": "content",
+  "exam": "exam",
+  "number_input": "number_input",
+  "quiz": "quiz",
+  "single_selection": "single_selection",
+  "survey": "survey",
+  "video": "video",
   "{{ count }} enrollments_one": "{{ count }} enrollments",
   "{{ count }} enrollments_other": "{{ count }} enrollments"
 }

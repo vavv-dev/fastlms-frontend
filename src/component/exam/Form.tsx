@@ -216,7 +216,6 @@ export const Form = ({ id }: { id: string }) => {
           </Box>
         </Stack>
       </CommonForm>
-
       <>
         <BaseDialog
           open={submitConfirmOpen}
@@ -232,7 +231,7 @@ export const Form = ({ id }: { id: string }) => {
                   timeout={10}
                   unmountOnExit
                 >
-                  <Typography component="span" variant="caption" color="info.main">
+                  <Typography component="span" variant="caption" sx={{ color: 'info.main' }}>
                     {t('Submitting answers...')}
                   </Typography>
                 </Zoom>

@@ -1,5 +1,5 @@
 import { formatDatetimeLocale } from '@/helper/util';
-import { userChannelState } from '@/store';
+import { userMessageState } from '@/store';
 import { NotificationsOutlined, TagFacesOutlined } from '@mui/icons-material';
 import { Badge, Box, Divider, IconButton, Popover, Stack, Typography, useTheme } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
@@ -25,10 +25,10 @@ export const NotificationButton = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [notifications, setNotifications] = useAtom(notificationState);
   const [newNotificationCount, setNewNotificationCount] = useAtom(newNotificationCountState);
-  const userChannel = useAtomValue(userChannelState);
+  const userMessage = useAtomValue(userMessageState);
 
-  if (userChannel) {
-    userChannel.onmessage = (event) => {
+  if (userMessage) {
+    userMessage.onmessage = (event) => {
       const data = JSON.parse(event.data);
       setNotifications((notifications) => [data, ...notifications]);
       setNewNotificationCount((count) => count + 1);

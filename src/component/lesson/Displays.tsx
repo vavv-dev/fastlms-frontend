@@ -45,11 +45,10 @@ export const Displays = () => {
         )
       }
       gridBoxSx={{ gap: '2em 1em', gridTemplateColumns: '1fr', '& .create-resource-button': { maxHeight: '200px' } }}
-      extraAction={(tab) =>
-        tab == 'owner' &&
+      extraAction={() =>
         owner && <Chip onClick={() => navigate('content')} icon={<CloudUploadOutlined />} label={t('Content upload')} />
       }
-      maxWidth="md"
+      maxWidth="lg"
     />
   );
 };

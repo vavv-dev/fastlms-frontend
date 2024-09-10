@@ -1,14 +1,11 @@
 import {
   LessonDisplayResponse as DisplayResponse,
-  LessonEmbedResource as EmbedResource,
   lessonGetDisplays as getDisplays,
   lessonToggleAction as toggleAction,
   lessonUpdateResource as updateResource,
 } from '@/api';
 import { ThreadDialog } from '@/component/comment';
 import { WithAvatar, createToggleAction, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
-import { QuizViewDialog } from '@/component/quiz';
-import { SurveyViewDialog } from '@/component/survey';
 import { decodeURLText, formatRelativeTime, generateRandomDarkColor, humanNumber } from '@/helper/util';
 import { ArrowRight, BookmarkBorderOutlined, HelpOutlineOutlined } from '@mui/icons-material';
 import {
@@ -29,9 +26,8 @@ import {
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ReadyDialog } from '../exam/ReadyDialog';
 import { ActionMenu } from './ActionMenu';
-import { ViewDialog as ContentViewDialog } from './content/ViewDialog';
+import { ResourceViewer } from './ResourceViewer';
 
 interface Props {
   data: DisplayResponse;
@@ -98,7 +94,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
               height: '100%',
               top: 0,
               right: 0,
-              background: 'rgba(0,0,0,0.4)',
+              background: 'rgba(0,0,0,0.2)',
               color: 'white',
               zIndex: 3,
               p: 1,
@@ -198,9 +194,23 @@ export const Card = ({ data, hideAvatar }: Props) => {
             <TableBody>
               {data.resources.map((resource, index) => (
                 <TableRow key={index}>
-                  <TableCell>{t(resource.kind)}</TableCell>
+                  <TableCell sx={{ width: '80px' }}>{t(resource.kind)}</TableCell>
+                  <TableCell sx={{ py: '4px !important', width: '82px', height: '56px !important' }}>
+                    <Box
+                      sx={{
+                        backgroundImage: `url(${resource.thumbnail})`,
+                        backgroundColor: theme.palette.action.hover,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        width: '80px',
+                        height: 'auto',
+                        aspectRatio: '16/9',
+                        borderRadius: '4px',
+                      }}
+                    />
+                  </TableCell>
                   <TableCell>
-                    <ResourceView resource={resource} />
+                    <ResourceViewer resource={resource} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -223,42 +233,5 @@ export const Card = ({ data, hideAvatar }: Props) => {
         />
       )}
     </Box>
-  );
-};
-
-const ResourceView = ({ resource }: { resource: EmbedResource }) => {
-  const navigate = useNavigate();
-  const [quizViewDialogOpen, setQuizViewDialogOpen] = useState(false);
-  const [surveyViewDialogOpen, setSurveyViewDialogOpen] = useState(false);
-  const [contentViewDialogOpen, setContentViewDialogOpen] = useState(false);
-  const [examReadyDialogOpen, setExamReadyDialogOpen] = useState(false);
-
-  return (
-    <>
-      <Typography
-        onClick={(e) => {
-          e.stopPropagation();
-          const kind = resource.kind;
-          if (kind == 'video') navigate(`/video/${resource.id}`);
-          if (kind == 'quiz') setQuizViewDialogOpen(true);
-          if (kind == 'survey') setSurveyViewDialogOpen(true);
-          if (kind == 'content') setContentViewDialogOpen(true);
-          if (kind == 'exam') setExamReadyDialogOpen(true);
-        }}
-        variant="subtitle1"
-        color="primary"
-        sx={{ cursor: 'pointer', lineHeight: 1, textDecoration: 'none', '&:hover': { fontWeight: '500' } }}
-      >
-        {resource.title}
-      </Typography>
-      {quizViewDialogOpen && <QuizViewDialog open={quizViewDialogOpen} setOpen={setQuizViewDialogOpen} id={resource.id} />}
-      {surveyViewDialogOpen && (
-        <SurveyViewDialog open={surveyViewDialogOpen} setOpen={setSurveyViewDialogOpen} id={resource.id} />
-      )}
-      {contentViewDialogOpen && (
-        <ContentViewDialog open={contentViewDialogOpen} setOpen={setContentViewDialogOpen} id={resource.id} />
-      )}
-      {examReadyDialogOpen && <ReadyDialog open={examReadyDialogOpen} setOpen={setExamReadyDialogOpen} id={resource.id} />}
-    </>
   );
 };

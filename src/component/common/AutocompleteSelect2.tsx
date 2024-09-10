@@ -97,7 +97,11 @@ export const AutocompleteSelect2 = <T extends { id: string | number }>({
                 <li {...props} key={option.id}>
                   <Box>
                     <Checkbox icon={<CheckBoxOutlineBlank />} checked={selected} />
-                    {'thumbnail' in option && <Box component="img" src={option.thumbnail as string} />}
+                    {'thumbnail' in option && option.thumbnail ? (
+                      <Box component="img" src={option.thumbnail as string} />
+                    ) : (
+                      <div />
+                    )}
                     <Box dangerouslySetInnerHTML={{ __html: title }} />
                   </Box>
                 </li>
@@ -115,7 +119,7 @@ export const AutocompleteSelect2 = <T extends { id: string | number }>({
             PaperComponent={CustomPaper}
             PopperComponent={CustomPopper}
             sx={{ flexGrow: 1, overflow: 'hidden', '& .MuiChip-root ': { maxWidth: '40%' } }}
-            groupBy={groupField ? (option) => option[groupField as keyof T] as string : undefined}
+            groupBy={groupField ? (option) => t(option[groupField as keyof T] as string) : undefined}
           />
           <Tooltip title={t('Add')} arrow>
             <span>
@@ -150,6 +154,7 @@ const CustomPaper = (props: PaperProps) => {
         p: 0.5,
         pt: 1,
         marginTop: '-0.5em',
+        '& .MuiAutocomplete-groupLabel': { fontWeight: 700 },
         '& li': { py: '3px !important' },
         '& li .MuiCheckbox-root': { p: '0', m: '4px' },
         '& li img': { borderRadius: '4px', height: '2.5em', objectFit: 'cover', aspectRatio: '16/9' },

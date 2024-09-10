@@ -41,7 +41,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
           ) : (
             <Box sx={{ p: 2 }}>
               <Typography
-                variant="subtitle1"
+                variant="subtitle2"
                 sx={{
                   color: 'text.secondary',
                   my: 1,
@@ -66,6 +66,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
         autoColor
         partialUpdateService={updateResource}
         listService={getDisplays}
+        bannerBorder={!data.thumbnail}
       />
     </>
   );

@@ -1,0 +1,83 @@
+import {
+  CourseDisplayResponse,
+  ExamDisplayResponse,
+  ChannelGetDisplaysData as GetDisplaysData,
+  ChannelGetDisplaysResponse as GetDisplaysResponse,
+  PlaylistDisplayResponse,
+  QuizDisplayResponse,
+  SurveyDisplayResponse,
+  VideoDisplayResponse,
+  channelGetDisplays as getDisplays,
+} from '@/api';
+import { GridSlider, useServiceImmutable } from '@/component/common';
+import { CourseCard } from '@/component/course';
+import { ExamCard } from '@/component/exam';
+import { QuizCard } from '@/component/quiz';
+import { SurveyCard } from '@/component/survey';
+import { PlaylistCard, VideoCard } from '@/component/video';
+import { Box, Divider, Stack, Theme, useMediaQuery } from '@mui/material';
+import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+
+const GIRD_SIZE: Record<string, number[]> = {
+  short: [210, 4],
+  exam: [308, 16],
+};
+
+export const Home = () => {
+  const { t } = useTranslation('channel');
+  const { data } = useServiceImmutable<GetDisplaysData, GetDisplaysResponse>(getDisplays, undefined);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+  if (!data) return null;
+
+  return (
+    <Box ref={containerRef} sx={{ width: '100%', p: 3 }}>
+      <Stack direction="column" spacing={2} divider={<Divider flexItem />} sx={{ width: 'fit-content', mx: 'auto' }}>
+        {Object.entries(data).map(
+          ([kind, resources]) =>
+            resources.length > 0 && (
+              <GridSlider
+                key={kind}
+                title={t(kind)}
+                itemWidth={smDown && (kind == 'video' || kind == 'short' || kind == 'playlist') ? 210 : GIRD_SIZE[kind]?.[0]}
+                itemGap={GIRD_SIZE[kind]?.[1]}
+                containerRef={containerRef}
+                disableSlider
+                sx={{ mb: '2em !important' }}
+              >
+                {resources?.map((resource) => {
+                  if (['video', 'short'].includes(kind)) {
+                    return (
+                      <VideoCard
+                        key={resource.id}
+                        data={resource as VideoDisplayResponse}
+                        sx={kind === 'short' ? { '& .card-banner': { borderRadius: '16px' } } : {}}
+                      />
+                    );
+                  } else if (kind === 'playlist') {
+                    return (
+                      <PlaylistCard
+                        key={resource.id}
+                        data={resource as PlaylistDisplayResponse}
+                        sx={{ '& > .card-banner': { mt: '6px' } }}
+                      />
+                    );
+                  } else if (kind === 'quiz') {
+                    return <QuizCard key={resource.id} data={resource as QuizDisplayResponse} />;
+                  } else if (kind === 'survey') {
+                    return <SurveyCard key={resource.id} data={resource as SurveyDisplayResponse} />;
+                  } else if (kind === 'exam') {
+                    return <ExamCard key={resource.id} data={resource as ExamDisplayResponse} />;
+                  } else if (kind === 'course') {
+                    return <CourseCard key={resource.id} data={resource as CourseDisplayResponse} />;
+                  }
+                })}
+              </GridSlider>
+            ),
+        )}
+      </Stack>
+    </Box>
+  );
+};

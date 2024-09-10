@@ -1,5 +1,5 @@
 export default {
-  client: 'fetch',
+  client: 'legacy/fetch',
   input: 'http://localhost:8012/api/v2/openapi.json',
   output: './src/api',
   format: 'prettier',

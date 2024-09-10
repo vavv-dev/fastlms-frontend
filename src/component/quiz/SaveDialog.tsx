@@ -1,4 +1,5 @@
 import {
+  QuizEmbedResource as Resource,
   QuizResourceQuestionUpdate as ResourceQuestionUpdate,
   QuizResourceResponse as ResourceResponse,
   QuizResourceUpdateRequest as ResourceUpdateRequest,
@@ -6,7 +7,9 @@ import {
   quizGetDisplays as getDisplays,
   quizGetOwnedQuestions as getOwnedQuestions,
   quizGetResource as getResource,
+  kind2,
   quizUpdateResource as updateResource,
+  videoVideoSelector as videoSelector,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
 import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
@@ -62,6 +65,13 @@ const questionSchema: yup.ObjectSchema<ResourceQuestionUpdate> = yup.object({
   correct_answer: yup.string().required(REQUIRED).default('').label(t('Correct answer')).meta({ control: 'number' }),
 });
 
+const contentSchema: yup.ObjectSchema<Resource> = yup.object({
+  kind: yup.mixed<kind2>().default('video').meta({ hidden: true }),
+  thumbnail: yup.string().default('').meta({ readOnly: true, control: 'thumbnail' }),
+  id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
+  title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
+});
+
 const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
   title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text' }),
   description: yup.string().default('').label(t('Description')).meta({ control: 'text', multiline: true }),
@@ -95,7 +105,7 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .meta({ control: 'datetime-local', grid: 6 }),
   end_date: yup
     .string()
-    .nullable()
+    .required(REQUIRED)
     .transform((v) => (v ? v : null))
     .label(t('End date'))
     .meta({ control: 'datetime-local', grid: 6 }),
@@ -109,7 +119,21 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .default('')
     .label(t('Failure message'))
     .meta({ control: 'editor', placeholderText: t('Optional') }),
-  questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
+  resources: yup
+    .array()
+    .max(1, t('Only one video is allowed'))
+    .of(contentSchema)
+    .label(t('Video'))
+    .default([])
+    .nullable()
+    .meta({ max: 1 }),
+  questions: yup
+    .array()
+    .of(questionSchema)
+    .required(REQUIRED)
+    .label(t('Questions'))
+    .min(1, t('At least one question is required'))
+    .default([]),
 });
 
 interface Props {
@@ -135,6 +159,13 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
       createService={createResource}
       partialUpdateService={updateResource}
       copyAutocomplete={{
+        resources: {
+          service: videoSelector,
+          labelField: 'title',
+          groudField: 'kind',
+          mode: 'select',
+          hideAddButton: true,
+        },
         questions: {
           service: getOwnedQuestions,
           labelField: 'question',

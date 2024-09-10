@@ -1,4 +1,4 @@
-import { Dialog, useTheme } from '@mui/material';
+import { Dialog, DialogContent, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
@@ -31,23 +31,23 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
 
   if (!open) return null;
 
-  // TODO
-
   return (
     <Dialog
-      PaperProps={{ sx: { borderRadius: theme.shape.borderRadius } }}
+      PaperProps={{ sx: { borderRadius: theme.shape.borderRadius, overflow: 'hidden' } }}
       fullWidth
       open={open}
       onClose={() => setOpen(false)}
       onClick={(e) => e.stopPropagation()}
       maxWidth="lg"
     >
-      <iframe
-        ref={iframeRef}
-        src={`${URL_BASE}/${id}`}
-        style={{ width: '100%', aspectRatio: aspectRatio, border: 'none' }}
-        allowFullScreen
-      ></iframe>
+      <DialogContent sx={{ p: 0, display: 'flex' }}>
+        <iframe
+          ref={iframeRef}
+          src={`${URL_BASE}/${id}`}
+          style={{ width: '100%', aspectRatio: aspectRatio, border: 'none' }}
+          allowFullScreen
+        ></iframe>
+      </DialogContent>
     </Dialog>
   );
 };

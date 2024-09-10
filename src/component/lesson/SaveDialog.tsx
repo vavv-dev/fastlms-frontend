@@ -36,6 +36,7 @@ const contentSchema: yup.ObjectSchema<Resource> = yup.object({
       ],
       readOnly: true,
     }),
+  thumbnail: yup.string().default('').meta({ readOnly: true, control: 'thumbnail' }),
   id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
   title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
 });
@@ -119,4 +120,3 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
     </>
   );
 };
-

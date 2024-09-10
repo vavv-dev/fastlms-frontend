@@ -19,6 +19,7 @@ interface Props {
 export const Card = ({ data, hideAvatar }: Props) => {
   const { t } = useTranslation('survey');
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const videoId = data.resources?.find((r) => r.kind === 'video')?.id ?? null;
 
   return (
     <>
@@ -38,7 +39,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
           ) : (
             <Box sx={{ p: 2 }}>
               <Typography
-                variant="subtitle1"
+                variant="subtitle2"
                 sx={{
                   color: 'text.secondary',
                   my: 1,
@@ -60,6 +61,14 @@ export const Card = ({ data, hideAvatar }: Props) => {
         autoColor
         partialUpdateService={updateResource}
         listService={getDisplays}
+        bannerBorder={!data.thumbnail}
+        footer={
+          videoId && (
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {t('Video is available')}
+            </Typography>
+          )
+        }
       />
       {viewDialogOpen && <ViewDialog open={viewDialogOpen} setOpen={setViewDialogOpen} id={data.id} />}
     </>

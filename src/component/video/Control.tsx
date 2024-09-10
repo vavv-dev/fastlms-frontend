@@ -7,7 +7,7 @@ import {
   videoToggleAction as toggleAction,
 } from '@/api';
 import { WithAvatar, createToggleAction, useServiceImmutable } from '@/component/common';
-import { decodeURLText, formatRelativeTime, humanNumber } from '@/helper/util';
+import { decodeURLText, formatRelativeTime, humanNumber, textEllipsisCss } from '@/helper/util';
 import { userState } from '@/store';
 import {
   BookmarkBorderOutlined,
@@ -88,7 +88,7 @@ export const Control = ({ id }: { id: string }) => {
           )}
         </Box>
       </Box>
-      <Collapse in={!collapse} collapsedSize={40}>
+      <Collapse in={!collapse} collapsedSize={40} timeout={50}>
         <Box
           sx={{
             position: 'relative',
@@ -96,7 +96,7 @@ export const Control = ({ id }: { id: string }) => {
             overflowWrap: 'anywhere',
             padding: '1em',
             minHeight: '40px',
-            bgcolor: theme.palette.action.selected,
+            bgcolor: theme.palette.action.hover,
             borderRadius: theme.shape.borderRadius / 2,
             cursor: 'pointer',
             fontSize: '.9rem',
@@ -117,7 +117,10 @@ export const Control = ({ id }: { id: string }) => {
           >
             {collapse ? <KeyboardArrowUpOutlined /> : <KeyboardArrowDownOutlined />}
           </Button>
-          <Box dangerouslySetInnerHTML={{ __html: decodeURLText(data.description) }} />
+          <Box
+            dangerouslySetInnerHTML={{ __html: decodeURLText(data.description) }}
+            sx={{ '& > p': { my: 0 }, ...(collapse && textEllipsisCss(1)) }}
+          />
         </Box>
       </Collapse>
     </Box>

@@ -7,4 +7,4 @@ export const userState = atomWithStorage<UserResponse | null>('user', parseLocal
 export const loginExpireState = atomWithStorage<string>('loginExpire', parseLocalStorage('loginExpire', null));
 export const homeUserState = atom<UserResponse | null>(null);
 export const accountProcessingState = atom<boolean>(false);
-export const userChannelState = atom<WebSocket | null>(null);
+export const userMessageState = atom<WebSocket | null>(null);

@@ -68,24 +68,26 @@ const SimpleSearch = ({ search, setSearch }: ActionProps) => {
 
   return (
     <TextField
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchOutlinedIcon />
-          </InputAdornment>
-        ),
-        endAdornment: search && (
-          <InputAdornment
-            position="end"
-            onClick={() => {
-              setSearchInput('');
-              setSearch?.('');
-            }}
-            sx={{ cursor: 'pointer' }}
-          >
-            <ClearOutlinedIcon />
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchOutlinedIcon />
+            </InputAdornment>
+          ),
+          endAdornment: search && (
+            <InputAdornment
+              position="end"
+              onClick={() => {
+                setSearchInput('');
+                setSearch?.('');
+              }}
+              sx={{ cursor: 'pointer' }}
+            >
+              <ClearOutlinedIcon />
+            </InputAdornment>
+          ),
+        },
       }}
       size="small"
       value={searchInput}

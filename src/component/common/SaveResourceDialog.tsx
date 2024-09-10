@@ -13,13 +13,12 @@ import {
 } from '@/component/common';
 import { textEllipsisCss } from '@/helper/util';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AddCircleOutlineOutlined, Close, ContentCopyOutlined, DragHandleOutlined } from '@mui/icons-material';
+import { AddCircleOutlineOutlined, Close, DragHandleOutlined, LibraryAddOutlined } from '@mui/icons-material';
 import {
   Box,
   Button,
   DialogProps,
   FormControlProps,
-  Grid,
   IconButton,
   Table,
   TableBody,
@@ -31,6 +30,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import React, { useEffect, useState } from 'react';
 import {
   Control,
@@ -228,7 +228,7 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
               if (fieldData.meta?.hidden) return null;
               if (fieldData.type == 'object') {
                 return (
-                  <Grid item xs={12} key={key}>
+                  <Grid size={{ xs: 12 }} key={key}>
                     <Typography variant="caption">{fieldData.label}</Typography>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       {Object.entries(fieldData.fields).map(([innerKey, _innerFieldData]) => (
@@ -261,7 +261,7 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
                 );
               } else {
                 return (
-                  <Grid item xs={fieldData.meta?.grid || 12} key={key}>
+                  <Grid size={{ xs: fieldData.meta?.grid || 12 }} key={key}>
                     <DrawField
                       containerRef={containerRef}
                       name={key as Path<T>}
@@ -337,19 +337,36 @@ const DrawField = <T extends FieldValues>({
     type: fieldData.meta?.control,
     control,
     label: !hideLabel ? fieldData.label || '' : '',
-    InputLabelProps: { shrink: true },
+    slotProps: { inputLabel: { shrink: true } },
     helperText: (formState.errors[name]?.message as string) || fieldData.meta?.helperText,
     required,
     readOnly: fieldData.meta?.readOnly,
   };
 
-  if (lazy && !isActive) {
+  if (fieldData.meta?.control === 'thumbnail') {
+    return (
+      <Box
+        sx={{
+          backgroundImage: `url(${field.value})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          width: '80px',
+          height: 'auto',
+          aspectRatio: '16/9',
+          borderRadius: '4px',
+        }}
+      />
+    );
+  }
+
+  if (lazy && !isActive && typeof field.value !== 'boolean') {
     return (
       <Box
         onClick={handleActivation}
         onKeyDown={handleKeyDown}
         tabIndex={0}
         sx={{
+          fontSize: '13px',
           width: '100%',
           minHeight: '1.5em',
           cursor: 'text',
@@ -360,7 +377,7 @@ const DrawField = <T extends FieldValues>({
           },
         }}
       >
-        {field.value && typeof field.value === 'string' ? t(field.value) : field.value || ''}
+        {field.value != null ? (typeof field.value === 'string' ? t(field.value) : String(field.value)) : ''}
       </Box>
     );
   }
@@ -368,11 +385,10 @@ const DrawField = <T extends FieldValues>({
   const renderControl = () => {
     switch (fieldData.meta?.control) {
       case 'checkbox':
-        return <CheckboxControl autoFocus {...props} margin={margin} />;
+        return <CheckboxControl {...props} margin={margin} />;
       case 'editor':
         return (
           <TextEditorControl
-            autoFocus
             containerRef={containerRef}
             {...props}
             margin={margin}
@@ -380,13 +396,12 @@ const DrawField = <T extends FieldValues>({
           />
         );
       case 'select':
-        return <SelectControl autoFocus {...props} margin={margin} options={fieldData.meta?.options || []} />;
+        return <SelectControl {...props} margin={margin} options={fieldData.meta?.options || []} />;
       case 'file':
-        return <FileFieldControl autoFocus {...props} inputProps={{ accept: fieldData.meta?.accept }} />;
+        return <FileFieldControl {...props} inputProps={{ accept: fieldData.meta?.accept }} />;
       default:
         return (
           <TextFieldControl
-            autoFocus
             {...props}
             margin={margin}
             focusSelect
@@ -445,20 +460,11 @@ const ArrayFieldTable = <T extends FieldValues>({
   };
 
   return (
-    <Grid item xs={12}>
-      {arrayFieldError?.message && (
-        <Typography color="error" variant="caption">
-          {t(arrayFieldError.message as string)}
-        </Typography>
-      )}
-      {arrayFieldError?.root?.message && (
-        <Typography color="error" variant="caption">
-          {t(arrayFieldError.root.message as string)}
-        </Typography>
-      )}
+    <Grid size={{ xs: 12 }}>
       <TableContainer
         sx={{
           '& th': { whiteSpace: 'nowrap' },
+          '& .MuiInput-input': { fontSize: '13px' },
           '& fieldset': { border: 'none' },
           '& .MuiInput-underline:not(.Mui-error):before': { borderBottom: 'none' },
           '& .MuiInput-underline:hover:not(.Mui-disabled):not(.Mui-error):before': { borderBottom: 'none' },
@@ -472,7 +478,19 @@ const ArrayFieldTable = <T extends FieldValues>({
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="caption">{fieldData.label}</Typography>
+          <Typography variant="caption">
+            {fieldData.label} {!fieldData.optional && !fieldData.nullable && '*'}
+          </Typography>
+          {arrayFieldError?.message && (
+            <Typography variant="caption" sx={{ color: 'error.main' }}>
+              {t(arrayFieldError.message as string)}
+            </Typography>
+          )}
+          {arrayFieldError?.root?.message && (
+            <Typography variant="caption" sx={{ color: 'error.main' }}>
+              {t(arrayFieldError.root.message as string)}
+            </Typography>
+          )}
           <Box sx={{ flexGrow: 1 }} />
           {copyAutocomplete?.[fieldKey] && (
             <>
@@ -483,7 +501,7 @@ const ArrayFieldTable = <T extends FieldValues>({
                 onClick={() => setAutocompleteOpen(autocompleteOpen === fieldKey ? '' : fieldKey)}
               >
                 <IconButton color="primary">
-                  <ContentCopyOutlined />
+                  <LibraryAddOutlined />
                 </IconButton>
               </Tooltip>
               {!copyAutocomplete[fieldKey].hideAddButton && (
@@ -505,7 +523,7 @@ const ArrayFieldTable = <T extends FieldValues>({
             </>
           )}
         </Box>
-        <List
+        <List<T>
           disabled={!fieldData.meta?.orderable}
           lockVertically
           values={arrayValues}
@@ -514,8 +532,9 @@ const ArrayFieldTable = <T extends FieldValues>({
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell></TableCell>
+                  {fieldData.meta?.orderable && <TableCell></TableCell>}
                   <TableCell>#</TableCell>
+                  {'thumbnail' in fieldData && <TableCell>{t('Thumbnail')}</TableCell>}
                   {Object.entries(fieldData.innerType.fields).map(([innerKey, innerFieldData]) =>
                     innerFieldData.meta?.hidden ? null : (
                       <TableCell key={`${fieldKey}.${innerKey}`}>{innerFieldData.label}</TableCell>
@@ -573,7 +592,7 @@ const ArrayFieldTable = <T extends FieldValues>({
                           margin="none"
                           control={control}
                           formState={formState}
-                          lazy={true}
+                          lazy={!!value.id}
                         />
                       </TableCell>
                     ),
@@ -583,10 +602,12 @@ const ArrayFieldTable = <T extends FieldValues>({
                       onClick={() => {
                         const remains = arrayValues.filter((_, j) => j !== index);
                         if (remains.length === 0) {
+                          // https://github.com/react-hook-form/react-hook-form/issues/10862
                           setValue(fieldKey, null as PathValue<T, Path<T>>, {
                             shouldDirty: true,
                             shouldValidate: true,
                           });
+                          setValue(fieldKey, fieldData.default as PathValue<T, Path<T>>);
                         } else {
                           setValue(fieldKey, remains as PathValue<T, Path<T>>, {
                             shouldDirty: true,
@@ -612,7 +633,6 @@ const ArrayFieldTable = <T extends FieldValues>({
           }}
         />
       </TableContainer>
-
       {copyAutocomplete?.[fieldKey]?.service && autocompleteOpen === fieldKey && (
         <AutocompleteSelect2
           service={copyAutocomplete[fieldKey].service}
@@ -620,21 +640,24 @@ const ArrayFieldTable = <T extends FieldValues>({
           groupField={copyAutocomplete[fieldKey].groudField}
           open={autocompleteOpen === fieldKey}
           setOpen={() => setAutocompleteOpen(autocompleteOpen === fieldKey ? '' : fieldKey)}
-          placeholder={`${t('Copy')} ${fieldData.label}`}
+          placeholder={`${t('Select {{ type }}', { type: fieldData.label })} `}
           onSelect={(selected) => {
-            setValue(
-              fieldKey,
-              [
-                ...(arrayValues || []),
-                ...selected.map((s) => ({
-                  ...s,
-                  id: copyAutocomplete[fieldKey].mode === 'select' ? s.id : undefined,
-                })),
-              ] as PathValue<T, Path<T>>,
-              { shouldDirty: true, shouldValidate: true },
-            );
+            const max = fieldData.meta?.max;
+            const updated = [
+              ...(arrayValues || []),
+              ...selected.map((s) => ({
+                ...s,
+                id: copyAutocomplete[fieldKey].mode === 'select' ? s.id : undefined,
+              })),
+            ];
+            console.log(updated);
+            setValue(fieldKey, (max ? updated.slice(-1 * max) : updated) as PathValue<T, Path<T>>, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
           }}
           excludes={new Set(arrayValues.map((v) => v['id']))}
+          selectionLimit={fieldData.meta?.max}
         />
       )}
     </Grid>

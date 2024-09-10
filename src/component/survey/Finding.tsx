@@ -6,7 +6,8 @@ import {
 import { useServiceImmutable } from '@/component/common';
 import { textEllipsisCss, toFixedHuman } from '@/helper/util';
 import { CheckBoxOutlined, RadioButtonCheckedOutlined } from '@mui/icons-material';
-import { Box, Divider, Grid, LinearProgress, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Divider, LinearProgress, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +39,7 @@ export const Finding = ({ id }: { id: string }) => {
                     const totalPercentage = totalOccurrence ? ((occurrences?.[i] || 0) / totalOccurrence) * 100 : 0;
 
                     return [
-                      <Grid key={`selection-${i}`} item xs={8}>
+                      <Grid key={`selection-${i}`} size={{ xs: 8 }}>
                         <Tooltip title={selection} placement="top" arrow>
                           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                             {kind == 'single_selection' ? (
@@ -47,13 +48,13 @@ export const Finding = ({ id }: { id: string }) => {
                               <CheckBoxOutlined sx={{ color: 'text.secondary', fontSize: '1em' }} />
                             )}
 
-                            <Typography variant="body2" color="textSecondary" sx={{ ...textEllipsisCss(1) }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', ...textEllipsisCss(1) }}>
                               {selection}
                             </Typography>
                           </Box>
                         </Tooltip>
                       </Grid>,
-                      <Grid key={`occurrence-${i}`} item xs={4}>
+                      <Grid key={`occurrence-${i}`} size={{ xs: 4 }}>
                         <Tooltip title={`${toFixedHuman(totalPercentage, 1)}%`} placement="top" arrow>
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <LinearProgress
@@ -81,7 +82,7 @@ export const Finding = ({ id }: { id: string }) => {
                 </Grid>
               ) : (
                 <>
-                  <Typography variant="caption" color="primary.main">
+                  <Typography variant="caption" sx={{ color: 'primary.main' }}>
                     {t('Frequently mentioned items in answers.')}
                   </Typography>
                   <PieChart

@@ -21,8 +21,7 @@ import { throttle } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReward } from 'react-rewards';
-import { useSearchParams } from 'react-router-dom';
-import { playerInstanceState, playerProgressState, playerReadyState } from '.';
+import { playerInstanceState, playerProgressState } from '.';
 
 const PERSIST_EVENT = ['beforeunload', 'pagehide', 'visibilitychange'];
 const MAX_WATCH_DURATION = 60 * 60 * 3; // 3 hours
@@ -35,11 +34,9 @@ const watchBitmaps = {};
 export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
   const { t } = useTranslation('video');
   const theme = useTheme();
-  const [searchParams] = useSearchParams();
   const user = useAtomValue(userState);
   const playerInstance = useAtomValue(playerInstanceState);
   const progress = useAtomValue(playerProgressState);
-  const ready = useAtomValue(playerReadyState);
   const { reward } = useReward('completed', 'confetti', { position: 'absolute' });
   const lastPositionsRef = useRef<Record<string, number>>(lastPositions);
   const watchBitmapsRef = useRef<Record<string, number[]>>(watchBitmaps);
@@ -73,22 +70,17 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
 
   /**
    *
-   * initialize last position and watch bitmap
+   * initialize watch bitmap
    *
    */
   useEffect(() => {
     if (trackingImpossible) return;
 
-    // position
-    if (lastPositionsRef.current[data.id] == undefined) {
+    // watch bitmap
+    if (!watchBitmapsRef.current[data.id]) {
       // if first watch, save first watch time
       if (data.last_position === null) throttlePersistWatch(data.id);
 
-      lastPositionsRef.current[data.id] = data.last_position || 0;
-    }
-
-    // watch bitmap
-    if (!watchBitmapsRef.current[data.id]) {
       watchBitmapsRef.current[id] = Array(data?.duration || 0).fill(0);
     }
 
@@ -99,20 +91,6 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
 
   /**
    *
-   *  resume last position
-   *
-   */
-  useEffect(() => {
-    if (!ready) return;
-    // resume
-    const startTime = parseInt(searchParams.get('t') || '', 10) || lastPositionsRef.current[id];
-    if (startTime) {
-      playerInstance?.seekTo(startTime, 'seconds');
-    }
-  }, [ready]); // eslint-disable-line
-
-  /**
-   *
    * load watch bitmap
    * convert bytes to bit array
    *
@@ -120,20 +98,20 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
   useEffect(() => {
     if (trackingImpossible || !watchBitmap) return;
 
-    const emptyBitmap = watchBitmapsRef.current[id];
+    const currentBitmap = watchBitmapsRef.current[id];
     watchBitmap?.arrayBuffer().then((arrayBuffer) => {
       const uint8Array = new Uint8Array(arrayBuffer);
 
       // watch bitmap to bit array
-      for (let i = 0; i < uint8Array.length && i * 8 < emptyBitmap.length; i++) {
+      for (let i = 0; i < uint8Array.length && i * 8 < currentBitmap.length; i++) {
         const byte = uint8Array[i];
-        for (let j = 7; j >= 0 && i * 8 + (7 - j) < emptyBitmap.length; j--) {
+        for (let j = 7; j >= 0 && i * 8 + (7 - j) < currentBitmap.length; j--) {
           const bit = (byte >> j) & 1;
-          emptyBitmap[i * 8 + (7 - j)] = bit;
+          currentBitmap[i * 8 + (7 - j)] = bit;
         }
       }
 
-      emptyBitmap.forEach((v, i) => {
+      currentBitmap.forEach((v, i) => {
         if (v === 1) updateWatchProgressBar(i);
       });
     });
@@ -151,9 +129,6 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     const player = playerInstance?.getInternalPlayer();
     if (!player) return;
 
-    const position = player.getCurrentTime?.();
-    if (!position) return;
-
     const currentId = player.getVideoData()?.video_id;
     if (!currentId) return;
 
@@ -161,14 +136,18 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     if (currentId !== data.id) return;
 
     // update last position
+    const position = player.getCurrentTime?.();
+    if (!position) return;
+
+    // cache current position
     lastPositionsRef.current[currentId] = position;
 
     // update watch bitmap
-    const watchBitmap = watchBitmapsRef.current[currentId];
-    if (!watchBitmap) return;
+    const currentBitmap = watchBitmapsRef.current[currentId];
+    if (!currentBitmap) return;
 
     const positionInt = Math.floor(position);
-    watchBitmap[Math.floor(positionInt)] = 1;
+    currentBitmap[Math.floor(positionInt)] = 1;
 
     // update watch progress bar
     updateWatchProgressBar(positionInt);
@@ -233,38 +212,62 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
   const persistWatch = async (id: string) => {
     if (trackingImpossible) return;
 
-    if (lastPositionsRef.current[data.id] == undefined && data.last_position == null) {
+    // first watch
+    if (!watchBitmapsRef.current[data.id] && data.last_position == null) {
       startWatch({
         id: data.id,
         requestBody: { first_watch: String(new Date().getTime() - DEBOUNCE_THROTTLE) },
       }).catch((e) => console.error(e));
     }
 
-    const position = lastPositionsRef.current[data.id];
+    const position = lastPositionsRef.current[id];
     if (!position) return;
 
     const watch: WatchUpdateRequest = {
       last_position: Math.floor(position),
     };
 
-    const watchBitmap = watchBitmapsRef.current[id];
-    if (watchBitmap) {
-      // convert watchBitmap bitarray to bytes
-      const byteArray = new Uint8Array(Math.ceil(watchBitmap.length / 8));
-      for (let i = 0; i < watchBitmap.length; i += 8) {
+    const newBitmap = watchBitmapsRef.current[id];
+    if (newBitmap) {
+      // check if different from watchBitmap
+      // let diff = false;
+
+      // why not working?
+
+      // const arrayBuffer = await watchBitmap?.arrayBuffer();
+      // if (arrayBuffer) {
+      //   const uint8Array = new Uint8Array(arrayBuffer);
+      //   for (let i = 0; i < uint8Array.length && i * 8 < newBitmap.length; i++) {
+      //     for (let j = 7; j >= 0 && i * 8 + (7 - j) < newBitmap.length; j--) {
+      //       const oldBit = (uint8Array[i] >> j) & 1;
+      //       console.log(oldBit, newBitmap[i * 8 + (7 - j)]);
+      //       if (!oldBit && newBitmap[i * 8 + (7 - j)] !== oldBit) {
+      //         diff = true;
+      //         break;
+      //       }
+      //     }
+      //     if (diff) break;
+      //   }
+      // }
+
+      // if (diff) {
+      // convert newBitmap bitarray to bytes
+      const byteArray = new Uint8Array(Math.ceil(newBitmap.length / 8));
+      for (let i = 0; i < newBitmap.length; i += 8) {
         let byte = 0;
         for (let j = 0; j < 8; j++) {
-          if (i + j < watchBitmap.length) {
-            byte |= (watchBitmap[i + j] & 1) << (7 - j);
+          if (i + j < newBitmap.length) {
+            byte |= (newBitmap[i + j] & 1) << (7 - j);
           }
         }
         byteArray[i / 8] = byte;
       }
 
-      watch['length'] = watchBitmap.length;
+      watch['length'] = newBitmap.length;
       watch['watch_bitmap'] = Array.from(byteArray)
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('') as unknown as Blob;
+      // }
     }
 
     updateWatch({ id, requestBody: watch })
@@ -338,17 +341,10 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
         <Box sx={{ flexGrow: 1, position: 'relative', height: '4px', bgcolor: alpha(progressColor, 0.4) }}>
           <Box
             ref={watchProgressRef}
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              '& rect': { stroke: progressColor },
-            }}
             component="svg"
-            width="100%"
-            height="4px"
             viewBox={`0 0 ${data?.duration || 0} 4`}
             preserveAspectRatio="none"
+            sx={{ width: '100%', height: '4px', position: 'absolute', top: 0, left: 0, '& rect': { stroke: progressColor } }}
           />
         </Box>
         {percent >= 100 && (

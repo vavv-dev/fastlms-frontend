@@ -1,7 +1,7 @@
 import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
 import { decodeURLText, generateRandomDarkColor, stripHtml, textEllipsisCss } from '@/helper/util';
 import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, BoxProps, Button, LinearProgress, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, BoxProps, Button, LinearProgress, Stack, Tooltip, Typography, darken, useTheme } from '@mui/material';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -26,8 +26,8 @@ interface Props {
   onClick?: (e: React.MouseEvent) => void;
   banner?: React.ReactNode;
   bannerPlace?: 'top' | 'bottom';
-  score: number | null;
-  passed: boolean | null;
+  score?: number | null;
+  passed?: boolean | null;
   avatarChildren?: React.ReactNode[];
   hideAvatar?: boolean;
   autoColor?: boolean;
@@ -35,6 +35,7 @@ interface Props {
   footer?: React.ReactNode;
   sx?: BoxProps['sx'];
   showDescription?: boolean;
+  bannerBorder?: boolean;
   partialUpdateService?: (params: { id: string; requestBody: Partial<ResourceUpdateField> }) => Promise<any>; // eslint-disable-line
   listService?: () => Promise<any>; // eslint-disable-line
 }
@@ -53,6 +54,7 @@ export const ResourceCard = ({
   footer,
   sx,
   showDescription,
+  bannerBorder,
   partialUpdateService,
   listService,
 }: Props) => {
@@ -90,7 +92,7 @@ export const ResourceCard = ({
             display: 'flex',
             flexDirection: 'column',
             bgcolor: color,
-            // border: `1px solid ${darken(color, 0.5)}`,
+            border: bannerBorder ? `1px solid ${darken(color, 0.5)}` : 'none',
             position: 'relative',
             borderRadius: theme.shape.borderRadius / 2,
             gap: 1.5,
@@ -98,8 +100,17 @@ export const ResourceCard = ({
           }}
         >
           {banner}
-          <Box sx={{ position: 'absolute', width: '100%', height: '100%', overflow: 'hidden', borderRadius: 'inherit' }}>
-            {score != null && (
+          <Box
+            sx={{
+              pointerEvents: 'none',
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden',
+              borderRadius: 'inherit',
+            }}
+          >
+            {(score != null || score != undefined) && (
               <LinearProgress
                 variant="determinate"
                 value={score}
@@ -119,6 +130,7 @@ export const ResourceCard = ({
                   color: 'white',
                   zIndex: 3,
                   p: 1,
+                  pointerEvents: 'auto',
                 }}
               >
                 <Tooltip title={t('If you change to public, everyone can see this resource.')}>
@@ -141,7 +153,18 @@ export const ResourceCard = ({
           </Box>
         </Box>
       ),
-    [banner, color, passed, resource.is_public, score, t, theme.shape.borderRadius, updateField, partialUpdateService],
+    [
+      banner,
+      color,
+      passed,
+      resource.is_public,
+      score,
+      t,
+      theme.shape.borderRadius,
+      updateField,
+      partialUpdateService,
+      bannerBorder,
+    ],
   );
 
   return (
@@ -178,7 +201,7 @@ export const ResourceCard = ({
         <Typography
           className="content-title"
           variant="subtitle2"
-          sx={{ fontWeight: '600', mt: 1, pr: '3px', lineHeight: 1.3, ...textEllipsisCss(2) }}
+          sx={{ fontWeight: '600', my: 0.5, pr: '3px', lineHeight: 1.3, ...textEllipsisCss(2) }}
         >
           {resource.title}
         </Typography>
@@ -189,15 +212,15 @@ export const ResourceCard = ({
           hideAvatar={hideAvatar}
           sx={bannerPlace === 'bottom' ? { flexGrow: 0, mb: 1 } : {}}
         >
-          <Stack sx={{ color: 'text.secondary', fontSize: '0.9rem' }} direction="row" spacing={1}>
+          <Stack sx={{ color: 'text.secondary' }} direction="row" spacing={1}>
             {avatarChildren?.map((child, i) => (
-              <Typography key={i} component="div" variant="subtitle2">
+              <Typography key={i} component="div" variant="caption">
                 {child}
               </Typography>
             ))}
             {resource.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
           </Stack>
-          <Box sx={{ display: !hover ? 'none' : 'block', position: 'absolute', right: '-8px' }}>{actionMenu}</Box>
+          <Box sx={{ display: !hover ? 'none' : 'block', position: 'absolute', right: 0 }}>{actionMenu}</Box>
         </WithAvatar>
         {showDescription && (
           <Typography variant="body2" sx={{ color: 'text.secondary', ...textEllipsisCss(2) }}>
