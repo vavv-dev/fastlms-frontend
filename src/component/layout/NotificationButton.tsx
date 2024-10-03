@@ -55,7 +55,7 @@ export const NotificationButton = () => {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         sx={{ '& .MuiPaper-root': { borderRadius: theme.shape.borderRadius } }}
       >
-        <Stack sx={{ maxHeight: '500px' }} divider={<Divider />} direction="column">
+        <Stack sx={{ maxHeight: '500px', width: '400px' }} divider={<Divider />} direction="column">
           {notifications.length > 0 ? (
             notifications.map((notification, index) => (
               <NotificationItem
@@ -68,7 +68,7 @@ export const NotificationButton = () => {
             <Typography
               component="div"
               variant="subtitle2"
-              sx={{ width: '350px', p: 2, display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}
+              sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}
             >
               <TagFacesOutlined />
               {t('No nofitication.')}
@@ -90,7 +90,6 @@ const NotificationItem = ({ notification, isNew }: { notification: Notification;
         py: 1.5,
         px: 2,
         gap: 0.5,
-        width: '350px',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: isNew ? theme.palette.action.hover : 'transparent',

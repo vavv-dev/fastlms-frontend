@@ -2,13 +2,13 @@ import { CancelablePromise } from '@/api';
 import { InfiniteScrollIndicator, PaginationActions, useInfinitePagination } from '@/component/common';
 import { homeUserState, userState } from '@/store';
 import { Add } from '@mui/icons-material';
-import { Box, BoxProps, Button, ToggleButton, ToggleButtonGroup, Typography, useTheme } from '@mui/material';
+import { Box, BoxProps, Button, Typography, useTheme } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
-const tabFamily = atomFamily(() => atom<string | undefined>(undefined));
 const orderingFamily = atomFamily(() => atom<string>(''));
 const searchFamily = atomFamily(() => atom<string>(''));
 
@@ -23,30 +23,24 @@ interface PaginatedList<T> {
 interface GridInfiniteScrollPageProps<Item, Params extends { orderBy?: string }> {
   pageKey: string;
   apiService: (params: Params) => CancelablePromise<PaginatedList<Item>>;
-  renderItem: (props: { data: PaginatedList<Item>[] | undefined; tab?: string }) => React.ReactNode;
+  renderItem: (props: { data: PaginatedList<Item>[] | undefined }) => React.ReactNode;
   gridBoxSx: BoxProps['sx'];
-  tabConfig?: {
-    sharedItemTabKey: string;
-    sharedItemTabLabel: string;
-    ownedItemTabLabel: string;
-    queryValue?: string;
-  };
   orderingOptions?: { value: Params['orderBy']; label: string }[];
   disableSearch?: boolean;
   CreateItemComponent?: React.ComponentType<{
     open: boolean;
     setOpen: (open: boolean) => void;
+    refresh?: () => void;
   }>;
-  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'inherit' | number;
   apiOptions?: Params;
   pageHeader?: React.ReactNode;
   boxPadding?: number;
-  extraAction?: React.ReactNode | ((tab: string | undefined) => React.ReactNode);
+  extraAction?: React.ReactNode | (() => React.ReactNode);
 }
 
 export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }>({
   pageKey,
-  tabConfig,
   orderingOptions,
   disableSearch,
   CreateItemComponent,
@@ -60,10 +54,10 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   extraAction,
 }: GridInfiniteScrollPageProps<Item, Params>) => {
   const { t } = useTranslation('common');
+  const location = useLocation();
   const theme = useTheme();
   const homeUser = useAtomValue(homeUserState);
   const user = useAtomValue(userState);
-  const [tab, setTab] = useAtom(tabFamily(pageKey));
   const [ordering, setOrdering] = useAtom(orderingFamily(pageKey));
   const [search, setSearch] = useAtom(searchFamily(pageKey));
   const [createItemDialogOpen, setCreateItemDialogOpen] = useState(false);
@@ -72,14 +66,12 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   const isOwner = user && user?.id === userID;
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
   const { data, isLoading, isValidating, mutate } = useInfinitePagination<Params, PaginatedList<Item>>({
-    apiOptions: (!tab
-      ? undefined
-      : {
-          [tabConfig ? tab : 'owner']: tabConfig?.queryValue || userID,
-          orderBy: ordering ? ordering : orderingOptions?.length ? orderingOptions[0].value : '',
-          search,
-          ...apiOptions,
-        }) as Params & undefined,
+    apiOptions: {
+      owner: userID,
+      orderBy: ordering ? ordering : orderingOptions?.length ? orderingOptions[0].value : '',
+      search: search || location.state?.search,
+      ...apiOptions,
+    } as Params & undefined,
     apiService: apiService,
     infiniteScrollRef,
   });
@@ -89,12 +81,11 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   }, [ordering]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!tabConfig) setTab('owner');
-    // show home user's owned public items to visitors
-    else if (!isOwner) setTab('owner');
-    // set default tab
-    else if (!tab) setTab(tabConfig.sharedItemTabKey);
-  }, [tab, setTab, isOwner, tabConfig]);
+    if (location.state?.search) {
+      setSearch(location.state.search);
+      location.state.search = undefined;
+    }
+  }, [location.state?.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box sx={{ width: '100%', p: boxPadding == undefined ? 3 : boxPadding }}>
@@ -115,29 +106,14 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
               {...(disableSearch ? {} : { search, setSearch })}
               {...(orderingOptions?.length ? { ordering, setOrdering } : {})}
             >
-              {typeof extraAction === 'function' ? extraAction(tab) : extraAction}
-              {!!data?.length && (
-                <Typography variant="subtitle2" sx={{ px: 1 }}>
-                  {t('{{ count }} items', { count: data?.[0]?.total || 0 })}
-                </Typography>
-              )}
+              {typeof extraAction === 'function' ? extraAction() : extraAction}
+              <Typography variant="subtitle2" sx={{ px: 1, textAlign: 'right', minWidth: '5em' }}>
+                {t('{{ count }} items', { count: data?.[0]?.total || 0 })}
+              </Typography>
             </PaginationActions>
-
-            {tabConfig && isOwner && (
-              <Box sx={{ gridColumn: '1 / -1', textAlign: 'center', my: 1 }}>
-                <ToggleButtonGroup size="small" color="primary" value={tab} exclusive onChange={(_, key) => key && setTab(key)}>
-                  <ToggleButton sx={{ px: 4 }} value={tabConfig.sharedItemTabKey}>
-                    {tabConfig.sharedItemTabLabel}
-                  </ToggleButton>
-                  <ToggleButton sx={{ px: 4 }} value="owner">
-                    {tabConfig.ownedItemTabLabel}
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-            )}
           </Box>
 
-          {CreateItemComponent && isOwner && tab === 'owner' && (
+          {CreateItemComponent && isOwner && (
             <Box className="create-resource-button" sx={{ position: 'relative' }}>
               <Button
                 onClick={() => setCreateItemDialogOpen(true)}
@@ -153,11 +129,11 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
               >
                 {data && <Add sx={{ fontSize: '3em' }} />}
               </Button>
-              <CreateItemComponent open={createItemDialogOpen} setOpen={setCreateItemDialogOpen} />
+              <CreateItemComponent open={createItemDialogOpen} setOpen={setCreateItemDialogOpen} refresh={mutate} />
             </Box>
           )}
 
-          {renderItem({ data, tab })}
+          {renderItem({ data })}
         </Box>
 
         <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} />

@@ -16,7 +16,6 @@ import { SaveDialog } from './SaveDialog';
 export const Displays = () => {
   const { t } = useTranslation('lesson');
   const navigate = useNavigate();
-  const sharedItemTabKey = 'bookmarker';
   const user = useAtomValue(userState);
   const homeUser = useAtomValue(homeUserState);
   const owner = user && user.id == homeUser?.id;
@@ -24,11 +23,6 @@ export const Displays = () => {
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="lesson"
-      tabConfig={{
-        sharedItemTabKey,
-        sharedItemTabLabel: t('Lesson I bookmarked'),
-        ownedItemTabLabel: t('My lesson'),
-      }}
       orderingOptions={[
         { value: 'created', label: t('Recently created') },
         { value: 'modified', label: t('Recently modified') },
@@ -37,11 +31,9 @@ export const Displays = () => {
       CreateItemComponent={SaveDialog}
       apiService={getDisplays}
       apiOptions={{ size: 10 }}
-      renderItem={({ data, tab }) =>
+      renderItem={({ data }) =>
         data?.map((pagination) =>
-          pagination.items?.map((item) => (
-            <Card key={item.id} data={item} hideAvatar={tab != sharedItemTabKey} showDescription={true} />
-          )),
+          pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} showDescription={true} />),
         )
       }
       gridBoxSx={{ gap: '2em 1em', gridTemplateColumns: '1fr', '& .create-resource-button': { maxHeight: '200px' } }}

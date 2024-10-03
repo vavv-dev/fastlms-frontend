@@ -1,1 +1,16 @@
-{}
+{
+  "Join": "Join",
+  "Joined": "Joined",
+  "Member join": "Member join",
+  "Member leave": "Member leave",
+  "Member {{ num }}": "Member {{ num }}",
+  "Name asc": "Name asc",
+  "Recently created": "Recently created",
+  "course": "course",
+  "exam": "exam",
+  "playlist": "playlist",
+  "quiz": "quiz",
+  "short": "short",
+  "survey": "survey",
+  "video": "video"
+}

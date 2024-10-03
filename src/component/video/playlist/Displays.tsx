@@ -14,26 +14,18 @@ import { SaveDialog } from './SaveDialog';
 
 export const Displays = () => {
   const { t } = useTranslation('video');
-  const sharedItemTabKey = 'bookmarker';
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="playlist"
-      tabConfig={{
-        sharedItemTabKey,
-        sharedItemTabLabel: t('Playlist I bookmarked'),
-        ownedItemTabLabel: t('My playlist'),
-      }}
       orderingOptions={[
         { value: 'modified', label: t('Recently modified') },
         { value: 'title', label: t('Title asc') },
       ]}
       CreateItemComponent={CreateOptions}
       apiService={getDisplays}
-      renderItem={({ data, tab }) =>
-        data?.map((pagination) =>
-          pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={tab != sharedItemTabKey} />),
-        )
+      renderItem={({ data }) =>
+        data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
       gridBoxSx={{
         gap: '2em 4px',
@@ -54,11 +46,6 @@ const CreateOptions = ({ open, setOpen }: { open: boolean; setOpen: (open: boole
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleClose = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpen(false);
-  };
-
   useEffect(() => {
     setAnchorEl(open ? containerRef.current : null);
   }, [open]);
@@ -73,7 +60,10 @@ const CreateOptions = ({ open, setOpen }: { open: boolean; setOpen: (open: boole
         <Menu
           anchorEl={anchorEl}
           open={!!anchorEl}
-          onClick={handleClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(false);
+          }}
           anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
           transformOrigin={{ vertical: 'center', horizontal: 'center' }}
           sx={{ '& .MuiMenu-list': { p: 0 }, '& .MuiPaper-root': { borderRadius: theme.shape.borderRadius / 2 } }}

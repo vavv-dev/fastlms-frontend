@@ -1,16 +1,12 @@
+import i18next from '@/i18n';
 import { userState } from '@/store';
 import {
-  FactCheck,
-  FactCheckOutlined,
   HomeOutlined,
-  PeopleAlt,
-  PeopleAltOutlined,
-  Poll,
-  PollOutlined,
-  Quiz,
-  QuizOutlined,
-  School,
-  SchoolOutlined,
+  SmartDisplay,
+  SmartDisplayOutlined,
+  SvgIconComponent,
+  VideoCameraFront,
+  VideoCameraFrontOutlined,
 } from '@mui/icons-material';
 import AssignmentInd from '@mui/icons-material/AssignmentInd';
 import AssignmentIndOutlined from '@mui/icons-material/AssignmentIndOutlined';
@@ -36,35 +32,36 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { alertState, navState } from '.';
 
 const drawerWidth = 150;
 
+const t = (key: string) => i18next.t(key, { ns: 'layout' });
+
+type MenuItem = [string, string, SvgIconComponent, SvgIconComponent];
+
+const menuItems: MenuItem[] = [
+  [t('Home'), '', HomeOutlined, Home],
+  [t('Video'), '/video', SmartDisplayOutlined, SmartDisplay],
+  [t('Me'), `/u`, AssignmentIndOutlined, AssignmentInd],
+];
+
 export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   const { t } = useTranslation('layout');
+  const user = useAtomValue(userState);
   const theme = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const matches = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const user = useAtomValue(userState);
   const [navOpen, setNavOpen] = useAtom(navState);
   const alert = useAtomValue(alertState);
 
-  const menuItems: [string, string, React.ElementType, React.ElementType][] = useMemo(
-    () => [
-      [t('Home'), '', HomeOutlined, Home],
-      [t('Channel'), '/channel', PeopleAltOutlined, PeopleAlt],
-      [t('Quiz'), '/quiz', QuizOutlined, Quiz],
-      [t('Survey'), '/survey', PollOutlined, Poll],
-      [t('Exam'), '/exam', FactCheckOutlined, FactCheck],
-      [t('Course'), '/course', SchoolOutlined, School],
-      [t('Me'), `/u/${user?.username}`, AssignmentIndOutlined, AssignmentInd],
-    ],
-    [user, t],
-  ); // eslint-disable-line,
+  const menus: MenuItem[] = user?.use_channel
+    ? [...menuItems, [t('Channel'), `/channel/${user.username}`, VideoCameraFrontOutlined, VideoCameraFront]]
+    : menuItems;
 
   useEffect(() => {
     if (hideDrawer) setNavOpen(false);
@@ -96,9 +93,10 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
           <Box sx={{ height: 48 }} />
         </Collapse>
         <List>
-          {menuItems.map(([title, path, Icon, IconSeleted], i) => {
+          {menus.map(([title, path, Icon, IconSeleted], i) => {
+            if (!title) return <Divider key={i} />;
             const active = (path && pathname.startsWith(path)) || (!path && pathname == '/');
-            return title ? (
+            return (
               <ListItem
                 key={i}
                 disablePadding
@@ -106,7 +104,7 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
                   navigate(path || '/');
                   if (matches) setNavOpen(false);
                 }}
-                sx={active ? { bgcolor: theme.palette.action.hover } : {}}
+                sx={active ? { bgcolor: theme.palette.action.selected } : {}}
               >
                 <ListItemButton sx={{ py: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ListItemIcon
@@ -124,8 +122,6 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
                   )}
                 </ListItemButton>
               </ListItem>
-            ) : (
-              <Divider key={i} />
             );
           })}
         </List>

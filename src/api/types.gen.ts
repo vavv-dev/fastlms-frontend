@@ -8,7 +8,7 @@ export type Body_CourseCreateEsimsaCourse = {
     file: (Blob | File);
 };
 
-export type Body_MemberAddMembers = {
+export type Body_MemberUploadMemberXlsx = {
     file: (Blob | File);
 };
 
@@ -21,7 +21,24 @@ export type Body_PublicLogin = {
     client_secret?: (string | null);
 };
 
-export type ChannelDisplayResponse = {
+export type BookmarkedContentResponse = {
+    id: string;
+    title: string;
+    featured: boolean;
+    start_date: string;
+    end_date: (string | null);
+    created: string;
+    thumbnail: string;
+    kind: 'video' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
+    bookmarked_at: string;
+    owner_name: string;
+    owner_username: string;
+    owner_thumbnail: string;
+};
+
+export type kind = 'video' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
+
+export type ChannelContentResponse = {
     video?: Array<VideoDisplayResponse>;
     short?: Array<VideoDisplayResponse>;
     playlist?: Array<PlaylistDisplayResponse>;
@@ -29,6 +46,20 @@ export type ChannelDisplayResponse = {
     survey?: Array<SurveyDisplayResponse>;
     exam?: Array<ExamDisplayResponse>;
     course?: Array<CourseDisplayResponse>;
+};
+
+export type ChannelDisplayResponse = {
+    id: number;
+    username: string;
+    email: string;
+    name: string;
+    thumbnail: string;
+    banner: string;
+    description: string;
+    created: string;
+    use_channel: boolean;
+    member_count: number;
+    member_id: (number | null);
 };
 
 export type CommentAuthor = {
@@ -56,6 +87,9 @@ export type CommentDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
+    thread_title?: (string | null);
+    thread_url?: (string | null);
+    thread_kind?: (LearningResourceKind | null);
 };
 
 export type CommentResourceCreateRequest = {
@@ -78,6 +112,9 @@ export type CommentResourceResponse = {
     author: CommentAuthor;
     deleted: boolean;
     created: string;
+    thread_title?: (string | null);
+    thread_url?: (string | null);
+    thread_kind?: (LearningResourceKind | null);
 };
 
 export type CommentUpdateRequest = {
@@ -284,25 +321,6 @@ export type CourseResourceUpdateRequest = {
     lessons?: Array<CourseLessonResource>;
 };
 
-export type CourseViewLesson = {
-    id: string;
-    title: string;
-    description: string;
-    start_date: string;
-    end_date: (string | null);
-    resources: Array<CourseViewLessonEmbedResource>;
-    thumbnail: string;
-};
-
-export type CourseViewLessonEmbedResource = {
-    kind: 'video' | 'quiz' | 'survey' | 'exam' | 'content';
-    id: string;
-    title: string;
-    thumbnail: string;
-};
-
-export type kind = 'video' | 'quiz' | 'survey' | 'exam' | 'content';
-
 export type CourseViewResponse = {
     id: string;
     title: string;
@@ -316,8 +334,8 @@ export type CourseViewResponse = {
     thumbnail: string;
     closed: boolean;
     score: (number | null);
+    lesson_count: number;
     status: null;
-    lessons: Array<CourseViewLesson>;
 };
 
 export type ExamAsseccQuestion = {
@@ -406,6 +424,7 @@ export type ExamDisplayResponse = {
         [key: string]: (number);
     };
     thumbnail: string;
+    kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -638,6 +657,8 @@ export type LessonEmbedResource = {
     thumbnail: string;
 };
 
+export type kind2 = 'video' | 'quiz' | 'survey' | 'exam' | 'content';
+
 export type LessonOwner = {
     id: number;
     username: string;
@@ -702,7 +723,37 @@ export type LoginResponse = {
     refresh_token_expire: string;
 };
 
-export type MemberBulkResponse = {
+export type MemberCreateRequest = {
+    channel_id: number;
+    user_id: number;
+    data?: {
+        [key: string]: (string);
+    };
+    memo?: string;
+};
+
+export type MemberDisplayResponse = {
+    id: number;
+    name: string;
+    username: string;
+    email: string;
+    thumbnail: string;
+    memo: string;
+    data: {
+        [key: string]: (string);
+    };
+    created: string;
+    invited_at: (string | null);
+};
+
+export type MemberUpdateRequest = {
+    data?: {
+        [key: string]: (string);
+    };
+    memo?: string;
+};
+
+export type MemberXlsxResponse = {
     add_member: Array<(string)>;
     update_member: Array<(string)>;
     skip_member: Array<(string)>;
@@ -718,18 +769,20 @@ export type MemberBulkResponse = {
     database_error: Array<(string)>;
 };
 
-export type MemberDisplayResponse = {
-    id: (number | null);
-    name: string;
-    username: string;
-    email: string;
-    thumbnail: string;
-    memo: string;
-    data: {
-        [key: string]: (string);
-    };
-    invited_at: (string | null);
-    cohorts: (string | null);
+export type Paginated_BookmarkedContentResponse_ = {
+    items: Array<BookmarkedContentResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_ChannelDisplayResponse_ = {
+    items: Array<ChannelDisplayResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
 };
 
 export type Paginated_CommentDisplayResponse_ = {
@@ -796,6 +849,14 @@ export type Paginated_MemberDisplayResponse_ = {
     pages: number;
 };
 
+export type Paginated_PlaylistCheckResponse_ = {
+    items: Array<PlaylistCheckResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
 export type Paginated_PlaylistDisplayResponse_ = {
     items: Array<PlaylistDisplayResponse>;
     total: number;
@@ -844,8 +905,8 @@ export type Paginated_ThreadResponse_ = {
     pages: number;
 };
 
-export type Paginated_UserDisplayResponse_ = {
-    items: Array<UserDisplayResponse>;
+export type Paginated_Union_VideoDisplayResponse__QuizDisplayResponse__SurveyDisplayResponse__ExamDisplayResponse__ = {
+    items: Array<(VideoDisplayResponse | QuizDisplayResponse | SurveyDisplayResponse | ExamDisplayResponse)>;
     total: number;
     page: number;
     size: number;
@@ -884,6 +945,13 @@ export type PasswordResetConfirmRequest = {
 export type PasswordResetRequest = {
     email: string;
     confirm_url: string;
+};
+
+export type PlaylistCheckResponse = {
+    id: string;
+    title: string;
+    is_in: boolean;
+    video_count: number;
 };
 
 export type PlaylistDisplayResponse = {
@@ -1051,6 +1119,7 @@ export type QuizDisplayResponse = {
     passed_count: number;
     question_count: number;
     thumbnail: string;
+    kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -1068,7 +1137,7 @@ export type QuizEmbedResource = {
     thumbnail: string;
 };
 
-export type kind2 = 'video';
+export type kind3 = 'video';
 
 export type QuizOwner = {
     id: number;
@@ -1192,6 +1261,26 @@ export type ResendVerificationEmailRequest = {
     email_verification_url: string;
 };
 
+export type RosterCreateRequest = {
+    username: string;
+    name: string;
+    email: string;
+    data?: {
+        [key: string]: (string);
+    };
+    memo?: string;
+};
+
+export type RosterUpdateRequest = {
+    username?: string;
+    name?: string;
+    email?: string;
+    data?: {
+        [key: string]: (string);
+    };
+    memo?: string;
+};
+
 export type SubmissionStatus = 'passed' | 'failed' | 'grading' | 'timeout' | 'in_progress' | 'ready';
 
 export type SurveyAsseccQuestion = {
@@ -1253,6 +1342,7 @@ export type SurveyDisplayResponse = {
     submission_count: number;
     question_count: number;
     thumbnail: string;
+    kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -1410,19 +1500,6 @@ export type UserCreateRequest = {
     email_verification_url: string;
 };
 
-export type UserDisplayResponse = {
-    id: number;
-    username: string;
-    email: string;
-    name: string;
-    thumbnail: string;
-    banner: string;
-    description: string;
-    created: string;
-    follower_count: number;
-    followed: boolean;
-};
-
 export type UserResponse = {
     id: number;
     username: string;
@@ -1432,8 +1509,7 @@ export type UserResponse = {
     banner: string;
     description: string;
     created: string;
-    follower_count: number;
-    followed: boolean;
+    use_channel: boolean;
 };
 
 export type UserUpdateRequest = {
@@ -1443,6 +1519,7 @@ export type UserUpdateRequest = {
     description?: string;
     thumbnail?: (string | null);
     banner?: (string | null);
+    use_channel?: boolean;
 };
 
 export type ValidationError = {
@@ -1463,14 +1540,15 @@ export type VideoDisplayResponse = {
     duration: (number | null);
     cutoff_progress: number;
     watch_count: number;
-    bookmark_count: number;
-    like_count: number;
-    flag_count: number;
     progress: (number | null);
     passed: (boolean | null);
     modified: string;
     is_live: boolean;
     video_kind?: (VideoKind | null);
+    kind: LearningResourceKind;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
@@ -1535,14 +1613,15 @@ export type VideoSearchResultResponse = {
     duration: (number | null);
     cutoff_progress: number;
     watch_count: number;
-    bookmark_count: number;
-    like_count: number;
-    flag_count: number;
     progress: (number | null);
     passed: (boolean | null);
     modified: string;
     is_live: boolean;
     video_kind?: (VideoKind | null);
+    kind: LearningResourceKind;
+    bookmark_count: number;
+    like_count: number;
+    flag_count: number;
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
@@ -1588,6 +1667,7 @@ export type VideoViewResponse = {
     thumbnail: string;
     tag_names: Array<(string)>;
     is_live: boolean;
+    kind: LearningResourceKind;
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
@@ -1643,7 +1723,7 @@ export type PublicInvitationAcceptData = {
     requestBody: InvitationAcceptRequest;
 };
 
-export type PublicInvitationAcceptResponse = (unknown);
+export type PublicInvitationAcceptResponse = (UserResponse);
 
 export type AccountGetMeData = {
     accessToken?: (string | null);
@@ -1676,31 +1756,12 @@ export type AccountGetUserByUsernameData = {
 
 export type AccountGetUserByUsernameResponse = (UserResponse);
 
-export type AccountToggleFollowData = {
-    accessToken?: (string | null);
-    id: number;
-    refreshToken?: (string | null);
-};
-
-export type AccountToggleFollowResponse = (unknown);
-
 export type AccountLogoutData = {
     accessToken?: (string | null);
     refreshToken?: (string | null);
 };
 
 export type AccountLogoutResponse = (unknown);
-
-export type AccountGetDisplaysData = {
-    accessToken?: (string | null);
-    orderBy?: 'created' | 'name' | 'username';
-    page?: number;
-    refreshToken?: (string | null);
-    search?: (string | null);
-    size?: number;
-};
-
-export type AccountGetDisplaysResponse = (Paginated_UserDisplayResponse_);
 
 export type AccountUploadFilesData = {
     accessToken?: (string | null);
@@ -1740,6 +1801,7 @@ export type CommentCreateThreadResponse = (ThreadResponse);
 
 export type CommentGetDisplaysData = {
     accessToken?: (string | null);
+    authorId?: (number | null);
     orderBy?: 'created' | 'like_count';
     page?: number;
     refreshToken?: (string | null);
@@ -1778,8 +1840,7 @@ export type CommentToggleActionResponse = (unknown);
 
 export type VideoGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
-    orderBy?: 'watched_at' | 'title' | 'modified';
+    orderBy?: 'title' | 'modified';
     owner?: (number | null);
     page?: number;
     playlistId?: (string | null);
@@ -1919,7 +1980,6 @@ export type VideoVideoSelectorResponse = (Array<VideoSelectorResponse>);
 
 export type PlaylistGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
     orderBy?: 'title' | 'modified';
     owner?: (number | null);
     page?: number;
@@ -1995,6 +2055,18 @@ export type PlaylistCreateResourceData = {
 
 export type PlaylistCreateResourceResponse = (PlaylistResourceResponse);
 
+export type PlaylistCheckVideoData = {
+    accessToken?: (string | null);
+    orderBy?: 'title' | 'created';
+    page?: number;
+    refreshToken?: (string | null);
+    search?: string;
+    size?: number;
+    videoId: string;
+};
+
+export type PlaylistCheckVideoResponse = (Paginated_PlaylistCheckResponse_);
+
 export type PlaylistToggleActionData = {
     accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
@@ -2006,7 +2078,6 @@ export type PlaylistToggleActionResponse = (unknown);
 
 export type QuizGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
     orderBy?: 'created' | 'submission_count';
     owner?: (number | null);
     page?: number;
@@ -2127,7 +2198,6 @@ export type QuizGetOwnedQuestionsResponse = (Array<QuizResourceQuestionResource>
 
 export type SurveyGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
     orderBy?: 'created' | 'submission_count';
     owner?: (number | null);
     page?: number;
@@ -2248,7 +2318,6 @@ export type SurveyGetOwnedQuestionsResponse = (Array<SurveyResourceQuestionResou
 
 export type ExamGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
     orderBy?: 'created' | 'submission_count' | 'title' | 'modified';
     owner?: (number | null);
     page?: number;
@@ -2409,7 +2478,7 @@ export type ExamGetOwnedQuestionsResponse = (Array<ExamResourceQuestionResource>
 
 export type LessonGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
+    course?: (string | null);
     orderBy?: 'title' | 'modified' | 'created';
     owner?: (number | null);
     page?: number;
@@ -2549,7 +2618,6 @@ export type ContentContentIframeResponse = (string);
 
 export type CourseGetDisplaysData = {
     accessToken?: (string | null);
-    bookmarker?: (number | null);
     orderBy?: 'title' | 'modified' | 'created';
     owner?: (number | null);
     page?: number;
@@ -2639,11 +2707,30 @@ export type SearchSuggestVideoKeywordsResponse = (Array<(string)>);
 
 export type ChannelGetDisplaysData = {
     accessToken?: (string | null);
+    orderBy?: 'created' | 'name';
+    page?: number;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    size?: number;
+};
+
+export type ChannelGetDisplaysResponse = (Paginated_ChannelDisplayResponse_);
+
+export type ChannelGetChannelByUsernameData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    username: string;
+};
+
+export type ChannelGetChannelByUsernameResponse = (ChannelDisplayResponse);
+
+export type ChannelGetContentData = {
+    accessToken?: (string | null);
     ownerId?: (number | null);
     refreshToken?: (string | null);
 };
 
-export type ChannelGetDisplaysResponse = (ChannelDisplayResponse);
+export type ChannelGetContentResponse = (ChannelContentResponse);
 
 export type MemberGetDisplaysData = {
     accessToken?: (string | null);
@@ -2657,17 +2744,83 @@ export type MemberGetDisplaysData = {
 
 export type MemberGetDisplaysResponse = (Paginated_MemberDisplayResponse_);
 
-export type MemberAddMembersData = {
+export type MemberUploadMemberXlsxData = {
     accessToken?: (string | null);
-    cohortId?: (number | null);
     commit?: boolean;
-    formData: Body_MemberAddMembers;
+    formData: Body_MemberUploadMemberXlsx;
     invitationUrl: string;
     invite?: boolean;
     refreshToken?: (string | null);
 };
 
-export type MemberAddMembersResponse = (MemberBulkResponse);
+export type MemberUploadMemberXlsxResponse = (MemberXlsxResponse);
+
+export type MemberDownloadMemberXlsxTemplateData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+};
+
+export type MemberDownloadMemberXlsxTemplateResponse = (string);
+
+export type MemberCheckMemberData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    username: string;
+};
+
+export type MemberCheckMemberResponse = (UserResponse);
+
+export type MemberCreateMemberData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    requestBody: MemberCreateRequest;
+};
+
+export type MemberCreateMemberResponse = (MemberDisplayResponse);
+
+export type MemberUpdateMemberData = {
+    accessToken?: (string | null);
+    id: number;
+    refreshToken?: (string | null);
+    requestBody: MemberUpdateRequest;
+};
+
+export type MemberUpdateMemberResponse = (unknown);
+
+export type MemberDeleteMemberData = {
+    accessToken?: (string | null);
+    id: number;
+    refreshToken?: (string | null);
+};
+
+export type MemberDeleteMemberResponse = (null);
+
+export type MemberCreateRosterData = {
+    accessToken?: (string | null);
+    invitationUrl: string;
+    invite?: boolean;
+    refreshToken?: (string | null);
+    requestBody: RosterCreateRequest;
+};
+
+export type MemberCreateRosterResponse = (MemberDisplayResponse);
+
+export type MemberDeleteRosterData = {
+    accessToken?: (string | null);
+    id: number;
+    refreshToken?: (string | null);
+};
+
+export type MemberDeleteRosterResponse = (unknown);
+
+export type MemberUpdateRosterData = {
+    accessToken?: (string | null);
+    id: number;
+    refreshToken?: (string | null);
+    requestBody: RosterUpdateRequest;
+};
+
+export type MemberUpdateRosterResponse = (unknown);
 
 export type MemberInviteUserData = {
     accessToken?: (string | null);
@@ -2677,3 +2830,36 @@ export type MemberInviteUserData = {
 };
 
 export type MemberInviteUserResponse = (unknown);
+
+export type AccountGetHistoryData = {
+    accessToken?: (string | null);
+    kind?: ('video' | 'quiz' | 'survey' | 'exam' | null);
+    orderBy?: 'created';
+    page?: number;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    size?: number;
+};
+
+export type AccountGetHistoryResponse = (Paginated_Union_VideoDisplayResponse__QuizDisplayResponse__SurveyDisplayResponse__ExamDisplayResponse__);
+
+export type AccountGetBookmarkedContentData = {
+    accessToken?: (string | null);
+    kind?: ('video' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course' | null);
+    orderBy?: 'bookmarked_at' | 'title';
+    page?: number;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    size?: number;
+};
+
+export type AccountGetBookmarkedContentResponse = (Paginated_BookmarkedContentResponse_);
+
+export type AccountToggleBookmarkData = {
+    accessToken?: (string | null);
+    id: (number | string);
+    kind: 'video' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
+    refreshToken?: (string | null);
+};
+
+export type AccountToggleBookmarkResponse = (unknown);

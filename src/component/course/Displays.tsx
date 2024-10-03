@@ -25,16 +25,10 @@ import { SaveDialog } from './SaveDialog';
 
 export const Displays = () => {
   const { t } = useTranslation('course');
-  const sharedItemTabKey = 'bookmarker';
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="course"
-      tabConfig={{
-        sharedItemTabKey,
-        sharedItemTabLabel: t('Course I enrolled'),
-        ownedItemTabLabel: t('My courses'),
-      }}
       orderingOptions={[
         { value: 'created', label: t('Recently created') },
         { value: 'modified', label: t('Recently modified') },
@@ -42,10 +36,8 @@ export const Displays = () => {
       ]}
       CreateItemComponent={CreateOptions}
       apiService={getDisplays}
-      renderItem={({ data, tab }) =>
-        data?.map((pagination) =>
-          pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={tab != sharedItemTabKey} />),
-        )
+      renderItem={({ data }) =>
+        data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
       gridBoxSx={{
         gap: '2em 1em',

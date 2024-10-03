@@ -72,7 +72,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
 
   useEffect(() => {
     if (!data || !data.content) return;
-    reset({ content: data.content });
+    reset({ content: data.content, is_question: !!data.is_question });
     trigger();
   }, [data?.content]); // eslint-disable-line
 
@@ -93,6 +93,11 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
           parent.children = [updated as DisplayResponse, ...(parent.children || [])];
           updateInfiniteCache<DisplayResponse>(getDisplays, parent, 'update');
         } else {
+          if (!updated.thread_title) {
+            updated.thread_title = thread.title;
+            updated.thread_url = thread.url;
+            updated.thread_kind = thread.kind;
+          }
           updateInfiniteCache<DisplayResponse>(getDisplays, updated, data ? 'update' : 'create', 'children');
         }
 
@@ -127,7 +132,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
       <Box sx={{ display: 'flex', gap: 1.4, alignItems: 'center', width: '100%' }}>
         {!data && (
           <Avatar
-            onClick={() => navigate(`/u/${user.username}`)}
+            onClick={() => navigate(`/channel/${user.username}`)}
             src={user.thumbnail || ''}
             sx={{ width: 36, height: 36, '& img': { cursor: 'pointer' } }}
           />

@@ -9,7 +9,15 @@ import {
 } from '@/api';
 import { ResourceActionMenu, createToggleAction, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { userState } from '@/store';
-import { EditOutlined, FlagOutlined, PushPinOutlined, QuestionMarkOutlined, RemoveCircleOutline } from '@mui/icons-material';
+import {
+  BookmarkAddOutlined,
+  BookmarkRemoveOutlined,
+  EditOutlined,
+  FlagOutlined,
+  PushPinOutlined,
+  QuestionMarkOutlined,
+  RemoveCircleOutline,
+} from '@mui/icons-material';
 import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +28,7 @@ interface Props {
   onEdit: () => void;
 }
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
+const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
 
 export const ActionMenu = ({ url, data, onEdit }: Props) => {
   const { t } = useTranslation('comment');
@@ -44,6 +52,10 @@ export const ActionMenu = ({ url, data, onEdit }: Props) => {
   return (
     <ResourceActionMenu
       menuItems={[
+        <MenuItem key="bookmark" onClick={() => action('bookmark', data)}>
+          <ListItemIcon>{data.bookmarked ? <BookmarkRemoveOutlined /> : <BookmarkAddOutlined />}</ListItemIcon>
+          {data.bookmarked ? t('Remove bookmark') : t('Add bookmark')}
+        </MenuItem>,
         user.username === data.author.username && [
           <MenuItem key="edit" onClick={onEdit}>
             <ListItemIcon>

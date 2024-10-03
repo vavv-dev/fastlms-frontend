@@ -26,10 +26,11 @@ import { ReadyDialog } from './ReadyDialog';
 interface Props {
   data: DisplayResponse;
   hideAvatar?: boolean;
+  bannerPlace?: 'top' | 'bottom';
   sx?: BoxProps['sx'];
 }
 
-export const Card = ({ data, hideAvatar, sx }: Props) => {
+export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
   const { t } = useTranslation('exam');
   const [readyDialogOpen, setReadyDialogOpen] = useState(false);
   const [threadDialogOpen, setThreadDialogOpen] = useState(false);
@@ -39,7 +40,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
       <ResourceCard
         resource={data}
         onClick={() => setReadyDialogOpen(true)}
-        bannerPlace="bottom"
+        bannerPlace={bannerPlace || 'bottom'}
         banner={
           <Box sx={{ p: 2, position: 'relative' }}>
             {data.thumbnail && (
@@ -66,7 +67,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
               >
                 {t('Q&A')}
               </Button>
-              {![null, 'passed', 'failed'].includes(data.status) && (
+              {![null, 'in_progress'].includes(data.status) && (
                 <Typography
                   component="span"
                   variant="subtitle2"
@@ -83,8 +84,9 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
             </Box>
           </Box>
         }
-        score={data.score}
+        score={data.score ? data.score : data.status ? 0 : null}
         passed={data.status === 'passed'}
+        inProgress={data.status == 'in_progress'}
         avatarChildren={[
           t(...formatRelativeTime(data.modified)),
           t('{{ count }} submissions', { count: data.submission_count }),
@@ -92,7 +94,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
         hideAvatar={hideAvatar}
         autoColor
         actionMenu={<ActionMenu data={data} />}
-        sx={{ ...sx, '& .card-content': { flexGrow: 0 } }}
+        sx={{ ...sx, '& .content-title': { WebkitLineClamp: '1' } }}
         partialUpdateService={updateResource}
         listService={getDisplays}
         bannerBorder={!data.thumbnail}

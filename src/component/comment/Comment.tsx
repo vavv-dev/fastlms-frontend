@@ -10,6 +10,7 @@ import { userState } from '@/store';
 import {
   ArrowDropDown,
   ArrowDropUp,
+  BookmarkBorderOutlined,
   CheckBoxOutlineBlankOutlined,
   CheckBoxOutlined,
   Flag,
@@ -30,7 +31,7 @@ interface Props {
   setParentHover?: (value: boolean) => void;
 }
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
+const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
 
 export const Comment = ({ url, data, setParentHover }: Props) => {
   const { t } = useTranslation('comment');
@@ -57,7 +58,14 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
   return (
     <Box
       ref={boxRef}
-      sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', position: 'relative', pt: 2 }}
+      sx={{
+        display: 'flex',
+        gap: 2,
+        alignItems: 'flex-start',
+        position: 'relative',
+        pt: 2,
+        '& .avatar-children': { flexShrink: 1, gap: 1 },
+      }}
       onMouseEnter={() => {
         setHover(true);
         setParentHover?.(false);
@@ -77,6 +85,7 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
             <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '.8em' }}>
               {t(...formatRelativeTime(data.created))}
             </Typography>
+            {data.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
           </Stack>
         }
         username={data.author.username}
@@ -174,7 +183,7 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
           {(data.children?.length as number) > 0 && (
             <>
               <Button sx={{ py: 0, alignSelf: 'flex-start' }} onClick={() => setShowReplies((prev) => !prev)} size="small">
-                {showReplies ? <ArrowDropUp /> : <ArrowDropDown />}
+                {showReplies ? <ArrowDropDown /> : <ArrowDropUp />}
                 {t('Replies')} {data.children?.length.toLocaleString()}
               </Button>
               <Box sx={{ display: 'flex', flexDirection: 'column' }}>

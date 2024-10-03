@@ -61,7 +61,6 @@ export const PreviewPlayer = ({ id, onClick }: Props) => {
           spacing={1}
           direction="row"
           sx={{
-            mb: 2,
             alignItems: 'center',
             justifyContent: 'center',
             position: 'absolute',

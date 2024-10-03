@@ -12,7 +12,6 @@ import { ImportYoutubeDialog } from './ImportYoutubeDialog';
 export const Displays = () => {
   const { t } = useTranslation('video');
   const location = useLocation();
-  const sharedItemTabKey = 'bookmarker';
   const kind = location.pathname.split('/').pop();
 
   if (kind !== 'video' && kind !== 'short') {
@@ -22,25 +21,20 @@ export const Displays = () => {
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="video"
-      tabConfig={{
-        sharedItemTabKey,
-        sharedItemTabLabel: t('Video I watched'),
-        ownedItemTabLabel: t('My video'),
-      }}
       orderingOptions={[
-        { value: 'watched_at', label: t('Recently watch') },
+        { value: 'modified', label: t('Recently modified') },
         { value: 'title', label: t('Title asc') },
       ]}
       CreateItemComponent={({ open, setOpen }) => <ImportYoutubeDialog open={open} setOpen={setOpen} kind={'video'} />}
       apiService={getDisplays}
       apiOptions={{ videoKind: kind }}
-      renderItem={({ data, tab }) =>
+      renderItem={({ data }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => (
             <Card
               key={item.id}
               data={item}
-              hideAvatar={tab != sharedItemTabKey}
+              hideAvatar={true}
               sx={kind == 'short' ? { '& .card-banner': { borderRadius: '16px', overflow: 'hidden' } } : {}}
             />
           )),

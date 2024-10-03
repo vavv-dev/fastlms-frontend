@@ -1,8 +1,6 @@
 {
   "Channel": "Channel",
   "Close": "Close",
-  "Course": "Course",
-  "Exam": "Exam",
   "Home": "Home",
   "Login": "Login",
   "Logout": "Logout",
@@ -10,7 +8,6 @@
   "No nofitication.": "No nofitication.",
   "Playlist imported successfully": "Playlist imported successfully",
   "Profile": "Profile",
-  "Quiz": "Quiz",
-  "Survey": "Survey",
+  "Video": "Video",
   "Video imported successfully": "Video imported successfully"
 }

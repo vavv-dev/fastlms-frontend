@@ -37,7 +37,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
               }}
             />
           ) : (
-            <Box sx={{ p: 2 }}>
+            <Box sx={{ p: 2, aspectRatio: '16/9' }}>
               <Typography
                 variant="subtitle2"
                 sx={{
@@ -53,8 +53,9 @@ export const Card = ({ data, hideAvatar }: Props) => {
             </Box>
           )
         }
-        score={data.status ? 100 : null}
+        score={data.status == 'passed' ? 100 : data.status ? 0 : null}
         passed={data.status == 'passed'}
+        inProgress={data.status == 'in_progress'}
         avatarChildren={[t(...formatRelativeTime(data.modified)), t('{{ count }} answers', { count: data.submission_count })]}
         hideAvatar={hideAvatar}
         actionMenu={<ActionMenu data={data} />}

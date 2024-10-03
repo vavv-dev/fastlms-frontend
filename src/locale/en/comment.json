@@ -1,4 +1,5 @@
 {
+  "Add bookmark": "Add bookmark",
   "Change to comment": "Change to comment",
   "Change to question": "Change to question",
   "Comment": "Comment",
@@ -20,6 +21,7 @@
   "Question count": "Question count",
   "Question solved": "Question solved",
   "Recently created": "Recently created",
+  "Remove bookmark": "Remove bookmark",
   "Replies": "Replies",
   "Reply": "Reply",
   "Save": "Save",
@@ -31,6 +33,7 @@
   "Write a comment or question.": "Write a comment or question.",
   "course": "course",
   "exam": "exam",
+  "lesson": "lesson",
   "quiz": "quiz",
   "short": "short",
   "survey": "survey",

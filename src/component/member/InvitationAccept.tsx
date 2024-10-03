@@ -47,13 +47,13 @@ export const InvitationAccept = () => {
     publicInvitationAccept({
       requestBody: data,
     })
-      .then(() => {
+      .then((user) => {
         setAlert({
           open: true,
           severity: 'success',
           message: t('Sucessfully password set. You can login with new password.'),
         });
-        navigate('/login');
+        navigate('/login', { state: { username: user.username } });
       })
       .catch((error) => {
         if (error.body) {

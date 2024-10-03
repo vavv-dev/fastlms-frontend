@@ -53,7 +53,7 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
         <Button
           size="small"
           onClick={() => setThreadDialogOpen((prev) => !prev)}
-          startIcon={!threadDialogOpen ? <ArrowDropDown /> : <ArrowDropUp />}
+          startIcon={threadDialogOpen ? <ArrowDropDown /> : <ArrowDropUp />}
           sx={{ flexShrink: 0 }}
         >
           {t('Q&A')}

@@ -43,6 +43,7 @@ import {
   MenuSelectHeading,
   RichTextEditor,
   RichTextEditorRef,
+  TableBubbleMenu,
   TableImproved,
 } from 'mui-tiptap';
 import { useEffect, useRef, useState } from 'react';
@@ -223,7 +224,8 @@ export const TextEditor = ({
             <MenuDivider />
             <MenuButtonEditLink
               tabIndex={-1}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 rteRef.current?.editor?.commands.openLinkBubbleMenu({
                   anchorEl: linkBubbleMenuButtonRef.current,
                   placement: 'bottom',
@@ -243,21 +245,39 @@ export const TextEditor = ({
         {() => (
           <>
             {linkBubbleMenuOpen && (
-              <LinkBubbleMenu
-                container={container}
-                anchorEl={linkBubbleMenuButtonRef.current}
-                labels={{
-                  viewLinkEditButtonLabel: t('Edit'),
-                  viewLinkRemoveButtonLabel: t('Remove'),
-                  editLinkAddTitle: t('Add link'),
-                  editLinkEditTitle: t('Edit link'),
-                  editLinkTextInputLabel: t('Text'),
-                  editLinkHrefInputLabel: t('Link URL'),
-                  editLinkCancelButtonLabel: t('Cancel'),
-                  editLinkSaveButtonLabel: t('Save'),
-                }}
-              />
+              <Box onClick={(e) => e.stopPropagation()}>
+                <LinkBubbleMenu
+                  container={container}
+                  anchorEl={linkBubbleMenuButtonRef.current}
+                  labels={{
+                    viewLinkEditButtonLabel: t('Edit'),
+                    viewLinkRemoveButtonLabel: t('Remove'),
+                    editLinkAddTitle: t('Add link'),
+                    editLinkEditTitle: t('Edit link'),
+                    editLinkTextInputLabel: t('Text'),
+                    editLinkHrefInputLabel: t('Link URL'),
+                    editLinkCancelButtonLabel: t('Cancel'),
+                    editLinkSaveButtonLabel: t('Save'),
+                  }}
+                />
+              </Box>
             )}
+            <TableBubbleMenu
+              labels={{
+                insertColumnBefore: t('Insert column before'),
+                insertColumnAfter: t('Insert column after'),
+                deleteColumn: t('Delete column'),
+                insertRowAbove: t('Insert row above'),
+                insertRowBelow: t('Insert row below'),
+                deleteRow: t('Delete row'),
+                mergeCells: t('Merge cells'),
+                splitCell: t('Split cell'),
+                toggleHeaderRow: t('Toggle header row'),
+                toggleHeaderColumn: t('Toggle header column'),
+                toggleHeaderCell: t('Toggle header cell'),
+                deleteTable: t('Delete table'),
+              }}
+            />
           </>
         )}
       </RichTextEditor>

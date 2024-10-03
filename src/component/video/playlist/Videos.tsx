@@ -1,4 +1,6 @@
 import {
+  PlaylistGetViewData,
+  PlaylistGetViewResponse,
   VideoDisplayResponse,
   VideoGetDisplaysData,
   VideoGetDisplaysResponse,
@@ -32,7 +34,7 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
   const navigate = useNavigate();
   const localtion = useLocation();
   const user = useAtomValue(userState);
-  const videoId = useAtomValue(activeVideoIdState);
+  const activeId = useAtomValue(activeVideoIdState);
   const playerHeight = useAtomValue(playerHeightState);
   const activeVideoRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLElement>(null);
@@ -40,7 +42,7 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
 
   const [videos, setVideos] = useState<VideoDisplayResponse[]>([]);
   const [order, setOrder] = useState<string[]>([]);
-  const { data } = useServiceImmutable(playlistGetView, { id: playlistId });
+  const { data } = useServiceImmutable<PlaylistGetViewData, PlaylistGetViewResponse>(playlistGetView, { id: playlistId });
   const {
     data: displays,
     isLoading,
@@ -60,18 +62,12 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
     if (oldIndex === newIndex) return;
     if (oldIndex === order.length - 1 && newIndex === order.length) return;
 
-    const videoId = order[oldIndex];
+    const activeId = order[oldIndex];
     setOrder(newIndex === -1 ? arrayRemove(order, oldIndex) : arrayMove(order, oldIndex, newIndex));
 
     playlistUpdatePlaylistVideos({
       requestBody: {
-        videos: [
-          {
-            playlist_id: playlistId,
-            video_id: videoId,
-            order: newIndex == -1 ? null : newIndex,
-          },
-        ],
+        videos: [{ playlist_id: playlistId, video_id: activeId, order: newIndex == -1 ? null : newIndex }],
       },
     }).catch((error) => console.error(error));
   };
@@ -95,7 +91,7 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
         behavior: 'smooth',
       });
     }
-  }, [playerHeight, videoId, containerRef?.current]); // eslint-disable-line
+  }, [playerHeight, activeId, containerRef?.current]); // eslint-disable-line
 
   if (!data) return null;
 
@@ -171,7 +167,10 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
           }}
           renderItem={({ index, value, props, isDragged, isSelected, isOutOfBounds }) => {
             const video = videos.find((v) => v.id === value);
-            const active = value == videoId;
+            const active = value == activeId;
+
+            // fix reacat-movable getattribute error
+            props.onKeyDown = () => {};
 
             return (
               video && (
@@ -186,6 +185,7 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
                       borderRadius: theme.shape.borderRadius / 2,
                       outline: `1px solid ${theme.palette.action.selected}`,
                     }),
+                    bgcolor: active ? theme.palette.action.selected : 'transparent',
                   }}
                   {...props}
                   key={value}
@@ -205,6 +205,7 @@ export const Videos = ({ playlistId, sidebar, sx, ...props }: Props) => {
                         '& .card-banner': { width: '168px', minWidth: '168px', aspectRatio: '16 / 9' },
                       }}
                       hideAvatar
+                      disablePreview
                     />
 
                     {!sidebar && user && user.username === data.owner.username ? (

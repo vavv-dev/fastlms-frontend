@@ -5,7 +5,7 @@ import {
   contentUpdateResource as updateResource,
 } from '@/api';
 import { GridInfiniteScrollPage, updateInfiniteCache, uppyFamily } from '@/component/common';
-import { formatDatetimeLocale, formatDuration, toFixedHuman } from '@/helper/util';
+import { calculateReverseIndex, formatDatetimeLocale, formatDuration, toFixedHuman } from '@/helper/util';
 import { homeUserState, userState } from '@/store';
 import { AddOutlined, CloudUpload, CloudUploadOutlined } from '@mui/icons-material';
 import { Box, Chip, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
@@ -54,9 +54,9 @@ export const Displays = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data?.map((pagination) =>
-                  pagination.items?.map((item, i) => (
-                    <Row item={item} line={pagination.total - (pagination.page - 1) * pagination.size - i} key={item.id} />
+                {data?.map((pagination, pageIndex) =>
+                  pagination.items?.map((item, rowIndex) => (
+                    <Row item={item} index={calculateReverseIndex(data, pageIndex, rowIndex, pagination.total)} key={item.id} />
                   )),
                 )}
               </TableBody>
@@ -64,8 +64,7 @@ export const Displays = () => {
           </TableContainer>
         )}
         gridBoxSx={{ gap: '1em 1em', gridTemplateColumns: '1fr' }}
-        extraAction={(tab) =>
-          tab == 'owner' &&
+        extraAction={() =>
           owner && <Chip onClick={() => setDialogOpen(true)} icon={<AddOutlined />} label={t('Create content')} />
         }
       />
@@ -74,7 +73,7 @@ export const Displays = () => {
   );
 };
 
-const Row = ({ item, line }: { item: DisplayResponse; line: number }) => {
+const Row = ({ item, index }: { item: DisplayResponse; index: number }) => {
   const { t } = useTranslation('lesson');
   const [ViewDialogOpen, setViewDialogOpen] = useState(false);
 
@@ -84,7 +83,7 @@ const Row = ({ item, line }: { item: DisplayResponse; line: number }) => {
       key={item.id}
       sx={{ '&:hover': { bgcolor: 'action.hover' }, cursor: 'pointer' }}
     >
-      <TableCell align="center">{line}</TableCell>
+      <TableCell align="center">{index}</TableCell>
       <TableCell>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', fontWeight: 600 }}>
           {item.thumbnail && (
@@ -136,7 +135,6 @@ const Upload = ({ item }: { item: DisplayResponse }) => {
         >
           {item.uploaded ? <CloudUpload color="primary" /> : <CloudUploadOutlined />}
         </IconButton>
-
         {totalProgress > 0 && `${toFixedHuman(totalProgress, 1)}%`}
       </Box>
       {UploaderOpen && <UploadDialog open={UploaderOpen} setOpen={setUploaderOpen} id={item.id} />}

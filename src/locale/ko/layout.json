@@ -1,8 +1,6 @@
 {
-  "Channel": "채널",
+  "Channel": "내 채널",
   "Close": "닫기",
-  "Course": "과정",
-  "Exam": "시험",
   "Home": "홈",
   "Login": "로그인",
   "Logout": "로그아웃",
@@ -10,7 +8,6 @@
   "No nofitication.": "새로운 알림이 없습니다.",
   "Playlist imported successfully": "플레이리스트 가져오기를 완료했습니다.",
   "Profile": "프로필",
-  "Quiz": "퀴즈",
-  "Survey": "설문",
+  "Video": "동영상",
   "Video imported successfully": "비디오 가져오기를 완료했습니다."
 }

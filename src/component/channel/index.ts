@@ -1,7 +1,7 @@
 import i18next from '@/i18n';
 
 export { Home as ChannelHome } from './Home';
-export { Displays as ChannelDisplays } from './Displays';
+export { Layout as ChannelLayout } from './Layout';
 
 void [
   i18next.t('video', { ns: 'channel' }),
@@ -11,4 +11,5 @@ void [
   i18next.t('survey', { ns: 'channel' }),
   i18next.t('exam', { ns: 'channel' }),
   i18next.t('course', { ns: 'channel' }),
+  i18next.t('lesson', { ns: 'channel' }),
 ];

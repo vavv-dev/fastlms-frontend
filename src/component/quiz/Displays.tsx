@@ -10,26 +10,18 @@ import { SaveDialog } from './SaveDialog';
 
 export const Displays = () => {
   const { t } = useTranslation('quiz');
-  const sharedItemTabKey = 'bookmarker';
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="quiz"
-      tabConfig={{
-        sharedItemTabKey,
-        sharedItemTabLabel: t('Quiz I answered'),
-        ownedItemTabLabel: t('My quizzes'),
-      }}
       orderingOptions={[
         { value: 'created', label: t('Recently created') },
         { value: 'submission_count', label: t('Submission desc') },
       ]}
       CreateItemComponent={SaveDialog}
       apiService={getDisplays}
-      renderItem={({ data, tab }) =>
-        data?.map((pagination) =>
-          pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={tab != sharedItemTabKey} />),
-        )
+      renderItem={({ data }) =>
+        data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
       gridBoxSx={{
         gap: '2em 1em',

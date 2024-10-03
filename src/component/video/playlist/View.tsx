@@ -14,7 +14,7 @@ import { AutocompleteSelect2, WithAvatar, useInfinitePagination, useServiceImmut
 import { formatDuration, generateRandomDarkColor } from '@/helper/util';
 import { userState } from '@/store';
 import { PlaylistAddOutlined, PlaylistPlayOutlined, Refresh } from '@mui/icons-material';
-import { Box, Button, CardMedia, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, CardMedia, Chip, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,7 +54,7 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
     playlistGetView,
     { id: playlistId },
   );
-  const { data: videoPages, mutate: videoPagesMutate } = useInfinitePagination<VideoGetDisplaysData, VideoGetDisplaysResponse>({
+  const { data: videos, mutate: videoPagesMutate } = useInfinitePagination<VideoGetDisplaysData, VideoGetDisplaysResponse>({
     apiOptions: { playlistId },
     apiService: videoGetDisplays,
   });
@@ -62,10 +62,13 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
 
   const resume = () => {
     if (!playlist) return;
-    void navigate;
-    playlistResumePlaylist({ id: playlistId }).then(({ video_id }) => {
-      navigate(`/video/${video_id}?p=${playlistId}`);
-    });
+    if (videos?.[0] && !playlist.progress) {
+      navigate(`/video/${videos[0].items[0].id}?p=${playlistId}`);
+    } else {
+      playlistResumePlaylist({ id: playlistId }).then(({ video_id }) => {
+        navigate(`/video/${video_id}?p=${playlistId}`);
+      });
+    }
   };
 
   const refresh = () => {
@@ -77,11 +80,7 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
     if (!playlist) return;
     playlistUpdatePlaylistVideos({
       requestBody: {
-        videos: selected.map((v, i) => ({
-          playlist_id: playlistId,
-          video_id: v.id,
-          order: playlist.video_count + i,
-        })),
+        videos: selected.map((v, i) => ({ playlist_id: playlistId, video_id: v.id, order: playlist.video_count + i })),
       },
     })
       .then(() => {
@@ -187,16 +186,12 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
               <Box sx={{ py: 1, display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
                 {user && (
                   <>
-                    <Button
+                    <Chip
                       onClick={resume}
-                      variant="outlined"
-                      color="inherit"
-                      startIcon={<PlaylistPlayOutlined />}
-                      sx={{ color: 'white' }}
-                    >
-                      {t('Resume')}
-                    </Button>
-
+                      icon={<PlaylistPlayOutlined />}
+                      color="warning"
+                      label={playlist.progress ? t('Resume') : t('Start')}
+                    />
                     {playlist.owner.username == user.username && (
                       <Tooltip title={t('Add videos')} arrow>
                         <IconButton onClick={() => setVideoSelectOpen(true)} color="inherit">
@@ -234,7 +229,7 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
           setOpen={setVideoSelectOpen}
           placeholder={t('Add videos to playlist')}
           onSelect={addVideos}
-          excludes={new Set(videoPages?.flatMap((p) => p.items).map((v) => v.id))}
+          excludes={new Set(videos?.flatMap((p) => p.items).map((v) => v.id))}
         />
       )}
     </Box>

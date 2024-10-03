@@ -4,7 +4,7 @@ import {
   examGetGradingSubmissions as getGradingSubmissions,
 } from '@/api';
 import { GridInfiniteScrollPage, WithAvatar } from '@/component/common';
-import { formatDatetimeLocale, toFixedHuman } from '@/helper/util';
+import { calculateReverseIndex, formatDatetimeLocale, toFixedHuman } from '@/helper/util';
 import { homeUserState, userState } from '@/store';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useAtomValue } from 'jotai';
@@ -46,9 +46,13 @@ export const Displays = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data?.map((pagination) =>
-                  pagination.items?.map((row, i) => (
-                    <GradingRow key={row.id} row={row} line={pagination.total - (pagination.page - 1) * pagination.size - i} />
+                {data?.map((pagination, pageIndex) =>
+                  pagination.items?.map((row, rowIndex) => (
+                    <GradingRow
+                      key={row.id}
+                      row={row}
+                      index={calculateReverseIndex(data, pageIndex, rowIndex, pagination.total)}
+                    />
                   )),
                 )}
               </TableBody>
@@ -61,7 +65,7 @@ export const Displays = () => {
   );
 };
 
-const GradingRow = ({ row, line }: { row: GradingSubmissionReponse; line: number }) => {
+const GradingRow = ({ row, index }: { row: GradingSubmissionReponse; index: number }) => {
   const { t } = useTranslation('exam');
   const [gradingDialogOpen, setGradingDialogOpen] = useState(false);
 
@@ -71,7 +75,7 @@ const GradingRow = ({ row, line }: { row: GradingSubmissionReponse; line: number
       key={row.id}
       sx={{ '&:hover': { bgcolor: 'action.hover' }, cursor: 'pointer' }}
     >
-      <TableCell align="center">{line}</TableCell>
+      <TableCell align="center">{index}</TableCell>
       <TableCell>
         <WithAvatar variant="small" {...row.user} />
       </TableCell>

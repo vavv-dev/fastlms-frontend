@@ -17,7 +17,7 @@ interface Props {
 
 export const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, color, sx, children }: Props) => {
   const navigate = useNavigate();
-  const userHome = `/u/${username}`;
+  const userHome = `/channel/${username}`;
   const homeUser = useAtomValue(homeUserState);
 
   const goToHome = (e: React.MouseEvent) => {
@@ -39,13 +39,14 @@ export const WithAvatar = ({ variant, name, username, thumbnail, hideAvatar, col
           className="avatar"
           onClick={goToHome}
           src={thumbnail || undefined}
-          sx={{ mt: children ? '3px' : 0, width: avatarSize, height: avatarSize, '& img': { cursor: 'pointer' } }}
+          sx={{ mt: children ? '3px' : 0, width: avatarSize, height: avatarSize, cursor: 'pointer' }}
         />
       )}
       <Box
         className="avatar-children"
         sx={{
           flexGrow: 1,
+          flexShrink: 0,
           display: 'grid',
           minHeight: avatarSize,
           alignItems: 'center',

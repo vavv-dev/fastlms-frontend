@@ -16,7 +16,6 @@ import { SaveDialog } from './SaveDialog';
 export const Displays = () => {
   const { t } = useTranslation('exam');
   const navigate = useNavigate();
-  const sharedItemTabKey = 'bookmarker';
   const user = useAtomValue(userState);
   const homeUser = useAtomValue(homeUserState);
   const owner = user && user.id == homeUser?.id;
@@ -24,11 +23,6 @@ export const Displays = () => {
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="exam"
-      tabConfig={{
-        sharedItemTabKey,
-        sharedItemTabLabel: t('Exam I submitted'),
-        ownedItemTabLabel: t('My exams'),
-      }}
       orderingOptions={[
         { value: 'created', label: t('Recently created') },
         { value: 'modified', label: t('Recently modified') },
@@ -36,10 +30,8 @@ export const Displays = () => {
       ]}
       CreateItemComponent={SaveDialog}
       apiService={getDisplays}
-      renderItem={({ data, tab }) =>
-        data?.map((pagination) =>
-          pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={tab != sharedItemTabKey} />),
-        )
+      renderItem={({ data }) =>
+        data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
       gridBoxSx={{
         gap: '2em 1em',

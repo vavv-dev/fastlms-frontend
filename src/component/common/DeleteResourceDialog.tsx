@@ -11,7 +11,7 @@ interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   resourceId: string;
-  destroyService: (params: { id: string }) => Promise<any>; // eslint-disable-line
+  destroyService: (params: { id: any }) => Promise<any>; // eslint-disable-line
   listService: () => Promise<any>; // eslint-disable-line
 }
 

@@ -4,6 +4,7 @@ export { Card as ExamCard } from './Card';
 export { Displays as ExamDisplays } from './Displays';
 export { View as ExamView } from './View';
 export { Displays as GradingDisplays } from './grading/Displays';
+export { ReadyDialog as ExamReadyDialog } from './ReadyDialog';
 
 // gettext no-op
 void [

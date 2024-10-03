@@ -1,6 +1,6 @@
 import { CommentGetThreadsData, ThreadResponse, commentGetThreads } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
-import { textEllipsisCss } from '@/helper/util';
+import { calculateReverseIndex, textEllipsisCss } from '@/helper/util';
 import { homeUserState } from '@/store';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, useTheme } from '@mui/material';
 import { Box } from '@mui/system';
@@ -39,13 +39,12 @@ export const Displays = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data?.map((pagination) =>
-                  pagination.items?.map((row, i) => (
-                    <CommentRow
+                {data?.map((pagination, pageIndex) =>
+                  pagination.items?.map((row, rowIndex) => (
+                    <ThreadRow
                       row={row}
-                      index={pagination.total - (pagination.page - 1) * pagination.pages - i}
+                      index={calculateReverseIndex(data, pageIndex, rowIndex, pagination.total)}
                       key={row.id}
-                      thread={row}
                     />
                   )),
                 )}
@@ -59,7 +58,7 @@ export const Displays = () => {
   );
 };
 
-const CommentRow = ({ row, index, thread }: { row: ThreadResponse; index: number; thread: ThreadResponse }) => {
+const ThreadRow = ({ row, index }: { row: ThreadResponse; index: number }) => {
   const { t } = useTranslation('comment');
   const theme = useTheme();
   const homeUser = useAtomValue(homeUserState);
@@ -105,10 +104,10 @@ const CommentRow = ({ row, index, thread }: { row: ThreadResponse; index: number
           open={threadDialogOpen}
           setOpen={setThreadDialogOpen}
           threadProps={{
-            url: thread.url,
-            title: thread.title,
+            url: row.url,
+            title: row.title,
             owner: homeUser,
-            kind: thread.kind,
+            kind: row.kind,
             question: true,
             sticky: true,
           }}

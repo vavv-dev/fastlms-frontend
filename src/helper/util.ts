@@ -334,3 +334,13 @@ export const datetimeLocalString = () => {
   const tzOffset = datetime.getTimezoneOffset() * 60000;
   return new Date(datetime.getTime() - tzOffset).toISOString().slice(0, 16);
 };
+
+export const calculateReverseIndex = <T>(
+  data: { items?: T[] }[],
+  pageIndex: number,
+  rowIndex: number,
+  total: number,
+): number => {
+  const totalIndex = data.slice(0, pageIndex).reduce((acc, page) => acc + (page.items?.length || 0), 0) + rowIndex;
+  return total - totalIndex;
+};

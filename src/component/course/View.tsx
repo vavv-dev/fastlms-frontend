@@ -1,43 +1,64 @@
 import {
-  CourseViewLesson,
-  CourseViewLessonEmbedResource as EmbedResource,
   CourseGetViewData as GetViewData,
   CourseGetViewResponse as GetViewResponse,
+  LessonDisplayResponse,
+  LessonGetDisplaysData,
+  LessonGetDisplaysResponse,
   courseGetView as getView,
+  lessonGetDisplays,
 } from '@/api';
-
-import { useServiceImmutable } from '@/component/common';
-import { ResourceViewer } from '@/component/lesson';
-import { decodeURLText } from '@/helper/util';
-import { userState } from '@/store';
-import { ArrowDropDown, ArrowDropUp, CheckOutlined } from '@mui/icons-material';
-import { Box, Button, Chip, IconButton, Paper, Step, StepContent, StepLabel, Stepper, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { useInfinitePagination, useServiceImmutable } from '@/component/common';
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import { Box, IconButton, Step, StepContent, StepLabel, Stepper, Theme, Typography, useMediaQuery } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ScrollRestoration, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import { spacerRefState } from '../layout';
+import { LessonCard } from '../lesson';
 
 const activeStepFamily = atomFamily(() => atom<number>(0));
 
 export const View = () => {
+  const location = useLocation();
   const { id } = useParams();
-  const user = useAtomValue(userState);
   const { data } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
+  const { data: lessons } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
+    apiOptions: { course: id, size: data?.lesson_count },
+    apiService: lessonGetDisplays,
+  });
   const [showAll, setShowAll] = useState(false);
   const [activeStep, setActiveStep] = useAtom(activeStepFamily(id));
+  const spacerRef = useAtomValue(spacerRefState);
 
-  void user;
+  // update spacerRef height
+  useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    if (location.state?.activeStep != undefined) {
+      setActiveStep(location.state.activeStep);
+      delete location.state.activeStep;
+    }
+  }, [location.state?.activeStep, setActiveStep]);
 
   if (!id || !data) return null;
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box sx={{ m: 'auto', maxWidth: 'md', display: 'flex', flexDirection: 'column', gap: '1em', position: 'relative' }}>
-        {/* course title */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
-          <Typography variant="h4" sx={{ flexGrow: 1, textAlign: 'center' }}>
+      <Box sx={{ m: 'auto', maxWidth: 'lg', display: 'flex', flexDirection: 'column', gap: '1em', position: 'relative' }}>
+        <Box
+          sx={{
+            position: 'sticky',
+            top: spacerRef?.clientHeight,
+            bgcolor: 'background.paper',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            alignItems: 'center',
+            zIndex: 4,
+          }}
+        >
+          <Typography variant="h5" sx={{ flexGrow: 1, textAlign: 'center' }}>
             {data.title}
             {!data.description && (
               <Typography
@@ -50,17 +71,16 @@ export const View = () => {
           </Typography>
         </Box>
 
-        {/* controler */}
-        <Box sx={{ display: 'flex', gap: 1, position: 'sticky', top: '70px', zIndex: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, position: 'sticky', top: spacerRef?.clientHeight, zIndex: 4 }}>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
-            {showAll ? <ArrowDropUp /> : <ArrowDropDown />}
+            {showAll ? <ArrowDropDown /> : <ArrowDropUp />}
           </IconButton>
         </Box>
 
         {/* lessons */}
         <Stepper nonLinear activeStep={activeStep} orientation="vertical" sx={{ flexGrow: 1 }}>
-          {data.lessons.map((lesson, i) => (
+          {lessons?.[0].items.map((lesson, i) => (
             <LessonStep
               lesson={lesson}
               stepIndex={i}
@@ -71,14 +91,13 @@ export const View = () => {
             />
           ))}
         </Stepper>
-        <ScrollRestoration />
       </Box>
     </Box>
   );
 };
 
 interface LessonStepProps {
-  lesson: CourseViewLesson;
+  lesson: LessonDisplayResponse;
   stepIndex: number;
   activeStep: number;
   setActiveStep: (value: number) => void;
@@ -86,7 +105,6 @@ interface LessonStepProps {
 }
 
 const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, collapse, ...props }: LessonStepProps) => {
-  const { t } = useTranslation('course');
   const [hover, setHover] = useState(false);
 
   void hover;
@@ -110,63 +128,9 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, collapse, ..
           {lesson.title}
         </Typography>
       </StepLabel>
-      <StepContent sx={{ pl: 4.5 }}>
-        <Box
-          dangerouslySetInnerHTML={{ __html: decodeURLText(lesson.description) }}
-          sx={{ whiteSpace: 'pre-wrap', '& p': { my: 0 }, fontSize: '0.9rem' }}
-        />
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, my: 3 }}>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            {t('Lesson Resources')}
-          </Typography>
-          <ResourceStepper resources={lesson.resources} />
-        </Box>
+      <StepContent>
+        <LessonCard data={lesson} embeded />
       </StepContent>
     </Step>
-  );
-};
-
-const ResourceStepper = ({ resources }: { resources: EmbedResource[] }) => {
-  const { t } = useTranslation('course');
-  const [activeStep, setActiveStep] = useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
-  return (
-    <Box>
-      <Stepper activeStep={activeStep} orientation="vertical" connector={null}>
-        {resources.map((resource) => (
-          <Step key={resource.id}>
-            <StepLabel>
-              <Grid container spacing={2} sx={{ alignItems: 'center', pl: 1 }}>
-                <Grid size={{ xs: 1 }}>
-                  <Typography variant="body2">{t(resource.kind)}</Typography>
-                </Grid>
-                <Grid size={{ xs: 9 }}>
-                  <ResourceViewer resource={resource} />
-                </Grid>
-                <Grid size={{ xs: 2 }}>
-                  <Chip icon={<CheckOutlined />} size="small" onClick={handleNext} label={t('Completed')} />
-                </Grid>
-              </Grid>
-            </StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      {activeStep === resources.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
-          </Button>
-        </Paper>
-      )}
-    </Box>
   );
 };

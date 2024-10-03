@@ -28,6 +28,7 @@ interface Props {
   bannerPlace?: 'top' | 'bottom';
   score?: number | null;
   passed?: boolean | null;
+  inProgress?: boolean;
   avatarChildren?: React.ReactNode[];
   hideAvatar?: boolean;
   autoColor?: boolean;
@@ -51,6 +52,7 @@ export const ResourceCard = ({
   actionMenu,
   score,
   passed,
+  inProgress,
   footer,
   sx,
   showDescription,
@@ -185,23 +187,23 @@ export const ResourceCard = ({
         cursor: onClick && 'pointer',
         display: 'flex',
         gap: 1,
-        '& .card-content': {
-          flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 0.5,
-          width: '100%',
-        },
+        '& .card-content': { flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' },
         flexDirection: 'column',
+        position: 'relative',
         ...sx,
       }}
     >
+      {inProgress && (
+        <Typography sx={{ position: 'absolute', top: '-1.8em', left: 0, color: 'warning.main' }} variant="caption">
+          {t('In Progress')}
+        </Typography>
+      )}
       {bannerPlace === 'top' && Banner}
       <Box className="card-content">
         <Typography
           className="content-title"
           variant="subtitle2"
-          sx={{ fontWeight: '600', my: 0.5, pr: '3px', lineHeight: 1.3, ...textEllipsisCss(2) }}
+          sx={{ fontWeight: '600', mt: 0.5, pr: '3px', lineHeight: 1.3, ...textEllipsisCss(2), wordBreak: 'keep-all' }}
         >
           {resource.title}
         </Typography>

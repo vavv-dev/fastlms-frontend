@@ -35,7 +35,7 @@ export const Login = () => {
   const setProcessing = useSetAtom(accountProcessingState);
   const setLoginExipire = useSetAtom(loginExpireState);
 
-  const { handleSubmit, control, setError, formState } = useForm<Body_PublicLogin>({
+  const { handleSubmit, control, setError, formState, setValue } = useForm<Body_PublicLogin>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
   });
@@ -64,8 +64,15 @@ export const Login = () => {
   };
 
   useEffect(() => {
+    if (location.state?.username) {
+      setValue('username', location.state.username);
+      delete location.state.username;
+    }
+  }, [location.state?.username, setValue]);
+
+  useEffect(() => {
     if (user) {
-      navigate(location.state?.from ? location.state.from : `/u/${user.username}`);
+      navigate(location.state?.from ? location.state.from : `/u`);
     }
   }, [user]); // eslint-disable-line
 
@@ -106,4 +113,3 @@ export const Login = () => {
     </Container>
   );
 };
-

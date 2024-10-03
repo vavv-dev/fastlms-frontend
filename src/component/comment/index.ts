@@ -22,4 +22,5 @@ void [
   i18next.t('course', { ns: 'comment' }),
   i18next.t('quiz', { ns: 'comment' }),
   i18next.t('survey', { ns: 'comment' }),
+  i18next.t('lesson', { ns: 'comment' }),
 ];

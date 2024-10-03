@@ -46,7 +46,7 @@ const OrderingOptions = ({ ordering, setOrdering, orderingOptions }: ActionProps
         onChange={(e) => setOrdering && setOrdering(e.target.value)}
         IconComponent={() => <SortOutlined sx={{ mr: 1 }} />}
         dir="rtl"
-        sx={{ '.MuiSelect-select:focus': { bgcolor: 'background.default' }, fontSize: '0.9em' }}
+        sx={{ minWidth: '8em', '.MuiSelect-select:focus': { bgcolor: 'background.default' }, fontSize: '0.9em' }}
       >
         {orderingOptions?.map(({ label, value }) => (
           <MenuItem key={value} value={value}>
@@ -68,6 +68,7 @@ const SimpleSearch = ({ search, setSearch }: ActionProps) => {
 
   return (
     <TextField
+      inputRef={(input) => input && search && input.focus()}
       slotProps={{
         input: {
           startAdornment: (

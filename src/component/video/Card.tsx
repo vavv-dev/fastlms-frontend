@@ -7,11 +7,9 @@ import { ResourceCard } from '@/component/common/ResourceCard';
 import { formatDuration, formatRelativeTime, humanNumber } from '@/helper/util';
 import { StreamOutlined } from '@mui/icons-material';
 import { Box, BoxProps, Typography, useTheme } from '@mui/material';
-import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { activeVideoIdState as activeIdState } from '.';
 import { ActionMenu } from './ActionMenu';
 import { PreviewPlayer } from './PreviewPlayer';
 
@@ -21,13 +19,13 @@ interface Props {
   to?: string;
   sx?: BoxProps['sx'];
   showDescription?: boolean;
+  disablePreview?: boolean;
 }
 
-export const Card = ({ data, hideAvatar, to, sx, showDescription }: Props) => {
+export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview }: Props) => {
   const { t } = useTranslation('video');
   const theme = useTheme();
   const navigate = useNavigate();
-  const activeId = useAtomValue(activeIdState);
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -50,9 +48,9 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription }: Props) => {
           <Box
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
-            sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+            sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 3 }}
           >
-            {isHover && (
+            {isHover && !disablePreview && (
               <PreviewPlayer
                 id={data.id}
                 onClick={() => {
@@ -98,7 +96,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription }: Props) => {
       avatarChildren={[t(...formatRelativeTime(data.modified)), `${t('Views')} ${humanNumber(data.watch_count)}`]}
       hideAvatar={hideAvatar}
       actionMenu={<ActionMenu data={data} />}
-      sx={{ ...sx, bgcolor: activeId === data.id ? theme.palette.action.selected : 'transparent' }}
+      sx={sx}
       showDescription={showDescription}
       partialUpdateService={updateResource}
       listService={getDisplays}

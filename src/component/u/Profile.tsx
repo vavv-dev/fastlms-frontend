@@ -1,8 +1,14 @@
-import { UserUpdateRequest, accountUpdateMe } from '@/api';
-import { Form, TextFieldControl as Text, TextEditorControl } from '@/component/common';
+import {
+  ChannelDisplayResponse,
+  ChannelGetChannelByUsernameData,
+  UserUpdateRequest,
+  accountUpdateMe,
+  channelGetChannelByUsername,
+} from '@/api';
+import { CheckboxControl, Form, TextFieldControl as Text, TextEditorControl, useServiceImmutable } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
 import i18next from '@/i18n';
-import { homeUserState, userState } from '@/store';
+import { userState } from '@/store';
 import { yupResolver } from '@hookform/resolvers/yup';
 import VpnKeyOutlined from '@mui/icons-material/VpnKeyOutlined';
 import { Box, Button } from '@mui/material';
@@ -22,16 +28,21 @@ const schema: yup.ObjectSchema<UserUpdateRequest> = yup.object({
   username: yup.string(),
   email: yup.string().email(t('Invalid email')).required(REQUIRED_FIELD).default(''),
   description: yup.string().default(''),
+  use_channel: yup.boolean(),
   thumbnail: yup.mixed(),
   banner: yup.mixed(),
 });
 
 export const Profile = () => {
-  const { t } = useTranslation('account');
+  const { t } = useTranslation('u');
   const navigate = useNavigate();
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const [user, setUser] = useAtom(userState);
-  const [homeUser, setHomeUser] = useAtom(homeUserState);
+
+  // sync with channel user
+  const { mutate } = useServiceImmutable<ChannelGetChannelByUsernameData, ChannelDisplayResponse>(channelGetChannelByUsername, {
+    username: user?.use_channel ? user.username : '',
+  });
 
   const { handleSubmit, control, setError, formState, reset } = useForm<UserUpdateRequest>({
     resolver: yupResolver(schema),
@@ -39,20 +50,23 @@ export const Profile = () => {
   });
 
   useEffect(() => {
+    if (!user) return;
     reset({
-      name: user?.name || '',
-      email: user?.email || '',
+      name: user.name || '',
+      email: user.email || '',
       description: user?.description || '',
+      use_channel: user?.use_channel || false,
     });
   }, [user, reset]);
 
-  const updateProfile = ({ name, email, description }: UserUpdateRequest) => {
+  const updateProfile = ({ name, email, description, use_channel }: UserUpdateRequest) => {
     setSnackbarMessage(null);
-    accountUpdateMe({ requestBody: { name, email, description } })
-      .then((user) => {
-        setUser(user);
-        if (user?.username === homeUser?.username) setHomeUser(user);
+    accountUpdateMe({ requestBody: { name, email, description, use_channel } })
+      .then((updated) => {
+        setUser(updated);
         setSnackbarMessage({ message: t('Profile information has been updated.'), duration: 3000 });
+        console.log(updated);
+        if (user?.use_channel && mutate) mutate((prev) => prev && { ...prev, ...updated }, { revalidate: false });
       })
       .catch((error) => {
         if (error.body) {
@@ -61,12 +75,10 @@ export const Profile = () => {
       });
   };
 
-  const isOwner = user && user.username == homeUser?.username;
-
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box sx={{ mx: 'auto', mt: 5, maxWidth: 'md', display: 'flex', flexDirection: 'column' }}>
-        <Form disabled={!isOwner} onSubmit={handleSubmit(updateProfile)} formState={formState} setError={setError}>
+      <Box sx={{ mx: 'auto', maxWidth: 'md', display: 'flex', flexDirection: 'column' }}>
+        <Form onSubmit={handleSubmit(updateProfile)} formState={formState} setError={setError}>
           <Text
             slotProps={{ inputLabel: { shrink: true } }}
             name="name"
@@ -83,37 +95,37 @@ export const Profile = () => {
             control={control}
             margin="normal"
           />
-          <TextEditorControl
-            minHeight={'200px'}
-            disabled={!isOwner}
-            name="description"
-            label={t('Description')}
+
+          <CheckboxControl
+            name="use_channel"
+            label={t('Use channel')}
             control={control}
             margin="normal"
+            helperText={t('If you enable this option, you can use the channel feature.')}
           />
 
-          {isOwner && (
-            <>
-              <Button
-                onClick={() => navigate('/password-reset')}
-                sx={{ display: 'flex', alignItems: 'center', my: 1, cursor: 'pointer' }}
-                startIcon={<VpnKeyOutlined />}
-              >
-                {t('Change password')}
-              </Button>
+          <TextEditorControl minHeight={'200px'} name="description" label={t('Description')} control={control} margin="normal" />
 
-              <Button
-                disabled={!formState.isDirty || formState.isSubmitting}
-                size="large"
-                sx={{ mt: 3 }}
-                variant="contained"
-                fullWidth
-                type="submit"
-              >
-                {t('Save profile information')}
-              </Button>
-            </>
-          )}
+          <>
+            <Button
+              onClick={() => navigate('/password-reset')}
+              sx={{ display: 'flex', alignItems: 'center', my: 1, cursor: 'pointer' }}
+              startIcon={<VpnKeyOutlined />}
+            >
+              {t('Change password')}
+            </Button>
+
+            <Button
+              disabled={!formState.isDirty || formState.isSubmitting}
+              size="large"
+              sx={{ mt: 3 }}
+              variant="contained"
+              fullWidth
+              type="submit"
+            >
+              {t('Save profile information')}
+            </Button>
+          </>
         </Form>
       </Box>
     </Box>

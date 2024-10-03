@@ -88,41 +88,43 @@ export const Control = ({ id }: { id: string }) => {
           )}
         </Box>
       </Box>
-      <Collapse in={!collapse} collapsedSize={40} timeout={50}>
-        <Box
-          sx={{
-            position: 'relative',
-            whiteSpace: 'pre-line',
-            overflowWrap: 'anywhere',
-            padding: '1em',
-            minHeight: '40px',
-            bgcolor: theme.palette.action.hover,
-            borderRadius: theme.shape.borderRadius / 2,
-            cursor: 'pointer',
-            fontSize: '.9rem',
-          }}
-          onClick={() => setCollapse((prev) => !prev)}
-        >
-          <Button
-            sx={{
-              position: 'absolute',
-              top: '4px',
-              right: '4px',
-              border: 0,
-              borderRadius: '50%',
-              p: '.3em',
-              minWidth: 0,
-              color: 'text.secondary',
-            }}
-          >
-            {collapse ? <KeyboardArrowUpOutlined /> : <KeyboardArrowDownOutlined />}
-          </Button>
+      {data.description && (
+        <Collapse in={!collapse} collapsedSize={40} timeout={50}>
           <Box
-            dangerouslySetInnerHTML={{ __html: decodeURLText(data.description) }}
-            sx={{ '& > p': { my: 0 }, ...(collapse && textEllipsisCss(1)) }}
-          />
-        </Box>
-      </Collapse>
+            sx={{
+              position: 'relative',
+              whiteSpace: 'pre-line',
+              overflowWrap: 'anywhere',
+              padding: '1em',
+              minHeight: '40px',
+              bgcolor: theme.palette.action.hover,
+              borderRadius: theme.shape.borderRadius / 2,
+              cursor: 'pointer',
+              fontSize: '.9rem',
+            }}
+            onClick={() => setCollapse((prev) => !prev)}
+          >
+            <Button
+              sx={{
+                position: 'absolute',
+                top: '4px',
+                right: '4px',
+                border: 0,
+                borderRadius: '50%',
+                p: '.3em',
+                minWidth: 0,
+                color: 'text.secondary',
+              }}
+            >
+              {collapse ? <KeyboardArrowUpOutlined /> : <KeyboardArrowDownOutlined />}
+            </Button>
+            <Box
+              dangerouslySetInnerHTML={{ __html: decodeURLText(data.description) }}
+              sx={{ '& > p': { my: 0 }, ...(collapse && textEllipsisCss(1)) }}
+            />
+          </Box>
+        </Collapse>
+      )}
     </Box>
   );
 };

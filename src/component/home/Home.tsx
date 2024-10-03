@@ -1,13 +1,13 @@
 import {
   CourseDisplayResponse,
   ExamDisplayResponse,
-  ChannelGetDisplaysData as GetDisplaysData,
-  ChannelGetDisplaysResponse as GetDisplaysResponse,
+  ChannelGetContentData as GetContentData,
+  ChannelGetContentResponse as GetContentResponse,
   PlaylistDisplayResponse,
   QuizDisplayResponse,
   SurveyDisplayResponse,
   VideoDisplayResponse,
-  channelGetDisplays as getDisplays,
+  channelGetContent as getDisplays,
 } from '@/api';
 import { GridSlider, useServiceImmutable } from '@/component/common';
 import { CourseCard } from '@/component/course';
@@ -15,7 +15,7 @@ import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
 import { PlaylistCard, VideoCard } from '@/component/video';
-import { Box, Divider, Stack, Theme, useMediaQuery } from '@mui/material';
+import { Box, Divider, Stack, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,22 +25,26 @@ const GIRD_SIZE: Record<string, number[]> = {
 };
 
 export const Home = () => {
-  const { t } = useTranslation('channel');
-  const { data } = useServiceImmutable<GetDisplaysData, GetDisplaysResponse>(getDisplays, undefined);
+  const { t } = useTranslation('home');
+  const { data } = useServiceImmutable<GetContentData, GetContentResponse>(getDisplays, undefined);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
   if (!data) return null;
 
   return (
-    <Box ref={containerRef} sx={{ width: '100%', p: 3 }}>
+    <Box ref={containerRef} sx={{ width: '100%', p: 3, maxWidth: 2000 + 64, mx: 'auto' }}>
       <Stack direction="column" spacing={2} divider={<Divider flexItem />} sx={{ width: 'fit-content', mx: 'auto' }}>
         {Object.entries(data).map(
           ([kind, resources]) =>
             resources.length > 0 && (
               <GridSlider
                 key={kind}
-                title={t(kind)}
+                title={
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+                    {t(kind)}
+                  </Typography>
+                }
                 itemWidth={smDown && (kind == 'video' || kind == 'short' || kind == 'playlist') ? 210 : GIRD_SIZE[kind]?.[0]}
                 itemGap={GIRD_SIZE[kind]?.[1]}
                 containerRef={containerRef}

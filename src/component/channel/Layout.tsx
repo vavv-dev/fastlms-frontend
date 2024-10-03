@@ -1,12 +1,21 @@
-import { AccountGetUserByUsernameData, UserResponse, accountGetUserByUsername, accountUpdateMe } from '@/api';
-import { useServiceImmutable } from '@/component/common';
+import {
+  ChannelDisplayResponse as DisplayResponse,
+  channelGetChannelByUsername as getChannelByUsername,
+  ChannelGetChannelByUsernameData as getChannelByUsernameData,
+  channelGetDisplays as getDisplays,
+  memberCreateMember as createMember,
+  memberDeleteMember as deleteMember,
+  accountUpdateMe as updateMe,
+} from '@/api';
+import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { formatRelativeTime, imageToBase64 } from '@/helper/util';
 import i18next from '@/i18n';
 import { homeUserState, userState } from '@/store';
-import { CloseOutlined, FileUploadOutlined } from '@mui/icons-material';
+import { CloseOutlined, FileUploadOutlined, Group } from '@mui/icons-material';
 import {
   Avatar,
   Box,
+  Chip,
   Fade,
   IconButton,
   Input,
@@ -25,35 +34,17 @@ import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { snackbarMessageState, spacerRefState } from '../layout';
 
-const t = (key: string) => i18next.t(key, { ns: 'account' });
-
-const tabs: Array<Array<string>> = [
-  [t('Home'), ''],
-  [t('Video'), 'video'],
-  [t('Short'), 'short'],
-  [t('Playlist'), 'playlist'],
-  [t('Quiz'), 'quiz'],
-  [t('Survey'), 'survey'],
-  [t('Exam'), 'exam'],
-  [t('Lesson'), 'lesson'],
-  [t('Course'), 'course'],
-  [t('Comment'), 'comment'],
-  [t('Member'), 'member'],
-  [t('Profile'), 'profile'],
-];
-
-const privateTabs: Array<string> = ['member', 'profile'];
-
-export const HomeLayout = () => {
-  const { t } = useTranslation('account');
+export const Layout = () => {
+  const { t } = useTranslation('channel');
   const theme = useTheme();
   const { username } = useParams();
   const [user, setUser] = useAtom(userState);
   const [homeUser, setHomeUser] = useAtom(homeUserState);
-  const { data, mutate } = useServiceImmutable<AccountGetUserByUsernameData, UserResponse>(accountGetUserByUsername, {
+  const { data, mutate } = useServiceImmutable<getChannelByUsernameData, DisplayResponse>(getChannelByUsername, {
     username: username || '',
   });
-  const [hover, setHover] = useState(false);
+  const [avatarHover, setAvatarHover] = useState(false);
+  const [bannerHover, setBannerHover] = useState(false);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement> | null, field: 'thumbnail' | 'banner') => {
@@ -66,10 +57,10 @@ export const HomeLayout = () => {
       setSnackbarMessage({ message: t('File size must be less than {{ max }} MB.', { max }), duration: 3000 });
       return;
     }
-    accountUpdateMe({ requestBody: { [field]: !e ? '' : await imageToBase64(image as File) } })
+    updateMe({ requestBody: { [field]: !e ? '' : await imageToBase64(image as File) } })
       .then((update) => {
         setUser(update);
-        mutate((prev: UserResponse | undefined) => ({ ...prev, ...update }), { revalidate: false });
+        mutate((prev) => ({ ...prev, ...(update as DisplayResponse) }), { revalidate: false });
       })
       .catch((error) => {
         setSnackbarMessage({ message: error.message, duration: 3000 });
@@ -77,6 +68,29 @@ export const HomeLayout = () => {
       .finally(() => {
         if (e) e.target.value = '';
       });
+  };
+
+  const toggleMembership = (e: React.MouseEvent) => {
+    if (!data || !user) return;
+    e.stopPropagation();
+
+    (data.member_id
+      ? deleteMember({ id: data.member_id })
+      : createMember({ requestBody: { channel_id: data.id, user_id: user.id } })
+    ).then((created) => {
+      updateInfiniteCache<DisplayResponse>(
+        getDisplays,
+        { id: data.id, member_id: created?.id, member_count: data.member_count + (created ? 1 : -1) },
+        'update',
+      );
+      mutate(
+        (prev) => {
+          if (!prev) return prev;
+          return { ...prev, member_id: created?.id || null, member_count: data.member_count + (created ? 1 : -1) };
+        },
+        { revalidate: false },
+      );
+    });
   };
 
   useEffect(() => {
@@ -98,8 +112,6 @@ export const HomeLayout = () => {
   return (
     <>
       <Box
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -110,7 +122,11 @@ export const HomeLayout = () => {
           zIndex: 4,
         }}
       >
-        <Box sx={{ maxWidth: 'lg', width: '100%', position: 'relative' }}>
+        <Box
+          onMouseEnter={() => setBannerHover(true)}
+          onMouseLeave={() => setBannerHover(false)}
+          sx={{ maxWidth: 'lg', width: '100%', position: 'relative' }}
+        >
           {homeUser.banner && (
             <Box
               component="img"
@@ -125,7 +141,7 @@ export const HomeLayout = () => {
             />
           )}
           {isOwner && (
-            <Fade in={hover}>
+            <Fade in={bannerHover || !homeUser.banner}>
               <Box
                 sx={{
                   position: 'absolute',
@@ -143,7 +159,12 @@ export const HomeLayout = () => {
                   </IconButton>
                 </Tooltip>
                 {!homeUser.banner && (
-                  <Typography variant="caption" sx={{ color: 'text.secondary', ml: 1 }}>
+                  <Typography
+                    component="label"
+                    htmlFor="banner-image"
+                    variant="caption"
+                    sx={{ color: 'text.secondary', ml: 1, cursor: 'pointer' }}
+                  >
                     {t('Upload banner')}
                   </Typography>
                 )}
@@ -178,12 +199,14 @@ export const HomeLayout = () => {
           }}
         >
           <Box
+            onMouseEnter={() => setAvatarHover(true)}
+            onMouseLeave={() => setAvatarHover(false)}
             sx={{ position: 'relative' }}
             {...(isOwner && { component: 'label', htmlFor: 'thumbnail-image', sx: { position: 'relative', cursor: 'pointer' } })}
           >
             <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 100, height: 100 }} />
             {isOwner && (
-              <Fade in={hover}>
+              <Fade in={avatarHover || !homeUser.thumbnail}>
                 <Box
                   sx={{
                     position: 'absolute',
@@ -224,9 +247,24 @@ export const HomeLayout = () => {
               <Typography variant="caption">
                 {homeUser.username}
                 {homeUser.created && ` • ${t(...formatRelativeTime(new Date(homeUser.created)))}`}
+                {data && !!data.member_count && ` • ${t('Member {{ num }}', { num: data.member_count.toLocaleString() })}`}
               </Typography>
+              {!isOwner && data && (
+                <Tooltip title={data.member_id ? t('Member leave') : t('Member join')}>
+                  <Chip
+                    onClick={toggleMembership}
+                    size="small"
+                    icon={<Group />}
+                    color={data.member_id ? 'primary' : 'default'}
+                    label={data.member_id ? t('Joined') : t('Join')}
+                  />
+                </Tooltip>
+              )}
             </Typography>
-            <Box dangerouslySetInnerHTML={{ __html: homeUser.description || '' }} />
+            <Box
+              sx={{ fontSize: theme.typography.body2.fontSize }}
+              dangerouslySetInnerHTML={{ __html: homeUser.description || '' }}
+            />
           </Stack>
         </Box>
       </Box>
@@ -235,6 +273,24 @@ export const HomeLayout = () => {
     </>
   );
 };
+
+const t = (key: string) => i18next.t(key, { ns: 'channel' });
+
+const tabs: Array<Array<string>> = [
+  [t('Home'), ''],
+  [t('Video'), 'video'],
+  [t('Short'), 'short'],
+  [t('Playlist'), 'playlist'],
+  [t('Quiz'), 'quiz'],
+  [t('Survey'), 'survey'],
+  [t('Exam'), 'exam'],
+  [t('Lesson'), 'lesson'],
+  [t('Course'), 'course'],
+  [t('Comment'), 'comment'],
+  [t('Member'), 'member'],
+];
+
+const privateTabs: Array<string> = ['member'];
 
 const HomeTabs = () => {
   const { username } = useParams();
@@ -252,12 +308,12 @@ const HomeTabs = () => {
 
   // current tab
   const tabIndex = tabs.findIndex(([, path]) => {
-    return path === '' ? pathname === `/u/${username}` : pathname.startsWith(`/u/${username}/${path}`);
+    return path === '' ? pathname === `/channel/${username}` : pathname.startsWith(`/channel/${username}/${path}`);
   });
 
   useEffect(() => {
     if (tabIndex === -1) {
-      navigate(`/u/${username}`, { replace: true });
+      navigate(`/channel/${username}`, { replace: true });
     }
   }, [tabIndex, navigate, username]);
 
@@ -321,7 +377,7 @@ const HomeTabs = () => {
               key={path}
               label={title}
               iconPosition="start"
-              onClick={() => navigate(`/u/${username}${path ? `/${path}` : ''}`)}
+              onClick={() => navigate(`/channel/${username}${path ? `/${path}` : ''}`)}
               sx={{ minHeight: 'inherit', cursor: 'pointer', py: '12px', minWidth: 'unset', fontWeight: 700 }}
             />
           ))}

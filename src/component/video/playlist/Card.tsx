@@ -47,7 +47,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
               objectFit: 'cover',
               aspectRatio: '16 / 9',
               borderRadius: '8px',
-              boxShadow: `0 -2px 0 0 ${theme.palette.background.paper}`,
+              boxShadow: `0 -1px 0 0 ${theme.palette.background.paper}`,
             }}
           />
           <Typography
@@ -74,7 +74,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
             sx={{
               height: 'calc(100% - 8px)',
               position: 'absolute',
-              top: '-6px',
+              top: '-5px',
               left: '8px',
               width: 'calc(100% - 16px)',
               borderRadius: '8px',
@@ -90,10 +90,11 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
               loading="lazy"
               sx={{
                 objectFit: 'cover',
+                scale: 5,
                 aspectRatio: '16 / 9',
                 width: '100%',
                 height: '100%',
-                filter: 'blur(10px) brightness(0.5)',
+                filter: 'blur(10px)',
                 willChange: 'filter',
               }}
             />
@@ -107,18 +108,20 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
       actionMenu={<ActionMenu data={data} />}
       sx={{ ...sx, '& .card-banner': { overflow: 'visible' } }}
       footer={
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-          <Button
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              resume();
-            }}
-            sx={{ minWidth: 0, alignSelf: 'flex-start', py: 0 }}
-          >
-            {t('Resume')}
-          </Button>
-        </Box>
+        data.progress && (
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'flex-end', position: 'relative' }}>
+            <Button
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                resume();
+              }}
+              sx={{ minWidth: 0, alignSelf: 'flex-start', py: 0 }}
+            >
+              {t('Resume')}
+            </Button>
+          </Box>
+        )
       }
       partialUpdateService={updateResource}
       listService={getDisplays}

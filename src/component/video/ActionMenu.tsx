@@ -6,7 +6,7 @@ import {
 } from '@/api';
 import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
-import { ListAltOutlined } from '@mui/icons-material';
+import { ListAltOutlined, PlaylistAddOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import BookmarkRemoveOutlinedIcon from '@mui/icons-material/BookmarkRemoveOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -15,6 +15,7 @@ import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AddToPlaylistDialog } from './AddToPlaylistDialog';
 import { ReportDialog } from './ReportDialog';
 import { SaveDialog } from './SaveDialog';
 
@@ -24,6 +25,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const { t } = useTranslation('video');
   const user = useAtomValue(userState);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [addToPlaylistOpen, setAddtoPlaylistOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
 
@@ -36,6 +38,13 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
           <MenuItem key="bookmark" onClick={() => action('bookmark', data)}>
             <ListItemIcon>{data.bookmarked ? <BookmarkRemoveOutlinedIcon /> : <BookmarkAddOutlinedIcon />}</ListItemIcon>
             {data.bookmarked ? t('Remove bookmark') : t('Add bookmark')}
+          </MenuItem>,
+
+          <MenuItem key="addtoplaylist" onClick={() => setAddtoPlaylistOpen(true)}>
+            <ListItemIcon>
+              <PlaylistAddOutlined />
+            </ListItemIcon>
+            {t('Add to playlist')}
           </MenuItem>,
 
           user.username === data?.owner.username && [
@@ -62,6 +71,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
       />
 
       {saveDialogOpen && <SaveDialog open={saveDialogOpen} setOpen={setSaveDialogOpen} id={data.id} />}
+      {addToPlaylistOpen && <AddToPlaylistDialog open={addToPlaylistOpen} setOpen={setAddtoPlaylistOpen} video={data} />}
       {deleteDialogOpen && (
         <DeleteResourceDialog
           title={t('Video')}

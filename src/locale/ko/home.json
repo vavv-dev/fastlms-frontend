@@ -1,1 +1,16 @@
-{}
+{
+  "Join": "등록 하기",
+  "Joined": "등록 됨",
+  "Member join": "멤버 등록",
+  "Member leave": "멤버 탈퇴",
+  "Member {{ num }}": "멤버 {{ num }}",
+  "Name asc": "이름순",
+  "Recently created": "최근 생성",
+  "course": "과정",
+  "exam": "시험",
+  "playlist": "재생목록",
+  "quiz": "퀴즈",
+  "short": "쇼트",
+  "survey": "설문",
+  "video": "동영상"
+}

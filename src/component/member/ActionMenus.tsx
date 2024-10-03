@@ -1,7 +1,13 @@
-import { MemberDisplayResponse as DisplayResponse, memberGetDisplays as getDisplays, memberInviteUser } from '@/api';
+import {
+  MemberDisplayResponse as DisplayResponse,
+  memberDeleteMember as deleteMember,
+  memberDeleteRoster as deleteRoster,
+  memberGetDisplays as getDisplays,
+  memberInviteUser as inviteUser,
+} from '@/api';
 import { DeleteResourceDialog, ResourceActionMenu } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
-import { userState } from '@/store';
+import { invitationUrl, userState } from '@/store';
 import { SendOutlined } from '@mui/icons-material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
@@ -9,6 +15,7 @@ import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SaveDialog } from './SaveDialog';
 
 export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const { t } = useTranslation('member');
@@ -17,10 +24,10 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
-  const inviteUser = (username: string) => {
-    memberInviteUser({
+  const invite = (username: string) => {
+    inviteUser({
       username,
-      invitationUrl: `${window.location.origin}/invitation-accept`,
+      invitationUrl,
     }).then(() => {
       setSnackbarMessage({ message: t('Invitation sent.'), duration: 3000 });
     });
@@ -33,8 +40,8 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
       <ResourceActionMenu
         menuItems={[
           [
-            !data.id && (
-              <MenuItem key="save" onClick={() => inviteUser(data.username)}>
+            data.id < 0 && (
+              <MenuItem key="invite" onClick={() => invite(data.username)}>
                 <ListItemIcon>
                   <SendOutlined />
                 </ListItemIcon>
@@ -56,14 +63,14 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
           ],
         ].flat()}
       />
-
+      {saveDialogOpen && <SaveDialog open={saveDialogOpen} setOpen={setSaveDialogOpen} data={data} />}
       {deleteDialogOpen && (
         <DeleteResourceDialog
-          title={t('Member')}
+          title={t('Delete member')}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
-          resourceId={data.id}
-          destroyService={deleteResource}
+          resourceId={data.id as unknown as string}
+          destroyService={data.id > 0 ? deleteMember : deleteRoster}
           listService={getDisplays}
         />
       )}

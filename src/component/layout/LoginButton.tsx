@@ -16,7 +16,7 @@ export const LoginButton = () => {
   const open = Boolean(anchorEl);
 
   const dropdowItems: [string, string, React.ElementType][] = [
-    ['Profile', `/u/${user?.username}/profile`, ContactMailOutlined],
+    ['Profile', `/u/profile`, ContactMailOutlined],
     ['Logout', '/logout', LogoutOutlined],
   ];
 

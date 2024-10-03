@@ -1,4 +1,5 @@
 {
+  "Add bookmark": "북마크 추가",
   "Change to comment": "댓글로 변경",
   "Change to question": "질문으로 변경",
   "Comment": "댓글",
@@ -20,6 +21,7 @@
   "Question count": "질문",
   "Question solved": "질문 해결됨",
   "Recently created": "최근 생성",
+  "Remove bookmark": "북마크 삭제",
   "Replies": "답글",
   "Reply": "답글",
   "Save": "저장",
@@ -31,6 +33,7 @@
   "Write a comment or question.": "댓글이나 질문을 작성하세요",
   "course": "과정",
   "exam": "시험",
+  "lesson": "강의",
   "quiz": "퀴즈",
   "short": "쇼트",
   "survey": "설문",

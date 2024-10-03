@@ -16,7 +16,6 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-  InputLabelProps,
   InputProps,
   MenuItem,
   Radio,
@@ -240,10 +239,11 @@ interface FileFieldControlProps extends Omit<InputProps, 'type'> {
   control: any; // eslint-disable-line
   variant?: 'standard' | 'outlined' | 'filled';
   helperText?: string | null;
-  slotProps?: InputProps['slotProps'] & { inputLabel: InputLabelProps };
+  slotProps?: InputProps['slotProps'];
+  shrink?: boolean;
 }
 
-export const FileFieldControl = ({ name, label, control, helperText, slotProps, ...props }: FileFieldControlProps) => {
+export const FileFieldControl = ({ name, label, control, helperText, slotProps, shrink, ...props }: FileFieldControlProps) => {
   const { t } = useTranslation('common');
   const inputRef = useRef(null);
 
@@ -257,12 +257,12 @@ export const FileFieldControl = ({ name, label, control, helperText, slotProps, 
             <InputLabel
               required={props.required}
               variant={props.variant || 'standard'}
-              shrink={true}
+              shrink={shrink == undefined ? true : shrink}
               htmlFor={name}
               sx={{ overflow: 'visible' }}
               {...slotProps}
             >
-              {label} {props.required ? '*' : `(${t('Optional')})`}
+              {label} {!props.required && `(${t('Optional')})`}
             </InputLabel>
           )}
           <Box sx={{ mt: 1, display: 'flex', alignItems: 'flex-end' }}>
@@ -274,7 +274,7 @@ export const FileFieldControl = ({ name, label, control, helperText, slotProps, 
               variant="contained"
             >
               {field.value?.[0] ? (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, lineHeight: 1.2, textTransform: 'none' }}>
                   <CheckOutlined />
                   {typeof field.value === 'string' ? field.value.split('/').pop() : field.value?.[0]?.name}
                   <Close

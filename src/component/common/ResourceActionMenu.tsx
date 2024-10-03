@@ -4,9 +4,10 @@ import { useState } from 'react';
 
 interface Props {
   menuItems: React.ReactNode;
+  icon?: React.ReactNode;
 }
 
-export const ResourceActionMenu = ({ menuItems }: Props) => {
+export const ResourceActionMenu = ({ menuItems, icon }: Props) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -22,9 +23,7 @@ export const ResourceActionMenu = ({ menuItems }: Props) => {
 
   return (
     <>
-      <IconButton onClick={openMenu}>
-        <MoreVert />
-      </IconButton>
+      <IconButton onClick={openMenu}>{icon || <MoreVert />}</IconButton>
       <Menu
         open={!!anchorEl}
         onClick={onClick}

@@ -24,6 +24,7 @@ type ToggleActionData<IDType extends string | number = string> = {
 export const createToggleAction = <T extends ToggleableItem<string | number>>(
   toggleActionFn: (data: ToggleActionData<T['id']>) => CancelablePromise<unknown>,
   getDisplayFn: () => Promise<{ items: T[]; page: number; total: number }>,
+  children?: boolean,
 ) => {
   return (action: Action, item: T) => {
     const pastAction = userActions[action];
@@ -38,6 +39,7 @@ export const createToggleAction = <T extends ToggleableItem<string | number>>(
             [`${action}_count`]: pastActionCount + (item[pastAction] ? -1 : 1),
           } as Partial<T>,
           'update',
+          children ? 'children' : undefined,
         ),
       )
       .catch(console.error);

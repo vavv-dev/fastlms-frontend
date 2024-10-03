@@ -4,7 +4,7 @@ import { atom, useAtom } from 'jotai';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 interface Props {
-  title?: string;
+  title?: React.ReactNode;
   children: React.ReactNode;
   maxWidth?: number;
   itemWidth?: number;
@@ -31,7 +31,7 @@ export const GridSlider: React.FC<Props> = ({
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [containerWidth, setContainerWidth] = useAtom(containerWidthState);
-  const mdlUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('mdl'));
+  const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
   const maxItems = useMemo(() => {
     const availableWidth = maxWidth ? Math.min(containerWidth, maxWidth) : containerWidth;
@@ -44,13 +44,13 @@ export const GridSlider: React.FC<Props> = ({
         const styles = window.getComputedStyle(containerRef.current);
         const paddingLeft = parseFloat(styles.paddingLeft);
         const paddingRight = parseFloat(styles.paddingRight);
-        setContainerWidth(containerRef.current.clientWidth - paddingLeft - paddingRight - (mdlUp ? 32 : 0));
+        setContainerWidth(containerRef.current.clientWidth - paddingLeft - paddingRight - (mdUp ? 32 : 0));
       }
     };
     updateContainerWidth();
     window.addEventListener('resize', updateContainerWidth);
     return () => window.removeEventListener('resize', updateContainerWidth);
-  }, [maxWidth, itemWidth, itemGap, containerRef, mdlUp, setContainerWidth]);
+  }, [maxWidth, itemWidth, itemGap, containerRef, mdUp, setContainerWidth]);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -92,10 +92,12 @@ export const GridSlider: React.FC<Props> = ({
         ...sx,
       }}
     >
-      {title && (
+      {typeof title === 'string' ? (
         <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
           {title}
         </Typography>
+      ) : (
+        title
       )}
       <Box
         ref={scrollContainerRef}
@@ -111,9 +113,7 @@ export const GridSlider: React.FC<Props> = ({
           scrollbarWidth: 'none',
           '&::-webkit-scrollbar': { display: 'none' },
           scrollSnapType: 'x mandatory',
-          '& > *': {
-            scrollSnapAlign: 'start',
-          },
+          '& > *': { scrollSnapAlign: 'start' },
         }}
       >
         {children}
@@ -126,7 +126,7 @@ export const GridSlider: React.FC<Props> = ({
             left: '-20px',
             top: '50%',
             transform: 'translateY(-36px)',
-            zIndex: 1,
+            zIndex: 5,
             bgcolor: theme.palette.background.paper,
             '&:hover': { filter: 'brightness(0.9)', bgcolor: theme.palette.background.paper },
             boxShadow: theme.shadows[2],
@@ -143,7 +143,7 @@ export const GridSlider: React.FC<Props> = ({
             right: '-20px',
             top: '50%',
             transform: 'translateY(-36px)',
-            zIndex: 1,
+            zIndex: 5,
             bgcolor: theme.palette.background.paper,
             '&:hover': { filter: 'brightness(0.9)', bgcolor: theme.palette.background.paper },
             boxShadow: theme.shadows[2],

@@ -148,7 +148,7 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .meta({ control: 'datetime-local', grid: 6 }),
   end_date: yup
     .string()
-    .nullable()
+    .required(REQUIRED)
     .transform((v) => (v ? v : null))
     .label(t('End date'))
     .meta({ control: 'datetime-local', grid: 6 }),

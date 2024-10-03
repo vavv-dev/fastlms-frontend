@@ -332,15 +332,18 @@ const DrawField = <T extends FieldValues>({
   };
 
   const required = !fieldData.optional && !fieldData.nullable;
-  const props = {
+  const baseProps = {
     name,
     type: fieldData.meta?.control,
     control,
     label: !hideLabel ? fieldData.label || '' : '',
-    slotProps: { inputLabel: { shrink: true } },
     helperText: (formState.errors[name]?.message as string) || fieldData.meta?.helperText,
     required,
     readOnly: fieldData.meta?.readOnly,
+  };
+  const props = {
+    ...baseProps,
+    slotProps: { inputLabel: { shrink: true } },
   };
 
   if (fieldData.meta?.control === 'thumbnail') {
@@ -398,7 +401,7 @@ const DrawField = <T extends FieldValues>({
       case 'select':
         return <SelectControl {...props} margin={margin} options={fieldData.meta?.options || []} />;
       case 'file':
-        return <FileFieldControl {...props} inputProps={{ accept: fieldData.meta?.accept }} />;
+        return <FileFieldControl {...baseProps} shrink inputProps={{ accept: fieldData.meta?.accept }} />;
       default:
         return (
           <TextFieldControl
@@ -603,16 +606,10 @@ const ArrayFieldTable = <T extends FieldValues>({
                         const remains = arrayValues.filter((_, j) => j !== index);
                         if (remains.length === 0) {
                           // https://github.com/react-hook-form/react-hook-form/issues/10862
-                          setValue(fieldKey, null as PathValue<T, Path<T>>, {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          });
+                          setValue(fieldKey, null as PathValue<T, Path<T>>, { shouldDirty: true, shouldValidate: true });
                           setValue(fieldKey, fieldData.default as PathValue<T, Path<T>>);
                         } else {
-                          setValue(fieldKey, remains as PathValue<T, Path<T>>, {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          });
+                          setValue(fieldKey, remains as PathValue<T, Path<T>>, { shouldDirty: true, shouldValidate: true });
                         }
                       }}
                     >
