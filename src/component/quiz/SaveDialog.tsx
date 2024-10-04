@@ -7,9 +7,8 @@ import {
   quizGetDisplays as getDisplays,
   quizGetOwnedQuestions as getOwnedQuestions,
   quizGetResource as getResource,
-  kind2,
   quizUpdateResource as updateResource,
-  videoVideoSelector as videoSelector,
+  videoVideoSelector as videoSelector
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
 import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
@@ -66,7 +65,7 @@ const questionSchema: yup.ObjectSchema<ResourceQuestionUpdate> = yup.object({
 });
 
 const contentSchema: yup.ObjectSchema<Resource> = yup.object({
-  kind: yup.mixed<kind2>().default('video').meta({ hidden: true }),
+  kind: yup.mixed<'video'>().default('video').meta({ hidden: true }),
   thumbnail: yup.string().default('').meta({ readOnly: true, control: 'thumbnail' }),
   id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
   title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
