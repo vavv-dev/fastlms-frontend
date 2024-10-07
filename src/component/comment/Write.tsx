@@ -163,6 +163,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
                           { value: 'false', label: t('Comment') },
                           { value: 'true', label: t('Question') },
                         ]}
+                        sx={{ width: '4em' }}
                       />
                       <ClickAwayListener onClickAway={() => showPicker && setShowPicker(false)}>
                         <span>

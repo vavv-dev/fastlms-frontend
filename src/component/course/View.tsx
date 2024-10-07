@@ -8,28 +8,46 @@ import {
   lessonGetDisplays,
 } from '@/api';
 import { useInfinitePagination, useServiceImmutable } from '@/component/common';
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
-import { Box, IconButton, Step, StepContent, StepLabel, Stepper, Theme, Typography, useMediaQuery } from '@mui/material';
-import { atom, useAtom, useAtomValue } from 'jotai';
-import { atomFamily } from 'jotai/utils';
-import { useEffect, useState } from 'react';
+import { parseLocalStorage, textEllipsisCss, toFixedHuman } from '@/helper/util';
+import { ArrowDropDown, ArrowDropUp, Refresh } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  IconButton,
+  Step,
+  StepContent,
+  StepLabel,
+  Stepper,
+  Theme,
+  Typography,
+  useMediaQuery
+} from '@mui/material';
+import { useAtom, useAtomValue } from 'jotai';
+import { atomFamily, atomWithStorage } from 'jotai/utils';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
+import { ThreadDialog } from '../comment';
 import { spacerRefState } from '../layout';
 import { LessonCard } from '../lesson';
+import { ActionMenu } from './ActionMenu';
 
-const activeStepFamily = atomFamily(() => atom<number>(0));
+const activeStepKey = parseLocalStorage('activeStep', 0);
+const activeStepFamily = atomFamily(() => atomWithStorage<number>(activeStepKey, 0));
 
 export const View = () => {
+  const { t } = useTranslation('course');
   const location = useLocation();
   const { id } = useParams();
-  const { data } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
-  const { data: lessons } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
+  const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
+  const { data: lessons, mutate: lessonMutate } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
     apiOptions: { course: id, size: data?.lesson_count },
     apiService: lessonGetDisplays,
   });
   const [showAll, setShowAll] = useState(false);
   const [activeStep, setActiveStep] = useAtom(activeStepFamily(id));
   const spacerRef = useAtomValue(spacerRefState);
+  const [threadDialogOpen, setThreadDialogOpen] = useState(false);
 
   // update spacerRef height
   useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -41,12 +59,40 @@ export const View = () => {
     }
   }, [location.state?.activeStep, setActiveStep]);
 
+  const refresh = () => {
+    mutate();
+    lessonMutate();
+  };
+
+  const totalStats = useMemo(() => {
+    if (!lessons) return;
+    let passed = 0;
+    let total = 0;
+    lessons?.forEach((lesson) => {
+      lesson.items.forEach((item) => {
+        if (item.grading_method == 'progress') {
+          total += 1;
+          if (item.passed) passed += 1;
+        }
+      });
+    });
+    return (
+      <Typography
+        variant="subtitle1"
+        sx={{ mb: 2, color: data?.passed ? 'success.main' : 'warning.main', display: 'flex', gap: 2 }}
+      >
+        <span>{t('Total progress')}:</span> {`${toFixedHuman((passed / total) * 100, 1)} % (${passed} / ${total})`}
+      </Typography>
+    );
+  }, [lessons, data, t]);
+
   if (!id || !data) return null;
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box sx={{ m: 'auto', maxWidth: 'lg', display: 'flex', flexDirection: 'column', gap: '1em', position: 'relative' }}>
-        <Box
+      <Box sx={{ m: 'auto', maxWidth: 'lg', display: 'flex', flexDirection: 'column', gap: 1, position: 'relative' }}>
+        <Typography
+          variant="h5"
           sx={{
             position: 'sticky',
             top: spacerRef?.clientHeight,
@@ -56,27 +102,54 @@ export const View = () => {
             gap: 1,
             alignItems: 'center',
             zIndex: 4,
+            flexGrow: 1,
+            textAlign: 'center',
           }}
         >
-          <Typography variant="h5" sx={{ flexGrow: 1, textAlign: 'center' }}>
-            {data.title}
-            {!data.description && (
-              <Typography
-                variant="caption"
-                sx={{ color: 'text.secondary', display: 'block', whiteSpace: 'pre-wrap', mt: 1, maxWidth: 'md', mx: 'auto' }}
-              >
-                {data.description}
-              </Typography>
-            )}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: 1, position: 'sticky', top: spacerRef?.clientHeight, zIndex: 4 }}>
-          <Box sx={{ flexGrow: 1 }} />
+          {data.title}
+          {!data.description && (
+            <Typography
+              variant="caption"
+              sx={{
+                lineHeight: 1.5,
+                color: 'text.secondary',
+                whiteSpace: 'pre-wrap',
+                maxWidth: 'sm',
+                ...textEllipsisCss(1),
+              }}
+              dangerouslySetInnerHTML={{ __html: data.description }}
+            />
+          )}
+        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            position: 'sticky',
+            top: (spacerRef?.clientHeight || 0) + 32,
+            bgcolor: 'background.paper',
+            zIndex: 4,
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setThreadDialogOpen((prev) => !prev);
+            }}
+          >
+            {t('Q&A')}
+          </Button>
           <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
             {showAll ? <ArrowDropDown /> : <ArrowDropUp />}
           </IconButton>
+          <IconButton color="primary" onClick={refresh}>
+            <Refresh />
+          </IconButton>
+          <ActionMenu data={data} />
         </Box>
+
+        {totalStats}
 
         {/* lessons */}
         <Stepper nonLinear activeStep={activeStep} orientation="vertical" sx={{ flexGrow: 1 }}>
@@ -92,6 +165,20 @@ export const View = () => {
           ))}
         </Stepper>
       </Box>
+      {threadDialogOpen && (
+        <ThreadDialog
+          open={threadDialogOpen}
+          setOpen={setThreadDialogOpen}
+          threadProps={{
+            url: encodeURIComponent(`${window.location.origin}/course/${data.id}`),
+            title: data.title,
+            owner: data.owner,
+            kind: 'course',
+            question: true,
+            sticky: true,
+          }}
+        />
+      )}
     </Box>
   );
 };
@@ -100,35 +187,50 @@ interface LessonStepProps {
   lesson: LessonDisplayResponse;
   stepIndex: number;
   activeStep: number;
-  setActiveStep: (value: number) => void;
+  setActiveStep: (value: number | ((prev: number) => number)) => void;
   collapse?: boolean;
 }
 
 const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, collapse, ...props }: LessonStepProps) => {
-  const [hover, setHover] = useState(false);
-
-  void hover;
+  const { t } = useTranslation('course');
+  const [, setHover] = useState(false);
 
   return (
     <Step
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onClick={() => setActiveStep(stepIndex)}
+      onClick={() => setActiveStep((prev) => (prev == stepIndex ? -1 : stepIndex))}
       active={!collapse || activeStep == stepIndex}
-      completed={false}
+      completed={!!lesson.passed}
       sx={{ '& .Mui-completed .MuiSvgIcon-root': { color: 'success.main' } }}
       key={stepIndex}
       {...props}
     >
       <StepLabel
-        optional={<Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}></Box>}
-        sx={{ gap: 2, cursor: 'pointer', minHeight: '3em' }}
+        sx={{
+          gap: 2,
+          cursor: 'pointer',
+          minHeight: '3em',
+          '& .MuiStepLabel-label': { display: 'flex', gap: 3, alignItems: 'center' },
+        }}
       >
-        <Typography variant="h6" sx={{ position: 'relative' }}>
-          {lesson.title}
-        </Typography>
+        <Typography variant="h6">{lesson.title}</Typography>
+        {activeStep != stepIndex && (
+          <>
+            {!!lesson.score && (
+              <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'error'}>
+                {t('Score {{ value }}', { value: toFixedHuman(lesson.score, 1) })}
+              </Typography>
+            )}
+            {!!lesson.progress && (
+              <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'error'}>
+                {t('Progress {{ value }} %', { value: toFixedHuman(lesson.progress, 1) })}
+              </Typography>
+            )}
+          </>
+        )}
       </StepLabel>
-      <StepContent>
+      <StepContent TransitionProps={{ unmountOnExit: false }}>
         <LessonCard data={lesson} embeded />
       </StepContent>
     </Step>

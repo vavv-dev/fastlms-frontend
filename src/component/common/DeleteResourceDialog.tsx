@@ -4,7 +4,7 @@ import { useSetAtom } from 'jotai';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseDialog } from './BaseDialog';
-import { updateInfiniteCache } from './hooks';
+import { updateInfiniteCache } from './swr';
 
 interface Props {
   title: string;

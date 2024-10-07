@@ -1,32 +1,22 @@
 import {
-  ExamDisplayResponse as DisplayResponse,
-  ExamGetDisplaysData as GetDisplaysData,
-  examGetDisplays as getDisplays,
+  AssetDisplayResponse as DisplayResponse,
+  assetGetDisplays as getDisplays,
+  AssetGetDisplaysData as GetDisplaysData,
 } from '@/api';
 import { GridInfiniteScrollPage } from '@/component/common';
-import { homeUserState, userState } from '@/store';
-import { GradingOutlined } from '@mui/icons-material';
-import { Chip } from '@mui/material';
-import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { Card } from './Card';
 import { SaveDialog } from './SaveDialog';
 
 export const Displays = () => {
-  const { t } = useTranslation('exam');
-  const navigate = useNavigate();
-  const user = useAtomValue(userState);
-  const homeUser = useAtomValue(homeUserState);
-  const owner = user && user.id == homeUser?.id;
+  const { t } = useTranslation('asset');
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
-      pageKey="exam"
+      pageKey="asset"
       orderingOptions={[
-        { value: 'created', label: t('Recently created') },
         { value: 'modified', label: t('Recently modified') },
-        { value: 'submission_count', label: t('Submission count') },
+        { value: 'title', label: t('Title asc') },
       ]}
       CreateItemComponent={SaveDialog}
       apiService={getDisplays}
@@ -41,9 +31,6 @@ export const Displays = () => {
           lg: 'repeat(4, minmax(251px, 308px))',
         },
       }}
-      extraAction={
-        owner && <Chip color="info" onClick={() => navigate('grading')} icon={<GradingOutlined />} label={t('Grade exams')} />
-      }
     />
   );
 };

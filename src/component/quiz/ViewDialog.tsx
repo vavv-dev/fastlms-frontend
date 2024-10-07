@@ -1,11 +1,13 @@
 import {
   QuizAssessResponse as AssessResponse,
+  QuizDisplayResponse as DisplayResponse,
   QuizGetAssessData as GetAssessData,
   quizGetAssess as getAssess,
+  quizGetDisplays as getDisplays,
   quizReadyAssess as readyAssess,
 } from '@/api';
 import { Thread } from '@/component/comment';
-import { BaseDialog, useServiceImmutable } from '@/component/common';
+import { BaseDialog, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { VideoPlayer, VideoTracking } from '@/component/video';
 import { ArrowDropDown, ArrowDropUp, ArrowRight } from '@mui/icons-material';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -35,6 +37,7 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
     if (!data) return;
     readyAssess({ id: data.id }).then((updated: AssessResponse) => {
       mutate(updated, { revalidate: false });
+      updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
     });
   };
 

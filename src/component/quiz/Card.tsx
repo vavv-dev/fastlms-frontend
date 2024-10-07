@@ -54,8 +54,8 @@ export const Card = ({ data, hideAvatar }: Props) => {
             </Box>
           )
         }
-        score={data.score ? data.score : data.status ? 0 : null}
-        passed={data.status == 'passed'}
+        score={data.score}
+        passed={data.passed}
         inProgress={data.status == 'in_progress'}
         avatarChildren={[t(...formatRelativeTime(data.modified)), t('{{ count }} answers', { count: data.submission_count })]}
         hideAvatar={hideAvatar}

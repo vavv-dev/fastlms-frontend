@@ -65,7 +65,6 @@ export const Profile = () => {
       .then((updated) => {
         setUser(updated);
         setSnackbarMessage({ message: t('Profile information has been updated.'), duration: 3000 });
-        console.log(updated);
         if (user?.use_channel && mutate) mutate((prev) => prev && { ...prev, ...updated }, { revalidate: false });
       })
       .catch((error) => {
@@ -104,7 +103,7 @@ export const Profile = () => {
             helperText={t('If you enable this option, you can use the channel feature.')}
           />
 
-          <TextEditorControl minHeight={'200px'} name="description" label={t('Description')} control={control} margin="normal" />
+          <TextEditorControl minHeight={200} name="description" label={t('Description')} control={control} margin="normal" />
 
           <>
             <Button

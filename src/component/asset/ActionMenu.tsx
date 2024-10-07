@@ -1,26 +1,33 @@
 import {
-  ContentDisplayResponse as DisplayResponse,
-  contentDeleteResource as deleteResource,
-  contentGetDisplays as getDisplays,
+  AssetDisplayResponse as DisplayResponse,
+  assetDeleteResource as deleteResource,
+  assetGetDisplays as getDisplays,
+  assetToggleAction as toggleAction,
 } from '@/api';
-import { DeleteResourceDialog, ResourceActionMenu } from '@/component/common';
+import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
-import { ListAltOutlined } from '@mui/icons-material';
+import { CloudUploadOutlined, ListAltOutlined } from '@mui/icons-material';
+import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
+import BookmarkRemoveOutlinedIcon from '@mui/icons-material/BookmarkRemoveOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-// import ReportDialog from './ReportDialog';
+import { ReportDialog } from './ReportDialog';
 import { SaveDialog } from './SaveDialog';
+import { UploadDialog } from './UploadDialog';
+
+const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
 
 export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
-  const { t } = useTranslation('lesson');
+  const { t } = useTranslation('asset');
   const user = useAtomValue(userState);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  // const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [uploaderOpen, setUploaderOpen] = useState(false);
 
   if (!user) return null;
 
@@ -28,8 +35,19 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
     <>
       <ResourceActionMenu
         menuItems={[
+          <MenuItem key="bookmark" onClick={() => action('bookmark', data)}>
+            <ListItemIcon>{data.bookmarked ? <BookmarkRemoveOutlinedIcon /> : <BookmarkAddOutlinedIcon />}</ListItemIcon>
+            {data.bookmarked ? t('Remove bookmark') : t('Add bookmark')}
+          </MenuItem>,
+
           user.username === data?.owner.username && [
-            <MenuItem key="watch-list" onClick={() => {}}>
+            <MenuItem key="upload" onClick={() => setUploaderOpen(true)}>
+              <ListItemIcon>
+                <CloudUploadOutlined />
+              </ListItemIcon>
+              {t('Upload')}
+            </MenuItem>,
+            <MenuItem key="watch-list" onClick={() => setReportDialogOpen(true)}>
               <ListItemIcon>
                 <ListAltOutlined />
               </ListItemIcon>
@@ -54,7 +72,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
       {saveDialogOpen && <SaveDialog open={saveDialogOpen} setOpen={setSaveDialogOpen} id={data.id} />}
       {deleteDialogOpen && (
         <DeleteResourceDialog
-          title={t('Content')}
+          title={t('Asset')}
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           resourceId={data.id}
@@ -62,6 +80,8 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
           listService={getDisplays}
         />
       )}
+      {reportDialogOpen && <ReportDialog open={reportDialogOpen} setOpen={setReportDialogOpen} data={data} />}
+      {uploaderOpen && <UploadDialog open={uploaderOpen} setOpen={setUploaderOpen} id={data.id} />}
     </>
   );
 };

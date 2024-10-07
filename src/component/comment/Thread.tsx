@@ -5,8 +5,7 @@ import {
   commentGetDisplays as getDisplays,
   commentGetThread as getThread,
 } from '@/api';
-import { InfiniteScrollIndicator, useInfinitePagination } from '@/component/common';
-import { useServiceImmutable } from '@/component/common/hooks';
+import { InfiniteScrollIndicator, useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

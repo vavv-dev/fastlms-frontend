@@ -19,6 +19,7 @@ void [
   i18next.t('video', { ns: 'u' }),
   i18next.t('short', { ns: 'u' }),
   i18next.t('playlist', { ns: 'u' }),
+  i18next.t('asset', { ns: 'u' }),
   i18next.t('exam', { ns: 'u' }),
   i18next.t('lesson', { ns: 'u' }),
   i18next.t('course', { ns: 'u' }),

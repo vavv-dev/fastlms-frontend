@@ -3,9 +3,10 @@ import {
   courseGetDisplays as getDisplays,
   courseUpdateResource as updateResource,
 } from '@/api';
-import { ResourceCard } from '@/component/common/ResourceCard';
-import { decodeURLText, formatRelativeTime, stripHtml, textEllipsisCss } from '@/helper/util';
-import { Box, Typography } from '@mui/material';
+import { ResourceCard } from '@/component/common';
+import { formatRelativeTime } from '@/helper/util';
+import { ReplyOutlined } from '@mui/icons-material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
@@ -29,34 +30,17 @@ export const Card = ({ data, hideAvatar }: Props) => {
         resource={data}
         onClick={onClick}
         banner={
-          data.thumbnail ? (
-            <Box
-              sx={{
-                aspectRatio: '16 / 9',
-                backgroundImage: `url(${data.thumbnail})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
-          ) : (
-            <Box sx={{ p: 2 }}>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  color: 'text.secondary',
-                  my: 1,
-                  lineHeight: 1.3,
-                  whiteSpace: 'pre-wrap',
-                  ...textEllipsisCss(3),
-                }}
-              >
-                {stripHtml(decodeURLText(data.description)) || t('Thumbnail or description here')}
-              </Typography>
-            </Box>
-          )
+          <Box
+            sx={{
+              aspectRatio: '16 / 9',
+              backgroundImage: `url(${data.thumbnail})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
         }
         score={data.score}
-        passed={data.status == 'passed'}
+        passed={data.passed}
         avatarChildren={[
           t(...formatRelativeTime(data.modified)),
           t('{{ count }} enrollments', { count: data.enrollment_count }),
@@ -67,6 +51,20 @@ export const Card = ({ data, hideAvatar }: Props) => {
         partialUpdateService={updateResource}
         listService={getDisplays}
         bannerBorder={!data.thumbnail}
+        footer={
+          <Button
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (data.marketing_url) window.open(data.marketing_url, '_blank');
+              else navigate(`/course/${data.id}/outline`);
+            }}
+            sx={{ minWidth: 0, alignSelf: 'flex-start', py: 0 }}
+            endIcon={<ReplyOutlined />}
+          >
+            {t('Go to course overview')}
+          </Button>
+        }
       />
     </>
   );

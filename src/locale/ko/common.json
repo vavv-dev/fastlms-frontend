@@ -45,7 +45,6 @@
   "Highlight color": "하이라이트 색상",
   "Horizontal rule": "가로선",
   "If you change to public, everyone can see this resource.": "공개로 변경하면, 모든 사람이 이 자료를 볼 수 있습니다.",
-  "In Progress": "진행 중입니다.",
   "Indent": "들여쓰기",
   "Insert column after": "다음에 칼럼 추가",
   "Insert column before": "앞에 칼럼 추가",
@@ -107,6 +106,7 @@
   "Video imported successfully": "비디오 가져오기를 완료했습니다.",
   "add_member": "멤버 추가",
   "add_roster": "멤버 초대",
+  "asset": "자료",
   "assignment": "과제",
   "browse files": "파일 찾기. 폴더 업로드는 드래그&드롭 하세요.",
   "content": "콘텐츠",
@@ -152,5 +152,6 @@
   "update_member": "멤버 수정",
   "update_roster": "멤버 초대 수정",
   "video": "동영상",
-  "{{ count }} items_other": "{{ count }}개"
+  "{{ count }} items_other": "{{ count }}개",
+  "{{ kind }} is in progress.": "{{ kind }} 진행 중입니다."
 }

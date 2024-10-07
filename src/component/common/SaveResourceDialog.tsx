@@ -647,7 +647,6 @@ const ArrayFieldTable = <T extends FieldValues>({
                 id: copyAutocomplete[fieldKey].mode === 'select' ? s.id : undefined,
               })),
             ];
-            console.log(updated);
             setValue(fieldKey, (max ? updated.slice(-1 * max) : updated) as PathValue<T, Path<T>>, {
               shouldDirty: true,
               shouldValidate: true,

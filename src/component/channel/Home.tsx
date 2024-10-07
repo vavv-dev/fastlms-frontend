@@ -6,6 +6,7 @@ import {
   ChannelGetContentResponse as GetContentResponse,
   PlaylistDisplayResponse as PlaylistResponse,
   QuizDisplayResponse as QuizResponse,
+  AssetDisplayResponse as AssetResponse,
   SurveyDisplayResponse as SurveyResponse,
   VideoDisplayResponse as VideoResponse,
 } from '@/api';
@@ -21,6 +22,7 @@ import { Box, Divider, IconButton, Stack, Tooltip } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AssetCard } from '../asset';
 
 const GIRD_SIZE: Record<string, number[]> = {
   video: [210, 4],
@@ -87,6 +89,8 @@ export const Home = () => {
                         sx={{ '& > .card-banner': { mt: '6px' }, '& .avatar-children': { pb: 0 } }}
                       />
                     );
+                  } else if (kind === 'asset') {
+                    return <AssetCard key={resource.id} data={resource as AssetResponse} hideAvatar />;
                   } else if (kind === 'quiz') {
                     return <QuizCard key={resource.id} data={resource as QuizResponse} hideAvatar />;
                   } else if (kind === 'survey') {

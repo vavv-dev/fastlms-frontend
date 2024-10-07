@@ -70,7 +70,7 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
       .then(async (updated) => {
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         // Attention before starting the exam!!!
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         await mutate(updated, { revalidate: false });
         navigate(`/exam/${data.id}/assess`);
       })

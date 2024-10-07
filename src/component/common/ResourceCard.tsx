@@ -14,6 +14,7 @@ interface Resource extends ResourceUpdateField {
   title: string;
   description?: string;
   bookmarked: boolean;
+  kind: string;
   owner: {
     name: string;
     username: string;
@@ -194,8 +195,8 @@ export const ResourceCard = ({
       }}
     >
       {inProgress && (
-        <Typography sx={{ position: 'absolute', top: '-1.8em', left: 0, color: 'warning.main' }} variant="caption">
-          {t('In Progress')}
+        <Typography sx={{ position: 'absolute', top: '-1.8em', left: 0, color: 'warning.dark' }} variant="caption">
+          {t('{{ kind }} is in progress.', { kind: t(resource.kind) })}
         </Typography>
       )}
       {bannerPlace === 'top' && Banner}
@@ -222,7 +223,7 @@ export const ResourceCard = ({
             ))}
             {resource.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
           </Stack>
-          <Box sx={{ display: !hover ? 'none' : 'block', position: 'absolute', right: 0 }}>{actionMenu}</Box>
+          <Box sx={{ visibility: !hover ? 'hidden' : 'visible', position: 'absolute', right: 0 }}>{actionMenu}</Box>
         </WithAvatar>
         {showDescription && (
           <Typography variant="body2" sx={{ color: 'text.secondary', ...textEllipsisCss(2) }}>

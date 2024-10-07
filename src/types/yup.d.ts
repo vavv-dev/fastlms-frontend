@@ -21,7 +21,7 @@ declare module 'yup' {
     tooltipText?: string;
     hidden?: boolean;
     grid?: number;
-    options?: { label: string; value: string }[];
+    options?: { label: string; value: string, disabled?: boolean }[];
     accept?: string;
     readOnly?: boolean;
     orderable?: boolean;

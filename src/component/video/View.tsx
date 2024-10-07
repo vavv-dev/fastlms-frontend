@@ -1,6 +1,6 @@
 import { VideoGetViewData as GetViewData, VideoGetViewResponse as GetViewResponse, videoGetView as getView } from '@/api';
 import { Thread } from '@/component/comment';
-import { useServiceImmutable } from '@/component/common/hooks';
+import { useServiceImmutable } from '@/component/common';
 import { textEllipsisCss } from '@/helper/util';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';

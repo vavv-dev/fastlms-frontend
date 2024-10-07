@@ -2,12 +2,12 @@ import { OpenAPI } from '@/api';
 import { EmailVerification, Join, Login, Logout, PasswordReset, PasswordResetConfirm } from '@/component/account';
 import { ChannelHome, ChannelLayout } from '@/component/channel';
 import { CommentDisplays } from '@/component/comment';
-import { CourseDisplays, CourseView } from '@/component/course';
+import { CourseDisplays, CourseOutline, CourseView } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamDisplays, ExamView, GradingDisplays } from '@/component/exam';
 import { Home, HomeVideo } from '@/component/home';
 import { BaseLayout } from '@/component/layout';
-import { ContentDisplays, LessonDisplays } from '@/component/lesson';
+import { LessonDisplays } from '@/component/lesson';
 import { InvitationAccept, MemberDisplays } from '@/component/member';
 import { QuizDisplays } from '@/component/quiz';
 import { SurveyDisplays } from '@/component/survey';
@@ -41,6 +41,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
+import { AssetDisplays } from './component/asset';
 
 const USER_MESSAGE_URL = import.meta.env.VITE_USER_MESSAGE_URL || '';
 
@@ -88,12 +89,12 @@ export const App = () => {
               <Route path="quiz" element={<QuizDisplays />} />
               <Route path="survey" element={<SurveyDisplays />} />
               <Route path="exam" element={<ExamDisplays />} />
+              <Route path="asset" element={<AssetDisplays />} />
               <Route path="lesson" element={<LessonDisplays />} />
               <Route path="course" element={<CourseDisplays />} />
               <Route path="comment" element={<CommentDisplays />} />
               <Route path="member" element={<MemberDisplays />} />
               <Route path="exam/grading" element={<GradingDisplays />} />
-              <Route path="lesson/content" element={<ContentDisplays />} />
             </Route>
           </Route>
 
@@ -107,6 +108,7 @@ export const App = () => {
           </Route>
         </Route>
 
+        {/* public with layout */}
         <Route path="/" element={<BaseLayout hideDrawer />}>
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
@@ -115,6 +117,9 @@ export const App = () => {
           <Route path="password-reset-confirm" element={<PasswordResetConfirm />} />
           <Route path="email-verification" element={<EmailVerification />} />
           <Route path="invitation-accept" element={<InvitationAccept />} />
+
+          {/* course */}
+          <Route path="course/:id/outline" element={<CourseOutline />} />
 
           {/* error */}
           <Route path="error/401" element={<Unauthorized />} />

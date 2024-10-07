@@ -13,8 +13,10 @@ import {
   SelectGroupControl,
   TextEditorControl,
   TextFieldControl,
+  updateInfiniteCache,
+  useScrollToFirstError,
+  useServiceImmutable,
 } from '@/component/common';
-import { updateInfiniteCache, useScrollToFirstError, useServiceImmutable } from '@/component/common/hooks';
 import i18next from '@/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, DialogContentText, Divider, Stack, Tooltip, Typography, Zoom, useTheme } from '@mui/material';
@@ -125,7 +127,7 @@ export const Form = ({ id }: { id: string }) => {
     })
       .then(async (updated) => {
         // Attention exam end!!!
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         await mutate(updated, { revalidate: false });
       })
@@ -169,7 +171,7 @@ export const Form = ({ id }: { id: string }) => {
                     required={true}
                     control={control}
                     helperText={question.help_text || null}
-                    minHeight="150px"
+                    minHeight={150}
                     disableFormLabelFocus={true}
                     sx={{ my: 1 }}
                   />

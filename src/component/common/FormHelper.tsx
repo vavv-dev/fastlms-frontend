@@ -322,7 +322,7 @@ interface TextEditorControlProps extends Omit<FormControlProps, 'type'> {
   helperText?: string | null;
   disabled?: boolean;
   placeholder?: string;
-  minHeight?: string;
+  minHeight?: number;
   disableFormLabelFocus?: boolean;
   sx?: SxProps;
 }
@@ -390,7 +390,7 @@ export const TextEditorControl = ({
 interface SelectControlProps extends FormControlProps {
   name: string;
   label?: React.ReactNode;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string; disabled?: boolean }[];
   control: any; // eslint-disable-line
   required?: boolean;
   helperText?: string | null;
@@ -398,6 +398,7 @@ interface SelectControlProps extends FormControlProps {
   disabled?: boolean;
   disableUnderline?: boolean;
   readOnly?: boolean;
+  shrink?: boolean;
 }
 
 export const SelectControl = ({
@@ -411,6 +412,7 @@ export const SelectControl = ({
   disabled,
   variant = 'standard',
   disableUnderline = false,
+  shrink = true,
   ...props
 }: SelectControlProps) => {
   // form fieldset's disabled not affect mui select
@@ -421,11 +423,21 @@ export const SelectControl = ({
       control={control}
       defaultValue={defaultValue}
       render={({ field: { ...field }, fieldState: { error } }) => (
-        <FormControl variant={variant} margin={props.margin || 'dense'}>
-          {label && <InputLabel required={required}>{label}</InputLabel>}
-          <Select disableUnderline={disableUnderline} disabled={disabled} inputProps={{ readOnly: props.readOnly }} {...field}>
+        <FormControl sx={{ width: '100%', ...props.sx }} variant={variant} margin={props.margin || 'dense'}>
+          {label && (
+            <InputLabel required={required} shrink={shrink}>
+              {label}
+            </InputLabel>
+          )}
+          <Select
+            fullWidth
+            disableUnderline={disableUnderline}
+            disabled={disabled}
+            inputProps={{ readOnly: props.readOnly }}
+            {...field}
+          >
             {options?.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
+              <MenuItem key={option.value} value={option.value} disabled={option.disabled}>
                 {option.label}
               </MenuItem>
             ))}

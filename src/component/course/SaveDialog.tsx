@@ -18,6 +18,7 @@ const t = (key: string) => i18next.t(key, { ns: 'course' });
 
 const REQUIRED = t('This field is required.');
 const INVALID_URL = t('Invalid URL.');
+const INVALID_IFRAME = t('Invalid iframe code.');
 
 const resourceSchema: yup.ObjectSchema<Resource> = yup.object({
   id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
@@ -27,7 +28,7 @@ const resourceSchema: yup.ObjectSchema<Resource> = yup.object({
 const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
   title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text' }),
   description: yup.string().default('').label(t('Description')).meta({ control: 'editor', multiline: true }),
-  thumbnail: base64ThumbnailSchema(yup).meta({ grid: 12 }),
+  thumbnail: base64ThumbnailSchema(yup).meta({ grid: 12 }).required(REQUIRED),
   is_public: yup
     .boolean()
     .default(false)
@@ -52,16 +53,18 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .default(false)
     .label(t('Invitation required'))
     .meta({ control: 'checkbox', grid: 4, helperText: t('If checked, only invited users can enroll.') }),
-  approval_required: yup
-    .boolean()
-    .default(false)
-    .label(t('Enrollment approval required'))
-    .meta({ control: 'checkbox', grid: 4, helperText: t('If checked, Enrollment must be approved by course owner.') }),
   closed: yup
     .boolean()
     .default(false)
     .label(t('Closed'))
     .meta({ control: 'checkbox', grid: 4, helperText: t('If checked, course will be frozen.') }),
+  learning_days: yup
+    .number()
+    .typeError(REQUIRED)
+    .required(REQUIRED)
+    .default(60)
+    .label(t('Learning days'))
+    .meta({ control: 'number', grid: 4 }),
   start_date: yup
     .string()
     .label(t('Start date'))
@@ -87,8 +90,22 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .label(t('Enrollment end'))
     .meta({ control: 'datetime-local', grid: 6 }),
   target: yup.string().default('').label(t('Target')).meta({ control: 'text', multiline: true }),
-  preview: yup.string().default('').url(INVALID_URL).label(t('Preview url')).meta({ control: 'text' }),
-  marketing_url: yup.string().default('').url(INVALID_URL).label(t('Marketing url')).meta({ control: 'text' }),
+  preview: yup
+    .string()
+    .default('')
+    .label(t('Preview iframe code'))
+    .test('is-iframe', INVALID_IFRAME, (value) => {
+      if (!value) return true;
+      return value.includes('<iframe');
+    })
+    .meta({ control: 'text', helperText: t('Insert iframe code for preview') }),
+  marketing_url: yup
+    .string()
+    .default('')
+    .url(INVALID_URL)
+    .label(t('Marketing url'))
+    .meta({ control: 'text', helperText: t('If you want to use another marketing page, insert URL here.') }),
+
   level: yup
     .string()
     .required(REQUIRED)

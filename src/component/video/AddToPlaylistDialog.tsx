@@ -52,6 +52,7 @@ export const AddToPlaylistDialog = ({ open, setOpen, video }: Props) => {
       title={video.title}
       renderContent={() => (
         <GridInfiniteScrollPage<PlaylistCheckResponse, PlaylistCheckVideoData>
+          disableSticky
           pageKey="playlist"
           apiService={playlistCheckVideo}
           apiOptions={{ videoId: video.id, orderBy: 'created' }}

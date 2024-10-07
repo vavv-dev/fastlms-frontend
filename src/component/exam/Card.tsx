@@ -4,7 +4,7 @@ import {
   examUpdateResource as updateResource,
 } from '@/api';
 import { ThreadDialog } from '@/component/comment';
-import { ResourceCard } from '@/component/common/ResourceCard';
+import { ResourceCard } from '@/component/common';
 import { formatDatetimeLocale, formatDuration, formatRelativeTime } from '@/helper/util';
 import {
   Box,
@@ -84,8 +84,8 @@ export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
             </Box>
           </Box>
         }
-        score={data.score ? data.score : data.status ? 0 : null}
-        passed={data.status === 'passed'}
+        score={data.score}
+        passed={data.passed}
         inProgress={data.status == 'in_progress'}
         avatarChildren={[
           t(...formatRelativeTime(data.modified)),
@@ -105,7 +105,7 @@ export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
           open={threadDialogOpen}
           setOpen={setThreadDialogOpen}
           threadProps={{
-            url: encodeURIComponent(`${location.origin}/exam/${data.id}`),
+            url: encodeURIComponent(`${window.location.origin}/exam/${data.id}`),
             title: data.title,
             owner: data.owner,
             kind: 'exam',

@@ -45,6 +45,7 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
       actions={<Button onClick={downlaodXlsxFile}>{t('Download report')}</Button>}
       renderContent={() => (
         <GridInfiniteScrollPage<ReportResponse, GetReportData>
+          disableSticky
           pageKey="answerlist"
           apiService={getReport}
           apiOptions={{

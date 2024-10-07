@@ -2,12 +2,13 @@ import { CancelablePromise } from '@/api';
 import { InfiniteScrollIndicator, PaginationActions, useInfinitePagination } from '@/component/common';
 import { homeUserState, userState } from '@/store';
 import { Add } from '@mui/icons-material';
-import { Box, BoxProps, Button, Typography, useTheme } from '@mui/material';
+import { Box, BoxProps, Button, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { spacerRefState } from '../layout';
 
 const orderingFamily = atomFamily(() => atom<string>(''));
 const searchFamily = atomFamily(() => atom<string>(''));
@@ -35,8 +36,10 @@ interface GridInfiniteScrollPageProps<Item, Params extends { orderBy?: string }>
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'inherit' | number;
   apiOptions?: Params;
   pageHeader?: React.ReactNode;
-  boxPadding?: number;
-  extraAction?: React.ReactNode | (() => React.ReactNode);
+  boxPadding?: BoxProps['p'];
+  extraAction?: React.ReactNode;
+  extraFilter?: React.ReactNode;
+  disableSticky?: boolean;
 }
 
 export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }>({
@@ -52,6 +55,8 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   pageHeader,
   boxPadding,
   extraAction,
+  extraFilter,
+  disableSticky,
 }: GridInfiniteScrollPageProps<Item, Params>) => {
   const { t } = useTranslation('common');
   const location = useLocation();
@@ -76,6 +81,10 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
     infiniteScrollRef,
   });
 
+  // update spacerRef height
+  const spacerRef = useAtomValue(spacerRefState);
+  useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
   useEffect(() => {
     if (!ordering && orderingOptions?.length) setOrdering(orderingOptions[0].value || '');
   }, [ordering]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -99,14 +108,22 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
         >
           {pageHeader && <Box sx={{ gridColumn: '1 / -1', width: '100%' }}>{pageHeader}</Box>}
 
-          <Box sx={{ gridColumn: '1 / -1', width: '100%' }}>
+          <Box
+            sx={{
+              gridColumn: '1 / -1',
+              width: '100%',
+              bgcolor: theme.palette.background.paper,
+              ...(!disableSticky && { position: 'sticky', top: spacerRef?.clientHeight, zIndex: 5 }),
+            }}
+          >
             <PaginationActions
               orderingOptions={orderingOptions || []}
               mutate={mutate}
               {...(disableSearch ? {} : { search, setSearch })}
               {...(orderingOptions?.length ? { ordering, setOrdering } : {})}
+              extraFilter={extraFilter}
             >
-              {typeof extraAction === 'function' ? extraAction() : extraAction}
+              {extraAction}
               <Typography variant="subtitle2" sx={{ px: 1, textAlign: 'right', minWidth: '5em' }}>
                 {t('{{ count }} items', { count: data?.[0]?.total || 0 })}
               </Typography>

@@ -1,5 +1,5 @@
 import { CancelablePromise } from '@/api';
-import { updateInfiniteCache } from './hooks';
+import { updateInfiniteCache } from './swr';
 
 const userActions = { bookmark: 'bookmarked', like: 'liked', flag: 'flagged' } as const;
 

@@ -281,6 +281,7 @@ const tabs: Array<Array<string>> = [
   [t('Video'), 'video'],
   [t('Short'), 'short'],
   [t('Playlist'), 'playlist'],
+  [t("Asset"), 'asset'],
   [t('Quiz'), 'quiz'],
   [t('Survey'), 'survey'],
   [t('Exam'), 'exam'],
@@ -356,7 +357,7 @@ const HomeTabs = () => {
         justifyContent: 'center',
         position: isFixed ? 'fixed' : 'sticky',
         top: spacerRef?.clientHeight,
-        zIndex: 5,
+        zIndex: 6,
         bgcolor: 'background.paper',
         width: ['100%', '-moz-available', '-webkit-fill-available', 'fill-available'],
       }}

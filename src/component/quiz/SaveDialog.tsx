@@ -8,7 +8,7 @@ import {
   quizGetOwnedQuestions as getOwnedQuestions,
   quizGetResource as getResource,
   quizUpdateResource as updateResource,
-  videoVideoSelector as videoSelector
+  videoVideoSelector as videoSelector,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
 import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
@@ -95,7 +95,7 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
   randomize: yup.boolean().default(true).label(t('Enable question randomize')).meta({ control: 'checkbox', grid: 6 }),
   enable_finding: yup.boolean().default(true).label(t('Enable finding')).meta({ control: 'checkbox', grid: 6 }),
   thumbnail: base64ThumbnailSchema(yup),
-  cutoff_percent: yup.number().default(0).label(t('Cutoff %')).meta({ control: 'number', grid: 6 }),
+  cutoff_percent: yup.number().typeError(REQUIRED).required(REQUIRED).label(t('Cutoff %')).meta({ control: 'number', grid: 6 }),
   start_date: yup
     .string()
     .required(REQUIRED)

@@ -72,7 +72,13 @@ export const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(location.state?.from ? location.state.from : `/u`);
+      const from = location.state?.from;
+      if (from) {
+        delete location.state.from;
+        navigate(from, { state: location.state });
+      } else {
+        navigate('/u', { state: location.state });
+      }
     }
   }, [user]); // eslint-disable-line
 

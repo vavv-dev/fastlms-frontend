@@ -14,11 +14,11 @@ import {
   VerifiedOutlined,
 } from '@mui/icons-material';
 import { Avatar, Box, Chip, Fade, IconButton, Input, Tab, Tabs, Theme, Tooltip, Typography, useMediaQuery } from '@mui/material';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { snackbarMessageState } from '../layout';
+import { snackbarMessageState, spacerRefState } from '../layout';
 
 export const Layout = () => {
   const { t } = useTranslation('u');
@@ -143,6 +143,10 @@ const VerticalTabs: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const spacerRef = useAtomValue(spacerRefState);
+
+  // update spacerRef height
+  useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
   const tabIndex = useMemo(() => {
     return tabs.findIndex(([, path]) => (path === '' ? pathname === '/u' : pathname.startsWith(`/u/${path}`)));
@@ -185,6 +189,10 @@ const VerticalTabs: React.FC = React.memo(() => {
       scrollButtons={true}
       allowScrollButtonsMobile
       sx={{
+        position: 'sticky',
+        bgcolor: 'background.paper',
+        zIndex: 6,
+        top: spacerRef?.clientHeight,
         minHeight: 'unset',
         maxWidth: '100%',
         alignSelf: { xs: 'center', md: 'flex-start' },

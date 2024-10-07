@@ -1,19 +1,20 @@
+import { AssetDisplayResponse } from '@/api';
 import { Dialog, DialogContent, useTheme } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Tracking } from './Tracking';
 
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
-  id: string;
+  data: AssetDisplayResponse;
 }
 
 // safe iframe url
-const URL_BASE = import.meta.env.VITE_CONTENT_URL_BASE;
+const URL_BASE = import.meta.env.VITE_ASSET_URL_BASE;
 
-export const ViewDialog = ({ open, setOpen, id }: Props) => {
+export const ViewDialog = ({ open, setOpen, data }: Props) => {
   const theme = useTheme();
   const [aspectRatio, setAspectRatio] = useState<string>('16/9');
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -29,6 +30,8 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
     };
   }, []);
 
+  const assetKind = data.asset_kind;
+
   if (!open) return null;
 
   return (
@@ -40,14 +43,20 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
       onClick={(e) => e.stopPropagation()}
       maxWidth="lg"
     >
-      <DialogContent sx={{ p: 0, display: 'flex' }}>
-        <iframe
-          ref={iframeRef}
-          src={`${URL_BASE}/${id}`}
-          style={{ width: '100%', aspectRatio: aspectRatio, border: 'none' }}
-          allowFullScreen
-        ></iframe>
+      <DialogContent sx={{ p: 0, display: 'flex', position: 'relative' }}>
+        {assetKind === 'html' && <HTMLViewer url={`${URL_BASE}/${data.id}`} aspectRatio={aspectRatio} />}
+        {/* pdf, ppt, epub ...*/}
+        <Tracking data={data} />
       </DialogContent>
     </Dialog>
   );
+};
+
+interface HTMLViewerProps {
+  url: string;
+  aspectRatio: string;
+}
+
+const HTMLViewer = ({ url, aspectRatio }: HTMLViewerProps) => {
+  return <iframe src={url} style={{ width: '100%', aspectRatio: aspectRatio, border: 'none' }} allowFullScreen></iframe>;
 };

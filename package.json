@@ -24,7 +24,7 @@
     "@hookform/resolvers": "^3.9.0",
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
-    "@mui/x-charts": "^7.18.0",
+    "@mui/x-charts": "^7.19.0",
     "@tiptap/core": "^2.8.0",
     "@tiptap/extension-color": "^2.8.0",
     "@tiptap/extension-heading": "^2.8.0",
@@ -71,7 +71,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "^0.53.7",
+    "@hey-api/openapi-ts": "^0.53.8",
     "@types/lodash": "^4.17.10",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",

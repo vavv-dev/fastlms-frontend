@@ -1,9 +1,9 @@
 import {
-  VideoDisplayResponse as DisplayResponse,
-  VideoGetVideoReportData as GetReportData,
-  VideoReportResponse as ReportResponse,
-  videoDownloadVideoReport as downloadReport,
-  videoGetVideoReport as getReport,
+  AssetDisplayResponse as DisplayResponse,
+  AssetGetAssetReportData as GetReportData,
+  AssetReportResponse as ReportResponse,
+  assetDownloadAssetReport as downloadReport,
+  assetGetAssetReport as getReport,
 } from '@/api';
 import { BaseDialog, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
 import { base64XlsxDownload, formatDatetimeLocale, toFixedHuman } from '@/helper/util';
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const ReportDialog = ({ open, setOpen, data }: Props) => {
-  const { t } = useTranslation('video');
+  const { t } = useTranslation('asset');
   const [asOf, setAsOf] = useState<string>('');
   const [upTo, setUpTo] = useState<string>('');
 

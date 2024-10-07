@@ -2,6 +2,7 @@ import i18next from '@/i18n';
 
 export { Card as CourseCard } from './Card';
 export { Displays as CourseDisplays } from './Displays';
+export { Outline as CourseOutline } from './Outline';
 export { View as CourseView } from './View';
 
 // gettext no-op

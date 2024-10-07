@@ -1,5 +1,5 @@
 import { searchSuggestVideoKeywords } from '@/api';
-import { useDebounce, useServiceImmutable } from '@/component/common/hooks';
+import { useDebounce, useServiceImmutable } from '@/component/common';
 import { getRegExp } from '@/helper/search';
 import { Search } from '@mui/icons-material';
 import { Autocomplete, Box, InputAdornment, SxProps, TextField } from '@mui/material';
@@ -60,7 +60,8 @@ export const Input = ({ sx }: { sx?: SxProps }) => {
         if (e.key === 'Enter') {
           e.defaultMuiPrevented = true;
           setOpen(false);
-          navigate(`/video/search?q=${inputValue}`);
+          if (!inputValue) navigate(`/video`);
+          else navigate(`/video/search?q=${inputValue}`);
         }
       }}
       size="small"

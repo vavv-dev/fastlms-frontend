@@ -3,7 +3,7 @@ import {
   videoGetDisplays as getDisplays,
   videoUpdateResource as updateResource,
 } from '@/api';
-import { ResourceCard } from '@/component/common/ResourceCard';
+import { ResourceCard } from '@/component/common';
 import { formatDuration, formatRelativeTime, humanNumber } from '@/helper/util';
 import { StreamOutlined } from '@mui/icons-material';
 import { Box, BoxProps, Typography, useTheme } from '@mui/material';

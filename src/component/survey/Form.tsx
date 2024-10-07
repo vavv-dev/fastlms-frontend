@@ -4,8 +4,13 @@ import {
   surveyGetAssess as getAssess,
   surveySubmitAssess as submitAssess,
 } from '@/api';
-import { Form as CommonForm, SelectGroupControl, TextFieldControl, useServiceImmutable } from '@/component/common';
-import { useScrollToFirstError } from '@/component/common/hooks';
+import {
+  Form as CommonForm,
+  SelectGroupControl,
+  TextFieldControl,
+  useScrollToFirstError,
+  useServiceImmutable,
+} from '@/component/common';
 import i18next from '@/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Divider, Stack, Tooltip } from '@mui/material';

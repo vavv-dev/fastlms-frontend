@@ -1,5 +1,5 @@
 import { VideoGetViewData as GetViewData, VideoGetViewResponse as GetViewResponse, videoGetView as getView } from '@/api';
-import { useServiceImmutable } from '@/component/common/hooks';
+import { useServiceImmutable } from '@/component/common';
 import { Box, useTheme } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef } from 'react';

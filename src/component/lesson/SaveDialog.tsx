@@ -18,21 +18,21 @@ const t = (key: string) => i18next.t(key, { ns: 'lesson' });
 
 const REQUIRED = t('This field is required.');
 
-const contentSchema: yup.ObjectSchema<Resource> = yup.object({
+const resourceSchema: yup.ObjectSchema<Resource> = yup.object({
   kind: yup
     .string()
     .required(REQUIRED)
     .default('video')
-    .oneOf(['quiz', 'survey', 'video', 'exam', 'content'])
+    .oneOf(['quiz', 'asset', 'survey', 'video', 'exam'])
     .label(t('Kind'))
     .meta({
       control: 'select',
       options: [
         { value: 'video', label: t('Video') },
+        { value: 'asset', label: t('Asset') },
         { value: 'quiz', label: t('Quiz') },
         { value: 'survey', label: t('Survey') },
         { value: 'exam', label: t('Exam') },
-        { value: 'content', label: t('Content') },
       ],
       readOnly: true,
     }),
@@ -43,7 +43,7 @@ const contentSchema: yup.ObjectSchema<Resource> = yup.object({
 
 const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
   title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text' }),
-  description: yup.string().required(REQUIRED).default('').label(t('Description')).meta({ control: 'editor', multiline: true }),
+  description: yup.string().default('').label(t('Description')).meta({ control: 'editor', multiline: true }),
   is_public: yup
     .boolean()
     .default(false)
@@ -74,10 +74,25 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .transform((v) => (v ? v : null))
     .label(t('End date'))
     .meta({ control: 'datetime-local', grid: 6 }),
+  grading_method: yup
+    .string()
+    .required(REQUIRED)
+    .oneOf(['none', 'progress', 'score'])
+    .label(t('Grading method'))
+    .meta({
+      control: 'select',
+      options: [
+        { value: 'none', label: t('No grading') },
+        { value: 'progress', label: t('Progress') },
+        { value: 'score', label: t('Score') },
+      ],
+      helperText: t('If video or asset is included, select progress. Otherwise, select score.'),
+      grid: 6,
+    }),
   thumbnail: base64ThumbnailSchema(yup),
   resources: yup
     .array()
-    .of(contentSchema)
+    .of(resourceSchema)
     .label(t('Resources'))
     .min(1, t('At least one item is required'))
     .default([])

@@ -3,7 +3,7 @@ import {
   surveyGetDisplays as getDisplays,
   surveyUpdateResource as updateResource,
 } from '@/api';
-import { ResourceCard } from '@/component/common/ResourceCard';
+import { ResourceCard } from '@/component/common';
 import { formatRelativeTime, textEllipsisCss } from '@/helper/util';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
@@ -53,8 +53,8 @@ export const Card = ({ data, hideAvatar }: Props) => {
             </Box>
           )
         }
-        score={data.status == 'passed' ? 100 : data.status ? 0 : null}
-        passed={data.status == 'passed'}
+        score={data.score}
+        passed={data.passed}
         inProgress={data.status == 'in_progress'}
         avatarChildren={[t(...formatRelativeTime(data.modified)), t('{{ count }} answers', { count: data.submission_count })]}
         hideAvatar={hideAvatar}

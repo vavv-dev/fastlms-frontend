@@ -9,7 +9,7 @@ import {
   videoStartWatch as startWatch,
   videoUpdateWatch as updateWatch,
 } from '@/api';
-import { useServiceImmutable } from '@/component/common/hooks';
+import { useServiceImmutable } from '@/component/common';
 import { formatDuration, toFixedHuman } from '@/helper/util';
 import { userState } from '@/store';
 import { SkipPreviousOutlined } from '@mui/icons-material';
@@ -229,29 +229,7 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
 
     const newBitmap = watchBitmapsRef.current[id];
     if (newBitmap) {
-      // check if different from watchBitmap
-      // let diff = false;
-
-      // why not working?
-
-      // const arrayBuffer = await watchBitmap?.arrayBuffer();
-      // if (arrayBuffer) {
-      //   const uint8Array = new Uint8Array(arrayBuffer);
-      //   for (let i = 0; i < uint8Array.length && i * 8 < newBitmap.length; i++) {
-      //     for (let j = 7; j >= 0 && i * 8 + (7 - j) < newBitmap.length; j--) {
-      //       const oldBit = (uint8Array[i] >> j) & 1;
-      //       console.log(oldBit, newBitmap[i * 8 + (7 - j)]);
-      //       if (!oldBit && newBitmap[i * 8 + (7 - j)] !== oldBit) {
-      //         diff = true;
-      //         break;
-      //       }
-      //     }
-      //     if (diff) break;
-      //   }
-      // }
-
-      // if (diff) {
-      // convert newBitmap bitarray to bytes
+      // Convert newBitmap bitarray to bytes
       const byteArray = new Uint8Array(Math.ceil(newBitmap.length / 8));
       for (let i = 0; i < newBitmap.length; i += 8) {
         let byte = 0;
@@ -263,11 +241,23 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
         byteArray[i / 8] = byte;
       }
 
-      watch['length'] = newBitmap.length;
-      watch['watch_bitmap'] = Array.from(byteArray)
+      // Convert byteArray to hex string
+      const newBitmapHex = Array.from(byteArray)
         .map((byte) => byte.toString(16).padStart(2, '0'))
-        .join('') as unknown as Blob;
-      // }
+        .join('');
+
+      // Check if different from existing watchBitmap
+      if (watchBitmap) {
+        const existingBitmapHex = await blobToHex(watchBitmap);
+        if (newBitmap.length !== watchBitmap.size || newBitmapHex !== existingBitmapHex) {
+          watch['length'] = newBitmap.length;
+          watch['watch_bitmap'] = newBitmapHex as unknown as Blob;
+        }
+      } else {
+        // If there's no existing watchBitmap, always update
+        watch['length'] = newBitmap.length;
+        watch['watch_bitmap'] = newBitmapHex as unknown as Blob;
+      }
     }
 
     updateWatch({ id, requestBody: watch })
@@ -275,6 +265,15 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
         // TODO: update cache
       })
       .catch((e) => console.error(e));
+  };
+
+  // Helper function to convert Blob to hex string
+  const blobToHex = async (blob: Blob): Promise<string> => {
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    return Array.from(uint8Array)
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
   };
 
   /**

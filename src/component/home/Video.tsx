@@ -2,27 +2,32 @@ import {
   VideoDisplayResponse as DisplayResponse,
   videoGetDisplays as getDisplays,
   VideoGetDisplaysData as GetDisplaysData,
+  videoGetTags as getTags,
+  VideoGetTagsData as GetTagsData,
+  VideoGetTagsResponse as GetTagsResponse,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
-import { Card } from '@/component/video/Card';
+import { GridInfiniteScrollPage, useServiceImmutable } from '@/component/common';
+import { VideoCard } from '@/component/video';
+import { ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
+import { atom, useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
+const tagState = atom<string>('');
+
 export const Video = () => {
-  const { t } = useTranslation('video');
+  const { data: tagNames } = useServiceImmutable<GetTagsData, GetTagsResponse>(getTags, { limit: 8 });
+  const [tag, setTag] = useAtom(tagState);
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       disableSearch
       pageKey="video"
-      orderingOptions={[
-        { value: 'modified', label: t('Recently modified') },
-        { value: 'title', label: t('Title asc') },
-      ]}
       apiService={getDisplays}
+      apiOptions={{ tag: tag ? encodeURIComponent(tag) : null, size: 24 }}
       renderItem={({ data }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => (
-            <Card
+            <VideoCard
               key={item.id}
               data={{ ...item, video_kind: 'video' }}
               sx={{ mb: 2, '& .card-banner': { borderRadius: '16px', overflow: 'hidden' } }}
@@ -39,6 +44,50 @@ export const Video = () => {
           smm: 'repeat(auto-fill, minmax(308px, 1fr))',
         },
       }}
+      extraFilter={tagNames && <TagGroup tagNames={tagNames} tag={tag} setTag={setTag} />}
     />
+  );
+};
+
+interface TagGroupProps {
+  tagNames: string[];
+  tag: string | null;
+  setTag: (tag: string) => void;
+}
+
+const TagGroup = ({ tagNames, tag, setTag }: TagGroupProps) => {
+  const { t } = useTranslation('video');
+  const theme = useTheme();
+
+  return (
+    <ToggleButtonGroup
+      value={tag}
+      exclusive
+      onChange={(_, v) => setTag(v ? v : '')}
+      sx={{
+        '& .MuiButtonBase-root': {
+          whiteSpace: 'nowrap',
+          px: 2,
+          py: 0.3,
+          my: 1,
+          fontWeight: 'bold',
+          '&.Mui-selected': {
+            color: 'background.paper',
+            bgcolor: theme.palette.text.primary,
+            '&:hover': { bgcolor: theme.palette.text.primary },
+          },
+          '&.MuiButtonBase-root ': { borderRadius: '8px', borderColor: theme.palette.divider },
+          '&.MuiButtonBase-root+.MuiButtonBase-root': { ml: 1 },
+        },
+      }}
+    >
+      <ToggleButton value="">{t('All')}</ToggleButton>
+      <ToggleButton value="featured">{t('featured')}</ToggleButton>
+      {tagNames.map((name) => (
+        <ToggleButton key={name} value={name}>
+          {name}
+        </ToggleButton>
+      ))}
+    </ToggleButtonGroup>
   );
 };

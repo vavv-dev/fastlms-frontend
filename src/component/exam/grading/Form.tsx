@@ -6,8 +6,7 @@ import {
   examGetGradingSubmissions as getGradingSubmissions,
   examSubmitGrading as submitGrading,
 } from '@/api';
-import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
-import { Form as CommonForm, TextFieldControl } from '@/component/common/FormHelper';
+import { Form as CommonForm, TextFieldControl, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import i18next from '@/i18n';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorOutlined } from '@mui/icons-material';

@@ -1,4 +1,5 @@
 import {
+  AssetDisplayResponse,
   CourseDisplayResponse,
   ExamDisplayResponse,
   ChannelGetContentData as GetContentData,
@@ -18,6 +19,7 @@ import { PlaylistCard, VideoCard } from '@/component/video';
 import { Box, Divider, Stack, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AssetCard } from '../asset';
 
 const GIRD_SIZE: Record<string, number[]> = {
   short: [210, 4],
@@ -68,6 +70,8 @@ export const Home = () => {
                         sx={{ '& > .card-banner': { mt: '6px' } }}
                       />
                     );
+                  } else if (kind === 'asset') {
+                    return <AssetCard key={resource.id} data={resource as AssetDisplayResponse} />;
                   } else if (kind === 'quiz') {
                     return <QuizCard key={resource.id} data={resource as QuizDisplayResponse} />;
                   } else if (kind === 'survey') {

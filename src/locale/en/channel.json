@@ -1,4 +1,5 @@
 {
+  "Asset": "Asset",
   "Comment": "Comment",
   "Course": "Course",
   "Exam": "Exam",
@@ -21,6 +22,7 @@
   "Upload banner": "Upload banner",
   "Upload thumbnail": "Upload thumbnail",
   "Video": "Video",
+  "asset": "asset",
   "course": "course",
   "exam": "exam",
   "lesson": "lesson",

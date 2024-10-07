@@ -20,7 +20,8 @@ export { ResourceActionMenu } from './ResourceActionMenu';
 export { ResourceCard } from './ResourceCard';
 export { SaveResourceDialog } from './SaveResourceDialog';
 export { WithAvatar } from './WithAvatar';
-export { updateInfiniteCache, useDebounce, useFixMouseLeave, useInfinitePagination, useServiceImmutable } from './hooks';
+export { useDebounce, useFixMouseLeave, useInfinitePagination, useScrollToFirstError, useServiceImmutable } from './hooks';
+export { updateInfiniteCache } from './swr';
 export { createToggleAction } from './toggleUserAction';
 export { uppyFamily } from './uppy';
 
@@ -40,4 +41,14 @@ void [
   i18next.t('unit.m'),
   i18next.t('unit.tm'),
   i18next.t('unit.hm'),
+
+  i18next.t('video'),
+  i18next.t('short'),
+  i18next.t('playlist'),
+  i18next.t('asset'),
+  i18next.t('quiz'),
+  i18next.t('survey'),
+  i18next.t('exam'),
+  i18next.t('lesson'),
+  i18next.t('course'),
 ];

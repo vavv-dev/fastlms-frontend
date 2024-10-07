@@ -45,7 +45,6 @@
   "Highlight color": "Highlight color",
   "Horizontal rule": "Horizontal rule",
   "If you change to public, everyone can see this resource.": "If you change to public, everyone can see this resource.",
-  "In Progress": "In Progress",
   "Indent": "Indent",
   "Insert column after": "Insert column after",
   "Insert column before": "Insert column before",
@@ -107,6 +106,7 @@
   "Video imported successfully": "Video imported successfully",
   "add_member": "add_member",
   "add_roster": "add_roster",
+  "asset": "asset",
   "assignment": "assignment",
   "browse files": "browse files",
   "content": "content",
@@ -154,5 +154,6 @@
   "update_roster": "update_roster",
   "video": "video",
   "{{ count }} items_one": "{{ count }} items",
-  "{{ count }} items_other": "{{ count }} items"
+  "{{ count }} items_other": "{{ count }} items",
+  "{{ kind }} is in progress.": "{{ kind }} is in progress."
 }

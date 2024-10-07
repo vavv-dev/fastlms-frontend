@@ -4,7 +4,7 @@ import {
   playlistResumePlaylist as resumePlay,
   playlistUpdateResource as updateResource,
 } from '@/api';
-import { ResourceCard } from '@/component/common/ResourceCard';
+import { ResourceCard } from '@/component/common';
 import { formatDuration, formatRelativeTime } from '@/helper/util';
 import { Box, BoxProps, Button, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -109,18 +109,16 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
       sx={{ ...sx, '& .card-banner': { overflow: 'visible' } }}
       footer={
         data.progress && (
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'flex-end', position: 'relative' }}>
-            <Button
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                resume();
-              }}
-              sx={{ minWidth: 0, alignSelf: 'flex-start', py: 0 }}
-            >
-              {t('Resume')}
-            </Button>
-          </Box>
+          <Button
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              resume();
+            }}
+            sx={{ minWidth: 0, alignSelf: 'flex-start', py: 0 }}
+          >
+            {t('Resume')}
+          </Button>
         )
       }
       partialUpdateService={updateResource}

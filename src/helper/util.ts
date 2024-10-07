@@ -174,6 +174,7 @@ export function generateRandomDarkColor(seedString: string | undefined, factor =
  * @returns The formatted date string
  */
 export function formatYYYMMDD(d: string | Date): string {
+  if (!d) return '';
   const date = typeof d === 'string' ? new Date(d) : d;
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -240,7 +241,7 @@ export const base64XlsxDownload = (text: string, filename: string) => {
  */
 export const toFixedHuman = (num: number | null | undefined, decimalPlaces: number) => {
   if (num == null || num == undefined) {
-    return '';
+    return '0';
   }
   return parseFloat(num.toFixed(decimalPlaces)).toString();
 };

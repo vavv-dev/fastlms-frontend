@@ -2,7 +2,6 @@ import { isObject } from 'lodash';
 import debounce from 'lodash/debounce';
 import { useEffect, useRef, useState } from 'react';
 import { FieldErrors, FieldValues, UseFormWatch } from 'react-hook-form';
-import { INFINITE_PREFIX, cache as globalCache, mutate as globalMutate } from 'swr/_internal';
 import useSWRImmutable from 'swr/immutable';
 import useSWRInfinite, { SWRInfiniteConfiguration } from 'swr/infinite';
 
@@ -159,53 +158,6 @@ export const useScrollToFirstError = (errors: FieldErrors) => {
       }
     }
   }, [errors]);
-};
-
-type NestedItem<T> = T & { [field: string]: Array<T> };
-
-export const updateInfiniteCache = <T extends { id: number | string }>(
-  listService: () => Promise<{ items: T[]; page: number; total: number }>,
-  item: Partial<T | NestedItem<T>>,
-  mode: 'update' | 'create' | 'delete',
-  children?: string,
-  isPin?: boolean,
-) => {
-  const updateNestedItems = (items: T[]): T[] => {
-    let found = undefined;
-    const newItems = items
-      .map((i) => {
-        if (i.id === item.id) {
-          // need to merge item with i to keep the nested items ?
-          found = { ...i, ...item };
-          return mode === 'delete' ? null : found;
-        }
-        if (children && Array.isArray(i[children as keyof T])) {
-          return { ...i, [children]: updateNestedItems(i[children as keyof T] as Array<T>) };
-        }
-        return i;
-      })
-      .filter(Boolean) as T[];
-    return isPin && found ? [found, ...newItems.filter((i) => i.id !== item.id)] : newItems;
-  };
-
-  Array.from(globalCache.keys()).forEach((key) => {
-    if (key.startsWith(`${INFINITE_PREFIX}${listService.name}`)) {
-      const data: Array<{ items: T[]; page: number; total: number }> = globalCache.get(key)?.data;
-      let updated = data;
-
-      if (mode === 'update' || mode === 'delete') {
-        updated = data.map((d) => ({
-          ...d,
-          items: updateNestedItems(d.items),
-          total: mode === 'delete' ? d.total - 1 : d.total,
-        }));
-      } else if (mode === 'create') {
-        updated = [{ ...data[0], items: [item as T, ...data[0].items], total: data[0].total + 1 }, ...data.slice(1)];
-      }
-
-      globalMutate(key, updated, { revalidate: false });
-    }
-  });
 };
 
 export const useScrollToNewElement = <T extends FieldValues>(watch: UseFormWatch<T>) => {

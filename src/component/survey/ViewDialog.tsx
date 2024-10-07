@@ -1,11 +1,13 @@
 import {
   SurveyAssessResponse as AssessResponse,
+  SurveyDisplayResponse as DisplayResponse,
   SurveyGetAssessData as GetAssessData,
   surveyDeleteAssess as deleteAssess,
   surveyGetAssess as getAssess,
+  surveyGetDisplays as getDisplays,
   surveyReadyAssess as readyAssess,
 } from '@/api';
-import { BaseDialog, WithAvatar, useServiceImmutable } from '@/component/common';
+import { BaseDialog, WithAvatar, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { formatDatetimeLocale } from '@/helper/util';
 import { ArrowRight, BarChartOutlined, EditNoteOutlined, KeyboardArrowRight, Refresh } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableContainer, TableRow, useTheme } from '@mui/material';
@@ -14,9 +16,9 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { VideoPlayer, VideoTracking } from '../video';
 import { Finding } from './Finding';
 import { Form } from './Form';
-import { VideoPlayer, VideoTracking } from '../video';
 
 interface Props {
   open: boolean;
@@ -38,6 +40,7 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
     readyAssess({ id: data.id })
       .then((updated: AssessResponse) => {
         mutate(updated, { revalidate: false });
+        updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })
       .catch((error) => {
         // TODO toast

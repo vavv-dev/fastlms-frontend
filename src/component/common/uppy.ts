@@ -1,4 +1,4 @@
-import { contentPresignedUploadUrl } from '@/api';
+import { assetPresignedUploadUrl } from '@/api';
 import i18next from '@/i18n';
 import AwsS3 from '@uppy/aws-s3';
 import Uppy from '@uppy/core';
@@ -81,27 +81,27 @@ const uppyLocale = {
   },
 };
 
-const CONTENT_MAX_SIZE_MB = import.meta.env.VITE_CONTENT_MAX_SIZE_MB;
-const CONTENT_MAX_SIZE = parseInt(CONTENT_MAX_SIZE_MB || '200') * 1024 * 1024; // 200MB
-const CONTENT_SIZE_LIMIT_MB = import.meta.env.VITE_CONTENT_SIZE_LIMIT_MB;
-const CONTENT_SIZE_LIMIT = parseInt(CONTENT_SIZE_LIMIT_MB || '1024') * 1024 * 1024; // 1GB
+const ASSET_MAX_SIZE_MB = import.meta.env.VITE_ASSET_MAX_SIZE_MB;
+const ASSET_MAX_SIZE = parseInt(ASSET_MAX_SIZE_MB || '200') * 1024 * 1024; // 200MB
+const ASSET_SIZE_LIMIT_MB = import.meta.env.VITE_ASSET_SIZE_LIMIT_MB;
+const ASSET_SIZE_LIMIT = parseInt(ASSET_SIZE_LIMIT_MB || '1024') * 1024 * 1024; // 1GB
 
 // upload state
-const createUppy = (contentId: string) => {
+const createUppy = (assetId: string) => {
   const uppy = new Uppy({
     locale: uppyLocale,
     autoProceed: false,
     restrictions: {
-      maxFileSize: CONTENT_MAX_SIZE,
+      maxFileSize: ASSET_MAX_SIZE,
       maxNumberOfFiles: null,
       allowedFileTypes: ['*/*'],
     },
     onBeforeFileAdded: (file) => {
       const totalSize = uppy.getFiles().reduce((total, f) => total + (f.size || 0), 0);
       const newTotalSize = totalSize + (file.size || 0);
-      if (newTotalSize > CONTENT_SIZE_LIMIT) {
+      if (newTotalSize > ASSET_SIZE_LIMIT) {
         uppy.info(
-          t(`The total size of the files exceeds the limit of {{ max }}MB.`, { max: CONTENT_SIZE_LIMIT_MB }),
+          t(`The total size of the files exceeds the limit of {{ max }}MB.`, { max: ASSET_SIZE_LIMIT_MB }),
           'error',
           5000,
         );
@@ -126,8 +126,8 @@ const createUppy = (contentId: string) => {
     },
 
     async getUploadParameters(file) {
-      const response = await contentPresignedUploadUrl({
-        contentId,
+      const response = await assetPresignedUploadUrl({
+        assetId,
         // use relativePath for the filename
         filename: (file.meta.relativePath || file.meta.webkitRelativePath || file.name) as string,
         contentType: file.type,

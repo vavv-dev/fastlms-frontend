@@ -83,11 +83,31 @@ const N_VALIDATION = t(`Input number of question kind to issue.`);
 
 const questionCompositionSchema: yup.ObjectSchema<ResourceQuestionComposition> = yup
   .object({
-    single_selection: yup.number().typeError(N_VALIDATION).label(t('Single selection')).meta({ control: 'number', grid: 3 }),
-    ox_selection: yup.number().typeError(N_VALIDATION).label(t('OX selection')).meta({ control: 'number', grid: 3 }),
-    text_input: yup.number().typeError(N_VALIDATION).label(t('Text input')).meta({ control: 'number', grid: 3 }),
-    number_input: yup.number().typeError(N_VALIDATION).label(t('Number input')).meta({ control: 'number', grid: 3 }),
-    essay: yup.number().typeError(N_VALIDATION).label(t('Essay')).meta({ control: 'number', grid: 3 }),
+    single_selection: yup
+      .number()
+      .typeError(N_VALIDATION)
+      .required(REQUIRED)
+      .label(t('Single selection'))
+      .meta({ control: 'number', grid: 3 }),
+    ox_selection: yup
+      .number()
+      .typeError(N_VALIDATION)
+      .required(REQUIRED)
+      .label(t('OX selection'))
+      .meta({ control: 'number', grid: 3 }),
+    text_input: yup
+      .number()
+      .typeError(N_VALIDATION)
+      .required(REQUIRED)
+      .label(t('Text input'))
+      .meta({ control: 'number', grid: 3 }),
+    number_input: yup
+      .number()
+      .typeError(N_VALIDATION)
+      .required(REQUIRED)
+      .label(t('Number input'))
+      .meta({ control: 'number', grid: 3 }),
+    essay: yup.number().typeError(N_VALIDATION).required(REQUIRED).label(t('Essay')).meta({ control: 'number', grid: 3 }),
   })
   .label(t('Question composition'));
 
@@ -117,7 +137,7 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .label(t('Duration'))
     .required(REQUIRED)
     .meta({ control: 'number', grid: 4 }),
-  cutoff_percent: yup.number().default(0).label(t('Cutoff %')).meta({ control: 'number', grid: 4 }),
+  cutoff_percent: yup.number().typeError(REQUIRED).required(REQUIRED).label(t('Cutoff %')).meta({ control: 'number', grid: 4 }),
   is_public: yup
     .boolean()
     .default(false)
