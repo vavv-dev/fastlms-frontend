@@ -261,7 +261,7 @@ export const Outline = () => {
         </Box>
       </Box>
       {enrollDialogOpen && (
-        <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} courseId={data.id} courseTitle={data.title} />
+        <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} title={data.title} />
       )}
     </Box>
   );

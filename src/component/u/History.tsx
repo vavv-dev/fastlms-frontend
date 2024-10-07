@@ -66,7 +66,7 @@ const Card = ({ item }: { item: HistoryDisplayResponse }) => {
     case 'video':
       return <VideoCard data={{ ...(item as VideoDisplayResponse), video_kind: 'video' }} />;
     case 'asset':
-      return <AssetCard data={{ ...(item as AssetDisplayResponse) }} />;
+      return <AssetCard data={item as AssetDisplayResponse} />;
     case 'quiz':
       return <QuizCard data={item as QuizDisplayResponse} />;
     case 'survey':

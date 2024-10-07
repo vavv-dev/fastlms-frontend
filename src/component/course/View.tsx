@@ -10,18 +10,7 @@ import {
 import { useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { parseLocalStorage, textEllipsisCss, toFixedHuman } from '@/helper/util';
 import { ArrowDropDown, ArrowDropUp, Refresh } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  IconButton,
-  Step,
-  StepContent,
-  StepLabel,
-  Stepper,
-  Theme,
-  Typography,
-  useMediaQuery
-} from '@mui/material';
+import { Box, Button, IconButton, Step, StepContent, StepLabel, Stepper, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { useEffect, useMemo, useState } from 'react';
@@ -41,7 +30,7 @@ export const View = () => {
   const { id } = useParams();
   const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
   const { data: lessons, mutate: lessonMutate } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
-    apiOptions: { course: id, size: data?.lesson_count },
+    apiOptions: data?.enrolled ? { course: id, size: 100 } : {},
     apiService: lessonGetDisplays,
   });
   const [showAll, setShowAll] = useState(false);
@@ -86,7 +75,7 @@ export const View = () => {
     );
   }, [lessons, data, t]);
 
-  if (!id || !data) return null;
+  if (!id || !data || !data.enrolled) return null;
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>

@@ -63,9 +63,6 @@ export const Control = ({ id }: { id: string }) => {
         >
           <Box sx={{ flexGrow: 1 }} />
           <Stack direction="row" divider={<Divider orientation="vertical" flexItem />} spacing={1}>
-            <Typography variant="body2">
-              {t('Views')} {humanNumber(data.watch_count)}
-            </Typography>
             {data.modified && <Typography variant="body2">{t(...formatRelativeTime(new Date(data.modified)))}</Typography>}
           </Stack>
           <IconButton onClick={() => action('bookmark', data)}>

@@ -23,11 +23,7 @@ export const Displays = () => {
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="exam"
-      orderingOptions={[
-        { value: 'created', label: t('Recently created') },
-        { value: 'modified', label: t('Recently modified') },
-        { value: 'submission_count', label: t('Submission count') },
-      ]}
+      orderingOptions={[{ value: 'modified', label: t('Recently modified') }]}
       CreateItemComponent={SaveDialog}
       apiService={getDisplays}
       renderItem={({ data }) =>

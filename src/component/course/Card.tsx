@@ -21,7 +21,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate(`/course/${data.id}`);
+    navigate(data.enrolled ? `/course/${data.id}` : `/course/${data.id}/outline`);
   };
 
   return (
@@ -41,10 +41,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
         }
         score={data.score}
         passed={data.passed}
-        avatarChildren={[
-          t(...formatRelativeTime(data.modified)),
-          t('{{ count }} enrollments', { count: data.enrollment_count }),
-        ]}
+        avatarChildren={[t(...formatRelativeTime(data.modified))]}
         hideAvatar={hideAvatar}
         actionMenu={<ActionMenu data={data} />}
         autoColor

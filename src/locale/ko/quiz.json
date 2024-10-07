@@ -40,7 +40,7 @@
   "Questions": "질문",
   "Quiz": "퀴즈",
   "Quiz result finding": "퀴즈 결과 보기",
-  "Recently created": "최근 생성",
+  "Recently modified": "최근 수정",
   "Remove bookmark": "북마크 삭제",
   "Reset": "초기화",
   "Result": "결과",
@@ -53,7 +53,6 @@
   "Start date": "시작 날짜",
   "Start time": "시작 시간",
   "Status": "상태",
-  "Submission desc": "최근 제출",
   "Submission list": "제출 목록",
   "Submit date": "제출",
   "Submit your answers": "응답 제출 하기",
@@ -70,7 +69,5 @@
   "number_input": "숫자 입력",
   "points": "점",
   "single_selection": "객관식",
-  "{{ count }} Question_other": "{{ count }} 문제",
-  "{{ count }} answers_other": "응답 {{ count }}",
   "{{ num }} Points": "{{ num }} 점"
 }

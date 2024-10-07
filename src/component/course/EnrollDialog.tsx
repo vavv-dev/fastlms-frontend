@@ -1,5 +1,5 @@
-import { courseEnroll } from '@/api';
-import { BaseDialog } from '@/component/common';
+import { courseEnroll, courseGetDisplays } from '@/api';
+import { BaseDialog, updateInfiniteCache } from '@/component/common';
 import { userState } from '@/store';
 import { Box, Button, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
@@ -10,11 +10,11 @@ import { useNavigate } from 'react-router-dom';
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
-  courseId: string;
-  courseTitle: string;
+  id: string;
+  title: string;
 }
 
-export const EnrollDialog = ({ open, setOpen, courseId, courseTitle }: Props) => {
+export const EnrollDialog = ({ open, setOpen, id, title }: Props) => {
   const { t } = useTranslation('course');
   const navigate = useNavigate();
   const user = useAtomValue(userState);
@@ -27,9 +27,10 @@ export const EnrollDialog = ({ open, setOpen, courseId, courseTitle }: Props) =>
   };
 
   const enroll = async () => {
-    courseEnroll({ id: courseId })
+    courseEnroll({ id })
       .then(() => {
         setResult(t('You are now enrolled in this course.'));
+        updateInfiniteCache(courseGetDisplays, { id, enrolled: true }, 'update');
       })
       .catch((err) => {
         switch (err.status) {
@@ -56,7 +57,7 @@ export const EnrollDialog = ({ open, setOpen, courseId, courseTitle }: Props) =>
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={`${t('Enroll to {{ title }}', { title: courseTitle })}`}
+      title={`${t('Enroll to {{ title }}', { title })}`}
       fullWidth
       maxWidth="sm"
       renderContent={() => (
@@ -70,7 +71,7 @@ export const EnrollDialog = ({ open, setOpen, courseId, courseTitle }: Props) =>
                 <Typography variant="body2" color={error ? 'error' : 'success'}>
                   {result}
                 </Typography>
-                {!error && <Button onClick={() => navigate(`/course/${courseId}`)}>{t('Go to course learning page')}</Button>}
+                {!error && <Button onClick={() => navigate(`/course/${id}`)}>{t('Go to course learning page')}</Button>}
               </Box>
             )}
 

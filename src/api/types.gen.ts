@@ -13,7 +13,6 @@ export type AssetDisplayResponse = {
     uploaded: boolean;
     duration: number;
     cutoff_progress: number;
-    watch_count: number;
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
@@ -248,14 +247,13 @@ export type CourseDisplayResponse = {
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
-    lesson_count: number;
-    enrollment_count: number;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
+    enrolled: boolean;
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
@@ -305,7 +303,7 @@ export type CourseResourceCreateRequest = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date?: (string | null);
+    end_date: (string | null);
     thumbnail?: (string | null);
     preview: string;
     target: string;
@@ -314,7 +312,7 @@ export type CourseResourceCreateRequest = {
     cutoff_percent: number;
     marketing_url: string;
     enrollment_start: string;
-    enrollment_end?: (string | null);
+    enrollment_end: (string | null);
     registration_limit: number;
     entrance_verification: boolean;
     invitation_required: boolean;
@@ -329,7 +327,7 @@ export type CourseResourceResponse = {
     is_public: boolean;
     featured: boolean;
     start_date: string;
-    end_date?: (string | null);
+    end_date: (string | null);
     thumbnail?: (string | null);
     preview: string;
     target: string;
@@ -338,7 +336,7 @@ export type CourseResourceResponse = {
     cutoff_percent: number;
     marketing_url: string;
     enrollment_start: string;
-    enrollment_end?: (string | null);
+    enrollment_end: (string | null);
     registration_limit: number;
     entrance_verification: boolean;
     invitation_required: boolean;
@@ -450,9 +448,6 @@ export type ExamDisplayResponse = {
     end_date: (string | null);
     owner: ExamOwner;
     modified: string;
-    submission_count: number;
-    passed_count: number;
-    question_count: number;
     exam_kind: ExamKind;
     duration: number;
     cutoff_percent: number;
@@ -1166,9 +1161,6 @@ export type QuizDisplayResponse = {
     resources: Array<QuizEmbedResource>;
     owner: QuizOwner;
     modified: string;
-    submission_count: number;
-    passed_count: number;
-    question_count: number;
     thumbnail: string;
     kind: LearningResourceKind;
     bookmark_count: number;
@@ -1288,7 +1280,6 @@ export type QuizResourceResponse = {
     id: string;
     owner: QuizOwner;
     modified: string;
-    question_count: number;
 };
 
 export type QuizResourceUpdateRequest = {
@@ -1393,8 +1384,6 @@ export type SurveyDisplayResponse = {
     resources: Array<SurveyEmbedResource>;
     owner: SurveyOwner;
     modified: string;
-    submission_count: number;
-    question_count: number;
     thumbnail: string;
     kind: LearningResourceKind;
     bookmark_count: number;
@@ -1502,7 +1491,6 @@ export type SurveyResourceResponse = {
     id: string;
     owner: SurveyOwner;
     modified: string;
-    question_count: number;
 };
 
 export type SurveyResourceUpdateRequest = {
@@ -1595,7 +1583,6 @@ export type VideoDisplayResponse = {
     uploader: string;
     duration: (number | null);
     cutoff_progress: number;
-    watch_count: number;
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
@@ -1669,7 +1656,6 @@ export type VideoSearchResultResponse = {
     uploader: string;
     duration: (number | null);
     cutoff_progress: number;
-    watch_count: number;
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
@@ -1713,7 +1699,6 @@ export type VideoViewResponse = {
     uploader: string;
     duration: (number | null);
     cutoff_progress: number;
-    watch_count: number;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -1899,7 +1884,7 @@ export type CommentToggleActionResponse = (unknown);
 
 export type VideoGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'title' | 'modified';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     playlistId?: (string | null);
@@ -2047,7 +2032,7 @@ export type VideoVideoSelectorResponse = (Array<VideoSelectorResponse>);
 
 export type PlaylistGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'title' | 'modified';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2278,7 +2263,7 @@ export type AssetHtmlViewResponse = (string);
 
 export type QuizGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'created' | 'submission_count';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2398,7 +2383,7 @@ export type QuizGetOwnedQuestionsResponse = (Array<QuizResourceQuestionResource>
 
 export type SurveyGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'created' | 'submission_count';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2518,7 +2503,7 @@ export type SurveyGetOwnedQuestionsResponse = (Array<SurveyResourceQuestionResou
 
 export type ExamGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'created' | 'submission_count' | 'title' | 'modified';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2679,7 +2664,7 @@ export type ExamGetOwnedQuestionsResponse = (Array<ExamResourceQuestionResource>
 export type LessonGetDisplaysData = {
     accessToken?: (string | null);
     course?: (string | null);
-    orderBy?: 'title' | 'modified' | 'created';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2747,7 +2732,7 @@ export type LessonLessonSelectorResponse = (Array<LessonSelectorResponse>);
 
 export type CourseGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'title' | 'modified' | 'created';
+    orderBy?: 'modified';
     owner?: (number | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2805,6 +2790,14 @@ export type CourseEnrollData = {
 };
 
 export type CourseEnrollResponse = (unknown);
+
+export type CourseUnenrollData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+};
+
+export type CourseUnenrollResponse = (unknown);
 
 export type CourseToggleActionData = {
     accessToken?: (string | null);

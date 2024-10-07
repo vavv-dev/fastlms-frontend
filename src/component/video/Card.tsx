@@ -4,7 +4,7 @@ import {
   videoUpdateResource as updateResource,
 } from '@/api';
 import { ResourceCard } from '@/component/common';
-import { formatDuration, formatRelativeTime, humanNumber } from '@/helper/util';
+import { formatDuration, formatRelativeTime } from '@/helper/util';
 import { StreamOutlined } from '@mui/icons-material';
 import { Box, BoxProps, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
@@ -93,7 +93,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
       }
       score={data.progress}
       passed={data.passed}
-      avatarChildren={[t(...formatRelativeTime(data.modified)), `${t('Views')} ${humanNumber(data.watch_count)}`]}
+      avatarChildren={[t(...formatRelativeTime(data.modified))]}
       hideAvatar={hideAvatar}
       actionMenu={<ActionMenu data={data} />}
       sx={sx}

@@ -56,7 +56,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
         score={data.score}
         passed={data.passed}
         inProgress={data.status == 'in_progress'}
-        avatarChildren={[t(...formatRelativeTime(data.modified)), t('{{ count }} answers', { count: data.submission_count })]}
+        avatarChildren={[t(...formatRelativeTime(data.modified))]}
         hideAvatar={hideAvatar}
         actionMenu={<ActionMenu data={data} />}
         autoColor

@@ -33,14 +33,13 @@
   "Public": "Public",
   "Question": "Question",
   "Questions": "Questions",
-  "Recently created": "Recently created",
+  "Recently modified": "Recently modified",
   "Remove bookmark": "Remove bookmark",
   "Selection question's choices are at least 2.": "Selection question's choices are at least 2.",
   "Selections": "Selections",
   "Single selection": "Single selection",
   "Start date": "Start date",
   "Status": "Status",
-  "Submission count": "Submission count",
   "Submission list": "Submission list",
   "Submit": "Submit",
   "Submitted": "Submitted",
@@ -57,7 +56,5 @@
   "Video": "Video",
   "Video is available": "Video is available",
   "View survey result": "View survey result",
-  "{{ count }} answers_one": "{{ count }} answers",
-  "{{ count }} answers_other": "{{ count }} answers",
   "{{ num }} people": "{{ num }} people"
 }

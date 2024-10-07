@@ -4,7 +4,7 @@ import {
   assetUpdateResource as updateResource,
 } from '@/api';
 import { ResourceCard, updateInfiniteCache, uppyFamily } from '@/component/common';
-import { formatDuration, formatRelativeTime, humanNumber, toFixedHuman } from '@/helper/util';
+import { formatDuration, formatRelativeTime, toFixedHuman } from '@/helper/util';
 import { userState } from '@/store';
 import { CloudUpload, CloudUploadOutlined } from '@mui/icons-material';
 import { Box, BoxProps, Button, Typography, useTheme } from '@mui/material';
@@ -12,11 +12,11 @@ import { useUppyEvent, useUppyState } from '@uppy/react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ThreadDialog } from '@/component/comment';
 import { snackbarMessageState } from '../layout';
 import { ActionMenu } from './ActionMenu';
-import { ViewDialog } from './ViewDialog';
-import { ThreadDialog } from '../comment';
 import { UploadDialog } from './UploadDialog';
+import { ViewDialog } from './ViewDialog';
 
 interface Props {
   data: DisplayResponse;
@@ -87,7 +87,6 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
         passed={data.passed}
         avatarChildren={[
           t(...formatRelativeTime(data.modified)),
-          `${t('Views')} ${humanNumber(data.watch_count)}`,
           user && user.username == data.owner.username && (
             <Box
               sx={{ display: 'flex', alignItems: 'center', gap: 1 }}

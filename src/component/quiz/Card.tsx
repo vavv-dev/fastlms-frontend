@@ -37,27 +37,26 @@ export const Card = ({ data, hideAvatar }: Props) => {
               }}
             />
           ) : (
-            <Box sx={{ p: 2, aspectRatio: '16/9' }}>
-              <Typography variant="caption">{t('{{ count }} Question', { count: data.question_count })}</Typography>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  color: 'text.secondary',
-                  my: 1,
-                  lineHeight: 1.3,
-                  whiteSpace: 'pre-wrap',
-                  ...textEllipsisCss(3),
-                }}
-              >
-                {data.description || t('Thumbnail or description here')}
-              </Typography>
-            </Box>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                p: 2,
+                aspectRatio: '16 / 9',
+                color: 'text.secondary',
+                my: 1,
+                lineHeight: 1.3,
+                whiteSpace: 'pre-wrap',
+                ...textEllipsisCss(3),
+              }}
+            >
+              {data.description || t('Thumbnail or description here')}
+            </Typography>
           )
         }
         score={data.score}
         passed={data.passed}
         inProgress={data.status == 'in_progress'}
-        avatarChildren={[t(...formatRelativeTime(data.modified)), t('{{ count }} answers', { count: data.submission_count })]}
+        avatarChildren={[t(...formatRelativeTime(data.modified))]}
         hideAvatar={hideAvatar}
         actionMenu={<ActionMenu data={data} />}
         autoColor

@@ -33,14 +33,13 @@
   "Public": "공개",
   "Question": "질문",
   "Questions": "질문",
-  "Recently created": "최근 생성",
+  "Recently modified": "최근 수정",
   "Remove bookmark": "북마크 삭제",
   "Selection question's choices are at least 2.": "선택 질문의 선택지는 최소 2개입니다.",
   "Selections": "보기",
   "Single selection": "단일 선택",
   "Start date": "시작 날짜",
   "Status": "상태",
-  "Submission count": "응답 수",
   "Submission list": "응답 목록",
   "Submit": "제출 하기",
   "Submitted": "제출 됨",
@@ -57,6 +56,5 @@
   "Video": "동영상",
   "Video is available": "동영상 1",
   "View survey result": "결과 보기",
-  "{{ count }} answers_other": "응답 {{ count }}",
   "{{ num }} people": "{{ num }} 명"
 }
