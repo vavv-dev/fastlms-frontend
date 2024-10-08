@@ -55,6 +55,21 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
 
   /**
    *
+   * initialize watch bitmap
+   *
+   */
+  useEffect(() => {
+    if (trackingImpossible) return;
+    // watch bitmap
+    if (!lastPositionsRef.current[data.id]) {
+      // if first watch, save first watch time
+      if (data.progress === null) throttlePersistWatch(data.id);
+      lastPositionsRef.current[data.id] = 0;
+    }
+  }, [data?.id]); // eslint-disable-line
+
+  /**
+   *
    * update position
    *
    */

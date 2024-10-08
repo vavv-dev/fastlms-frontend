@@ -9,13 +9,13 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
   mode: 'update' | 'create' | 'delete',
   children?: string,
   isPin?: boolean,
+  skipAccountHistory?: boolean,
 ) => {
   const updateNestedItems = (items: T[]): T[] => {
     let found = undefined;
     const newItems = items
       .map((i) => {
         if (i.id === item.id) {
-          // need to merge item with i to keep the nested items ?
           found = { ...i, ...item };
           return mode === 'delete' ? null : found;
         }
@@ -32,7 +32,6 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
     if (key.startsWith(`${INFINITE_PREFIX}${listService.name}`)) {
       const data: Array<{ items: T[]; page: number; total: number }> = globalCache.get(key)?.data;
       let updated = data;
-
       if (mode === 'update' || mode === 'delete') {
         updated = data.map((d) => ({
           ...d,
@@ -42,14 +41,20 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
       } else if (mode === 'create') {
         updated = [{ ...data[0], items: [item as T, ...data[0].items], total: data[0].total + 1 }, ...data.slice(1)];
       }
-
       globalMutate(key, updated, { revalidate: false });
     }
   });
+
   try {
-    // TODO remove this
-    if (listService.name !== 'accountGetHistory' && mode != 'create') {
-      updateInfiniteCache(accountGetHistory, item as unknown as AccountGetHistoryResponse['items'][0], mode);
+    if (!skipAccountHistory && listService.name !== 'accountGetHistory' && mode !== 'create') {
+      updateInfiniteCache(
+        accountGetHistory,
+        item as unknown as AccountGetHistoryResponse['items'][0],
+        mode,
+        undefined,
+        undefined,
+        true,
+      );
     }
   } catch (e) {
     console.warn('Error updating accountGetHistory cache:', e);
