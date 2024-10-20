@@ -5,7 +5,7 @@ import {
   memberDownloadMemberXlsxTemplate as downloadMemberXlsxTemplate,
   memberGetDisplays as getDisplays,
 } from '@/api';
-import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
 import { base64XlsxDownload, calculateReverseIndex, formatDatetimeLocale } from '@/helper/util';
 import { channelState } from '@/store';
 import { FileDownloadOutlined, FileUploadOutlined, PersonAddAlt1, PersonAddAltOutlined } from '@mui/icons-material';
@@ -86,14 +86,14 @@ const MemberTable = ({ data }: MemberTableProps) => {
   if (!channel) return null;
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ position: 'relative', display: 'inherit' }}>
       <BulkActions selection={selection} setSelection={setSelection} data={data} />
       <TableContainer>
         <Table
           sx={{
             '& th,td:not(:nth-of-type(3))': { whiteSpace: 'nowrap' },
             '& th:last-of-type, td:last-of-type': { width: '2em' },
-            '& td': { py: 1 },
+            '& td': { p: 0.5 },
           }}
         >
           <TableHead>
@@ -153,6 +153,7 @@ const MemberRow = memo<MemberRowProps>(({ data, index, selected, onSelectRow }) 
   const renderField = useMemo(
     () => (field: string) => {
       if (field === 'username') return data.username;
+      if (field === 'name' && data.joined_at) return <WithAvatar variant="small" {...data} />;
       if (field === 'email' && data.invited_at)
         return (
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>

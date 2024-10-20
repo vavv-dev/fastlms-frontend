@@ -95,7 +95,7 @@ export const Outline = () => {
             </WithAvatar>
             <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
               {data.featured && <Chip label={t('Featured course')} color="warning" />}
-              <Chip label={t(data.level)} color="primary" />
+              <Chip label={`${t('Level')}: ${t(data.level)}`} color="primary" />
             </Stack>
           </Box>
           <Box
@@ -201,7 +201,13 @@ export const Outline = () => {
                 <List dense sx={{ listStyle: 'decimal', pl: 5 }}>
                   {data.lessons.map((lesson) => (
                     <ListItem key={lesson.id} sx={{ display: 'list-item' }}>
-                      <ListItemText primary={lesson.title} />
+                      <ListItemText
+                        primary={
+                          <Typography component="span" variant="body1">
+                            {lesson.title}
+                          </Typography>
+                        }
+                      />
                     </ListItem>
                   ))}
                 </List>
@@ -260,9 +266,7 @@ export const Outline = () => {
           </Box>
         </Box>
       </Box>
-      {enrollDialogOpen && (
-        <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} title={data.title} />
-      )}
+      {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}
     </Box>
   );
 };

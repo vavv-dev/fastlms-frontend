@@ -1,5 +1,10 @@
-import { courseEnroll, courseGetDisplays } from '@/api';
-import { BaseDialog, updateInfiniteCache } from '@/component/common';
+import {
+  CourseGetNewEnrolledCountData as GetNewEnrolledCountData,
+  courseEnroll as enroll,
+  courseGetDisplays as getDisplays,
+  courseGetNewEnrolledCount as getNewEnrolledCount,
+} from '@/api';
+import { BaseDialog, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { userState } from '@/store';
 import { Box, Button, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
@@ -11,26 +16,29 @@ interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   id: string;
-  title: string;
 }
 
-export const EnrollDialog = ({ open, setOpen, id, title }: Props) => {
+export const EnrollDialog = ({ open, setOpen, id }: Props) => {
   const { t } = useTranslation('course');
   const navigate = useNavigate();
   const user = useAtomValue(userState);
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const { mutate } = useServiceImmutable<GetNewEnrolledCountData, number>(getNewEnrolledCount, undefined);
 
   const closeDialog = (e: React.MouseEvent) => {
     e.stopPropagation();
     setOpen(false);
   };
 
-  const enroll = async () => {
-    courseEnroll({ id })
+  const enrollCourse = async () => {
+    enroll({ id })
       .then(() => {
         setResult(t('You are now enrolled in this course.'));
-        updateInfiniteCache(courseGetDisplays, { id, enrolled: true }, 'update');
+        updateInfiniteCache(getDisplays, { id, enrolled: true }, 'update');
+
+        // revalidate new course count cache
+        mutate((prev) => (prev ? prev + 1 : 1), { revalidate: false });
       })
       .catch((err) => {
         switch (err.status) {
@@ -57,7 +65,7 @@ export const EnrollDialog = ({ open, setOpen, id, title }: Props) => {
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={`${t('Enroll to {{ title }}', { title })}`}
+      title={t('Course enrollment')}
       fullWidth
       maxWidth="sm"
       renderContent={() => (
@@ -85,7 +93,7 @@ export const EnrollDialog = ({ open, setOpen, id, title }: Props) => {
             )}
 
             {!result && (
-              <Button onClick={enroll} variant="contained">
+              <Button onClick={enrollCourse} variant="contained">
                 {t('Enroll to this course')}
               </Button>
             )}

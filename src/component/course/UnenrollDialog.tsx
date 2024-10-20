@@ -1,4 +1,8 @@
-import { courseGetDisplays, courseUnenroll } from '@/api';
+import {
+  courseGetDisplays as getDisplays,
+  courseGetEnrolledCourses as getEnrolledCourses,
+  courseUnenroll as unenroll,
+} from '@/api';
 import { BaseDialog } from '@/component/common';
 import { updateInfiniteCache } from '@/component/common/swr';
 import { snackbarMessageState } from '@/component/layout';
@@ -18,10 +22,11 @@ export const UnenrollDialog = ({ open, setOpen, id, title }: Props) => {
   const { t } = useTranslation('course');
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
-  const deleteResource = useCallback(() => {
-    courseUnenroll({ id })
+  const unenrollCourse = useCallback(() => {
+    unenroll({ id })
       .then(() => {
-        updateInfiniteCache(courseGetDisplays, { id, enrolled: false }, 'update');
+        updateInfiniteCache(getDisplays, { id, enrolled: false }, 'update');
+        updateInfiniteCache(getEnrolledCourses, { id, enrolled: false }, 'update');
         setTimeout(() => {
           setSnackbarMessage({ message: t('You are now unenrolled from this course.'), duration: 3000 });
         }, 500);
@@ -43,7 +48,7 @@ export const UnenrollDialog = ({ open, setOpen, id, title }: Props) => {
         </DialogContentText>
       )}
       actions={
-        <Button onClick={() => deleteResource()} autoFocus>
+        <Button onClick={() => unenrollCourse()} autoFocus>
           {t('Unenroll')}
         </Button>
       }

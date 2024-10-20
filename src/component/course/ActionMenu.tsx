@@ -2,7 +2,7 @@ import {
   CourseDisplayResponse as DisplayResponse,
   courseDeleteResource as deleteResource,
   courseGetDisplays as getDisplays,
-  courseToggleAction as toggleAction
+  courseToggleAction as toggleAction,
 } from '@/api';
 import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
@@ -87,9 +87,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
           listService={getDisplays}
         />
       )}
-      {enrollDialogOpen && (
-        <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} title={data.title} />
-      )}
+      {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}
       {unenrollDialogOpen && (
         <UnenrollDialog open={unenrollDialogOpen} setOpen={setUnenrollDialogOpen} id={data.id} title={data.title} />
       )}

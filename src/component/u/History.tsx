@@ -1,14 +1,16 @@
 import {
   AccountGetHistoryData,
   AssetDisplayResponse,
+  CourseGetNewEnrolledCountData,
   ExamDisplayResponse,
   QuizDisplayResponse,
   SurveyDisplayResponse,
   VideoDisplayResponse,
   accountGetHistory,
+  courseGetNewEnrolledCount,
 } from '@/api';
 import { AssetCard } from '@/component/asset';
-import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage, useServiceImmutable } from '@/component/common';
 import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
@@ -87,6 +89,13 @@ const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
   const { t } = useTranslation('u');
   const navigate = useNavigate();
   const theme = useTheme();
+  const { data, mutate } = useServiceImmutable<CourseGetNewEnrolledCountData, number>(courseGetNewEnrolledCount, undefined);
+
+  const goToCourses = () => {
+    navigate('/u/course');
+    // After user see the count badge, just hide it
+    mutate(0, { revalidate: false });
+  };
 
   return (
     <ToggleButtonGroup
@@ -119,13 +128,9 @@ const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
       <ToggleButton value="quiz">{t('Quiz')}</ToggleButton>
       <ToggleButton value="survey">{t('Survey')}</ToggleButton>
       <ToggleButton value="exam">{t('Exam')}</ToggleButton>
-      <Badge
-        badgeContent={0} // TODO: Implement this
-        color="error"
-        sx={{ ml: 1, '& .MuiBadge-badge': { top: 6 } }}
-      >
+      <Badge badgeContent={data} color="error" sx={{ ml: 1, '& .MuiBadge-badge': { top: 6 } }}>
         <Button
-          onClick={() => navigate('/u/course')}
+          onClick={goToCourses}
           sx={{
             background: 'linear-gradient(90deg, #e0f7fa 0%, #ffcdd2 100%)',
             boxShadow: `inset 0 0 0 1px ${theme.palette.divider}`,

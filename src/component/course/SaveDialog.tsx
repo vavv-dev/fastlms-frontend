@@ -182,6 +182,7 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
           hideAddButton: true,
         },
       }}
+      maxWidth="lg"
     />
   );
 };

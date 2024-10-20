@@ -309,6 +309,8 @@ export type CourseDisplayResponse = {
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
+    study_start?: (string | null);
+    study_end?: (string | null);
 };
 
 export type CourseLessonResource = {
@@ -2822,6 +2824,22 @@ export type CourseGetDisplaysData = {
 };
 
 export type CourseGetDisplaysResponse = (Paginated_CourseDisplayResponse_);
+
+export type CourseGetEnrolledCoursesData = {
+    accessToken?: (string | null);
+    page?: number;
+    refreshToken?: (string | null);
+    size?: number;
+};
+
+export type CourseGetEnrolledCoursesResponse = (Paginated_CourseDisplayResponse_);
+
+export type CourseGetNewEnrolledCountData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+};
+
+export type CourseGetNewEnrolledCountResponse = (number);
 
 export type CourseGetResourceData = {
     accessToken?: (string | null);

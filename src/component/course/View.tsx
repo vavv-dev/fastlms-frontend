@@ -7,7 +7,7 @@ import {
   courseGetView as getView,
   lessonGetDisplays,
 } from '@/api';
-import { useInfinitePagination, useServiceImmutable } from '@/component/common';
+import { WithAvatar, useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { spacerRefState } from '@/component/layout';
 import { LessonCard } from '@/component/lesson';
 import { parseLocalStorage, textEllipsisCss, toFixedHuman } from '@/helper/util';
@@ -109,6 +109,7 @@ export const View = () => {
               dangerouslySetInnerHTML={{ __html: data.description }}
             />
           )}
+          <WithAvatar variant="small" {...data.owner} />
         </Typography>
         <Box
           sx={{
@@ -119,6 +120,7 @@ export const View = () => {
             bgcolor: 'background.paper',
             zIndex: 4,
             justifyContent: 'flex-end',
+            alignItems: 'center',
           }}
         >
           <Button
@@ -206,7 +208,7 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, collapse, ..
         )}
       </StepLabel>
       <StepContent TransitionProps={{ unmountOnExit: false }}>
-        <LessonCard data={lesson} embeded />
+        <LessonCard data={lesson} embeded hideAvatar />
       </StepContent>
     </Step>
   );

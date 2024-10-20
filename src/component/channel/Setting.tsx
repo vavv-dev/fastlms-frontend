@@ -43,7 +43,7 @@ const schema: yup.ObjectSchema<UpdateRequest> = yup.object({
 });
 
 const RESOURCE_OPTIONS = ['home', 'video', 'short', 'playlist', 'asset', 'quiz', 'survey', 'exam', 'lesson', 'course'];
-const MEMBER_FIELD_OPTIONS = ['birthdate', 'company', 'position', 'department'];
+const MEMBER_FIELD_OPTIONS = ['birthdate', 'company', 'department', 'position'];
 const MEMBER_FIELD_FIXED = ['username', 'name', 'email', 'cellphone'];
 
 export const Setting: React.FC = () => {

@@ -134,8 +134,8 @@ const t = (key: string) => i18next.t(key, { ns: 'u' });
 
 const tabs: [string, string, React.ElementType][] = [
   [t('History'), '', HistoryOutlined],
-  [t('Bookmark'), 'bookmark', BookmarkBorderOutlined],
   [t('Course/Certificate'), 'course', SchoolOutlined],
+  [t('Bookmark'), 'bookmark', BookmarkBorderOutlined],
   [t('Q&A/Comment'), 'comment', ChatOutlined],
   [t('Joined channel'), 'channel', PeopleAltOutlined],
   [t('Notification'), 'notification', NotificationsOutlined],

@@ -107,8 +107,9 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
             display: 'grid',
             justifyContent: 'center',
             ...gridBoxSx,
-            minHeight: '250px',
+            minHeight: '200px',
             alignItems: 'flex-start',
+            alignContent: 'flex-start',
           }}
         >
           {pageHeader && <Box sx={{ gridColumn: '1 / -1', width: '100%' }}>{pageHeader}</Box>}

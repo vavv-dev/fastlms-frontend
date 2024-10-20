@@ -173,7 +173,7 @@ export function generateRandomDarkColor(seedString: string | undefined, factor =
  * @param date - The date to format
  * @returns The formatted date string
  */
-export function formatYYYMMDD(d: string | Date): string {
+export function formatYYYMMDD(d: string | Date | undefined | null): string {
   if (!d) return '';
   const date = typeof d === 'string' ? new Date(d) : d;
   const year = date.getFullYear();

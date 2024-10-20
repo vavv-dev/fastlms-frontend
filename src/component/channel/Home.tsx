@@ -76,25 +76,34 @@ export const Home = () => {
                 gridColumn: '1 / -1',
                 display: 'flex',
                 gap: '2em',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 flexDirection: { xs: 'column', mdl: 'row' },
               }}
             >
               {videoId && (
-                <Box sx={{ flexShrink: 0, width: '424px' }}>
+                <Box sx={{ position: 'relative', flexShrink: 0, height: '238px', aspectRatio: '16/9', mb: 3 }}>
                   <VideoPlayer id={videoId} sx={{ borderRadius: '8px', aspectRatio: '16/9' }} />
                   <VideoTracking id={videoId} hidden />
                   <Button
                     size="small"
-                    sx={{ font: theme.typography.caption, display: 'flex', alignItems: 'center' }}
-                    onClick={() => navigate(`/video/${channel.resources[0].id}`)}
+                    sx={{
+                      position: 'absolute',
+                      bottom: '-2.2em',
+                      left: 0,
+                      font: theme.typography.caption,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    onClick={() => navigate(`/video/${videoId}`)}
                   >
                     {t('Go to video view')}
                     <ArrowRight fontSize="small" />
                   </Button>
                 </Box>
               )}
-              {channel.welcome && <Box className="tiptap-content" dangerouslySetInnerHTML={{ __html: channel.welcome }} />}
+              {channel.welcome && (
+                <Box sx={{ mb: 3 }} className="tiptap-content" dangerouslySetInnerHTML={{ __html: channel.welcome }} />
+              )}
             </Box>
           </GridSlider>
         )}

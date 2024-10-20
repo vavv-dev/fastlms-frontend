@@ -1,8 +1,8 @@
 import { OpenAPI } from '@/api';
 import { EmailVerification, Join, Login, Logout, PasswordReset, PasswordResetConfirm } from '@/component/account';
-import { ChannelStats, ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting } from '@/component/channel';
+import { ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting, ChannelStats } from '@/component/channel';
 import { CommentDisplays, ThreadDialog } from '@/component/comment';
-import { CourseDisplays, CourseOutline, CourseView } from '@/component/course';
+import { CourseDisplays, CourseEnrollDialog, CourseOutline, CourseView } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamDisplays, ExamReadyDialog, ExamView, GradingDisplays } from '@/component/exam';
 import { HomeChannel, HomeVideo } from '@/component/home';
@@ -184,7 +184,8 @@ const DialogOpener = () => {
     asset: AssetViewDialog,
     exam: ExamReadyDialog,
     lesson: LessonViewDialog,
-  }[dialog.kind as 'quiz' | 'survey' | 'asset' | 'exam' | 'lesson'];
+    course: CourseEnrollDialog,
+  }[dialog.kind as 'quiz' | 'survey' | 'asset' | 'exam' | 'lesson' | 'course'];
 
   if (!DialogComponent) return null;
 

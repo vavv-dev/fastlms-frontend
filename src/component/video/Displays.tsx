@@ -32,7 +32,12 @@ export const Displays = ({ kind }: { kind: VideoKind }) => {
           )),
         )
       }
-      emptyMessage={<EmptyMessage Icon={kind === 'video' ? VideoLibrary : ElectricBolt} message={t('No video found.')} />}
+      emptyMessage={
+        <EmptyMessage
+          Icon={kind === 'video' ? VideoLibrary : ElectricBolt}
+          message={kind === 'video' ? t('No video found.') : t('No short found.')}
+        />
+      }
       gridBoxSx={
         kind === 'video'
           ? {

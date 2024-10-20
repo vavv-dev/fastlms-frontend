@@ -41,7 +41,16 @@ export const WithAvatar = ({ variant, name, username, thumbnail, use_channel, hi
   const pointer = use_channel ? 'pointer' : 'default';
 
   return (
-    <Box sx={{ position: 'relative', display: 'flex', gap: avatarGap, alignItems: 'flex-start', flexGrow: 0, ...sx }}>
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        gap: avatarGap,
+        alignItems: 'flex-start',
+        flexGrow: 0,
+        ...sx,
+      }}
+    >
       {!hideAvatar && (
         <Avatar
           className="avatar"
@@ -53,11 +62,12 @@ export const WithAvatar = ({ variant, name, username, thumbnail, use_channel, hi
       <Box
         className="avatar-children"
         sx={{
+          width: 'max-content',
           flexGrow: 1,
           flexShrink: 0,
           display: 'grid',
           minHeight: avatarSize,
-          alignItems: 'flex-end',
+          alignItems: 'center',
           '& .MuiTypography-root': textEllipsisCss(1),
         }}
       >
