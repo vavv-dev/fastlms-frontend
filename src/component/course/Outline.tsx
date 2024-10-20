@@ -131,7 +131,7 @@ export const Outline = () => {
                 </IconButton>
               </Typography>
               <Collapse in={!collapsed.description}>
-                <Box sx={{ p: 3 }} dangerouslySetInnerHTML={{ __html: data.description }} />
+                <Box sx={{ p: 3 }} className="tiptap-content" dangerouslySetInnerHTML={{ __html: data.description }} />
               </Collapse>
             </Box>
 

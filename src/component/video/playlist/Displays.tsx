@@ -3,8 +3,8 @@ import {
   playlistGetDisplays as getDisplays,
   PlaylistGetDisplaysData as GetDisplaysData,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
-import { CloudUploadOutlined, PlaylistAddOutlined } from '@mui/icons-material';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { CloudUploadOutlined, PlaylistAddOutlined, PlaylistPlay } from '@mui/icons-material';
 import { Box, ListItemIcon, ListItemText, Menu, MenuItem, MenuList, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,7 @@ export const Displays = () => {
       renderItem={({ data }) =>
         data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
+      emptyMessage={<EmptyMessage Icon={PlaylistPlay} message={t('No playlist found.')} />}
       gridBoxSx={{
         gap: '2em 4px',
         gridTemplateColumns: {

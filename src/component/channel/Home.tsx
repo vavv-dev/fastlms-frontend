@@ -1,4 +1,5 @@
 import {
+  AssetDisplayResponse as AssetResponse,
   CourseDisplayResponse as CourseResponse,
   ExamDisplayResponse as ExamResponse,
   channelGetContent as GetContent,
@@ -6,25 +7,25 @@ import {
   ChannelGetContentResponse as GetContentResponse,
   PlaylistDisplayResponse as PlaylistResponse,
   QuizDisplayResponse as QuizResponse,
-  AssetDisplayResponse as AssetResponse,
   SurveyDisplayResponse as SurveyResponse,
   VideoDisplayResponse as VideoResponse,
 } from '@/api';
-import { GridSlider, useServiceImmutable } from '@/component/common';
+import { AssetCard } from '@/component/asset';
+import { EmptyMessage, GridSlider, useServiceImmutable } from '@/component/common';
 import { CourseCard } from '@/component/course';
 import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
-import { PlaylistCard, VideoCard } from '@/component/video';
-import { homeUserState } from '@/store';
-import { Refresh } from '@mui/icons-material';
-import { Box, Divider, IconButton, Stack, Tooltip } from '@mui/material';
+import { PlaylistCard, VideoCard, VideoPlayer, VideoTracking } from '@/component/video';
+import { channelState } from '@/store';
+import { ArrowRight, Recommend, Refresh } from '@mui/icons-material';
+import { Box, Button, Divider, IconButton, Stack, Tooltip, useTheme } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AssetCard } from '../asset';
+import { useNavigate } from 'react-router-dom';
 
-const GIRD_SIZE: Record<string, number[]> = {
+const GRID_SIZE: Record<string, number[]> = {
   video: [210, 4],
   short: [210, 4],
   playlist: [210, 4],
@@ -34,13 +35,18 @@ const GIRD_SIZE: Record<string, number[]> = {
 
 export const Home = () => {
   const { t } = useTranslation('channel');
-  const homeUser = useAtomValue(homeUserState);
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const channel = useAtomValue(channelState);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { data, mutate } = useServiceImmutable<GetContentData, GetContentResponse>(GetContent, {
-    ownerId: homeUser?.id as number,
+    ownerId: channel?.owner.id as string,
   });
 
-  if (!homeUser || !data) return null;
+  if (!channel || !data) return null;
+
+  const isEmpty = Object.values(data).every((v) => v.length === 0);
+  const videoId = data.video?.[0]?.id ?? null;
 
   return (
     <Box ref={containerRef} sx={{ width: '100%', p: 3 }}>
@@ -58,60 +64,97 @@ export const Home = () => {
         divider={<Divider flexItem />}
         sx={{ width: 'fit-content', mx: 'auto', '& .avatar-children': { pb: '1em' } }}
       >
-        {Object.entries(data).map(
-          ([kind, resources]) =>
-            resources.length > 0 && (
-              <GridSlider
-                key={kind}
-                title={t(kind)}
-                itemWidth={GIRD_SIZE[kind]?.[0]}
-                itemGap={GIRD_SIZE[kind]?.[1]}
-                containerRef={containerRef}
-                maxWidth={1280}
-                sx={{ mb: '1em !important' }}
-              >
-                {resources?.map((resource) => {
-                  if (['video', 'short'].includes(kind)) {
-                    return (
-                      <VideoCard
-                        key={resource.id}
-                        data={resource as VideoResponse}
-                        hideAvatar
-                        sx={kind === 'short' ? { '& .card-banner': { borderRadius: '16px' } } : {}}
-                      />
-                    );
-                  } else if (kind === 'playlist') {
-                    return (
-                      <PlaylistCard
-                        key={resource.id}
-                        data={resource as PlaylistResponse}
-                        hideAvatar
-                        sx={{ '& > .card-banner': { mt: '6px' }, '& .avatar-children': { pb: 0 } }}
-                      />
-                    );
-                  } else if (kind === 'asset') {
-                    return <AssetCard key={resource.id} data={resource as AssetResponse} hideAvatar />;
-                  } else if (kind === 'quiz') {
-                    return <QuizCard key={resource.id} data={resource as QuizResponse} hideAvatar />;
-                  } else if (kind === 'survey') {
-                    return <SurveyCard key={resource.id} data={resource as SurveyResponse} hideAvatar />;
-                  } else if (kind === 'exam') {
-                    return (
-                      <ExamCard
-                        sx={{ '& .avatar-children': { pb: 0 } }}
-                        key={resource.id}
-                        data={resource as ExamResponse}
-                        hideAvatar
-                      />
-                    );
-                  } else if (kind === 'course') {
-                    return <CourseCard key={resource.id} data={resource as CourseResponse} hideAvatar />;
-                  }
-                })}
-              </GridSlider>
-            ),
+        {(channel.welcome || channel.resources.length > 0) && (
+          <GridSlider
+            itemWidth={GRID_SIZE['video'][0]}
+            itemGap={GRID_SIZE['video'][1]}
+            containerRef={containerRef}
+            maxWidth={1280}
+          >
+            <Box
+              sx={{
+                gridColumn: '1 / -1',
+                display: 'flex',
+                gap: '2em',
+                alignItems: 'center',
+                flexDirection: { xs: 'column', mdl: 'row' },
+              }}
+            >
+              {videoId && (
+                <Box sx={{ flexShrink: 0, width: '424px' }}>
+                  <VideoPlayer id={videoId} sx={{ borderRadius: '8px', aspectRatio: '16/9' }} />
+                  <VideoTracking id={videoId} hidden />
+                  <Button
+                    size="small"
+                    sx={{ font: theme.typography.caption, display: 'flex', alignItems: 'center' }}
+                    onClick={() => navigate(`/video/${channel.resources[0].id}`)}
+                  >
+                    {t('Go to video view')}
+                    <ArrowRight fontSize="small" />
+                  </Button>
+                </Box>
+              )}
+              {channel.welcome && <Box className="tiptap-content" dangerouslySetInnerHTML={{ __html: channel.welcome }} />}
+            </Box>
+          </GridSlider>
         )}
+
+        {!isEmpty &&
+          Object.entries(data).map(
+            ([kind, resources]) =>
+              resources.length > 0 && (
+                <GridSlider
+                  key={kind}
+                  title={t(kind)}
+                  itemWidth={GRID_SIZE[kind]?.[0]}
+                  itemGap={GRID_SIZE[kind]?.[1]}
+                  containerRef={containerRef}
+                  maxWidth={1280}
+                  sx={{ mb: '1em !important' }}
+                >
+                  {resources?.map((resource) => {
+                    if (['video', 'short'].includes(kind)) {
+                      return (
+                        <VideoCard
+                          key={resource.id}
+                          data={resource as VideoResponse}
+                          hideAvatar
+                          sx={kind === 'short' ? { '& .card-banner': { borderRadius: '16px' } } : {}}
+                        />
+                      );
+                    } else if (kind === 'playlist') {
+                      return (
+                        <PlaylistCard
+                          key={resource.id}
+                          data={resource as PlaylistResponse}
+                          hideAvatar
+                          sx={{ '& > .card-banner': { mt: '6px' }, '& .avatar-children': { pb: 0 } }}
+                        />
+                      );
+                    } else if (kind === 'asset') {
+                      return <AssetCard key={resource.id} data={resource as AssetResponse} hideAvatar />;
+                    } else if (kind === 'quiz') {
+                      return <QuizCard key={resource.id} data={resource as QuizResponse} hideAvatar />;
+                    } else if (kind === 'survey') {
+                      return <SurveyCard key={resource.id} data={resource as SurveyResponse} hideAvatar />;
+                    } else if (kind === 'exam') {
+                      return (
+                        <ExamCard
+                          sx={{ '& .avatar-children': { pb: 0 } }}
+                          key={resource.id}
+                          data={resource as ExamResponse}
+                          hideAvatar
+                        />
+                      );
+                    } else if (kind === 'course') {
+                      return <CourseCard key={resource.id} data={resource as CourseResponse} hideAvatar />;
+                    }
+                  })}
+                </GridSlider>
+              ),
+          )}
       </Stack>
+      {isEmpty && <EmptyMessage sx={{ my: 3 }} Icon={Recommend} message={t('No featured content yet.')} />}
     </Box>
   );
 };

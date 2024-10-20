@@ -1,4 +1,5 @@
 import { accountProcessingState, userState } from '@/store';
+import { AssignmentIndOutlined } from '@mui/icons-material';
 import ContactMailOutlined from '@mui/icons-material/ContactMailOutlined';
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
 import { Avatar, Button, CircularProgress, IconButton, ListItemButton, ListItemText, Menu, useTheme } from '@mui/material';
@@ -16,6 +17,7 @@ export const LoginButton = () => {
   const open = Boolean(anchorEl);
 
   const dropdowItems: [string, string, React.ElementType][] = [
+    ['Me', `/u`, AssignmentIndOutlined],
     ['Profile', `/u/profile`, ContactMailOutlined],
     ['Logout', '/logout', LogoutOutlined],
   ];

@@ -1,22 +1,22 @@
 import {
   MemberDisplayResponse as DisplayResponse,
   MemberGetDisplaysData as GetDisplaysData,
+  MemberGetDisplaysResponse as GetDisplaysResponse,
   memberDownloadMemberXlsxTemplate as downloadMemberXlsxTemplate,
   memberGetDisplays as getDisplays,
 } from '@/api';
-import { GridInfiniteScrollPage, WithAvatar } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
 import { base64XlsxDownload, calculateReverseIndex, formatDatetimeLocale } from '@/helper/util';
-import { FileDownloadOutlined, FileUploadOutlined, PersonAddAltOutlined } from '@mui/icons-material';
+import { channelState } from '@/store';
+import { FileDownloadOutlined, FileUploadOutlined, PersonAddAlt1, PersonAddAltOutlined } from '@mui/icons-material';
 import {
   Box,
   Checkbox,
-  FormControlLabel,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
   MenuList,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -26,96 +26,113 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { atom, useAtom } from 'jotai';
-import { useEffect, useRef, useState } from 'react';
+import { useAtomValue } from 'jotai';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionMenu } from './ActionMenus';
-import { ListActions } from './ListActions';
+import { BulkActions } from './BulkActions';
 import { SaveDialog } from './SaveDialog';
 import { XlsxUploadDialog } from './XlsxUploadDialog';
 
-const rosterOnlyState = atom(false);
-
 export const Displays = () => {
   const { t } = useTranslation('member');
-  const [rosterOnly, setRosterOnly] = useAtom(rosterOnlyState);
-  const [selection, setSelection] = useState<number[]>([]);
+  const channel = useAtomValue(channelState);
 
-  // const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   // if (event.target.checked) {
-  //   //   const allIds = data?.flatMap((pagination) => pagination.items?.map((item) => item.id.toString()) ?? []) ?? [];
-  //   //   setSelection(allIds);
-  //   // } else {
-  //   //   setSelection([]);
-  //   // }
-  // };
-
-  const handleSelectRow = (id: number) => {
-    setSelection((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]));
-  };
-
-  // const handleBulkAction = () => {
-  //   console.log('Bulk action on:', selection);
-  //   // Implement your bulk action logic here
-  // };
+  if (!channel) return null;
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
-      pageKey="account"
+      pageKey="member"
       orderingOptions={[
         { value: 'created', label: t('Recently created') },
         { value: 'name', label: t('Name asc') },
       ]}
       CreateItemComponent={CreateOptions}
       apiService={getDisplays}
-      apiOptions={{ roster: rosterOnly }}
-      renderItem={({ data }) =>
-        (data?.[0].total as number) > 0 && (
-          <TableContainer>
-            <Table
-              sx={{
-                '& th,td:not(:nth-of-type(3))': { whiteSpace: 'nowrap' },
-                '& th:last-of-type, td:last-of-type': { width: '2em' },
-                '& td': { py: 1 },
-              }}
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell padding="checkbox">
-                    <ListActions selection={selection} totalCount={data?.[0].total} />
-                  </TableCell>
-                  <TableCell>no</TableCell>
-                  <TableCell>{t('Username')}</TableCell>
-                  <TableCell>{t('Member data')}</TableCell>
-                  <TableCell>{t('Memo')}</TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data?.map((pagination, pageIndex) =>
-                  pagination.items?.map((item, rowIndex) => (
-                    <MemberRow
-                      data={item}
-                      index={calculateReverseIndex(data, pageIndex, rowIndex, pagination.total)}
-                      key={item.id}
-                      selected={selection.includes(item.id)}
-                      onSelectRow={handleSelectRow}
-                    />
-                  )),
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )
-      }
+      renderItem={({ data }) => <MemberTable data={data} />}
+      emptyMessage={<EmptyMessage Icon={PersonAddAlt1} message={t('No member yet.')} />}
       gridBoxSx={{ gap: '2em 1em', gridTemplateColumns: '1fr', '& .create-resource-button': { maxHeight: '200px' } }}
-      extraAction={
-        <FormControlLabel
-          control={<Switch checked={rosterOnly} onChange={() => setRosterOnly(!rosterOnly)} />}
-          label={<Typography variant="subtitle2">{t('Roster only')}</Typography>}
-        />
-      }
     />
+  );
+};
+
+interface MemberTableProps {
+  data: GetDisplaysResponse[] | undefined;
+}
+
+const MemberTable = ({ data }: MemberTableProps) => {
+  const { t } = useTranslation('member');
+  const channel = useAtomValue(channelState);
+  const [selection, setSelection] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const selectable = data?.flatMap((pagination) => pagination.items.map((item) => item.id)).length || 0;
+
+  const handleSelectRow = useCallback((id: string) => {
+    setSelection((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]));
+  }, []);
+
+  useEffect(() => {
+    if (!data) return;
+    setSelectAll(selection.length === selectable);
+  }, [selectable, selection.length]);
+
+  useEffect(() => {
+    // revalidate selection when data changes
+    setSelection((prev) =>
+      prev.filter((id) => data?.flatMap((pagination) => pagination.items.map((item) => item.id)).includes(id)),
+    );
+  }, [data]);
+
+  if (!channel) return null;
+
+  return (
+    <Box sx={{ position: 'relative' }}>
+      <BulkActions selection={selection} setSelection={setSelection} data={data} />
+      <TableContainer>
+        <Table
+          sx={{
+            '& th,td:not(:nth-of-type(3))': { whiteSpace: 'nowrap' },
+            '& th:last-of-type, td:last-of-type': { width: '2em' },
+            '& td': { py: 1 },
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selectAll}
+                  onChange={() => {
+                    setSelectAll(!selectAll);
+                    if (selectAll) setSelection([]);
+                    else setSelection(data?.flatMap((pagination) => pagination.items.map((item) => item.id)) || []);
+                  }}
+                />
+              </TableCell>
+              <TableCell>no</TableCell>
+              {channel.member_fields.map((field) => (
+                <TableCell key={field}>{t(field)}</TableCell>
+              ))}
+              <TableCell>{t('Extra Data')}</TableCell>
+              <TableCell>{t('Memo')}</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.map((pagination, pageIndex) =>
+              pagination.items?.map((item, rowIndex) => (
+                <MemberRow
+                  data={item}
+                  index={calculateReverseIndex(data, pageIndex, rowIndex, pagination.total)}
+                  key={item.id}
+                  selected={selection.includes(item.id)}
+                  onSelectRow={handleSelectRow}
+                />
+              )),
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
@@ -123,33 +140,46 @@ interface MemberRowProps {
   data: DisplayResponse;
   index: number;
   selected: boolean;
-  onSelectRow: (id: number) => void;
+  onSelectRow: (id: string) => void;
 }
 
-const MemberRow = ({ data, index, selected, onSelectRow }: MemberRowProps) => {
-  const theme = useTheme();
+const MemberRow = memo<MemberRowProps>(({ data, index, selected, onSelectRow }) => {
   const { t } = useTranslation('member');
+  const theme = useTheme();
+  const channel = useAtomValue(channelState);
+
+  if (!channel) return null;
+
+  const renderField = useMemo(
+    () => (field: string) => {
+      if (field === 'username') return data.username;
+      if (field === 'email' && data.invited_at)
+        return (
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            {data.email}
+            <Typography variant="caption">
+              {t('Invited at {{ when }}', { when: formatDatetimeLocale(data.invited_at) })}
+            </Typography>
+          </Box>
+        );
+
+      return data.data[field];
+    },
+    [data, t],
+  );
 
   return (
-    <TableRow sx={{ bgcolor: data.id < 0 ? theme.palette.action.hover : 'inherit' }}>
+    <TableRow sx={{ bgcolor: !data.joined_at ? theme.palette.action.hover : 'inherit' }}>
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onChange={() => onSelectRow(data.id)} />
       </TableCell>
       <TableCell>{index}</TableCell>
-      <TableCell sx={{ pointerEvents: data.id < 0 ? 'none' : 'auto' }}>
-        <WithAvatar {...data} variant="small">
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="caption">{data.username}</Typography>
-            {data.invited_at && (
-              <Typography variant="caption" color="warning">
-                {t('Invited at {{ when }}', { when: formatDatetimeLocale(data.invited_at) })}
-              </Typography>
-            )}
-          </Box>
-        </WithAvatar>
-      </TableCell>
+      {channel.member_fields.map((field) => (
+        <TableCell key={field}>{renderField(field)}</TableCell>
+      ))}
       <TableCell sx={{ whiteSpace: 'pre-wrap !important', fontSize: '0.8em' }}>
         {Object.entries(data.data)
+          .filter(([key]) => !channel.member_fields.includes(key))
           .map(([key, value]) => `${key}: ${value}`)
           .join('\n')}
       </TableCell>
@@ -159,7 +189,7 @@ const MemberRow = ({ data, index, selected, onSelectRow }: MemberRowProps) => {
       </TableCell>
     </TableRow>
   );
-};
+});
 
 interface Props {
   open: boolean;

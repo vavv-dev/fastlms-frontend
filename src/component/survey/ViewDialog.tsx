@@ -8,6 +8,7 @@ import {
   surveyReadyAssess as readyAssess,
 } from '@/api';
 import { BaseDialog, WithAvatar, updateInfiniteCache, useServiceImmutable } from '@/component/common';
+import { VideoPlayer, VideoTracking } from '@/component/video';
 import { formatDatetimeLocale } from '@/helper/util';
 import { ArrowRight, BarChartOutlined, EditNoteOutlined, KeyboardArrowRight, Refresh } from '@mui/icons-material';
 import { Box, Table, TableBody, TableCell, TableContainer, TableRow, useTheme } from '@mui/material';
@@ -16,7 +17,6 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { VideoPlayer, VideoTracking } from '../video';
 import { Finding } from './Finding';
 import { Form } from './Form';
 
@@ -49,14 +49,11 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
   };
 
   const deleteSubmission = () => {
-    deleteAssess({ id: id }).then(async () => {
-      await mutate(
-        (prev) => {
-          if (!prev) return;
-          return { ...prev, status: null, submission: null };
-        },
-        { revalidate: false },
-      );
+    if (!data?.submission) return;
+    deleteAssess({ id: id }).then(() => {
+      const cleaned = { ...data, submission: null, score: null, passed: null, status: null };
+      mutate(cleaned, { revalidate: false });
+      updateInfiniteCache<DisplayResponse>(getDisplays, cleaned, 'update');
     });
   };
 
@@ -69,7 +66,7 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
       fullWidth
       open={open}
       setOpen={setOpen}
-      maxWidth="sm"
+      maxWidth="smm"
       title={data.title}
       renderContent={() => (
         <Box
@@ -84,17 +81,11 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
         >
           {videoId && (
             <Box sx={{ width: '100%', mb: 3 }}>
-              <VideoPlayer id={videoId} aspectRatio="16 / 9" />
+              <VideoPlayer id={videoId} sx={{ aspectRatio: '16/9' }} />
               <VideoTracking id={videoId} hidden />
               <Button
                 size="small"
-                sx={{
-                  mt: 0.5,
-                  font: theme.typography.caption,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
+                sx={{ mt: 0.5, font: theme.typography.caption, display: 'flex', alignItems: 'center' }}
                 onClick={() => {
                   setOpen(false);
                   navigate(`/video/${videoId}`);
@@ -129,13 +120,7 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
                   <TableCell>{t('User')}</TableCell>
                   <TableCell sx={{ py: 0 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, '& *': { flexGrow: '0 !important' } }}>
-                      <WithAvatar
-                        variant="small"
-                        username={data.owner.username}
-                        name={data.owner.name}
-                        thumbnail={data.owner.thumbnail}
-                      />
-                      @
+                      <WithAvatar variant="small" {...data.owner} />@
                       <Typography
                         component="span"
                         variant="subtitle2"

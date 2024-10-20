@@ -71,9 +71,7 @@ export const XlsxUploadDialog = ({ open, setOpen, refresh }: Props) => {
           closeDialog();
         }
       })
-      .catch((error) => {
-        setError('root.server', error.body);
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   if (!user || !open) return null;

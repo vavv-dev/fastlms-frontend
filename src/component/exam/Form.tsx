@@ -131,9 +131,7 @@ export const Form = ({ id }: { id: string }) => {
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         await mutate(updated, { revalidate: false });
       })
-      .catch((error) => {
-        setError('root.server', error.body);
-      });
+      .catch((error) => setError('root.server', error));
     setSubmitConfirmOpen(false);
   };
 

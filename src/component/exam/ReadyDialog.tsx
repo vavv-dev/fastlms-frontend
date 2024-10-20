@@ -25,6 +25,8 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { examMessageState } from '.';
+import { useAtomValue } from 'jotai';
 
 const t = (key: string) => i18next.t(key, { ns: 'exam' });
 
@@ -60,6 +62,7 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
     resolver: yupResolver(readySchema),
     defaultValues: readySchema.getDefault(),
   });
+  const examMessage = useAtomValue(examMessageState);
 
   const ready = async (input: AssessReadyRequest) => {
     if (!data) return;
@@ -72,11 +75,9 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
         // Attention before starting the exam!!!
         await new Promise((resolve) => setTimeout(resolve, 500));
         await mutate(updated, { revalidate: false });
-        navigate(`/exam/${data.id}/assess`);
+        navigate(`/exam/${data.id}`);
       })
-      .catch((error) => {
-        setError('root.server', error.body);
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   const verifyIdentity = () => {
@@ -98,9 +99,8 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
 
   if (!open || !data) return null;
 
-  // This will write history twice in dev mode. But it's okay in production.
   if (['ready', 'in_progress', 'timeout', 'failed', 'passed'].includes(data.status as string)) {
-    return <Navigate to={`/exam/${data.id}/assess`} />;
+    return <Navigate to={`/exam/${data.id}`} replace={true} />;
   }
 
   if (data.status === 'grading') {
@@ -126,6 +126,20 @@ export const ReadyDialog = ({ open, setOpen, id }: Props) => {
     );
   }
 
+  if (examMessage) {
+    return (
+      <BaseDialog
+        open={open}
+        setOpen={setOpen}
+        title={t('Exam is in progress.')}
+        renderContent={() => (
+          <Button size="large" sx={{ my: 1 }}>
+            {examMessage}
+          </Button>
+        )}
+      />
+    );
+  }
   return (
     <BaseDialog
       fullWidth

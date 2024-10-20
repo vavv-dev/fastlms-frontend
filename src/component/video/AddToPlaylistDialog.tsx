@@ -7,8 +7,9 @@ import {
   playlistCheckVideo,
   playlistUpdatePlaylistVideos,
 } from '@/api';
-import { BaseDialog, CheckboxControl, Form, GridInfiniteScrollPage } from '@/component/common';
+import { BaseDialog, CheckboxControl, EmptyMessage, Form, GridInfiniteScrollPage } from '@/component/common';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { PlaylistPlay } from '@mui/icons-material';
 import { Box, Button, Portal, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useEffect, useRef } from 'react';
@@ -39,6 +40,7 @@ const schema: yup.ObjectSchema<PlaylistVideoUpdateRequest> = yup.object({
 });
 
 export const AddToPlaylistDialog = ({ open, setOpen, video }: Props) => {
+  const { t } = useTranslation('video');
   const actionContainer = useRef(null);
 
   if (!video) return null;
@@ -57,11 +59,12 @@ export const AddToPlaylistDialog = ({ open, setOpen, video }: Props) => {
           apiService={playlistCheckVideo}
           apiOptions={{ videoId: video.id, orderBy: 'created' }}
           renderItem={({ data }) => <PlaylistUpdater data={data} video={video} actionContainer={actionContainer} />}
+          emptyMessage={<EmptyMessage Icon={PlaylistPlay} message={t('No playlist found.')} />}
           boxPadding={0}
           gridBoxSx={{ gap: '1em 1em', gridTemplateColumns: '1fr' }}
         />
       )}
-      actions={<Box ref={actionContainer}></Box>}
+      actions={<Box ref={actionContainer} />}
     />
   );
 };
@@ -94,7 +97,7 @@ const PlaylistUpdater = ({ data, video, actionContainer }: PlaylistUpdaterProps)
 
     playlistUpdatePlaylistVideos({ requestBody: { videos: dirtyVideos } })
       .then(() => reset(data))
-      .catch((e) => setError('root.server', { message: e.body }));
+      .catch((error) => setError('root.server', error));
   };
 
   useEffect(() => {

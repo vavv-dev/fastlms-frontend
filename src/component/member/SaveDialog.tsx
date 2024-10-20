@@ -11,11 +11,21 @@ import {
 } from '@/api';
 import { BaseDialog, Form, TextFieldControl, updateInfiniteCache } from '@/component/common';
 import i18next from '@/i18n';
-import { invitationUrl, userState } from '@/store';
+import { channelState, invitationUrl, userState } from '@/store';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DeleteOutlined, Search } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -33,19 +43,19 @@ const extraSample = [
 ];
 
 interface ExtendedUpdateRequest extends UpdateRequest, RosterUpdateRequest {
-  id?: number;
+  id?: string;
   username: string;
   name: string;
   email: string;
-  channel_id: number;
-  user_id: number;
+  channel_id: string;
+  user_id: string;
   extra: Array<{ key: string; value: string }>;
 }
 
 const schema: yup.ObjectSchema<ExtendedUpdateRequest> = yup.object({
-  id: yup.number(),
-  channel_id: yup.number().default(0),
-  user_id: yup.number().default(0),
+  id: yup.string(),
+  channel_id: yup.string().default(''),
+  user_id: yup.string().default(''),
   memo: yup.string().default(''),
   data: yup.object().default({}),
   username: yup.string().required(REQUIRED).default(''),
@@ -79,16 +89,18 @@ interface Props {
 export const SaveDialog = ({ open, setOpen, data: resource }: Props) => {
   const { t } = useTranslation('member');
   const user = useAtomValue(userState);
+  const channel = useAtomValue(channelState);
 
   const [searchInput, setSearchInput] = useState('');
   const [searchMessage, setSearchMessage] = useState('');
   const [searchStatusCode, setSearchStatusCode] = useState(0);
+  const [invite, setInvite] = useState(true);
 
   const { handleSubmit, control, formState, reset, setValue, setError } = useForm<ExtendedUpdateRequest>({
     mode: 'onBlur',
     reValidateMode: 'onSubmit',
     resolver: yupResolver(schema),
-    defaultValues: { ...schema.getDefault(), channel_id: user?.id },
+    defaultValues: { ...schema.getDefault(), channel_id: channel?.id },
     context: { searchStatusCode },
   });
   const { fields, append, remove } = useFieldArray({ control, name: 'extra' });
@@ -98,24 +110,22 @@ export const SaveDialog = ({ open, setOpen, data: resource }: Props) => {
     if (!member.id) {
       (searchStatusCode != 404
         ? createMember({ requestBody: { ...member, data } })
-        : createRoster({ invitationUrl, requestBody: { ...member, data } })
+        : createRoster({ invitationUrl, invite, requestBody: { ...member, data } })
       )
         .then((created) => {
           setOpen(false);
           updateInfiniteCache<DisplayResponse>(getDisplays, created, 'create');
         })
-        .catch((e) => setError('root.server', e.body));
+        .catch((error) => setError('root.server', error));
     } else {
-      (searchStatusCode != 404
-        ? updateMember({ id: member.id, requestBody: { ...member, data } })
-        : updateRoster({ id: member.id, requestBody: { ...member, data } })
-      )
+      const toUpdate = { id: member.id, requestBody: { ...member, data } };
+      (searchStatusCode != 404 ? updateMember(toUpdate) : updateRoster(toUpdate))
         .then(() => {
           setOpen(false);
           const data = extra.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});
           updateInfiniteCache<DisplayResponse>(getDisplays, { id: member.id, ...member, data }, 'update');
         })
-        .catch((e) => setError('root.server', e.body));
+        .catch((error) => setError('root.server', error));
     }
   };
 
@@ -133,11 +143,11 @@ export const SaveDialog = ({ open, setOpen, data: resource }: Props) => {
         setSearchStatusCode(e.status);
         if (e.status === 404) {
           setSearchMessage(t("User not found. If you provide the user's name and email, you can invite the user."));
-          setValue('username', searchInput);
+          setValue('username', searchInput, { shouldDirty: true, shouldValidate: true });
         } else if (e.status === 409) {
           setSearchMessage(e.body.detail || e.message);
         } else {
-          setError('root.server', e.body || e.message);
+          setError('root.server', e);
         }
       });
   };
@@ -148,7 +158,7 @@ export const SaveDialog = ({ open, setOpen, data: resource }: Props) => {
       ...resource,
       extra: Object.entries(resource.data || {}).map(([key, value]) => ({ key, value })),
     });
-    setSearchStatusCode(resource.id > 0 ? 200 : 404);
+    setSearchStatusCode(resource.joined_at ? 200 : 404);
   }, [resource]); // eslint-disable-line
 
   if (!open || !user) return null;
@@ -160,6 +170,14 @@ export const SaveDialog = ({ open, setOpen, data: resource }: Props) => {
       title={resource ? t('Edit member') : t('Add member')}
       actions={
         <>
+          {searchStatusCode == 404 && (
+            <FormGroup>
+              <FormControlLabel
+                control={<Checkbox checked={invite} onChange={(e) => setInvite(e.target.checked)} />}
+                label={<Typography variant="body2">{t('Send invitation email')}</Typography>}
+              />
+            </FormGroup>
+          )}
           <Button disabled={!formState.isDirty} onClick={() => reset()} color="primary">
             {t('Reset')}
           </Button>

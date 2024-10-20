@@ -105,8 +105,9 @@ export const FindingQuestionPanel = ({ question, maxOccurrence, totalOccurrence,
                 {t('My answer')}
               </Typography>
               <Box
-                sx={{ '& > p': { mt: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }}
+                className="tiptap-content"
                 dangerouslySetInnerHTML={{ __html: answer || t('No answer submitted.') }}
+                sx={{ '& > p': { mt: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }}
               />
             </Box>
           )}

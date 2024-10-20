@@ -1,8 +1,11 @@
 import i18next from '@/i18n';
+import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 
 export { AutocompleteSelect2 } from './AutocompleteSelect2';
 export { BaseDialog } from './BaseDialog';
 export { DeleteResourceDialog } from './DeleteResourceDialog';
+export { EmptyMessage } from './EmptyMessage';
 export {
   CheckboxControl,
   FileFieldControl,
@@ -24,6 +27,8 @@ export { useDebounce, useFixMouseLeave, useInfinitePagination, useScrollToFirstE
 export { updateInfiniteCache } from './swr';
 export { createToggleAction } from './toggleUserAction';
 export { uppyFamily } from './uppy';
+
+export const searchFamily = atomFamily(() => atom<string>(''));
 
 // gettext no-op
 void [

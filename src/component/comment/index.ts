@@ -9,9 +9,10 @@ export interface ThreadProps {
   url: string;
   title: string;
   owner: ThreadOwner;
-  kind: LearningResourceKind;
+  resource_kind: LearningResourceKind;
   question?: boolean;
   sticky?: boolean;
+  onLoad?: () => void;
 }
 
 // gettext no-op
@@ -23,4 +24,5 @@ void [
   i18next.t('quiz', { ns: 'comment' }),
   i18next.t('survey', { ns: 'comment' }),
   i18next.t('lesson', { ns: 'comment' }),
+  i18next.t('asset', { ns: 'comment' }),
 ];

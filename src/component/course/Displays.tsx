@@ -4,8 +4,8 @@ import {
   courseCreateEsimsaCourse as createEsimsaCourse,
   courseGetDisplays as getDisplays,
 } from '@/api';
-import { GridInfiniteScrollPage, updateInfiniteCache } from '@/component/common';
-import { AddOutlined, CloudUploadOutlined } from '@mui/icons-material';
+import { EmptyMessage, GridInfiniteScrollPage, updateInfiniteCache } from '@/component/common';
+import { AddOutlined, CloudUploadOutlined, School } from '@mui/icons-material';
 import {
   Box,
   Input,
@@ -35,6 +35,7 @@ export const Displays = () => {
       renderItem={({ data }) =>
         data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
+      emptyMessage={<EmptyMessage Icon={School} message={t('No course found.')} />}
       gridBoxSx={{
         gap: '2em 1em',
         gridTemplateColumns: {

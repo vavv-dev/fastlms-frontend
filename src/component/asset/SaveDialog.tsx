@@ -42,13 +42,13 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .required(REQUIRED)
     .default('html')
     .label(t('Asset kind'))
-    .oneOf(['html', 'pdf', 'ppt', 'epub'])
+    .oneOf(['html', 'pdf', 'pptx', 'epub'])
     .meta({
       control: 'select',
       options: [
         { value: 'html', label: t('HTML content') },
         { value: 'pdf', label: t('PDF file'), disabled: true },
-        { value: 'ppt', label: t('PPT'), disabled: true },
+        { value: 'pptx', label: t('PPTX presentation'), disabled: true },
         { value: 'epub', label: t('EPUB'), disabled: true },
       ],
       grid: 6,

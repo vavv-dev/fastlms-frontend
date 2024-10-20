@@ -77,6 +77,7 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
       }}
     >
       <WithAvatar
+        {...data.author}
         name={
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
@@ -88,9 +89,8 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
             {data.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
           </Stack>
         }
-        username={data.author.username}
-        thumbnail={data.author.thumbnail || ''}
         variant={data.parent_id ? 'small' : 'medium'}
+        sx={{ flexGrow: 1 }}
       >
         <Box sx={{ flexGrow: 1, gap: 0.4, display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ mr: '2.5em' }}>

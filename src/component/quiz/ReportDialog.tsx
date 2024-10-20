@@ -5,8 +5,9 @@ import {
   quizDownloadQuizReport as downloadReport,
   quizGetQuizReport as getReport,
 } from '@/api';
-import { BaseDialog, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
+import { BaseDialog, EmptyMessage, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
 import { base64XlsxDownload, formatDatetimeLocale, toFixedHuman } from '@/helper/util';
+import { BarChart } from '@mui/icons-material';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -103,6 +104,7 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
               </TableContainer>
             </Box>
           )}
+          emptyMessage={<EmptyMessage Icon={BarChart} message={t('No report data found.')} />}
           boxPadding={0}
           gridBoxSx={{ gap: '1em 1em', gridTemplateColumns: '1fr' }}
         />

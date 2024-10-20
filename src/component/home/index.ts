@@ -1,6 +1,6 @@
 import i18next from '@/i18n';
 
-export { Home } from './Home';
+export { Channel as HomeChannel } from './Channel';
 export { Video as HomeVideo } from './Video';
 
 void [

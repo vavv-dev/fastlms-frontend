@@ -2,21 +2,16 @@ import {
   VideoDisplayResponse as DisplayResponse,
   videoGetDisplays as getDisplays,
   VideoGetDisplaysData as GetDisplaysData,
+  VideoKind,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { ElectricBolt, VideoLibrary } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useLocation } from 'react-router-dom';
 import { Card } from './Card';
 import { ImportYoutubeDialog } from './ImportYoutubeDialog';
 
-export const Displays = () => {
+export const Displays = ({ kind }: { kind: VideoKind }) => {
   const { t } = useTranslation('video');
-  const location = useLocation();
-  const kind = location.pathname.split('/').pop();
-
-  if (kind !== 'video' && kind !== 'short') {
-    return <Navigate to="/404" />;
-  }
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
@@ -37,6 +32,7 @@ export const Displays = () => {
           )),
         )
       }
+      emptyMessage={<EmptyMessage Icon={kind === 'video' ? VideoLibrary : ElectricBolt} message={t('No video found.')} />}
       gridBoxSx={
         kind === 'video'
           ? {

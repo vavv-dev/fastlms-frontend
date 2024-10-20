@@ -3,10 +3,11 @@ import {
   SurveyGetDisplaysData as GetDisplaysData,
   surveyGetDisplays as getDisplays,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
 import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
 import { SaveDialog } from './SaveDialog';
+import { Poll } from '@mui/icons-material';
 
 export const Displays = () => {
   const { t } = useTranslation('survey');
@@ -20,6 +21,7 @@ export const Displays = () => {
       renderItem={({ data }) =>
         data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
+      emptyMessage={<EmptyMessage Icon={Poll} message={t('No survey found.')} />}
       gridBoxSx={{
         gap: '2em 1em',
         gridTemplateColumns: {

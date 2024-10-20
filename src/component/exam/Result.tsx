@@ -1,24 +1,26 @@
 import { ExamAssessResponse as AssessResponse, ExamGetAssessData as GetAssessData, examGetAssess as getAssess } from '@/api';
-import { ThreadDialog } from '@/component/comment';
 import { useServiceImmutable } from '@/component/common';
 import { formatDatetimeLocale, toFixedHuman } from '@/helper/util';
-import { Button, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from '@mui/material';
-import { useState } from 'react';
+import { Box, Button, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Finding } from './Finding';
 
 export const Result = ({ id }: { id: string }) => {
   const { t } = useTranslation('exam');
+  const navigate = useNavigate();
   const theme = useTheme();
   const { data } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
-  const [threadDialogOpen, setThreadDialogOpen] = useState(false);
 
   if (!data || !data.status || !data.submission) return null;
 
   return (
     <>
       <Button
-        onClick={() => setThreadDialogOpen((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate('.', { state: { dialog: { question: true, ...data } } });
+        }}
         sx={{ flexShrink: 0, position: 'absolute', right: '2em', top: '2.8em' }}
       >
         {t('Q&A')}
@@ -46,20 +48,8 @@ export const Result = ({ id }: { id: string }) => {
         </Table>
       </TableContainer>
       <Divider sx={{ mb: 3, width: '100%', borderBottomWidth: 2, borderColor: theme.palette.action.disabled }} />
+      <Box sx={{ px: 3 }} className="tiptap-content" dangerouslySetInnerHTML={{ __html: data.final_message }} />
       <Finding id={id} />
-
-      <ThreadDialog
-        open={threadDialogOpen}
-        setOpen={setThreadDialogOpen}
-        threadProps={{
-          url: encodeURIComponent(`${location.origin}/exam/${data.id}`),
-          title: data.title,
-          owner: data.owner,
-          kind: 'exam',
-          question: true,
-          sticky: true,
-        }}
-      />
     </>
   );
 };

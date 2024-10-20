@@ -1,13 +1,16 @@
 import i18next from '@/i18n';
+import { atom } from 'jotai';
+import { ReactElement } from 'react';
 
 export { Card as ExamCard } from './Card';
 export { Displays as ExamDisplays } from './Displays';
+export { ReadyDialog as ExamReadyDialog } from './ReadyDialog';
 export { View as ExamView } from './View';
 export { Displays as GradingDisplays } from './grading/Displays';
-export { ReadyDialog as ExamReadyDialog } from './ReadyDialog';
 
 // gettext no-op
 void [
+  i18next.t('general_exam', { ns: 'exam' }),
   i18next.t('midterm_exam', { ns: 'exam' }),
   i18next.t('final_exam', { ns: 'exam' }),
   i18next.t('assignment', { ns: 'exam' }),
@@ -25,3 +28,5 @@ void [
   i18next.t('failed', { ns: 'exam' }),
   i18next.t('passed', { ns: 'exam' }),
 ];
+
+export const examMessageState = atom<ReactElement | null>(null);

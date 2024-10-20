@@ -4,6 +4,7 @@ import {
   assetUpdateResource as updateResource,
 } from '@/api';
 import { ResourceCard, updateInfiniteCache, uppyFamily } from '@/component/common';
+import { snackbarMessageState } from '@/component/layout';
 import { formatDuration, formatRelativeTime, toFixedHuman } from '@/helper/util';
 import { userState } from '@/store';
 import { CloudUpload, CloudUploadOutlined } from '@mui/icons-material';
@@ -12,11 +13,9 @@ import { useUppyEvent, useUppyState } from '@uppy/react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ThreadDialog } from '@/component/comment';
-import { snackbarMessageState } from '../layout';
+import { useNavigate } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
 import { UploadDialog } from './UploadDialog';
-import { ViewDialog } from './ViewDialog';
 
 interface Props {
   data: DisplayResponse;
@@ -27,11 +26,10 @@ interface Props {
 
 export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
   const { t } = useTranslation('asset');
+  const navigate = useNavigate();
   const theme = useTheme();
   const user = useAtomValue(userState);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
-  const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [threadDialogOpen, setThreadDialogOpen] = useState(false);
   const [uploaderOpen, setUploaderOpen] = useState(false);
 
   const uppy = useAtomValue(uppyFamily(data.id));
@@ -51,7 +49,7 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
       <ResourceCard
         resource={data}
         onClick={() => {
-          if (data.uploaded) setViewDialogOpen(true);
+          if (data.uploaded) navigate('.', { state: { dialog: data } });
           else setSnackbarMessage({ message: t('Asset is not uploaded yet'), duration: 3000 });
         }}
         banner={
@@ -107,12 +105,12 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
         partialUpdateService={updateResource}
         listService={getDisplays}
         footer={
-          data.progress && (
+          data.progress !== null && (
             <Button
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                setThreadDialogOpen(true);
+                navigate('.', { state: { dialog: { question: true, ...data } } });
               }}
               sx={{ minWidth: 0, alignSelf: 'flex-start', py: 0 }}
             >
@@ -121,21 +119,6 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
           )
         }
       />
-      {viewDialogOpen && <ViewDialog open={viewDialogOpen} setOpen={setViewDialogOpen} data={data} />}
-      {threadDialogOpen && (
-        <ThreadDialog
-          open={threadDialogOpen}
-          setOpen={setThreadDialogOpen}
-          threadProps={{
-            url: encodeURIComponent(`${window.location.origin}/asset/${data.id}`),
-            title: data.title,
-            owner: data.owner,
-            kind: 'asset',
-            question: true,
-            sticky: true,
-          }}
-        />
-      )}
       {uploaderOpen && <UploadDialog open={uploaderOpen} setOpen={setUploaderOpen} id={data.id} />}
     </>
   );

@@ -1,9 +1,14 @@
 import i18next from '@/i18n';
 
+export { Stats as ChannelStats } from './Stats';
+export { Card as ChannelCard } from './Card';
 export { Home as ChannelHome } from './Home';
 export { Layout as ChannelLayout } from './Layout';
+export { DynamicRoot as ChannelRoot } from './DynamicRoot';
+export { Setting as ChannelSetting } from './Setting';
 
 void [
+  i18next.t('home', { ns: 'channel' }),
   i18next.t('video', { ns: 'channel' }),
   i18next.t('short', { ns: 'channel' }),
   i18next.t('playlist', { ns: 'channel' }),
@@ -13,4 +18,13 @@ void [
   i18next.t('exam', { ns: 'channel' }),
   i18next.t('course', { ns: 'channel' }),
   i18next.t('lesson', { ns: 'channel' }),
+
+  i18next.t('username', { ns: 'channel' }),
+  i18next.t('email', { ns: 'channel' }),
+  i18next.t('name', { ns: 'channel' }),
+  i18next.t('cellphone', { ns: 'channel' }),
+  i18next.t('birthdate', { ns: 'channel' }),
+  i18next.t('company', { ns: 'channel' }),
+  i18next.t('position', { ns: 'channel' }),
+  i18next.t('department', { ns: 'channel' }),
 ];

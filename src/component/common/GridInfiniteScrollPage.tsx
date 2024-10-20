@@ -1,17 +1,16 @@
 import { CancelablePromise } from '@/api';
-import { InfiniteScrollIndicator, PaginationActions, useInfinitePagination } from '@/component/common';
-import { homeUserState, userState } from '@/store';
+import { InfiniteScrollIndicator, PaginationActions, searchFamily, useInfinitePagination } from '@/component/common';
+import { spacerRefState } from '@/component/layout';
+import { channelState, userState } from '@/store';
 import { Add } from '@mui/icons-material';
 import { Box, BoxProps, Button, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { spacerRefState } from '../layout';
 
 const orderingFamily = atomFamily(() => atom<string>(''));
-const searchFamily = atomFamily(() => atom<string>(''));
 
 interface PaginatedList<T> {
   page: number;
@@ -25,6 +24,7 @@ interface GridInfiniteScrollPageProps<Item, Params extends { orderBy?: string }>
   pageKey: string;
   apiService: (params: Params) => CancelablePromise<PaginatedList<Item>>;
   renderItem: (props: { data: PaginatedList<Item>[] | undefined }) => React.ReactNode;
+  emptyMessage: React.ReactNode;
   gridBoxSx: BoxProps['sx'];
   orderingOptions?: { value: Params['orderBy']; label: string }[];
   disableSearch?: boolean;
@@ -50,6 +50,7 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   apiService,
   apiOptions,
   renderItem,
+  emptyMessage,
   maxWidth,
   gridBoxSx,
   pageHeader,
@@ -61,13 +62,13 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   const { t } = useTranslation('common');
   const location = useLocation();
   const theme = useTheme();
-  const homeUser = useAtomValue(homeUserState);
+  const channel = useAtomValue(channelState);
   const user = useAtomValue(userState);
   const [ordering, setOrdering] = useAtom(orderingFamily(pageKey));
   const [search, setSearch] = useAtom(searchFamily(pageKey));
   const [createItemDialogOpen, setCreateItemDialogOpen] = useState(false);
 
-  const userID = homeUser?.id;
+  const userID = channel?.owner.id;
   const isOwner = user && user?.id === userID;
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
   const { data, isLoading, isValidating, mutate } = useInfinitePagination<Params, PaginatedList<Item>>({
@@ -92,9 +93,11 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   useEffect(() => {
     if (location.state?.search) {
       setSearch(location.state.search);
-      location.state.search = undefined;
+      delete location.state.search;
     }
   }, [location.state?.search]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const MemoizedRenderItem = useMemo(() => memo(renderItem), [renderItem]);
 
   return (
     <Box sx={{ width: '100%', p: boxPadding == undefined ? 3 : boxPadding }}>
@@ -104,6 +107,8 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
             display: 'grid',
             justifyContent: 'center',
             ...gridBoxSx,
+            minHeight: '250px',
+            alignItems: 'flex-start',
           }}
         >
           {pageHeader && <Box sx={{ gridColumn: '1 / -1', width: '100%' }}>{pageHeader}</Box>}
@@ -131,7 +136,7 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
           </Box>
 
           {CreateItemComponent && isOwner && (
-            <Box className="create-resource-button" sx={{ position: 'relative' }}>
+            <Box className="create-resource-button" sx={{ position: 'relative', height: '100%' }}>
               <Button
                 onClick={() => setCreateItemDialogOpen(true)}
                 sx={{
@@ -149,8 +154,11 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
               <CreateItemComponent open={createItemDialogOpen} setOpen={setCreateItemDialogOpen} refresh={mutate} />
             </Box>
           )}
-
-          {renderItem({ data })}
+          {data?.[0]?.total ? (
+            <MemoizedRenderItem data={data} />
+          ) : isLoading || isValidating ? null : (
+            <Box sx={{ gridColumn: '1 / -1', width: '100%', textAlign: 'center' }}>{emptyMessage}</Box>
+          )}
         </Box>
 
         <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} />

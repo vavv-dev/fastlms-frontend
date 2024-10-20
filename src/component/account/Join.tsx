@@ -55,11 +55,7 @@ export const Join = () => {
         });
         navigate('/login');
       })
-      .catch((error) => {
-        if (error.body) {
-          setError('root.server', error.body);
-        }
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   return (

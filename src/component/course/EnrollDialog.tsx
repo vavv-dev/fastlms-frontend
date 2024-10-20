@@ -71,7 +71,16 @@ export const EnrollDialog = ({ open, setOpen, id, title }: Props) => {
                 <Typography variant="body2" color={error ? 'error' : 'success'}>
                   {result}
                 </Typography>
-                {!error && <Button onClick={() => navigate(`/course/${id}`)}>{t('Go to course learning page')}</Button>}
+                {!error && (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/course/${id}`);
+                    }}
+                  >
+                    {t('Go to course learning page')}
+                  </Button>
+                )}
               </Box>
             )}
 

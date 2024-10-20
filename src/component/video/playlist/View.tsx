@@ -161,17 +161,15 @@ const PlaylistSidebar = ({ playlistId }: { playlistId: string }) => {
               </Typography>
 
               {playlist.description && (
-                <Box sx={{ maxWidth: '100%' }} dangerouslySetInnerHTML={{ __html: playlist.description }} />
+                <Box
+                  className="tiptap-content"
+                  dangerouslySetInnerHTML={{ __html: playlist.description }}
+                  sx={{ maxWidth: '100%' }}
+                />
               )}
 
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                <WithAvatar
-                  variant="large"
-                  name={playlist.owner.name}
-                  username={playlist.owner.username}
-                  thumbnail={playlist.owner.thumbnail}
-                  color="white"
-                >
+                <WithAvatar variant="large" {...playlist.owner} color="white">
                   <Box sx={{ display: 'block', color: 'white' }}>
                     <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
                       {playlist.modified && (

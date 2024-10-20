@@ -42,7 +42,7 @@ export const useInfinitePagination = <T, K extends PaginateProps>(options: Infin
       // revalidateOnMount: false,
       // revalidateIfStale: false,
       initialSize: 1,
-      // keepPreviousData: true,
+      keepPreviousData: true,
       ...options.swrInfiniteOption,
     },
   );

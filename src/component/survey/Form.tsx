@@ -1,13 +1,16 @@
 import {
   SurveyAssessResponse as AssessResponse,
+  SurveyDisplayResponse as DisplayResponse,
   SurveyGetAssessData as GetAssessData,
   surveyGetAssess as getAssess,
+  surveyGetDisplays as getDisplays,
   surveySubmitAssess as submitAssess,
 } from '@/api';
 import {
   Form as CommonForm,
   SelectGroupControl,
   TextFieldControl,
+  updateInfiniteCache,
   useScrollToFirstError,
   useServiceImmutable,
 } from '@/component/common';
@@ -87,10 +90,9 @@ export const Form = ({ id }: { id: string }) => {
     })
       .then(async (updated) => {
         await mutate(updated, { revalidate: false });
+        updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })
-      .catch((error) => {
-        if (error.body) setError('root.server', error.body);
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   if (!data || !data.submission) return;

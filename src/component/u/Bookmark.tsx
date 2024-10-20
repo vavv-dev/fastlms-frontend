@@ -4,10 +4,7 @@ import {
   accountGetBookmarkedContent,
   accountToggleBookmark,
 } from '@/api';
-import { GridInfiniteScrollPage, WithAvatar } from '@/component/common';
-import { ExamReadyDialog } from '@/component/exam';
-import { QuizViewDialog } from '@/component/quiz';
-import { SurveyViewDialog } from '@/component/survey';
+import { EmptyMessage, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
 import { formatDatetimeLocale, formatRelativeTime, textEllipsisCss } from '@/helper/util';
 import { userState } from '@/store';
 import { BookmarkBorderOutlined, BookmarkOutlined } from '@mui/icons-material';
@@ -42,7 +39,8 @@ export const Bookmark = () => {
           </Table>
         </TableContainer>
       )}
-      gridBoxSx={{ gap: '1em 1em', gridTemplateColumns: '1fr' }}
+      emptyMessage={<EmptyMessage Icon={BookmarkOutlined} message={t('No bookmarked content found.')} />}
+      gridBoxSx={{ gap: '2em 1em', gridTemplateColumns: '1fr' }}
       boxPadding={0}
     />
   );
@@ -53,10 +51,6 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
   const navigate = useNavigate();
   const user = useAtomValue(userState);
   const [bookmarked, setBookmarked] = useState(true);
-
-  const [quizViewDialogOpen, setQuizViewDialogOpen] = useState(false);
-  const [surveyViewDialogOpen, setSurveyViewDialogOpen] = useState(false);
-  const [examReadyDialogOpen, setExamReadyDialogOpen] = useState(false);
 
   const toggleBookmark = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -78,18 +72,12 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
       case 'course':
         navigate(`/${row.kind}/${row.id}`);
         break;
+      case 'asset':
       case 'quiz':
-        setQuizViewDialogOpen(true);
-        break;
       case 'survey':
-        setSurveyViewDialogOpen(true);
-        break;
       case 'exam':
-        setExamReadyDialogOpen(true);
-        break;
       case 'lesson':
-        navigate(`/channel/${row.owner_username}/lesson`, { state: { search: row.id } });
-        break;
+        navigate('.', { state: { dialog: row } });
     }
   };
 
@@ -97,25 +85,24 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
     <TableRow onClick={openContent} key={row.id} sx={{ '&:hover': { bgcolor: 'action.hover' }, cursor: 'pointer' }}>
       <TableCell align="center">{t(row.kind)}</TableCell>
       <TableCell sx={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
-        {row.thumbnail && (
-          <Box
-            sx={{
-              display: { xs: 'none', sm: 'block' },
-              backgroundImage: `url(${row.thumbnail})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              width: '140px',
-              minWidth: '140px',
-              aspectRatio: '16/9',
-              borderRadius: 2,
-            }}
-          />
-        )}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5em', flexGrow: 1 }}>
+        <Box
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            backgroundImage: `url(${row.thumbnail})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '100px',
+            minWidth: '100px',
+            aspectRatio: '16/9',
+            borderRadius: 2,
+            bgcolor: 'action.hover',
+          }}
+        />
+        <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
           <Typography variant="body2" sx={{ ...textEllipsisCss(2), whiteSpace: 'wrap' }}>
             {row.title}
           </Typography>
-          <WithAvatar variant="small" name={row.owner_name} username={row.owner_username} thumbnail={row.owner_thumbnail}>
+          <WithAvatar variant="small" {...row.owner}>
             <Typography component="div" variant="caption">
               {t(...formatRelativeTime(row.created))}
             </Typography>
@@ -132,9 +119,6 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
           <IconButton onClick={toggleBookmark}>{bookmarked ? <BookmarkOutlined /> : <BookmarkBorderOutlined />}</IconButton>
         </Tooltip>
       </TableCell>
-      {quizViewDialogOpen && <QuizViewDialog open={quizViewDialogOpen} setOpen={setQuizViewDialogOpen} id={row.id} />}
-      {surveyViewDialogOpen && <SurveyViewDialog open={surveyViewDialogOpen} setOpen={setSurveyViewDialogOpen} id={row.id} />}
-      {examReadyDialogOpen && <ExamReadyDialog open={examReadyDialogOpen} setOpen={setExamReadyDialogOpen} id={row.id} />}
     </TableRow>
   );
 };

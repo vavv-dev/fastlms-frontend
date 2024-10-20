@@ -28,7 +28,8 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
     id: data.progress != null ? data.id : '',
   });
 
-  const trackingImpossible = !data || !data.duration || data.duration > MAX_WATCH_DURATION;
+  // no need to save last position
+  const trackingImpossible = !data || !data.duration || data.duration > MAX_WATCH_DURATION || (data.progress || 0) >= 100;
 
   useEffect(() => {
     if (trackingImpossible || !watchBitmap) return;
@@ -137,7 +138,6 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
     }
 
     if (!lastPosition) return;
-    if (lastPosition >= data.duration) return;
 
     const watch: WatchUpdateRequest = {
       last_position: Math.floor(lastPosition),
@@ -155,18 +155,8 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
       .map((byte) => byte.toString(16).padStart(2, '0'))
       .join('');
 
-    // Check if different from existing watchBitmap
-    if (watchBitmap) {
-      const existingBitmapHex = await blobToHex(watchBitmap);
-      if (bitmap.length !== watchBitmap.size || bitmapHex !== existingBitmapHex) {
-        watch['length'] = bitmap.length * 8; // Convert byte length to bit length
-        watch['watch_bitmap'] = bitmapHex as unknown as Blob;
-      }
-    } else {
-      // If there's no existing watchBitmap, always update
-      watch['length'] = bitmap.length * 8; // Convert byte length to bit length
-      watch['watch_bitmap'] = bitmapHex as unknown as Blob;
-    }
+    watch['length'] = data.duration;
+    watch['watch_bitmap'] = bitmapHex as unknown as Blob;
 
     updateWatch({ id, requestBody: watch })
       .then(() => {
@@ -182,15 +172,6 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })
       .catch((e) => console.error(e));
-  };
-
-  // Helper function to convert Blob to hex string
-  const blobToHex = async (blob: Blob): Promise<string> => {
-    const arrayBuffer = await blob.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    return Array.from(uint8Array)
-      .map((byte) => byte.toString(16).padStart(2, '0'))
-      .join('');
   };
 
   // debounce persist watch

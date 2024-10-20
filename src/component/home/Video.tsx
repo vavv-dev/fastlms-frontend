@@ -6,8 +6,9 @@ import {
   VideoGetTagsData as GetTagsData,
   VideoGetTagsResponse as GetTagsResponse,
 } from '@/api';
-import { GridInfiniteScrollPage, useServiceImmutable } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage, useServiceImmutable } from '@/component/common';
 import { VideoCard } from '@/component/video';
+import { VideoLibrary } from '@mui/icons-material';
 import { ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
 import { atom, useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 const tagState = atom<string>('');
 
 export const Video = () => {
+  const { t } = useTranslation('home');
   const { data: tagNames } = useServiceImmutable<GetTagsData, GetTagsResponse>(getTags, { limit: 8 });
   const [tag, setTag] = useAtom(tagState);
 
@@ -35,6 +37,7 @@ export const Video = () => {
           )),
         )
       }
+      emptyMessage={<EmptyMessage Icon={VideoLibrary} message={t('No video found.')} />}
       maxWidth={1928}
       gridBoxSx={{
         gap: '2em 1em',
@@ -56,7 +59,7 @@ interface TagGroupProps {
 }
 
 const TagGroup = ({ tagNames, tag, setTag }: TagGroupProps) => {
-  const { t } = useTranslation('video');
+  const { t } = useTranslation('home');
   const theme = useTheme();
 
   return (
@@ -82,7 +85,8 @@ const TagGroup = ({ tagNames, tag, setTag }: TagGroupProps) => {
       }}
     >
       <ToggleButton value="">{t('All')}</ToggleButton>
-      <ToggleButton value="featured">{t('featured')}</ToggleButton>
+      <ToggleButton value="featured">{t('Featured')}</ToggleButton>
+      <ToggleButton value="watched">{t('Watched video')}</ToggleButton>
       {tagNames.map((name) => (
         <ToggleButton key={name} value={name}>
           {name}

@@ -3,8 +3,9 @@ import {
   SearchSearchVideoContentData as SearchVideoContentData,
   searchSearchVideoContent as searchVideoContent,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
 import { durationToSeconds, stripHtml } from '@/helper/util';
+import { Search } from '@mui/icons-material';
 import { Box, Chip, Tooltip, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -40,20 +41,8 @@ export const Result = () => {
       disableSearch={true}
       apiService={searchVideoContent}
       apiOptions={search ? { q: search } : undefined}
-      renderItem={({ data }) => {
-        if (data && data[0].items.length === 0) {
-          return (
-            <Box sx={{ my: 3, textAlign: 'center' }}>
-              {search ? (
-                <Typography variant="h6">{t('No search result by "{{ search }}".', { search })}</Typography>
-              ) : (
-                <Typography variant="h6">{t('Search within video content.')}</Typography>
-              )}
-            </Box>
-          );
-        }
-
-        return data?.map((pagination) =>
+      renderItem={({ data }) =>
+        data?.map((pagination) =>
           pagination.items?.map((item) => (
             <Box key={item.id} sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 2 }}>
               <Card
@@ -107,8 +96,9 @@ export const Result = () => {
               </Box>
             </Box>
           )),
-        );
-      }}
+        )
+      }
+      emptyMessage={<EmptyMessage Icon={Search} message={t('No search result by "{{ search }}".', { search })} />}
       gridBoxSx={{ gap: '1em 1em', gridTemplateColumns: '1fr' }}
     />
   );

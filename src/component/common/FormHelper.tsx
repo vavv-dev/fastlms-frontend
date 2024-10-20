@@ -1,3 +1,4 @@
+import { ValidationError } from '@/api';
 import { CheckOutlined, Close, Visibility, VisibilityOff } from '@mui/icons-material';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import {
@@ -44,35 +45,29 @@ export const Form: React.FC<FormProps> = ({ onSubmit, formState, setError, child
   const [noneFieldErrors, setNoneFieldErrors] = useState<string[]>([]);
 
   useEffect(() => {
-    const errorsFromServer = formState.errors?.root?.server || {};
-    for (const key in errorsFromServer) {
-      const message = errorsFromServer[key];
-      if (!message) continue;
+    const serverError = formState.errors?.root?.server;
+    setNoneFieldErrors([]);
 
-      if (Array.isArray(message) && message.every((item) => typeof item === 'object')) {
-        const flattenedMessage = message
-          .filter((obj) => Object.keys(obj).length)
-          .map((obj) => {
-            return Object.entries(obj)
-              .map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`)
-              .join(' / ');
-          });
+    if (!serverError) return;
+    const detail = serverError.body?.detail;
 
-        if (key in formState.defaultValues) {
+    if (Array.isArray(detail)) {
+      detail.forEach((error: ValidationError) => {
+        const fieldName = error.loc[error.loc.length - 1];
+        const errorMessage = error.msg;
+
+        if (fieldName in formState.defaultValues) {
           // Set field error
-          setError(key, { type: key, message: flattenedMessage.join(' / ') }, { shouldFocus: true });
+          setError(fieldName, { type: error.type, message: errorMessage }, { shouldFocus: true });
         } else {
-          const nonFeildKey = key == 'detail' || key == 'message' ? '' : `${key}: `;
-          setNoneFieldErrors((prev) => [...prev, `${nonFeildKey}${flattenedMessage.join(' / ')}`]);
+          // Set non-field error
+          setNoneFieldErrors((prev) => [...prev, errorMessage]);
         }
-      } else {
-        if (key in formState.defaultValues) {
-          setError(key, { type: key, message: message }, { shouldFocus: true });
-        } else {
-          const nonFeildKey = key == 'detail' || key == 'message' ? '' : `${key}: `;
-          setNoneFieldErrors((prev) => [...prev, `${nonFeildKey}${message}`]);
-        }
-      }
+      });
+    } else if (typeof detail === 'string') {
+      setNoneFieldErrors((prev) => [...prev, detail]);
+    } else if (typeof serverError.message === 'string') {
+      setNoneFieldErrors((prev) => [...prev, serverError.message]);
     }
 
     return () => {

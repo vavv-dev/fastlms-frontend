@@ -137,7 +137,13 @@ const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     .label(t('Duration'))
     .required(REQUIRED)
     .meta({ control: 'number', grid: 4 }),
-  cutoff_percent: yup.number().typeError(REQUIRED).required(REQUIRED).label(t('Cutoff %')).meta({ control: 'number', grid: 4 }),
+  cutoff_percent: yup
+    .number()
+    .typeError(REQUIRED)
+    .required(REQUIRED)
+    .default(60)
+    .label(t('Cutoff %'))
+    .meta({ control: 'number', grid: 4 }),
   is_public: yup
     .boolean()
     .default(false)

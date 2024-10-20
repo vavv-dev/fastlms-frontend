@@ -8,33 +8,31 @@ import {
   lessonGetDisplays as getDisplays,
   lessonUpdateResource as updateResource,
 } from '@/api';
-import { ThreadDialog } from '@/component/comment';
+import { AssetCard } from '@/component/asset';
 import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
+import { ExamCard } from '@/component/exam';
+import { QuizCard } from '@/component/quiz';
+import { SurveyCard } from '@/component/survey';
+import { VideoCard } from '@/component/video';
 import { decodeURLText, formatRelativeTime, toFixedHuman } from '@/helper/util';
-import { ArrowRight, BookmarkBorderOutlined, HelpOutlineOutlined } from '@mui/icons-material';
+import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
 import { Box, Button, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionMenu } from './ActionMenu';
-import { VideoCard } from '../video';
-import { QuizCard } from '../quiz';
-import { SurveyCard } from '../survey';
-import { ExamCard } from '../exam';
-import { AssetCard } from '../asset';
 
 interface Props {
   data: DisplayResponse;
   hideAvatar?: boolean;
-  showDescription?: boolean;
   embeded?: boolean;
+  borderBox?: boolean;
 }
 
-export const Card = ({ data, hideAvatar, embeded }: Props) => {
+export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => {
   const { t } = useTranslation('lesson');
   const theme = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState(false);
-  const [threadDialogOpen, setThreadDialogOpen] = useState(false);
 
   // Fix  with hovering
   useFixMouseLeave(cardRef, () => {
@@ -62,10 +60,13 @@ export const Card = ({ data, hideAvatar, embeded }: Props) => {
         display: 'flex',
         gap: 3,
         flexDirection: 'column',
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: theme.shape.borderRadius,
-        p: { xs: 2, sm: 3 },
         position: 'relative',
+        pb: 2,
+        ...(borderBox && {
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: theme.shape.borderRadius,
+          p: { xs: 2, sm: 3 },
+        }),
       }}
     >
       {!data.is_public && (
@@ -100,19 +101,9 @@ export const Card = ({ data, hideAvatar, embeded }: Props) => {
         </Box>
       )}
 
-      <WithAvatar name={data.owner.name} username={data.owner.username} thumbnail={data.owner.thumbnail} hideAvatar={hideAvatar}>
+      <WithAvatar {...data.owner} hideAvatar={hideAvatar}>
         <Stack sx={{ color: 'text.secondary', alignItems: 'center', pr: '3em' }} direction="row" spacing={2}>
           <Typography variant="subtitle2">{t(...formatRelativeTime(data.modified))}</Typography>
-          <Button
-            size="small"
-            startIcon={<HelpOutlineOutlined fontSize="small" />}
-            onClick={(e) => {
-              e.stopPropagation();
-              setThreadDialogOpen((prev) => !prev);
-            }}
-          >
-            {t('Q&A')}
-          </Button>
           {data.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
           {data.grading_method == 'score' && (
             <>
@@ -193,26 +184,13 @@ export const Card = ({ data, hideAvatar, embeded }: Props) => {
           ))}
           {data.description && (
             <Box
+              className="tiptap-content"
               dangerouslySetInnerHTML={{ __html: decodeURLText(data.description) }}
               sx={{ gridColumn: { xs: '1 / -1' }, pr: 3, whiteSpace: 'pre-wrap', '& p': { my: 0 } }}
             />
           )}
         </Box>
       </Box>
-      {threadDialogOpen && (
-        <ThreadDialog
-          open={threadDialogOpen}
-          setOpen={setThreadDialogOpen}
-          threadProps={{
-            url: encodeURIComponent(`${window.location.origin}/lesson/${data.id}`),
-            title: data.title,
-            owner: data.owner,
-            kind: 'lesson',
-            question: true,
-            sticky: true,
-          }}
-        />
-      )}
     </Box>
   );
 };

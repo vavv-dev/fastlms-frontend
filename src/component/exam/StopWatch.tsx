@@ -8,12 +8,13 @@ import {
 import { useServiceImmutable } from '@/component/common';
 import { alertState, snackbarMessageState } from '@/component/layout';
 import { formatDuration } from '@/helper/util';
-import { KeyboardArrowRight } from '@mui/icons-material';
+import { ArrowForwardOutlined } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { examMessageState } from '.';
 
 interface Props {
   id: string;
@@ -29,6 +30,7 @@ export const StopWatch = ({ id, getValues }: Props) => {
   const setAlert = useSetAtom(alertState);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const submission = data?.submission;
+  const setExamMessage = useSetAtom(examMessageState);
 
   const createMessage = useMemo(() => {
     return (title: string, duration: number, remain: number, severity: string) => (
@@ -46,12 +48,12 @@ export const StopWatch = ({ id, getValues }: Props) => {
     return (id: string, title: string) => (
       <Box
         sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-        onClick={() => navigate(`/exam/${id}/assess`)}
+        onClick={() => navigate(`/exam/${id}`)}
         style={{ cursor: 'pointer' }}
       >
         <Typography variant="body2">{title}</Typography>
         <Typography variant="body2">{`${t('Exam is in progress.')}`}</Typography>
-        <KeyboardArrowRight fontSize="small" />
+        <ArrowForwardOutlined fontSize="small" />
       </Box>
     );
   }, [t, navigate]);
@@ -106,6 +108,7 @@ export const StopWatch = ({ id, getValues }: Props) => {
     const pathnameRefVal = pathnameRef.current;
     return () => {
       // set global alert
+      setExamMessage(null);
       if (pathnameRefVal !== window.location.pathname) {
         if (!submission.end_time && data.duration) {
           const start = submission.start_time ? new Date(submission.start_time).getTime() : new Date().getTime();
@@ -113,6 +116,7 @@ export const StopWatch = ({ id, getValues }: Props) => {
           if (remain > 0) {
             const message = globalAlert(data.id, data.title);
             setAlert({ open: true, message: message, severity: 'warning', duration: remain * 1000 });
+            setExamMessage(message);
           }
         }
       }

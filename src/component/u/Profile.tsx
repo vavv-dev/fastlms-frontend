@@ -1,17 +1,12 @@
-import {
-  ChannelDisplayResponse,
-  ChannelGetChannelByUsernameData,
-  UserUpdateRequest,
-  accountUpdateMe,
-  channelGetChannelByUsername,
-} from '@/api';
-import { CheckboxControl, Form, TextFieldControl as Text, TextEditorControl, useServiceImmutable } from '@/component/common';
+import { UserUpdateRequest, accountUpdateMe } from '@/api';
+import { CheckboxControl, Form, TextFieldControl as Text } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
 import i18next from '@/i18n';
 import { userState } from '@/store';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Refresh } from '@mui/icons-material';
 import VpnKeyOutlined from '@mui/icons-material/VpnKeyOutlined';
-import { Box, Button } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useAtom, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -39,11 +34,6 @@ export const Profile = () => {
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const [user, setUser] = useAtom(userState);
 
-  // sync with channel user
-  const { mutate } = useServiceImmutable<ChannelGetChannelByUsernameData, ChannelDisplayResponse>(channelGetChannelByUsername, {
-    username: user?.use_channel ? user.username : '',
-  });
-
   const { handleSubmit, control, setError, formState, reset } = useForm<UserUpdateRequest>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
@@ -65,18 +55,16 @@ export const Profile = () => {
       .then((updated) => {
         setUser(updated);
         setSnackbarMessage({ message: t('Profile information has been updated.'), duration: 3000 });
-        if (user?.use_channel && mutate) mutate((prev) => prev && { ...prev, ...updated }, { revalidate: false });
       })
-      .catch((error) => {
-        if (error.body) {
-          setError('root.server', error.body);
-        }
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
-      <Box sx={{ mx: 'auto', maxWidth: 'md', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mx: 'auto', maxWidth: 'sm', display: 'flex', flexDirection: 'column' }}>
+        <Typography variant="body2" sx={{ my: 2 }}>
+          {t('Update your profile information.')}
+        </Typography>
         <Form onSubmit={handleSubmit(updateProfile)} formState={formState} setError={setError}>
           <Text
             slotProps={{ inputLabel: { shrink: true } }}
@@ -94,6 +82,23 @@ export const Profile = () => {
             control={control}
             margin="normal"
           />
+          <Text
+            slotProps={{ inputLabel: { shrink: true } }}
+            name="description"
+            label={t('Description')}
+            control={control}
+            margin="normal"
+            placeholder={t('Enter a short description about yourself.')}
+            multiline
+          />
+
+          <Button
+            onClick={() => navigate('/password-reset')}
+            sx={{ display: 'flex', alignItems: 'center', my: 1, cursor: 'pointer' }}
+            startIcon={<VpnKeyOutlined />}
+          >
+            {t('Change password')}
+          </Button>
 
           <CheckboxControl
             name="use_channel"
@@ -103,28 +108,14 @@ export const Profile = () => {
             helperText={t('If you enable this option, you can use the channel feature.')}
           />
 
-          <TextEditorControl minHeight={200} name="description" label={t('Description')} control={control} margin="normal" />
-
-          <>
-            <Button
-              onClick={() => navigate('/password-reset')}
-              sx={{ display: 'flex', alignItems: 'center', my: 1, cursor: 'pointer' }}
-              startIcon={<VpnKeyOutlined />}
-            >
-              {t('Change password')}
-            </Button>
-
-            <Button
-              disabled={!formState.isDirty || formState.isSubmitting}
-              size="large"
-              sx={{ mt: 3 }}
-              variant="contained"
-              fullWidth
-              type="submit"
-            >
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4, gap: 2 }}>
+            <IconButton onClick={() => reset()}>
+              <Refresh />
+            </IconButton>
+            <Button disabled={!formState.isDirty || formState.isSubmitting} size="large" variant="contained" type="submit">
               {t('Save profile information')}
             </Button>
-          </>
+          </Box>
         </Form>
       </Box>
     </Box>

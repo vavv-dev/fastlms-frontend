@@ -60,7 +60,7 @@ export const Input = ({ sx }: { sx?: SxProps }) => {
         if (e.key === 'Enter') {
           e.defaultMuiPrevented = true;
           setOpen(false);
-          if (!inputValue) navigate(`/video`);
+          if (!inputValue) navigate(`/`);
           else navigate(`/video/search?q=${inputValue}`);
         }
       }}

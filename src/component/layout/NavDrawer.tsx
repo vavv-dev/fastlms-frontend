@@ -1,7 +1,8 @@
 import i18next from '@/i18n';
 import { userState } from '@/store';
 import {
-  HomeOutlined,
+  People,
+  PeopleOutlined,
   SmartDisplay,
   SmartDisplayOutlined,
   SvgIconComponent,
@@ -10,7 +11,6 @@ import {
 } from '@mui/icons-material';
 import AssignmentInd from '@mui/icons-material/AssignmentInd';
 import AssignmentIndOutlined from '@mui/icons-material/AssignmentIndOutlined';
-import Home from '@mui/icons-material/Home';
 import {
   Backdrop,
   Box,
@@ -44,8 +44,9 @@ const t = (key: string) => i18next.t(key, { ns: 'layout' });
 type MenuItem = [string, string, SvgIconComponent, SvgIconComponent];
 
 const menuItems: MenuItem[] = [
-  [t('Home'), '', HomeOutlined, Home],
-  [t('Video'), '/video', SmartDisplayOutlined, SmartDisplay],
+  // [t('Home'), '', HomeOutlined, Home],
+  [t('Video'), '', SmartDisplayOutlined, SmartDisplay],
+  [t('Channel'), '/channel', PeopleOutlined, People],
   [t('Me'), `/u`, AssignmentIndOutlined, AssignmentInd],
 ];
 
@@ -60,7 +61,7 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   const alert = useAtomValue(alertState);
 
   const menus: MenuItem[] = user?.use_channel
-    ? [...menuItems, [t('Channel'), `/channel/${user.username}`, VideoCameraFrontOutlined, VideoCameraFront]]
+    ? [...menuItems, [t('My channel'), `/channel/${user.username}`, VideoCameraFrontOutlined, VideoCameraFront]]
     : menuItems;
 
   useEffect(() => {
@@ -95,7 +96,9 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
         <List>
           {menus.map(([title, path, Icon, IconSeleted], i) => {
             if (!title) return <Divider key={i} />;
-            const active = (path && pathname.startsWith(path)) || (!path && pathname == '/');
+            const active =
+              (path && (path == '/channel' ? pathname == path : pathname.startsWith(path))) || (!path && pathname == '/');
+
             return (
               <ListItem
                 key={i}

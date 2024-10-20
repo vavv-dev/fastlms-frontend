@@ -45,9 +45,7 @@ export const EmailVerification = () => {
         });
       })
       .catch((error) => {
-        if (error.body) {
-          setError('root.server', error.body);
-        }
+        setError('root.server', error);
         setInvalidToken(true);
       });
   };

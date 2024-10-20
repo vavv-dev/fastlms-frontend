@@ -122,6 +122,7 @@ const PaginationActions = ({
           overflowX: 'auto',
           scrollbarWidth: 'none',
           '&::-webkit-scrollbar': { display: 'none' },
+          py: '5px', // badge space
         }}
         onScroll={() => {
           checkForOverflow();
@@ -239,18 +240,12 @@ const InfiniteScrollIndicator = forwardRef((props: { show: boolean; small?: bool
       </svg>
       <Box
         ref={ref}
-        sx={{
-          width: '100%',
-          minHeight: props.small ? `${1.8 + 2}em` : `${2.5 + 2}em`,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+        sx={{ width: '100%', height: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}
       >
         {props.show && (
           <CircularProgress
             disableShrink
-            sx={{ 'svg circle': { stroke: 'url(#my_gradient)' } }}
+            sx={{ 'svg circle': { stroke: 'url(#my_gradient)' }, position: 'absolute', zIndex: 5, bottom: 1 }}
             size={props.small ? '1.8em' : '2.5em'}
           />
         )}

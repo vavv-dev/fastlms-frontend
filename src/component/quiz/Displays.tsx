@@ -3,7 +3,8 @@ import {
   quizGetDisplays as getDisplays,
   QuizGetDisplaysData as GetDisplaysData,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { Quiz } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
 import { SaveDialog } from './SaveDialog';
@@ -20,6 +21,7 @@ export const Displays = () => {
       renderItem={({ data }) =>
         data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
+      emptyMessage={<EmptyMessage Icon={Quiz} message={t('No quiz found.')} />}
       gridBoxSx={{
         gap: '2em 1em',
         gridTemplateColumns: {

@@ -56,7 +56,7 @@ export const ImportYoutubeDialog = ({ open, setOpen, kind }: Props) => {
           updateInfiniteCache<PlaylistDisplayResponse>(playlistGetDisplays, imported as PlaylistDisplayResponse, 'create');
         }
       })
-      .catch((error) => setError('root.server', error.body));
+      .catch((error) => setError('root.server', error));
   };
 
   if (!user || !open) return null;
@@ -86,6 +86,7 @@ export const ImportYoutubeDialog = ({ open, setOpen, kind }: Props) => {
               required
               label={t('Youtube {{ kind }} ID', { kind: t(kind) })}
               control={control}
+              slotProps={{ input: { disableUnderline: formState.isSubmitting } }}
             />
           </Form>
           {formState.isSubmitting && (

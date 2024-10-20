@@ -25,12 +25,15 @@
   "Let's start the survey!": "Let's start the survey!",
   "Mandatory": "Mandatory",
   "Multiple selection": "Multiple selection",
+  "No report data found.": "No report data found.",
+  "No survey found.": "No survey found.",
   "Number input": "Number input",
   "Only one video is allowed": "Only one video is allowed",
   "Optional": "Optional",
   "Paticipate to survey": "Paticipate to survey",
   "Period": "Period",
   "Public": "Public",
+  "Q&A": "Q&A",
   "Question": "Question",
   "Questions": "Questions",
   "Recently modified": "Recently modified",
@@ -54,7 +57,6 @@
   "Up to": "Up to",
   "User": "User",
   "Video": "Video",
-  "Video is available": "Video is available",
   "View survey result": "View survey result",
   "{{ num }} people": "{{ num }} people"
 }

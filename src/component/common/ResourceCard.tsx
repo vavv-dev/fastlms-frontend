@@ -18,6 +18,7 @@ interface Resource extends ResourceUpdateField {
   owner: {
     name: string;
     username: string;
+    use_channel: boolean;
     thumbnail?: string | null;
   };
 }
@@ -209,11 +210,8 @@ export const ResourceCard = ({
           {resource.title}
         </Typography>
         <WithAvatar
-          name={resource.owner.name}
-          username={resource.owner.username}
-          thumbnail={resource.owner.thumbnail}
+          {...resource.owner}
           hideAvatar={hideAvatar}
-          sx={bannerPlace === 'bottom' ? { flexGrow: 0, mb: 1 } : {}}
         >
           <Stack sx={{ color: 'text.secondary' }} direction="row" spacing={1}>
             {avatarChildren?.map((child, i) => (

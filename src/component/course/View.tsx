@@ -8,6 +8,8 @@ import {
   lessonGetDisplays,
 } from '@/api';
 import { useInfinitePagination, useServiceImmutable } from '@/component/common';
+import { spacerRefState } from '@/component/layout';
+import { LessonCard } from '@/component/lesson';
 import { parseLocalStorage, textEllipsisCss, toFixedHuman } from '@/helper/util';
 import { ArrowDropDown, ArrowDropUp, Refresh } from '@mui/icons-material';
 import { Box, Button, IconButton, Step, StepContent, StepLabel, Stepper, Theme, Typography, useMediaQuery } from '@mui/material';
@@ -15,10 +17,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
-import { ThreadDialog } from '../comment';
-import { spacerRefState } from '../layout';
-import { LessonCard } from '../lesson';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
 
 const activeStepKey = parseLocalStorage('activeStep', 0);
@@ -27,6 +26,7 @@ const activeStepFamily = atomFamily(() => atomWithStorage<number>(activeStepKey,
 export const View = () => {
   const { t } = useTranslation('course');
   const location = useLocation();
+  const navigate = useNavigate();
   const { id } = useParams();
   const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
   const { data: lessons, mutate: lessonMutate } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
@@ -36,7 +36,6 @@ export const View = () => {
   const [showAll, setShowAll] = useState(false);
   const [activeStep, setActiveStep] = useAtom(activeStepFamily(id));
   const spacerRef = useAtomValue(spacerRefState);
-  const [threadDialogOpen, setThreadDialogOpen] = useState(false);
 
   // update spacerRef height
   useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -106,6 +105,7 @@ export const View = () => {
                 maxWidth: 'sm',
                 ...textEllipsisCss(1),
               }}
+              className="tiptap-content"
               dangerouslySetInnerHTML={{ __html: data.description }}
             />
           )}
@@ -124,7 +124,7 @@ export const View = () => {
           <Button
             onClick={(e) => {
               e.stopPropagation();
-              setThreadDialogOpen((prev) => !prev);
+              navigate('.', { state: { dialog: { question: true, ...data } } });
             }}
           >
             {t('Q&A')}
@@ -154,20 +154,6 @@ export const View = () => {
           ))}
         </Stepper>
       </Box>
-      {threadDialogOpen && (
-        <ThreadDialog
-          open={threadDialogOpen}
-          setOpen={setThreadDialogOpen}
-          threadProps={{
-            url: encodeURIComponent(`${window.location.origin}/course/${data.id}`),
-            title: data.title,
-            owner: data.owner,
-            kind: 'course',
-            question: true,
-            sticky: true,
-          }}
-        />
-      )}
     </Box>
   );
 };

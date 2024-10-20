@@ -3,9 +3,9 @@ import {
   ExamGetDisplaysData as GetDisplaysData,
   examGetDisplays as getDisplays,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
-import { homeUserState, userState } from '@/store';
-import { GradingOutlined } from '@mui/icons-material';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { channelState, userState } from '@/store';
+import { FactCheck, GradingOutlined } from '@mui/icons-material';
 import { Chip } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
@@ -17,8 +17,8 @@ export const Displays = () => {
   const { t } = useTranslation('exam');
   const navigate = useNavigate();
   const user = useAtomValue(userState);
-  const homeUser = useAtomValue(homeUserState);
-  const owner = user && user.id == homeUser?.id;
+  const channel = useAtomValue(channelState);
+  const owner = user && user.id == channel?.owner.id;
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
@@ -37,6 +37,7 @@ export const Displays = () => {
           lg: 'repeat(4, minmax(251px, 308px))',
         },
       }}
+      emptyMessage={<EmptyMessage Icon={FactCheck} message={t('No exam found.')} />}
       extraAction={
         owner && <Chip color="info" onClick={() => navigate('grading')} icon={<GradingOutlined />} label={t('Grade exams')} />
       }

@@ -54,7 +54,7 @@ const gradingSchema: yup.ObjectSchema<GradingInput> = yup.object({
     .default([]),
 });
 
-export const Form = ({ id, userId }: { id: string; userId: number }) => {
+export const Form = ({ id, userId }: { id: string; userId: string }) => {
   const { t } = useTranslation('exam');
   const { data, mutate } = useServiceImmutable<GetGradingData, AssessResponse>(getGrading, {
     id,
@@ -111,7 +111,7 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
           'update',
         );
       })
-      .catch((e) => setError('root.server', { message: e.message }));
+      .catch((error) => setError('root.server', error));
   };
 
   useEffect(() => {
@@ -129,9 +129,14 @@ export const Form = ({ id, userId }: { id: string; userId: number }) => {
 
   return (
     <CommonForm onSubmit={handleSubmit(submitGradingForm)} formState={formState} setError={setError}>
-      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 3 }}>
-        {t('Among the questions below, please grade the text input questions and essay questions and submit them.')}
-      </Typography>
+      {data.status && (
+        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+          <Typography sx={{ display: 'block' }} variant="caption">
+            {t('Grading status')}
+          </Typography>
+          {t(data.status)} / {t('{{ num }} points', { num: data.score })}
+        </Typography>
+      )}
       <Stack
         spacing={3}
         divider={<Divider />}

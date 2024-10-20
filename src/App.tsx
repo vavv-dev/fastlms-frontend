@@ -1,22 +1,22 @@
 import { OpenAPI } from '@/api';
 import { EmailVerification, Join, Login, Logout, PasswordReset, PasswordResetConfirm } from '@/component/account';
-import { ChannelHome, ChannelLayout } from '@/component/channel';
-import { CommentDisplays } from '@/component/comment';
+import { ChannelStats, ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting } from '@/component/channel';
+import { CommentDisplays, ThreadDialog } from '@/component/comment';
 import { CourseDisplays, CourseOutline, CourseView } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
-import { ExamDisplays, ExamView, GradingDisplays } from '@/component/exam';
-import { Home, HomeVideo } from '@/component/home';
+import { ExamDisplays, ExamReadyDialog, ExamView, GradingDisplays } from '@/component/exam';
+import { HomeChannel, HomeVideo } from '@/component/home';
 import { BaseLayout } from '@/component/layout';
-import { LessonDisplays } from '@/component/lesson';
+import { LessonDisplays, LessonViewDialog } from '@/component/lesson';
 import { InvitationAccept, MemberDisplays } from '@/component/member';
-import { QuizDisplays } from '@/component/quiz';
-import { SurveyDisplays } from '@/component/survey';
+import { QuizDisplays, QuizViewDialog } from '@/component/quiz';
+import { SurveyDisplays, SurveyViewDialog } from '@/component/survey';
 import {
   Profile,
   UserBookmark,
-  UserCertificate,
   UserChannel,
   UserComment,
+  UserCourse,
   UserHistory,
   UserLayout,
   UserNotification,
@@ -34,25 +34,25 @@ import {
   Route,
   RouteProps,
   RouterProvider,
-  ScrollRestoration,
   createBrowserRouter,
   createRoutesFromElements,
   useLocation,
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import { AssetDisplays } from './component/asset';
+import { AssetDisplays, AssetViewDialog } from './component/asset';
 
 const USER_MESSAGE_URL = import.meta.env.VITE_USER_MESSAGE_URL || '';
 
 const AppWrapper = () => {
   return (
     <>
-      <ScrollRestoration />
+      <DialogOpener />
       <Outlet />
     </>
   );
 };
+
 export const App = () => {
   const mode = useAtomValue(modeState);
   const theme = React.useMemo(() => createTheme(themeConfig(mode)), [mode]);
@@ -62,8 +62,8 @@ export const App = () => {
       <Route element={<AppWrapper />}>
         <Route path="/" element={<Protected />}>
           <Route path="" element={<BaseLayout searchBar={<SearchInput />} />}>
-            <Route path="" element={<Home />} />
-            <Route path="video" element={<HomeVideo />} />
+            <Route path="" element={<HomeVideo />} />
+            <Route path="channel" element={<HomeChannel />} />
 
             <Route path="playlist/:id" element={<PlaylistView />} />
             <Route path="course/:id" element={<CourseView />} />
@@ -72,19 +72,20 @@ export const App = () => {
             {/* user */}
             <Route path="u" element={<UserLayout />}>
               <Route path="" element={<UserHistory />} />
+              <Route path="course" element={<UserCourse />} />
               <Route path="bookmark" element={<UserBookmark />} />
               <Route path="channel" element={<UserChannel />} />
               <Route path="comment" element={<UserComment />} />
               <Route path="notification" element={<UserNotification />} />
-              <Route path="certificate" element={<UserCertificate />} />
               <Route path="profile" element={<Profile />} />
             </Route>
 
             {/* channel */}
             <Route path="channel/:username" element={<ChannelLayout />}>
-              <Route path="" element={<ChannelHome />} />
-              <Route path="video" element={<VideoDisplays />} />
-              <Route path="short" element={<VideoDisplays />} />
+              <Route path="" element={<ChannelRoot />} />
+              <Route path="home" element={<ChannelHome />} />
+              <Route path="video" element={<VideoDisplays kind="video" />} />
+              <Route path="short" element={<VideoDisplays kind="short" />} />
               <Route path="playlist" element={<PlaylistDisplays />} />
               <Route path="quiz" element={<QuizDisplays />} />
               <Route path="survey" element={<SurveyDisplays />} />
@@ -95,6 +96,8 @@ export const App = () => {
               <Route path="comment" element={<CommentDisplays />} />
               <Route path="member" element={<MemberDisplays />} />
               <Route path="exam/grading" element={<GradingDisplays />} />
+              <Route path="stats" element={<ChannelStats />} />
+              <Route path="setting" element={<ChannelSetting />} />
             </Route>
           </Route>
 
@@ -104,7 +107,7 @@ export const App = () => {
           </Route>
           {/* top level page without drawer, search bar */}
           <Route path="" element={<BaseLayout hideDrawer />}>
-            <Route path="exam/:id/assess" element={<ExamView />} />
+            <Route path="exam/:id" element={<ExamView />} />
           </Route>
         </Route>
 
@@ -139,18 +142,68 @@ export const App = () => {
   );
 };
 
+const DialogOpener = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleClose = () => {
+    if (location.state?.previousPath) {
+      navigate(location.state.previousPath);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const dialog = location.state?.dialog;
+  if (!dialog) return null;
+
+  // Thread instance
+  if (dialog.kind === 'thread') {
+    return <ThreadDialog open={true} setOpen={handleClose} threadProps={{ ...dialog, sticky: true }} enableSubjectOpen />;
+  }
+
+  // Learning resource's comment thread
+  if (dialog.question != undefined) {
+    return (
+      <ThreadDialog
+        open={true}
+        setOpen={handleClose}
+        threadProps={{
+          ...dialog,
+          url: encodeURIComponent(`${window.location.origin}/${dialog.kind}/${dialog.id}`),
+          resource_kind: dialog.kind,
+          sticky: true,
+        }}
+      />
+    );
+  }
+
+  const DialogComponent = {
+    quiz: QuizViewDialog,
+    survey: SurveyViewDialog,
+    asset: AssetViewDialog,
+    exam: ExamReadyDialog,
+    lesson: LessonViewDialog,
+  }[dialog.kind as 'quiz' | 'survey' | 'asset' | 'exam' | 'lesson'];
+
+  if (!DialogComponent) return null;
+
+  return <DialogComponent id={dialog.id} open={true} setOpen={handleClose} />;
+};
+
 const Protected: React.FC<RouteProps> = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useAtom(userState);
-  const loginExpire = useAtomValue(loginExpireState);
+  const [loginExpire, setLoginExpire] = useAtom(loginExpireState);
   const setUserMessage = useSetAtom(userMessageState);
   const socketRef = useRef<WebSocket | null>(null);
 
   const forceLogout = useCallback(() => {
     setUser(null);
+    setLoginExpire(null);
     navigate('/login', { state: { from: location.pathname }, replace: true });
-  }, [setUser, navigate, location.pathname]);
+  }, [setUser, navigate, location.pathname, setLoginExpire]);
 
   /**
    *
@@ -193,7 +246,6 @@ const Protected: React.FC<RouteProps> = () => {
 
     socket.onopen = () => {
       setUserMessage(socket);
-      console.log('WebSocket connected');
     };
 
     socket.onclose = (e) => {

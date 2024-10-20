@@ -3,25 +3,12 @@ import {
   examGetDisplays as getDisplays,
   examUpdateResource as updateResource,
 } from '@/api';
-import { ThreadDialog } from '@/component/comment';
 import { ResourceCard } from '@/component/common';
 import { formatDatetimeLocale, formatDuration, formatRelativeTime } from '@/helper/util';
-import {
-  Box,
-  BoxProps,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { useState } from 'react';
+import { Box, BoxProps, Table, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
-import { ReadyDialog } from './ReadyDialog';
 
 interface Props {
   data: DisplayResponse;
@@ -32,14 +19,13 @@ interface Props {
 
 export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
   const { t } = useTranslation('exam');
-  const [readyDialogOpen, setReadyDialogOpen] = useState(false);
-  const [threadDialogOpen, setThreadDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <Box>
       <ResourceCard
         resource={data}
-        onClick={() => setReadyDialogOpen(true)}
+        onClick={() => navigate('.', { state: { dialog: data } })}
         bannerPlace={bannerPlace || 'bottom'}
         banner={
           <Box sx={{ p: 2, position: 'relative' }}>
@@ -56,32 +42,23 @@ export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
               />
             )}
             <Info data={data} />
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
-              <Button
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setThreadDialogOpen((prev) => !prev);
+            {![null, 'in_progress', 'fail', 'passed'].includes(data.status) && (
+              <Typography
+                component="span"
+                variant="subtitle2"
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  p: 1,
+                  fontSize: 'small',
+                  color: 'error.main',
+                  float: 'right',
                 }}
-                sx={{ py: 0 }}
               >
-                {t('Q&A')}
-              </Button>
-              {![null, 'in_progress'].includes(data.status) && (
-                <Typography
-                  component="span"
-                  variant="subtitle2"
-                  sx={{
-                    fontSize: 'small',
-                    fontWeight: 600,
-                    mx: 0.5,
-                    color: data.status == 'failed' || data.status == 'timeout' ? 'error.main' : 'success.main',
-                  }}
-                >
-                  {t(data.status || '')}
-                </Typography>
-              )}
-            </Box>
+                {t(data.status || '')}
+              </Typography>
+            )}
           </Box>
         }
         score={data.score}
@@ -96,21 +73,6 @@ export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
         listService={getDisplays}
         bannerBorder={!data.thumbnail}
       />
-      {readyDialogOpen && <ReadyDialog open={readyDialogOpen} setOpen={setReadyDialogOpen} id={data.id} />}
-      {threadDialogOpen && (
-        <ThreadDialog
-          open={threadDialogOpen}
-          setOpen={setThreadDialogOpen}
-          threadProps={{
-            url: encodeURIComponent(`${window.location.origin}/exam/${data.id}`),
-            title: data.title,
-            owner: data.owner,
-            kind: 'exam',
-            question: true,
-            sticky: true,
-          }}
-        />
-      )}
     </Box>
   );
 };

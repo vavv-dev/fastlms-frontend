@@ -1,11 +1,11 @@
 import { courseGetDisplays, courseUnenroll } from '@/api';
 import { BaseDialog } from '@/component/common';
 import { updateInfiniteCache } from '@/component/common/swr';
+import { snackbarMessageState } from '@/component/layout';
 import { Button, DialogContentText } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { snackbarMessageState } from '../layout';
 
 interface Props {
   open: boolean;

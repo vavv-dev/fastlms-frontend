@@ -52,7 +52,7 @@ export const Control = ({ id }: { id: string }) => {
         {!!data.uploader && `${[data.uploader]}`} {data.title}
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '.5em' }}>
-        <WithAvatar variant="large" name={data.owner.name} username={data.owner.username} thumbnail={data.owner.thumbnail} />
+        <WithAvatar variant="large" {...data.owner} />
         <Box
           sx={{
             flexGrow: 1,
@@ -116,6 +116,7 @@ export const Control = ({ id }: { id: string }) => {
               {collapse ? <KeyboardArrowUpOutlined /> : <KeyboardArrowDownOutlined />}
             </Button>
             <Box
+              className="tiptap-content"
               dangerouslySetInnerHTML={{ __html: decodeURLText(data.description) }}
               sx={{ '& > p': { my: 0 }, ...(collapse && textEllipsisCss(1)) }}
             />

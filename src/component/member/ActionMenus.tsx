@@ -40,12 +40,12 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
       <ResourceActionMenu
         menuItems={[
           [
-            data.id < 0 && (
+            !data.joined_at && (
               <MenuItem key="invite" onClick={() => invite(data.username)}>
                 <ListItemIcon>
                   <SendOutlined />
                 </ListItemIcon>
-                {t('Send Invitation')}
+                {t('Re-send Invitation')}
               </MenuItem>
             ),
             <MenuItem key="save" onClick={() => setSaveDialogOpen(true)}>
@@ -70,7 +70,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           resourceId={data.id as unknown as string}
-          destroyService={data.id > 0 ? deleteMember : deleteRoster}
+          destroyService={data.joined_at ? deleteMember : deleteRoster}
           listService={getDisplays}
         />
       )}

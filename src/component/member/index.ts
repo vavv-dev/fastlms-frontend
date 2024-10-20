@@ -19,4 +19,13 @@ void [
   t('invalid_email', { ns: 'member' }),
   t('duplicate_email', { ns: 'member' }),
   t('database_error', { ns: 'member' }),
+
+  i18next.t('username', { ns: 'member' }),
+  i18next.t('email', { ns: 'member' }),
+  i18next.t('name', { ns: 'member' }),
+  i18next.t('cellphone', { ns: 'member' }),
+  i18next.t('birthdate', { ns: 'member' }),
+  i18next.t('company', { ns: 'member' }),
+  i18next.t('position', { ns: 'member' }),
+  i18next.t('department', { ns: 'member' }),
 ];

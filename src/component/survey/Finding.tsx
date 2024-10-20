@@ -24,6 +24,8 @@ export const Finding = ({ id }: { id: string }) => {
       divider={<Divider />}
       sx={{ p: 2, width: '100%', '& .MuiFormLabel-root': { mb: 2, fontWeight: 500, color: 'text.primary' } }}
     >
+      <Box sx={{ px: 3 }} className="tiptap-content" dangerouslySetInnerHTML={{ __html: data.final_message }} />
+
       {Object.entries(data.finding).map(([id, { kind, question, mandatory, occurrences, selections }], i) => {
         const maxOccurrence = Math.max(...occurrences);
         const totalOccurrence = occurrences.reduce((acc, cur) => acc + cur, 0);

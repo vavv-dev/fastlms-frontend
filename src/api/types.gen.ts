@@ -26,13 +26,14 @@ export type AssetDisplayResponse = {
     flagged: boolean;
 };
 
-export type AssetKind = 'html' | 'pdf' | 'ppt' | 'epub';
+export type AssetKind = 'html' | 'pdf' | 'pptx' | 'epub';
 
 export type AssetOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type AssetReportResponse = {
@@ -44,10 +45,11 @@ export type AssetReportResponse = {
 };
 
 export type AssetReportUser = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type AssetResourceCreateRequest = {
@@ -129,9 +131,7 @@ export type BookmarkedContentResponse = {
     thumbnail: string;
     kind: 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
     bookmarked_at: string;
-    owner_name: string;
-    owner_username: string;
-    owner_thumbnail: string;
+    owner: ContentOwner;
 };
 
 export type kind = 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
@@ -148,30 +148,74 @@ export type ChannelContentResponse = {
 };
 
 export type ChannelDisplayResponse = {
-    id: number;
-    username: string;
-    email: string;
-    name: string;
+    id: string;
+    modified: string;
+    title: string;
+    description: string;
+    welcome: string;
+    active_resources: Array<(string)>;
+    member_fields: Array<(string)>;
     thumbnail: string;
     banner: string;
-    description: string;
-    created: string;
-    use_channel: boolean;
+    resources: Array<ChannelEmbedResource>;
+    owner: ChannelOwner;
     member_count: number;
-    member_id: (number | null);
+    member_id: (string | null);
+};
+
+export type ChannelEmbedResource = {
+    kind: 'video';
+    id: string;
+    title: string;
+    thumbnail: string;
+};
+
+export type kind2 = 'video';
+
+export type ChannelOwner = {
+    id: string;
+    username: string;
+    name: string;
+    thumbnail: string;
+    use_channel: boolean;
+};
+
+export type ChannelUpdateRequest = {
+    title?: string;
+    description?: string;
+    welcome?: string;
+    active_resources?: Array<(string)>;
+    member_fields?: Array<(string)>;
+    thumbnail?: string;
+    banner?: string;
+    resources?: Array<ChannelEmbedResource>;
+};
+
+export type ChannelUpdateResponse = {
+    title: string;
+    description: string;
+    welcome: string;
+    active_resources: Array<(string)>;
+    member_fields: Array<(string)>;
+    thumbnail: string;
+    banner: string;
+    resources: Array<ChannelEmbedResource>;
+    id: string;
+    modified: string;
 };
 
 export type CommentAuthor = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type CommentDisplayResponse = {
-    id: number;
-    parent_id?: (number | null);
-    thread_id: number;
+    id: string;
+    parent_id?: (string | null);
+    thread_id: string;
     content: string;
     is_question: boolean;
     solved: boolean;
@@ -188,12 +232,12 @@ export type CommentDisplayResponse = {
     flagged: boolean;
     thread_title?: (string | null);
     thread_url?: (string | null);
-    thread_kind?: (LearningResourceKind | null);
+    thread_resource_kind?: (LearningResourceKind | null);
 };
 
 export type CommentResourceCreateRequest = {
-    parent_id?: (number | null);
-    thread_id: number;
+    parent_id?: (string | null);
+    thread_id: string;
     content: string;
     is_question: boolean;
     solved: boolean;
@@ -201,29 +245,37 @@ export type CommentResourceCreateRequest = {
 };
 
 export type CommentResourceResponse = {
-    parent_id?: (number | null);
-    thread_id: number;
+    parent_id?: (string | null);
+    thread_id: string;
     content: string;
     is_question: boolean;
     solved: boolean;
     pinned: boolean;
-    id: number;
+    id: string;
     author: CommentAuthor;
     deleted: boolean;
     created: string;
     thread_title?: (string | null);
     thread_url?: (string | null);
-    thread_kind?: (LearningResourceKind | null);
+    thread_resource_kind?: (LearningResourceKind | null);
 };
 
 export type CommentUpdateRequest = {
-    parent_id?: (number | null);
-    thread_id?: number;
+    parent_id?: (string | null);
+    thread_id?: string;
     content?: string;
     is_question?: boolean;
     solved?: boolean;
     pinned?: boolean;
     deleted?: (boolean | null);
+};
+
+export type ContentOwner = {
+    id: string;
+    username: string;
+    name: string;
+    thumbnail: string;
+    use_channel: boolean;
 };
 
 export type CourseDisplayResponse = {
@@ -291,10 +343,11 @@ export type CourseOutlineReponse = {
 };
 
 export type CourseOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type CourseResourceCreateRequest = {
@@ -372,7 +425,7 @@ export type CourseResourceUpdateRequest = {
     lessons?: Array<CourseLessonResource>;
 };
 
-export type ExamAsseccQuestion = {
+export type ExamAssessQuestion = {
     id: number;
     question: string;
     help_text: string;
@@ -429,7 +482,7 @@ export type ExamAssessSubmission = {
     earned_score: number;
     possible_score: number;
     graded_time: (string | null);
-    questions: Array<ExamAsseccQuestion>;
+    questions: Array<ExamAssessQuestion>;
 };
 
 export type ExamAssessSubmitRequest = {
@@ -496,10 +549,11 @@ export type ExamGradingSubmissionReponse = {
 export type ExamKind = 'midterm_exam' | 'final_exam' | 'assignment' | 'general_exam';
 
 export type ExamOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type ExamQuestionFinding = {
@@ -639,10 +693,11 @@ export type ExamResourceUpdateRequest = {
 };
 
 export type ExamSubmissionUser = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type GradingEnum = 'none' | 'progress' | 'score';
@@ -695,13 +750,14 @@ export type LessonEmbedResource = {
     thumbnail: string;
 };
 
-export type kind2 = 'video' | 'asset' | 'quiz' | 'survey' | 'exam';
+export type kind3 = 'video' | 'asset' | 'quiz' | 'survey' | 'exam';
 
 export type LessonOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type LessonResourceCreateRequest = {
@@ -759,8 +815,8 @@ export type LoginResponse = {
 };
 
 export type MemberCreateRequest = {
-    channel_id: number;
-    user_id: number;
+    channel_id: string;
+    user_id: string;
     data?: {
         [key: string]: (string);
     };
@@ -768,17 +824,19 @@ export type MemberCreateRequest = {
 };
 
 export type MemberDisplayResponse = {
-    id: number;
-    name: string;
+    id: string;
     username: string;
-    email: string;
+    name: string;
     thumbnail: string;
+    use_channel: boolean;
+    email: string;
     memo: string;
     data: {
         [key: string]: (string);
     };
     created: string;
     invited_at: (string | null);
+    joined_at: (string | null);
 };
 
 export type MemberUpdateRequest = {
@@ -948,8 +1006,8 @@ export type Paginated_ThreadResponse_ = {
     pages: number;
 };
 
-export type Paginated_Union_VideoDisplayResponse__AssetDisplayResponse__QuizDisplayResponse__SurveyDisplayResponse__ExamDisplayResponse__CourseDisplayResponse__ = {
-    items: Array<(VideoDisplayResponse | AssetDisplayResponse | QuizDisplayResponse | SurveyDisplayResponse | ExamDisplayResponse | CourseDisplayResponse)>;
+export type Paginated_Union_VideoDisplayResponse__AssetDisplayResponse__QuizDisplayResponse__SurveyDisplayResponse__ExamDisplayResponse__ = {
+    items: Array<(VideoDisplayResponse | AssetDisplayResponse | QuizDisplayResponse | SurveyDisplayResponse | ExamDisplayResponse)>;
     total: number;
     page: number;
     size: number;
@@ -1023,10 +1081,11 @@ export type PlaylistDisplayResponse = {
 };
 
 export type PlaylistOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type PlaylistResourceCreateRequest = {
@@ -1095,7 +1154,7 @@ export type PlaylistViewResponse = {
     flagged: boolean;
 };
 
-export type QuizAsseccQuestion = {
+export type QuizAssessQuestion = {
     id: number;
     question: string;
     help_text: string;
@@ -1141,7 +1200,7 @@ export type QuizAssessSubmission = {
     };
     earned_score: number;
     possible_score: number;
-    questions: Array<QuizAsseccQuestion>;
+    questions: Array<QuizAssessQuestion>;
 };
 
 export type QuizAssessSubmitRequest = {
@@ -1181,13 +1240,12 @@ export type QuizEmbedResource = {
     thumbnail: string;
 };
 
-export type kind3 = 'video';
-
 export type QuizOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type QuizQuestionFinding = {
@@ -1210,10 +1268,11 @@ export type QuizReportResponse = {
 };
 
 export type QuizReportUser = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type QuizResourceCreateRequest = {
@@ -1326,7 +1385,7 @@ export type RosterUpdateRequest = {
 
 export type SubmissionStatus = 'passed' | 'failed' | 'grading' | 'timeout' | 'in_progress' | 'ready';
 
-export type SurveyAsseccQuestion = {
+export type SurveyAssessQuestion = {
     id: number;
     question: string;
     help_text: string;
@@ -1364,7 +1423,7 @@ export type SurveyAssessSubmission = {
     answers: {
         [key: string]: (string);
     };
-    questions: Array<SurveyAsseccQuestion>;
+    questions: Array<SurveyAssessQuestion>;
 };
 
 export type SurveyAssessSubmitRequest = {
@@ -1405,10 +1464,11 @@ export type SurveyEmbedResource = {
 };
 
 export type SurveyOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type SurveyQuestionFinding = {
@@ -1428,10 +1488,11 @@ export type SurveyReportResponse = {
 };
 
 export type SurveyReportUser = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type SurveyResourceCreateRequest = {
@@ -1509,32 +1570,36 @@ export type SurveyResourceUpdateRequest = {
 };
 
 export type ThreadCreateRequest = {
-    owner_id: number;
+    owner_id: string;
     thumbnail?: string;
     title: string;
     url: string;
-    kind: LearningResourceKind;
+    resource_kind: LearningResourceKind;
 };
 
 export type ThreadOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type ThreadResponse = {
-    id: number;
+    id: string;
     thumbnail: string;
     title: string;
     owner: ThreadOwner;
     url: string;
-    kind: LearningResourceKind;
+    kind: 'thread';
+    resource_kind: LearningResourceKind;
     comment_count: number;
     question_count: number;
     unsolved_count: number;
     created: string;
 };
+
+export type kind4 = 'thread';
 
 export type UserCreateRequest = {
     username: string;
@@ -1545,15 +1610,14 @@ export type UserCreateRequest = {
 };
 
 export type UserResponse = {
-    id: number;
+    id: string;
     username: string;
-    email: string;
     name: string;
     thumbnail: string;
-    banner: string;
+    use_channel: boolean;
+    email: string;
     description: string;
     created: string;
-    use_channel: boolean;
 };
 
 export type UserUpdateRequest = {
@@ -1562,7 +1626,6 @@ export type UserUpdateRequest = {
     name?: string;
     description?: string;
     thumbnail?: (string | null);
-    banner?: (string | null);
     use_channel?: boolean;
 };
 
@@ -1601,10 +1664,11 @@ export type VideoDisplayResponse = {
 export type VideoKind = 'video' | 'short';
 
 export type VideoOwner = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type VideoReportResponse = {
@@ -1616,10 +1680,11 @@ export type VideoReportResponse = {
 };
 
 export type VideoReportUser = {
-    id: number;
+    id: string;
     username: string;
     name: string;
     thumbnail: string;
+    use_channel: boolean;
 };
 
 export type VideoResourceResponse = {
@@ -1786,7 +1851,7 @@ export type AccountUpdateMeResponse = (UserResponse);
 
 export type AccountGetUserData = {
     accessToken?: (string | null);
-    id: number;
+    id: string;
     refreshToken?: (string | null);
 };
 
@@ -1825,8 +1890,9 @@ export type CommentGetThreadResponse = (ThreadResponse);
 
 export type CommentGetThreadsData = {
     accessToken?: (string | null);
+    commenterId?: (string | null);
     orderBy?: 'created' | 'comment_count' | 'question_count' | 'unsolved_count';
-    ownerId?: (number | null);
+    ownerId?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -1845,13 +1911,12 @@ export type CommentCreateThreadResponse = (ThreadResponse);
 
 export type CommentGetDisplaysData = {
     accessToken?: (string | null);
-    authorId?: (number | null);
     orderBy?: 'created' | 'like_count';
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
     size?: number;
-    threadId?: (number | null);
+    threadId?: (string | null);
 };
 
 export type CommentGetDisplaysResponse = (Paginated_CommentDisplayResponse_);
@@ -1866,7 +1931,7 @@ export type CommentCreateResourceResponse = (CommentResourceResponse);
 
 export type CommentUpdateResourceData = {
     accessToken?: (string | null);
-    id: number;
+    id: string;
     refreshToken?: (string | null);
     requestBody: CommentUpdateRequest;
 };
@@ -1876,7 +1941,7 @@ export type CommentUpdateResourceResponse = (CommentResourceResponse);
 export type CommentToggleActionData = {
     accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
-    id: number;
+    id: string;
     refreshToken?: (string | null);
 };
 
@@ -1885,7 +1950,7 @@ export type CommentToggleActionResponse = (unknown);
 export type VideoGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     playlistId?: (string | null);
     refreshToken?: (string | null);
@@ -2033,7 +2098,7 @@ export type VideoVideoSelectorResponse = (Array<VideoSelectorResponse>);
 export type PlaylistGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2132,7 +2197,7 @@ export type AssetGetDisplaysData = {
     accessToken?: (string | null);
     assetKind?: (AssetKind | null);
     orderBy?: 'title' | 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2140,6 +2205,14 @@ export type AssetGetDisplaysData = {
 };
 
 export type AssetGetDisplaysResponse = (Paginated_AssetDisplayResponse_);
+
+export type AssetGetDisplayData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+};
+
+export type AssetGetDisplayResponse = (AssetDisplayResponse);
 
 export type AssetGetResourceData = {
     accessToken?: (string | null);
@@ -2264,7 +2337,7 @@ export type AssetHtmlViewResponse = (string);
 export type QuizGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2384,7 +2457,7 @@ export type QuizGetOwnedQuestionsResponse = (Array<QuizResourceQuestionResource>
 export type SurveyGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2504,7 +2577,7 @@ export type SurveyGetOwnedQuestionsResponse = (Array<SurveyResourceQuestionResou
 export type ExamGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2593,7 +2666,7 @@ export type ExamGetGradingData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
-    userId: number;
+    userId: string;
 };
 
 export type ExamGetGradingResponse = (ExamAssessResponse);
@@ -2603,7 +2676,7 @@ export type ExamSubmitGradingData = {
     id: string;
     refreshToken?: (string | null);
     requestBody: ExamGradingRequest;
-    userId: number;
+    userId: string;
 };
 
 export type ExamSubmitGradingResponse = (ExamAssessResponse);
@@ -2665,7 +2738,7 @@ export type LessonGetDisplaysData = {
     accessToken?: (string | null);
     course?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2673,6 +2746,14 @@ export type LessonGetDisplaysData = {
 };
 
 export type LessonGetDisplaysResponse = (Paginated_LessonDisplayResponse_);
+
+export type LessonGetDisplayData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+};
+
+export type LessonGetDisplayResponse = (LessonDisplayResponse);
 
 export type LessonGetResourceData = {
     accessToken?: (string | null);
@@ -2733,7 +2814,7 @@ export type LessonLessonSelectorResponse = (Array<LessonSelectorResponse>);
 export type CourseGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
-    owner?: (number | null);
+    owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2843,7 +2924,8 @@ export type SearchSuggestVideoKeywordsResponse = (Array<(string)>);
 
 export type ChannelGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'created' | 'name';
+    joined?: (boolean | null);
+    orderBy?: 'created';
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2860,9 +2942,17 @@ export type ChannelGetChannelByUsernameData = {
 
 export type ChannelGetChannelByUsernameResponse = (ChannelDisplayResponse);
 
+export type ChannelUpdateMyChannelData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    requestBody: ChannelUpdateRequest;
+};
+
+export type ChannelUpdateMyChannelResponse = (ChannelUpdateResponse);
+
 export type ChannelGetContentData = {
     accessToken?: (string | null);
-    ownerId?: (number | null);
+    ownerId?: (string | null);
     refreshToken?: (string | null);
 };
 
@@ -2916,7 +3006,7 @@ export type MemberCreateMemberResponse = (MemberDisplayResponse);
 
 export type MemberUpdateMemberData = {
     accessToken?: (string | null);
-    id: number;
+    id: string;
     refreshToken?: (string | null);
     requestBody: MemberUpdateRequest;
 };
@@ -2925,7 +3015,7 @@ export type MemberUpdateMemberResponse = (unknown);
 
 export type MemberDeleteMemberData = {
     accessToken?: (string | null);
-    id: number;
+    id: string;
     refreshToken?: (string | null);
 };
 
@@ -2941,22 +3031,22 @@ export type MemberCreateRosterData = {
 
 export type MemberCreateRosterResponse = (MemberDisplayResponse);
 
-export type MemberDeleteRosterData = {
-    accessToken?: (string | null);
-    id: number;
-    refreshToken?: (string | null);
-};
-
-export type MemberDeleteRosterResponse = (unknown);
-
 export type MemberUpdateRosterData = {
     accessToken?: (string | null);
-    id: number;
+    id: string;
     refreshToken?: (string | null);
     requestBody: RosterUpdateRequest;
 };
 
 export type MemberUpdateRosterResponse = (unknown);
+
+export type MemberDeleteRosterData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+};
+
+export type MemberDeleteRosterResponse = (unknown);
 
 export type MemberInviteUserData = {
     accessToken?: (string | null);
@@ -2969,7 +3059,7 @@ export type MemberInviteUserResponse = (unknown);
 
 export type AccountGetHistoryData = {
     accessToken?: (string | null);
-    kind?: ('video' | 'asset' | 'quiz' | 'survey' | 'exam' | 'course' | null);
+    kind?: ('video' | 'asset' | 'quiz' | 'survey' | 'exam' | null);
     orderBy?: 'created';
     page?: number;
     refreshToken?: (string | null);
@@ -2977,7 +3067,7 @@ export type AccountGetHistoryData = {
     size?: number;
 };
 
-export type AccountGetHistoryResponse = (Paginated_Union_VideoDisplayResponse__AssetDisplayResponse__QuizDisplayResponse__SurveyDisplayResponse__ExamDisplayResponse__CourseDisplayResponse__);
+export type AccountGetHistoryResponse = (Paginated_Union_VideoDisplayResponse__AssetDisplayResponse__QuizDisplayResponse__SurveyDisplayResponse__ExamDisplayResponse__);
 
 export type AccountGetBookmarkedContentData = {
     accessToken?: (string | null);
@@ -2993,7 +3083,7 @@ export type AccountGetBookmarkedContentResponse = (Paginated_BookmarkedContentRe
 
 export type AccountToggleBookmarkData = {
     accessToken?: (string | null);
-    id: (number | string);
+    id: string;
     kind: 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
     refreshToken?: (string | null);
 };

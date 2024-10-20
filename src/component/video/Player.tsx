@@ -1,6 +1,6 @@
 import { VideoGetViewData as GetViewData, VideoGetViewResponse as GetViewResponse, videoGetView as getView } from '@/api';
 import { useServiceImmutable } from '@/component/common';
-import { Box, useTheme } from '@mui/material';
+import { Box, SxProps, useTheme } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import ReactPlayer, { YouTubePlayerProps } from 'react-player/youtube';
@@ -16,7 +16,7 @@ import {
 // For fast switching between videos, do not use state
 const lastPositions = {};
 
-export const Player = ({ id, aspectRatio }: { id: string; aspectRatio?: string }) => {
+export const Player = ({ id, sx }: { id: string; sx?: SxProps }) => {
   const theme = useTheme();
   const [searchParams] = useSearchParams();
   const setPlayerInstance = useSetAtom(playerInstanceState);
@@ -76,8 +76,9 @@ export const Player = ({ id, aspectRatio }: { id: string; aspectRatio?: string }
         maxWidth: playerRatio >= 1 ? '100%' : `calc((100vh - 200px) * ${playerRatio})`,
         maxHeight: 'calc(100vh - 200px)',
         mx: 'auto',
-        aspectRatio: aspectRatio || playerRatio,
+        aspectRatio: playerRatio,
         bgcolor: 'black',
+        ...sx,
       }}
     >
       <ReactPlayer

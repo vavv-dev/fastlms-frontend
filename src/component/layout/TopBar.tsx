@@ -33,7 +33,7 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
             {navOpen ? <ArrowBackIos /> : <Menu />}
           </IconButton>
           <Box component={Link} to="/" sx={{ display: 'flex', textDecoration: 'None', color: 'inherit' }}>
-            <Box component="img" src={imgUrl} alt="logo" sx={{ height: 25 }} />
+            <Box component="img" src={imgUrl} alt="logo" sx={{ height: 25, width: 100 }} />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           {searchBar}

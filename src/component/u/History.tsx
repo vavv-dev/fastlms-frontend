@@ -1,37 +1,37 @@
 import {
   AccountGetHistoryData,
   AssetDisplayResponse,
-  CourseDisplayResponse,
   ExamDisplayResponse,
   QuizDisplayResponse,
   SurveyDisplayResponse,
   VideoDisplayResponse,
   accountGetHistory,
 } from '@/api';
-import { GridInfiniteScrollPage } from '@/component/common';
+import { AssetCard } from '@/component/asset';
+import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
 import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
 import { VideoCard } from '@/component/video';
-import { Box, ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
+import { HistoryOutlined } from '@mui/icons-material';
+import { Badge, Box, Button, ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
 import { atom, useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
-import { AssetCard } from '../asset';
-import { CourseCard } from '../course';
+import { useNavigate } from 'react-router-dom';
 
 type HistoryDisplayResponse =
   | VideoDisplayResponse
   | AssetDisplayResponse
   | QuizDisplayResponse
   | SurveyDisplayResponse
-  | ExamDisplayResponse
-  | CourseDisplayResponse;
+  | ExamDisplayResponse;
 
-type Kind = 'video' | 'asset' | 'quiz' | 'survey' | 'exam' | 'course' | null;
+type Kind = 'video' | 'asset' | 'quiz' | 'survey' | 'exam' | null;
 
 const kindState = atom<Kind>(null);
 
 export const History = () => {
+  const { t } = useTranslation('u');
   const [kind, setKind] = useAtom(kindState);
 
   return (
@@ -48,6 +48,7 @@ export const History = () => {
           )),
         )
       }
+      emptyMessage={<EmptyMessage Icon={HistoryOutlined} message={t('No history found.')} />}
       gridBoxSx={{
         gap: '2em 0.5em',
         gridTemplateColumns: {
@@ -73,8 +74,6 @@ const Card = ({ item }: { item: HistoryDisplayResponse }) => {
       return <SurveyCard data={item as SurveyDisplayResponse} />;
     case 'exam':
       return <ExamCard data={item as ExamDisplayResponse} bannerPlace="top" />;
-    case 'course':
-      return <CourseCard data={item as CourseDisplayResponse} />;
     default:
   }
 };
@@ -86,7 +85,9 @@ interface HistoryFilterProps {
 
 const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
   const { t } = useTranslation('u');
+  const navigate = useNavigate();
   const theme = useTheme();
+
   return (
     <ToggleButtonGroup
       size="small"
@@ -106,7 +107,7 @@ const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
             bgcolor: theme.palette.text.primary,
             '&:hover': { bgcolor: theme.palette.text.primary },
           },
-          '&.MuiButtonBase-root ': { borderRadius: '8px', borderColor: theme.palette.divider },
+          '&.MuiButtonBase-root': { borderRadius: '8px', borderColor: theme.palette.divider },
           '&.MuiButtonBase-root+.MuiButtonBase-root': { ml: 1 },
         },
         alignItems: 'center',
@@ -118,7 +119,23 @@ const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
       <ToggleButton value="quiz">{t('Quiz')}</ToggleButton>
       <ToggleButton value="survey">{t('Survey')}</ToggleButton>
       <ToggleButton value="exam">{t('Exam')}</ToggleButton>
-      <ToggleButton value="course">{t('Course')}</ToggleButton>
+      <Badge
+        badgeContent={0} // TODO: Implement this
+        color="error"
+        sx={{ ml: 1, '& .MuiBadge-badge': { top: 6 } }}
+      >
+        <Button
+          onClick={() => navigate('/u/course')}
+          sx={{
+            background: 'linear-gradient(90deg, #e0f7fa 0%, #ffcdd2 100%)',
+            boxShadow: `inset 0 0 0 1px ${theme.palette.divider}`,
+            color: theme.palette.text.primary,
+            '&:hover': { background: 'linear-gradient(90deg, #b2ebf2 0%, #ef9a9a 100%)' },
+          }}
+        >
+          {t('My courses')}
+        </Button>
+      </Badge>
     </ToggleButtonGroup>
   );
 };

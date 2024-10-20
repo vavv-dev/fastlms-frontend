@@ -39,11 +39,7 @@ export const PasswordReset = () => {
       .then(() => {
         setSpecialAlert(t('Password reset email has been sent. Follow the instructions in the email to reset your password.'));
       })
-      .catch((error) => {
-        if (error.body) {
-          setError('root.server', error.body);
-        }
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   return (

@@ -1,8 +1,8 @@
 import i18next from '@/i18n';
 
-export { Displays as LessonDisplays } from './Displays';
-export { ResourceViewer } from './ResourceViewer';
 export { Card as LessonCard } from './Card';
+export { Displays as LessonDisplays } from './Displays';
+export { ViewDialog as LessonViewDialog } from './ViewDialog';
 
 const t = i18next.t;
 

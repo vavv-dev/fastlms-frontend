@@ -13,7 +13,7 @@ import { ThreadProps } from '.';
 import { Comment } from './Comment';
 import { Write } from './Write';
 
-export const Thread = ({ question, sticky, ...threadData }: ThreadProps) => {
+export const Thread = ({ question, sticky, onLoad, ...threadData }: ThreadProps) => {
   const { t } = useTranslation('comment');
   const theme = useTheme();
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
@@ -40,14 +40,19 @@ export const Thread = ({ question, sticky, ...threadData }: ThreadProps) => {
     });
   }, [error]); // eslint-disable-line
 
+  useEffect(() => {
+    if (!data) return;
+    if (onLoad) onLoad();
+  }, [data]); // eslint-disable-line
+
   if (!thread || !data) return null;
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, position: 'relative' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <Box
         sx={{
           bgcolor: theme.palette.background.paper,
-          ...(sticky && { position: 'sticky', top: 0, zIndex: 1 }),
+          ...(sticky && { position: 'sticky', top: 0, zIndex: 1, mb: 1 }),
         }}
       >
         <Typography variant="h6">

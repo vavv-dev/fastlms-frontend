@@ -35,7 +35,7 @@ interface Props {
 const t = (key: string) => i18next.t(key, { ns: 'comment' });
 
 const schema: yup.ObjectSchema<ResourceCreateRequest> = yup.object({
-  id: yup.number().nullable(),
+  id: yup.string().nullable(),
   content: yup
     .string()
     .min(3, t('Content must be at least 3 characters long.'))
@@ -48,8 +48,8 @@ const schema: yup.ObjectSchema<ResourceCreateRequest> = yup.object({
     .transform((value) => (value ? true : false)),
   solved: yup.boolean().default(false),
   pinned: yup.boolean().default(false),
-  thread_id: yup.number().required().default(-1),
-  parent_id: yup.number().nullable().default(null),
+  thread_id: yup.string().required().default(null),
+  parent_id: yup.string().nullable().default(null),
   deleted: yup.boolean().default(false),
 });
 
@@ -67,7 +67,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
 
   const { handleSubmit, control, setValue, trigger, getValues, formState, reset, setError } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: { ...schema.getDefault(), is_question: question ? 'true' : 'false' },
+    defaultValues: { ...schema.getDefault(), is_question: question ? 'true' : 'false', thread_id: thread?.id },
   });
 
   useEffect(() => {
@@ -80,11 +80,11 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
     if (!thread) return;
 
     (data ? updateResource : createResource)({
-      id: data?.id as number,
+      id: data?.id as string,
       requestBody: {
         ...input,
         parent_id: parent?.id,
-        thread_id: thread.id as number,
+        thread_id: thread.id as string,
       },
     })
       .then((updated) => {
@@ -96,7 +96,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
           if (!updated.thread_title) {
             updated.thread_title = thread.title;
             updated.thread_url = thread.url;
-            updated.thread_kind = thread.kind;
+            updated.thread_resource_kind = thread.resource_kind;
           }
           updateInfiniteCache<DisplayResponse>(getDisplays, updated, data ? 'update' : 'create', 'children');
         }
@@ -114,7 +114,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
         );
       })
       .catch((error) => {
-        setError('root.server', error.body);
+        setError('root.server', error);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
   };

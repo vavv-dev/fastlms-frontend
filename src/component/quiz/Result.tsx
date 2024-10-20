@@ -52,8 +52,9 @@ export const Result = ({ id }: { id: string }) => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center', p: 2 }}>
         {finalMessage && (
           <Box
-            sx={{ whiteSpace: 'pre-wrap', maxWidth: '100%', wordBreak: 'break-word' }}
+            className="tiptap-content"
             dangerouslySetInnerHTML={{ __html: finalMessage }}
+            sx={{ whiteSpace: 'pre-wrap', maxWidth: '100%', wordBreak: 'break-word' }}
           />
         )}
         <TableContainer sx={{ width: 'inherit' }}>

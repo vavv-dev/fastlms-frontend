@@ -115,9 +115,7 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
   useScrollToNewElement<T>(watch);
 
   useEffect(() => {
-    if (retrieveError) {
-      setError('root.server', { message: t('Failed to retrieve data') });
-    }
+    if (retrieveError) setError('root.server', retrieveError);
   }, [retrieveError]); // eslint-disable-line
 
   useEffect(() => {
@@ -165,9 +163,7 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
         // update list cache
         updateInfiniteCache<T & { id: string }>(listService, saved, editKey ? 'update' : 'create');
       })
-      .catch((error) => {
-        setError('root.server', error.body);
-      });
+      .catch((error) => setError('root.server', error));
   };
 
   const fixDatetimeDispaly = (resource: T): Record<keyof T, string> => {

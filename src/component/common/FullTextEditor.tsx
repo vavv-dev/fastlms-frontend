@@ -16,6 +16,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import { Underline } from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import {
+  FontSize,
   LinkBubbleMenu,
   LinkBubbleMenuHandler,
   MenuButtonAddTable,
@@ -40,7 +41,7 @@ import {
   MenuButtonUnindent,
   MenuControlsContainer,
   MenuDivider,
-  MenuSelectHeading,
+  MenuSelectFontSize,
   RichTextEditor,
   RichTextEditorRef,
   TableBubbleMenu,
@@ -71,7 +72,7 @@ const fileSchema = yup.array().of(
   }),
 );
 
-const FullTextEditor = ({
+export const FullTextEditor = ({
   initialValue,
   placeholder,
   borderColor,
@@ -117,7 +118,6 @@ const FullTextEditor = ({
         '& .MuiTiptap-MenuBar-root .MuiTiptap-RichTextField-content': { py: 0.5 },
         '& .MuiTiptap-RichTextContent-readonly': { opacity: 0.6 },
         '& .MuiTiptap-FieldContainer-root': { borderRadius: '8px' },
-        '& .MuiTiptap-RichTextField-content .MuiSelect-select': { width: '3em' },
         '& .MuiTiptap-FieldContainer-notchedOutline': {
           borderColor: borderColor ? `${borderColor} !important` : 'inherit',
         },
@@ -161,23 +161,15 @@ const FullTextEditor = ({
           Link,
           ImageResize,
           Placeholder.configure({ placeholder: placeholder || t('Type something...') }),
+          FontSize,
         ]}
         renderControls={() => (
           <MenuControlsContainer>
-            <MenuSelectHeading
+            <MenuSelectFontSize
               tabIndex={-1}
+              tooltipTitle={''}
               inputProps={{ tabIndex: -1, focusable: false }}
-              tooltipTitle={t('Text styles')}
-              labels={{
-                empty: t('Select a heading'),
-                paragraph: t('Normal text'),
-                heading1: t('Heading 1'),
-                heading2: t('Heading 2'),
-                heading3: t('Heading 3'),
-                heading4: t('Heading 4'),
-                heading5: t('Heading 5'),
-                heading6: t('Heading 6'),
-              }}
+              unsetOptionLabel={t('Unset font size')}
             />
             <MenuButtonBold tabIndex={-1} tooltipLabel={t('Bold')} />
             <MenuButtonItalic tabIndex={-1} tooltipLabel={t('Italic')} />
@@ -289,5 +281,3 @@ const FullTextEditor = ({
     </Box>
   );
 };
-
-export default FullTextEditor;

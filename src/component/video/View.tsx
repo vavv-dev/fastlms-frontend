@@ -58,7 +58,7 @@ export const View = () => {
                 url={encodeURIComponent(`${window.location.origin}/video/${data.id}`)}
                 title={data.title}
                 owner={data.owner}
-                kind="video"
+                resource_kind="video"
               />
             </Box>
           )}

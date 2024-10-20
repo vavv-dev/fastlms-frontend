@@ -1,4 +1,4 @@
-import { ApiError, Body_PublicLogin, accountGetMe, publicLogin } from '@/api';
+import { Body_PublicLogin, accountGetMe, publicLogin } from '@/api';
 import { Form, TextFieldControl } from '@/component/common';
 import i18next from '@/i18n';
 import { accountProcessingState, loginExpireState, userState } from '@/store';
@@ -33,7 +33,7 @@ export const Login = () => {
   const location = useLocation();
   const [user, setUser] = useAtom(userState);
   const setProcessing = useSetAtom(accountProcessingState);
-  const setLoginExipire = useSetAtom(loginExpireState);
+  const setLoginExpire = useSetAtom(loginExpireState);
 
   const { handleSubmit, control, setError, formState, setValue } = useForm<Body_PublicLogin>({
     resolver: yupResolver(schema),
@@ -48,19 +48,12 @@ export const Login = () => {
       formData: { username: username, password: password },
     })
       .then(async (r) => {
-        setLoginExipire(r.refresh_token_expire);
+        setLoginExpire(r.refresh_token_expire);
         const me = await accountGetMe();
         setUser(me);
       })
-      .catch((error) => {
-        if (error instanceof ApiError && error.body) {
-          setError('root.server', error.body);
-          setProcessing(false);
-        }
-      })
-      .finally(() => {
-        setProcessing(false);
-      });
+      .catch((error) => setError('root.server', error))
+      .finally(() => setProcessing(false));
   };
 
   useEffect(() => {

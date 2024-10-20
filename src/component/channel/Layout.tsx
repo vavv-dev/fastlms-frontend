@@ -1,21 +1,24 @@
 import {
   ChannelDisplayResponse as DisplayResponse,
+  memberCreateMember as createMember,
+  memberDeleteMember as deleteMember,
   channelGetChannelByUsername as getChannelByUsername,
   ChannelGetChannelByUsernameData as getChannelByUsernameData,
   channelGetDisplays as getDisplays,
-  memberCreateMember as createMember,
-  memberDeleteMember as deleteMember,
-  accountUpdateMe as updateMe,
+  channelUpdateMyChannel as updateMyChannel,
 } from '@/api';
-import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
+import { EmptyMessage, updateInfiniteCache, useServiceImmutable } from '@/component/common';
+import { snackbarMessageState, spacerRefState } from '@/component/layout';
 import { formatRelativeTime, imageToBase64 } from '@/helper/util';
 import i18next from '@/i18n';
-import { homeUserState, userState } from '@/store';
-import { CloseOutlined, FileUploadOutlined, Group } from '@mui/icons-material';
+import { channelState, userState } from '@/store';
+import { CloseOutlined, ErrorOutlined, FileUploadOutlined, Group } from '@mui/icons-material';
 import {
   Avatar,
   Box,
+  Button,
   Chip,
+  Divider,
   Fade,
   IconButton,
   Input,
@@ -32,14 +35,14 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { snackbarMessageState, spacerRefState } from '../layout';
 
 export const Layout = () => {
   const { t } = useTranslation('channel');
   const theme = useTheme();
+  const navigate = useNavigate();
   const { username } = useParams();
-  const [user, setUser] = useAtom(userState);
-  const [homeUser, setHomeUser] = useAtom(homeUserState);
+  const user = useAtomValue(userState);
+  const [channel, setChannel] = useAtom(channelState);
   const { data, mutate } = useServiceImmutable<getChannelByUsernameData, DisplayResponse>(getChannelByUsername, {
     username: username || '',
   });
@@ -57,10 +60,9 @@ export const Layout = () => {
       setSnackbarMessage({ message: t('File size must be less than {{ max }} MB.', { max }), duration: 3000 });
       return;
     }
-    updateMe({ requestBody: { [field]: !e ? '' : await imageToBase64(image as File) } })
-      .then((update) => {
-        setUser(update);
-        mutate((prev) => ({ ...prev, ...(update as DisplayResponse) }), { revalidate: false });
+    updateMyChannel({ requestBody: { [field]: !e ? '' : await imageToBase64(image as File) } })
+      .then((updated) => {
+        mutate((prev) => prev && { ...prev, ...updated }, { revalidate: false });
       })
       .catch((error) => {
         setSnackbarMessage({ message: error.message, duration: 3000 });
@@ -95,19 +97,23 @@ export const Layout = () => {
 
   useEffect(() => {
     if (!data) return;
-    setHomeUser(data);
+    setChannel(data);
   }, [data]); // eslint-disable-line
 
   useEffect(() => {
     return () => {
-      setHomeUser(null);
+      setChannel(null);
     };
   }, []); // eslint-disable-line
 
   // fix. flickering previous user's cache
-  if (!homeUser || homeUser?.username != username) return null;
+  if (!channel || channel?.owner.username != username) return null;
 
-  const isOwner = user?.username === homeUser.username;
+  if (!channel.owner.use_channel) {
+    return <EmptyMessage Icon={ErrorOutlined} message={t('This channel is not active.')} />;
+  }
+
+  const isOwner = user?.username === channel.owner.username;
 
   return (
     <>
@@ -127,10 +133,10 @@ export const Layout = () => {
           onMouseLeave={() => setBannerHover(false)}
           sx={{ maxWidth: 'lg', width: '100%', position: 'relative' }}
         >
-          {homeUser.banner && (
+          {channel.banner && (
             <Box
               component="img"
-              src={homeUser.banner}
+              src={channel.banner}
               sx={{
                 objectFit: 'cover',
                 width: '100%',
@@ -141,7 +147,7 @@ export const Layout = () => {
             />
           )}
           {isOwner && (
-            <Fade in={bannerHover || !homeUser.banner}>
+            <Fade in={bannerHover || !channel.banner}>
               <Box
                 sx={{
                   position: 'absolute',
@@ -158,7 +164,7 @@ export const Layout = () => {
                     <FileUploadOutlined fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                {!homeUser.banner && (
+                {!channel.banner && (
                   <Typography
                     component="label"
                     htmlFor="banner-image"
@@ -168,7 +174,7 @@ export const Layout = () => {
                     {t('Upload banner')}
                   </Typography>
                 )}
-                {homeUser.banner && (
+                {channel.banner && (
                   <Tooltip title={t('Remove banner')}>
                     <IconButton size="small" onClick={() => uploadImage(null, 'banner')}>
                       <CloseOutlined fontSize="small" />
@@ -195,7 +201,8 @@ export const Layout = () => {
             maxWidth: 'sm',
             width: '100%',
             gap: 2,
-            alignItems: homeUser.description ? 'flex-start' : 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <Box
@@ -204,9 +211,9 @@ export const Layout = () => {
             sx={{ position: 'relative' }}
             {...(isOwner && { component: 'label', htmlFor: 'thumbnail-image', sx: { position: 'relative', cursor: 'pointer' } })}
           >
-            <Avatar alt={homeUser.name} src={homeUser.thumbnail || ''} sx={{ width: 100, height: 100 }} />
+            <Avatar alt={channel.title} src={channel.thumbnail || ''} sx={{ width: 100, height: 100 }} />
             {isOwner && (
-              <Fade in={avatarHover || !homeUser.thumbnail}>
+              <Fade in={avatarHover || !channel.thumbnail}>
                 <Box
                   sx={{
                     position: 'absolute',
@@ -222,7 +229,7 @@ export const Layout = () => {
                       <FileUploadOutlined fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  {homeUser.thumbnail && (
+                  {channel.thumbnail && (
                     <Tooltip title={t('Remove thumbnail')}>
                       <IconButton size="small" onClick={() => uploadImage(null, 'thumbnail')} sx={{ p: 0.5 }}>
                         <CloseOutlined fontSize="small" />
@@ -241,12 +248,12 @@ export const Layout = () => {
               </Fade>
             )}
           </Box>
-          <Stack spacing={1}>
-            <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
-              {homeUser.name}
+          <Stack spacing={0.5}>
+            <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {channel.title || t('Channel title here')}
               <Typography variant="caption">
-                {homeUser.username}
-                {homeUser.created && ` • ${t(...formatRelativeTime(new Date(homeUser.created)))}`}
+                {channel.owner.name}
+                {channel.modified && ` • ${t(...formatRelativeTime(new Date(channel.modified)))}`}
                 {data && !!data.member_count && ` • ${t('Member {{ num }}', { num: data.member_count.toLocaleString() })}`}
               </Typography>
               {!isOwner && data && (
@@ -261,14 +268,26 @@ export const Layout = () => {
                 </Tooltip>
               )}
             </Typography>
-            <Box
-              sx={{ fontSize: theme.typography.body2.fontSize }}
-              dangerouslySetInnerHTML={{ __html: homeUser.description || '' }}
-            />
+            {channel.description ? (
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {channel.description}
+              </Typography>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {t('Channel description here')}
+                </Typography>
+                <Button size="small" onClick={() => navigate(`/channel/${username}/setting`)}>
+                  {t('Edit')}
+                </Button>
+              </Box>
+            )}
           </Stack>
         </Box>
       </Box>
-      <HomeTabs />
+      <Box sx={{ minHeight: '50px' }}>
+        <HomeTabs activeTabs={data?.active_resources} />
+      </Box>
       <Outlet />
     </>
   );
@@ -276,24 +295,32 @@ export const Layout = () => {
 
 const t = (key: string) => i18next.t(key, { ns: 'channel' });
 
-const tabs: Array<Array<string>> = [
-  [t('Home'), ''],
+const dynamicTabs: Array<Array<string>> = [
+  [t('Home'), 'home'],
   [t('Video'), 'video'],
   [t('Short'), 'short'],
   [t('Playlist'), 'playlist'],
-  [t("Asset"), 'asset'],
+  [t('Asset'), 'asset'],
   [t('Quiz'), 'quiz'],
   [t('Survey'), 'survey'],
   [t('Exam'), 'exam'],
   [t('Lesson'), 'lesson'],
   [t('Course'), 'course'],
-  [t('Comment'), 'comment'],
-  [t('Member'), 'member'],
 ];
 
-const privateTabs: Array<string> = ['member'];
+const privateTabs: Array<Array<string>> = [
+  ['', 'divider'],
+  [t('Comment'), 'comment'],
+  [t('Member'), 'member'],
+  [t('Stats'), 'stats'],
+  [t('Setting'), 'setting'],
+];
 
-const HomeTabs = () => {
+interface Props {
+  activeTabs?: string[];
+}
+
+const HomeTabs = ({ activeTabs }: Props) => {
   const { username } = useParams();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -302,21 +329,19 @@ const HomeTabs = () => {
   const [isFixed, setIsFixed] = useState(false);
   const lastScrollY = useRef(0);
   const user = useAtomValue(userState);
-  const homeUser = useAtomValue(homeUserState);
+  const channel = useAtomValue(channelState);
 
   // update spacerRef height
   useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
+  // tabs
+  const isOwner = user && user.username === channel?.owner.username;
+  const tabs = dynamicTabs.filter(([, path]) => activeTabs?.includes(path)).concat(isOwner ? privateTabs : []);
+
   // current tab
   const tabIndex = tabs.findIndex(([, path]) => {
-    return path === '' ? pathname === `/channel/${username}` : pathname.startsWith(`/channel/${username}/${path}`);
+    return path === '' ? pathname === `/channel/${username}/home` : pathname.startsWith(`/channel/${username}/${path}`);
   });
-
-  useEffect(() => {
-    if (tabIndex === -1) {
-      navigate(`/channel/${username}`, { replace: true });
-    }
-  }, [tabIndex, navigate, username]);
 
   // stick no bouncing tabs
   useEffect(() => {
@@ -345,7 +370,7 @@ const HomeTabs = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [spacerRef]);
 
-  const isOwner = user && user.username === homeUser?.username;
+  if (!tabs.length) return null;
 
   return (
     <Box
@@ -364,24 +389,32 @@ const HomeTabs = () => {
     >
       <Tabs
         selectionFollowsFocus
-        value={tabIndex === -1 ? 0 : tabIndex}
+        value={tabIndex < 0 ? 0 : tabIndex}
         role="navigation"
         variant="scrollable"
         scrollButtons={true}
         allowScrollButtonsMobile
         sx={{ minHeight: 'unset', maxWidth: '100%' }}
       >
-        {tabs
-          .filter(([, path]) => isOwner || !privateTabs.includes(path))
-          .map(([title, path]) => (
+        {tabs.map(([title, path]) =>
+          path === 'divider' ? (
+            <Tab key={path} label="" icon={<Divider orientation="vertical" />} disabled sx={{ minWidth: 'unset' }} />
+          ) : (
             <Tab
               key={path}
               label={title}
               iconPosition="start"
               onClick={() => navigate(`/channel/${username}${path ? `/${path}` : ''}`)}
-              sx={{ minHeight: 'inherit', cursor: 'pointer', py: '12px', minWidth: 'unset', fontWeight: 700 }}
+              sx={{
+                minHeight: 'inherit',
+                cursor: 'pointer',
+                py: '12px',
+                minWidth: 'unset',
+                fontWeight: 700,
+              }}
             />
-          ))}
+          ),
+        )}
       </Tabs>
     </Box>
   );
