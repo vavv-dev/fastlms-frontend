@@ -46,7 +46,7 @@ export const Home = () => {
   if (!channel || !data) return null;
 
   const isEmpty = Object.values(data).every((v) => v.length === 0);
-  const videoId = data.video?.[0]?.id ?? null;
+  const videoId = channel.resources[0]?.id;
 
   return (
     <Box ref={containerRef} sx={{ width: '100%', p: 3 }}>

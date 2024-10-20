@@ -64,9 +64,11 @@ p:empty:not(.MuiFormHelperText-root)::before {
   font-size: 1em;
 }
 
+/*
 .tiptap-content p {
   margin-bottom: 1em;
 }
+*/
 
 .tiptap-content ul,
 .tiptap-content ol {
