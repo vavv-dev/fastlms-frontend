@@ -10,14 +10,15 @@ import {
   courseGetNewEnrolledCount,
 } from '@/api';
 import { AssetCard } from '@/component/asset';
-import { EmptyMessage, GridInfiniteScrollPage, useServiceImmutable } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage, TagGroup, useServiceImmutable } from '@/component/common';
 import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
 import { VideoCard } from '@/component/video';
 import { HistoryOutlined } from '@mui/icons-material';
-import { Badge, Box, Button, ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
+import { Badge, Box, Button, useTheme } from '@mui/material';
 import { atom, useAtom } from 'jotai';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -87,8 +88,8 @@ interface HistoryFilterProps {
 
 const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
   const { t } = useTranslation('u');
-  const navigate = useNavigate();
   const theme = useTheme();
+  const navigate = useNavigate();
   const { data, mutate } = useServiceImmutable<CourseGetNewEnrolledCountData, number>(courseGetNewEnrolledCount, undefined);
 
   const goToCourses = () => {
@@ -97,50 +98,38 @@ const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
     mutate(0, { revalidate: false });
   };
 
+  const kinds = useMemo(
+    () => [
+      ['', t('All')],
+      ['video', t('Video')],
+      ['asset', t('Asset')],
+      ['quiz', t('Quiz')],
+      ['survey', t('Survey')],
+      ['exam', t('Exam')],
+    ],
+    [t],
+  );
+
   return (
-    <ToggleButtonGroup
-      size="small"
-      value={kind ? kind : ''}
-      exclusive
-      onChange={(_, v) => setKind(v || null)}
-      sx={{
-        gridColumn: '1 / -1',
-        width: '100%',
-        '& .MuiButtonBase-root': {
-          whiteSpace: 'nowrap',
-          px: 2,
-          py: 0.2,
-          fontWeight: 'bold',
-          '&.Mui-selected': {
-            color: 'background.paper',
-            bgcolor: theme.palette.text.primary,
-            '&:hover': { bgcolor: theme.palette.text.primary },
-          },
-          '&.MuiButtonBase-root': { borderRadius: '8px', borderColor: theme.palette.divider },
-          '&.MuiButtonBase-root+.MuiButtonBase-root': { ml: 1 },
-        },
-        alignItems: 'center',
-      }}
-    >
-      <ToggleButton value="">{t('All')}</ToggleButton>
-      <ToggleButton value="video">{t('Video')}</ToggleButton>
-      <ToggleButton value="asset">{t('Asset')}</ToggleButton>
-      <ToggleButton value="quiz">{t('Quiz')}</ToggleButton>
-      <ToggleButton value="survey">{t('Survey')}</ToggleButton>
-      <ToggleButton value="exam">{t('Exam')}</ToggleButton>
-      <Badge badgeContent={data} color="error" sx={{ ml: 1, '& .MuiBadge-badge': { top: 6 } }}>
-        <Button
-          onClick={goToCourses}
-          sx={{
-            background: 'linear-gradient(90deg, #e0f7fa 0%, #ffcdd2 100%)',
-            boxShadow: `inset 0 0 0 1px ${theme.palette.divider}`,
-            color: theme.palette.text.primary,
-            '&:hover': { background: 'linear-gradient(90deg, #b2ebf2 0%, #ef9a9a 100%)' },
-          }}
-        >
-          {t('My courses')}
-        </Button>
-      </Badge>
-    </ToggleButtonGroup>
+    <TagGroup
+      tags={kinds}
+      tag={kind || ''}
+      setTag={setKind as (tag: string) => void}
+      extraButtions={
+        <Badge badgeContent={data} color="error" sx={{ ml: 1, '& .MuiBadge-badge': { top: 10 } }}>
+          <Button
+            onClick={goToCourses}
+            sx={{
+              background: 'linear-gradient(90deg, #e0f7fa 0%, #ffcdd2 100%)',
+              boxShadow: `inset 0 0 0 1px ${theme.palette.divider}`,
+              color: theme.palette.text.primary,
+              '&:hover': { background: 'linear-gradient(90deg, #b2ebf2 0%, #ef9a9a 100%)' },
+            }}
+          >
+            {t('My courses')}
+          </Button>
+        </Badge>
+      }
+    />
   );
 };

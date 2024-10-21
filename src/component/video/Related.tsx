@@ -4,22 +4,20 @@ import {
   videoGetDisplays as getDisplays,
   videoGetView as getView,
 } from '@/api';
-import { InfiniteScrollIndicator, useInfinitePagination, useServiceImmutable } from '@/component/common';
-import { Box, Tab, Tabs } from '@mui/material';
-import { useRef, useState } from 'react';
+import { InfiniteScrollIndicator, TagGroup, useInfinitePagination, useServiceImmutable } from '@/component/common';
+import { Box } from '@mui/material';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
 
 /**
- * tag custom protocol
  * all:videoId - all videos which have the same tag as the video
- *
  */
 
 export const Related = ({ id }: { id: string }) => {
   const { t } = useTranslation('video');
   const { data } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
-  const [tagName, setTagName] = useState<string | null>(null);
+  const [tag, setTag] = useState<string>('');
 
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -27,31 +25,20 @@ export const Related = ({ id }: { id: string }) => {
     isLoading,
     isValidating,
   } = useInfinitePagination({
-    apiOptions: { tag: encodeURIComponent(tagName || `all:${id}`) },
+    apiOptions: { tag: encodeURIComponent(tag || `all:${id}`) },
     apiService: getDisplays,
     infiniteScrollRef,
   });
 
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-      <Box sx={{ display: 'grid' }}>
-        <Tabs
-          sx={{ minHeight: '2em', '& .MuiButtonBase-root': { minHeight: '2em', minWidth: 'auto' } }}
-          value={tagName}
-          role="navigation"
-          variant="scrollable"
-          scrollButtons={true}
-          allowScrollButtonsMobile
-        >
-          <Tab label={t('All')} value={null} onClick={() => setTagName(null)} />
-          {data?.tag_names.map((name) => <Tab key={name} label={name} value={name} onClick={() => setTagName(name)} />)}
-        </Tabs>
-      </Box>
+  const tags = useMemo(() => [['', t('All')], ...(data?.tag_names?.map((tag) => [tag, tag]) ?? [])], [data, t]);
 
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <TagGroup tags={tags} tag={tag} setTag={setTag} />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
         {displays?.map((pagination) =>
           pagination.items.map((video) => (
-            <Box key={video.id} onClick={() => setTagName(null)}>
+            <Box key={video.id} onClick={() => setTag('')}>
               <Card
                 data={video}
                 hideAvatar

@@ -10,7 +10,7 @@ import {
 import { WithAvatar, useInfinitePagination, useServiceImmutable } from '@/component/common';
 import { spacerRefState } from '@/component/layout';
 import { LessonCard } from '@/component/lesson';
-import { parseLocalStorage, textEllipsisCss, toFixedHuman } from '@/helper/util';
+import { textEllipsisCss, toFixedHuman } from '@/helper/util';
 import { ArrowDropDown, ArrowDropUp, Refresh } from '@mui/icons-material';
 import { Box, Button, IconButton, Step, StepContent, StepLabel, Stepper, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
@@ -20,8 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
 
-const activeStepKey = parseLocalStorage('activeStep', 0);
-const activeStepFamily = atomFamily(() => atomWithStorage<number>(activeStepKey, 0));
+const activeStepFamily = atomFamily((id: string) => atomWithStorage(`activeStep-${id}`, 0));
 
 export const View = () => {
   const { t } = useTranslation('course');
@@ -34,7 +33,7 @@ export const View = () => {
     apiService: lessonGetDisplays,
   });
   const [showAll, setShowAll] = useState(false);
-  const [activeStep, setActiveStep] = useAtom(activeStepFamily(id));
+  const [activeStep, setActiveStep] = useAtom(activeStepFamily(id as string));
   const spacerRef = useAtomValue(spacerRefState);
 
   // update spacerRef height

@@ -1,8 +1,6 @@
 import { textEllipsisCss } from '@/helper/util';
-import { channelState } from '@/store';
 import { VideoCameraFront } from '@mui/icons-material';
 import { Avatar, Box, SxProps, Tooltip, Typography, useTheme } from '@mui/material';
-import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +20,6 @@ export const WithAvatar = ({ variant, name, username, thumbnail, use_channel, hi
   const { t } = useTranslation('common');
   const theme = useTheme();
   const navigate = useNavigate();
-  const channel = useAtomValue(channelState);
 
   const goToHome = (e: React.MouseEvent) => {
     if (!use_channel) return;
@@ -71,30 +68,28 @@ export const WithAvatar = ({ variant, name, username, thumbnail, use_channel, hi
           '& .MuiTypography-root': textEllipsisCss(1),
         }}
       >
-        {!(hideAvatar && channel) && (
-          <Typography
-            onClick={goToHome}
-            variant={nameVariant}
-            sx={{
-              color: color || 'text.primary',
-              width: 'fit-content',
-              fontWeight: 'bold',
-              lineHeight: 1.4,
-              cursor: pointer,
-              '&:hover': use_channel ? { color: 'primary.main' } : undefined,
-              display: 'flex !important',
-              alignItems: 'center',
-              gap: 0.8,
-            }}
-          >
-            {use_channel && (
-              <Tooltip title={t('Channel enabled')}>
-                <VideoCameraFront color="success" sx={{ fontSize: theme.typography.subtitle2.fontSize }} />
-              </Tooltip>
-            )}
-            {name}
-          </Typography>
-        )}
+        <Typography
+          onClick={goToHome}
+          variant={nameVariant}
+          sx={{
+            color: color || 'text.primary',
+            width: 'fit-content',
+            fontWeight: 'bold',
+            lineHeight: 1.4,
+            cursor: pointer,
+            '&:hover': use_channel ? { color: 'primary.main' } : undefined,
+            display: 'flex !important',
+            alignItems: 'center',
+            gap: 0.8,
+          }}
+        >
+          {use_channel && (
+            <Tooltip title={t('Channel enabled')}>
+              <VideoCameraFront color="success" sx={{ fontSize: theme.typography.subtitle2.fontSize }} />
+            </Tooltip>
+          )}
+          {name}
+        </Typography>
         {children}
       </Box>
     </Box>

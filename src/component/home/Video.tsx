@@ -6,11 +6,11 @@ import {
   VideoGetTagsData as GetTagsData,
   VideoGetTagsResponse as GetTagsResponse,
 } from '@/api';
-import { EmptyMessage, GridInfiniteScrollPage, useServiceImmutable } from '@/component/common';
+import { EmptyMessage, GridInfiniteScrollPage, TagGroup, useServiceImmutable } from '@/component/common';
 import { VideoCard } from '@/component/video';
 import { VideoLibrary } from '@mui/icons-material';
-import { ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
 import { atom, useAtom } from 'jotai';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const tagState = atom<string>('');
@@ -19,6 +19,16 @@ export const Video = () => {
   const { t } = useTranslation('home');
   const { data: tagNames } = useServiceImmutable<GetTagsData, GetTagsResponse>(getTags, { limit: 8 });
   const [tag, setTag] = useAtom(tagState);
+
+  const tags = useMemo(
+    () => [
+      ['', t('All')],
+      ['featured', t('Featured')],
+      ['watched', t('Watched videos')],
+      ...(tagNames?.map((tag) => [tag, tag]) ?? []),
+    ],
+    [tagNames, t],
+  );
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
@@ -47,51 +57,7 @@ export const Video = () => {
           smm: 'repeat(auto-fill, minmax(308px, 1fr))',
         },
       }}
-      extraFilter={tagNames && <TagGroup tagNames={tagNames} tag={tag} setTag={setTag} />}
+      extraFilter={tagNames && <TagGroup tags={tags} tag={tag} setTag={setTag} />}
     />
-  );
-};
-
-interface TagGroupProps {
-  tagNames: string[];
-  tag: string | null;
-  setTag: (tag: string) => void;
-}
-
-const TagGroup = ({ tagNames, tag, setTag }: TagGroupProps) => {
-  const { t } = useTranslation('home');
-  const theme = useTheme();
-
-  return (
-    <ToggleButtonGroup
-      value={tag}
-      exclusive
-      onChange={(_, v) => setTag(v ? v : '')}
-      sx={{
-        '& .MuiButtonBase-root': {
-          whiteSpace: 'nowrap',
-          px: 2,
-          py: 0.3,
-          my: 1,
-          fontWeight: 'bold',
-          '&.Mui-selected': {
-            color: 'background.paper',
-            bgcolor: theme.palette.text.primary,
-            '&:hover': { bgcolor: theme.palette.text.primary },
-          },
-          '&.MuiButtonBase-root ': { borderRadius: '8px', borderColor: theme.palette.divider },
-          '&.MuiButtonBase-root+.MuiButtonBase-root': { ml: 1 },
-        },
-      }}
-    >
-      <ToggleButton value="">{t('All')}</ToggleButton>
-      <ToggleButton value="featured">{t('Featured')}</ToggleButton>
-      <ToggleButton value="watched">{t('Watched video')}</ToggleButton>
-      {tagNames.map((name) => (
-        <ToggleButton key={name} value={name}>
-          {name}
-        </ToggleButton>
-      ))}
-    </ToggleButtonGroup>
   );
 };

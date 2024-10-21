@@ -27,6 +27,7 @@ export { useDebounce, useFixMouseLeave, useInfinitePagination, useScrollToFirstE
 export { updateInfiniteCache } from './swr';
 export { createToggleAction } from './toggleUserAction';
 export { uppyFamily } from './uppy';
+export { TagGroup } from './TagGroup';
 
 export const searchFamily = atomFamily(() => atom<string>(''));
 

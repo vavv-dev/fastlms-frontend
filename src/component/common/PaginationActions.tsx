@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, RefreshOutlined, SortOutlined } from '@mui/icons-material';
+import { RefreshOutlined, SortOutlined } from '@mui/icons-material';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { CircularProgress, FormControl, IconButton, InputAdornment, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { CircularProgress, FormControl, IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 // import GradientCircularProgress from './GradientCircularProgress';
 
@@ -28,125 +28,16 @@ const PaginationActions = ({
   children,
   extraFilter,
 }: ActionProps) => {
-  const theme = useTheme();
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [showLeftButton, setShowLeftButton] = useState(false);
-  const [showRightButton, setShowRightButton] = useState(false);
-  const [rightButtonPosition, setRightButtonPosition] = useState(0);
-
-  const checkForOverflow = useCallback(() => {
-    const element = scrollRef.current;
-    if (element) {
-      setShowLeftButton(element.scrollLeft > 0);
-      setShowRightButton(element.scrollWidth > element.clientWidth + element.scrollLeft);
-    }
-  }, []);
-
-  const updateButtonPositions = useCallback(() => {
-    const scrollElement = scrollRef.current;
-    const containerElement = containerRef.current;
-    if (scrollElement && containerElement) {
-      const scrollRect = scrollElement.getBoundingClientRect();
-      const containerRect = containerElement.getBoundingClientRect();
-      setRightButtonPosition(scrollRect.right - containerRect.left);
-    }
-  }, []);
-
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(() => {
-      checkForOverflow();
-      updateButtonPositions();
-    });
-
-    if (scrollRef.current) {
-      resizeObserver.observe(scrollRef.current);
-    }
-
-    return () => resizeObserver.disconnect();
-  }, [checkForOverflow, updateButtonPositions]);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -100 : 100;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      setTimeout(() => {
-        checkForOverflow();
-        updateButtonPositions();
-      }, 100);
-    }
-  };
-
   return (
-    <Box ref={containerRef} sx={{ display: 'flex', alignItems: 'center', gap: 2, whiteSpace: 'nowrap', position: 'relative' }}>
-      {showLeftButton && (
-        <IconButton
-          size="small"
-          onClick={() => scroll('left')}
-          sx={{
-            position: 'absolute',
-            left: 0,
-            transform: 'translateX(-50%)',
-            zIndex: 2,
-            bgcolor: theme.palette.background.paper,
-            '&:hover': { filter: 'brightness(0.9)', bgcolor: theme.palette.background.paper },
-            boxShadow: theme.shadows[2],
-          }}
-        >
-          <ChevronLeft />
-        </IconButton>
-      )}
-      {showRightButton && (
-        <IconButton
-          size="small"
-          onClick={() => scroll('right')}
-          sx={{
-            position: 'absolute',
-            left: `${rightButtonPosition}px`,
-            transform: 'translateX(-50%)',
-            zIndex: 2,
-            bgcolor: theme.palette.background.paper,
-            '&:hover': { filter: 'brightness(0.9)', bgcolor: theme.palette.background.paper },
-            boxShadow: theme.shadows[2],
-          }}
-        >
-          <ChevronRight />
-        </IconButton>
-      )}
-      <Box
-        ref={scrollRef}
-        sx={{
-          flexGrow: 1,
-          display: 'flex',
-          gap: 1,
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
-          py: '5px', // badge space
-        }}
-        onScroll={() => {
-          checkForOverflow();
-          updateButtonPositions();
-        }}
-      >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, whiteSpace: 'nowrap' }}>
+      <Box sx={{ flexGrow: 1, display: 'flex', gap: 1, overflow: 'hidden' }}>
         {setOrdering && <OrderingOptions ordering={ordering} setOrdering={setOrdering} orderingOptions={orderingOptions} />}
         {setSearch && <SimpleSearch search={search} setSearch={setSearch} />}
         {extraFilter}
       </Box>
-      <Box sx={{ display: 'flex', flexGrow: 1, alignItems: 'center', justifyContent: 'end', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
         {children}
-        <IconButton
-          color="primary"
-          onClick={() => {
-            if (mutate) {
-              mutate();
-              setTimeout(() => {
-                checkForOverflow();
-                updateButtonPositions();
-              }, 100);
-            }
-          }}
-        >
+        <IconButton color="primary" onClick={() => mutate?.()}>
           <RefreshOutlined />
         </IconButton>
       </Box>
