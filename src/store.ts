@@ -8,5 +8,4 @@ export const userState = atomWithStorage<UserResponse | null>('user', parseLocal
 export const channelState = atom<ChannelDisplayResponse | null>(null);
 export const accountProcessingState = atom<boolean>(false);
 export const userMessageState = atom<WebSocket | null>(null);
-
 export const invitationUrl = `${window.location.origin}/invitation-accept`;

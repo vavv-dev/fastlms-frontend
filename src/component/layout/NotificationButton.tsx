@@ -1,3 +1,4 @@
+import { UserMessageResponse } from '@/api';
 import { formatDatetimeLocale } from '@/helper/util';
 import { userMessageState } from '@/store';
 import { NotificationsOutlined, TagFacesOutlined } from '@mui/icons-material';
@@ -5,23 +6,15 @@ import { Badge, Box, Divider, IconButton, Popover, Stack, Typography, useTheme }
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { notificationState } from '.';
 
-interface Notification {
-  title: string;
-  detail: string | null;
-  kind: string;
-  action: string;
-  object_title: string;
-  object_id: string;
-  time: string;
-}
-
-const notificationState = atom<Array<Notification>>([]);
 const newNotificationCountState = atom<number>(0);
 
 export const NotificationButton = () => {
   const { t } = useTranslation('layout');
   const theme = useTheme();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [notifications, setNotifications] = useAtom(notificationState);
   const [newNotificationCount, setNewNotificationCount] = useAtom(newNotificationCountState);
@@ -29,9 +22,11 @@ export const NotificationButton = () => {
 
   if (userMessage) {
     userMessage.onmessage = (event) => {
+      // check if message is array
       const data = JSON.parse(event.data);
-      setNotifications((notifications) => [data, ...notifications]);
-      setNewNotificationCount((count) => count + 1);
+      const messages = Array.isArray(data) ? data : [data];
+      setNotifications((notifications) => [...messages, ...notifications]);
+      setNewNotificationCount((count) => count + messages.length);
     };
   }
 
@@ -74,13 +69,26 @@ export const NotificationButton = () => {
               {t('No nofitication.')}
             </Typography>
           )}
+
+          <Typography
+            component="div"
+            variant="body2"
+            color="primary"
+            onClick={() => {
+              navigate('/u/notification');
+              setAnchorEl(null);
+            }}
+            sx={{ cursor: 'pointer', p: 1.5, display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}
+          >
+            {t('See previous notifications')}
+          </Typography>
         </Stack>
       </Popover>
     </>
   );
 };
 
-const NotificationItem = ({ notification, isNew }: { notification: Notification; isNew: boolean }) => {
+const NotificationItem = ({ notification, isNew }: { notification: UserMessageResponse; isNew: boolean }) => {
   const { t } = useTranslation('layout');
   const theme = useTheme();
 

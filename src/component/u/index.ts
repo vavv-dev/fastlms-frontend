@@ -1,9 +1,9 @@
 import i18next from '@/i18n';
 
 export { Bookmark as UserBookmark } from './Bookmark';
-export { Course as UserCourse } from './Course';
 export { Channel as UserChannel } from './Channel';
 export { Comment as UserComment } from './Comment';
+export { Course as UserCourse } from './Course';
 export { History as UserHistory } from './History';
 export { Layout as UserLayout } from './Layout';
 export { Notification as UserNotification } from './Notification';

@@ -1016,6 +1016,14 @@ export type Paginated_Union_VideoDisplayResponse__AssetDisplayResponse__QuizDisp
     pages: number;
 };
 
+export type Paginated_UserMessageResponse_ = {
+    items: Array<UserMessageResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
 export type Paginated_VideoDisplayResponse_ = {
     items: Array<VideoDisplayResponse>;
     total: number;
@@ -1385,6 +1393,14 @@ export type RosterUpdateRequest = {
     memo?: string;
 };
 
+export type Sender = {
+    id: string;
+    username: string;
+    name: string;
+    thumbnail: string;
+    use_channel: boolean;
+};
+
 export type SubmissionStatus = 'passed' | 'failed' | 'grading' | 'timeout' | 'in_progress' | 'ready';
 
 export type SurveyAssessQuestion = {
@@ -1609,6 +1625,38 @@ export type UserCreateRequest = {
     password: string;
     name: string;
     email_verification_url: string;
+};
+
+export type UserMessageRequest = {
+    user_message: UserMessageSchema;
+    receivers?: Array<(string)>;
+    rosters?: Array<(string)>;
+};
+
+export type UserMessageResponse = {
+    title: string;
+    detail: string;
+    kind: 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course';
+    action: 'import' | 'promote';
+    object_title: string;
+    object_id: string;
+    id: string;
+    time: string;
+    read_time?: (string | null);
+    sender?: (Sender | null);
+};
+
+export type kind5 = 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course';
+
+export type action = 'import' | 'promote';
+
+export type UserMessageSchema = {
+    title: string;
+    detail: string;
+    kind: 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course';
+    action: 'import' | 'promote';
+    object_title: string;
+    object_id: string;
 };
 
 export type UserResponse = {
@@ -3099,3 +3147,24 @@ export type AccountToggleBookmarkData = {
 };
 
 export type AccountToggleBookmarkResponse = (unknown);
+
+export type MessageSendMessageData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    requestBody: UserMessageRequest;
+};
+
+export type MessageSendMessageResponse = (unknown);
+
+export type MessageGetMessagesData = {
+    accessToken?: (string | null);
+    orderBy?: 'time';
+    page?: number;
+    receiverId?: (string | null);
+    refreshToken?: (string | null);
+    search?: (string | null);
+    senderId?: (string | null);
+    size?: number;
+};
+
+export type MessageGetMessagesResponse = (Paginated_UserMessageResponse_);
