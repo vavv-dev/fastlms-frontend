@@ -1,8 +1,4 @@
-import {
-  courseGetDisplays as getDisplays,
-  courseGetEnrolledCourses as getEnrolledCourses,
-  courseUnenroll as unenroll,
-} from '@/api';
+import { courseGetDisplays as getDisplays, courseUnenroll as unenroll } from '@/api';
 import { BaseDialog } from '@/component/common';
 import { updateInfiniteCache } from '@/component/common/swr';
 import { snackbarMessageState } from '@/component/layout';
@@ -26,7 +22,6 @@ export const UnenrollDialog = ({ open, setOpen, id, title }: Props) => {
     unenroll({ id })
       .then(() => {
         updateInfiniteCache(getDisplays, { id, enrolled: false }, 'update');
-        updateInfiniteCache(getEnrolledCourses, { id, enrolled: false }, 'update');
         setTimeout(() => {
           setSnackbarMessage({ message: t('You are now unenrolled from this course.'), duration: 3000 });
         }, 500);

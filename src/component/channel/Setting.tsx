@@ -185,7 +185,7 @@ export const Setting: React.FC = () => {
             margin="normal"
           />
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4, gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mt: 4, gap: 2 }}>
             <IconButton onClick={() => reset()}>
               <Refresh />
             </IconButton>

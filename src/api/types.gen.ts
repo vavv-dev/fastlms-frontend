@@ -2815,6 +2815,7 @@ export type LessonLessonSelectorResponse = (Array<LessonSelectorResponse>);
 
 export type CourseGetDisplaysData = {
     accessToken?: (string | null);
+    enrolled?: boolean;
     orderBy?: 'modified';
     owner?: (string | null);
     page?: number;
@@ -2824,15 +2825,6 @@ export type CourseGetDisplaysData = {
 };
 
 export type CourseGetDisplaysResponse = (Paginated_CourseDisplayResponse_);
-
-export type CourseGetEnrolledCoursesData = {
-    accessToken?: (string | null);
-    page?: number;
-    refreshToken?: (string | null);
-    size?: number;
-};
-
-export type CourseGetEnrolledCoursesResponse = (Paginated_CourseDisplayResponse_);
 
 export type CourseGetNewEnrolledCountData = {
     accessToken?: (string | null);

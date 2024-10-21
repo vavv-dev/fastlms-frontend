@@ -93,7 +93,7 @@ const MemberTable = ({ data }: MemberTableProps) => {
           sx={{
             '& th,td:not(:nth-of-type(3))': { whiteSpace: 'nowrap' },
             '& th:last-of-type, td:last-of-type': { width: '2em' },
-            '& td': { p: 0.5 },
+            '& td': { px: 0.5, py: 1 },
           }}
         >
           <TableHead>

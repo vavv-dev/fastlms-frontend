@@ -1,52 +1,66 @@
 import {
   CourseDisplayResponse as DisplayResponse,
   CourseGetDisplaysData as GetDisplaysData,
-  courseGetEnrolledCourses as getEnrolledCourses,
+  courseGetDisplays as getDisplays,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
 import { CourseCard } from '@/component/course';
 import { formatYYYMMDD, toFixedHuman } from '@/helper/util';
 import { School } from '@mui/icons-material';
-import { Box, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export const Course = () => {
   const { t } = useTranslation('course');
   const theme = useTheme();
+  const smUp = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>
       pageKey="course"
       orderingOptions={[{ value: 'modified', label: t('Recently modified') }]}
-      apiService={getEnrolledCourses}
+      apiService={getDisplays}
+      apiOptions={{ enrolled: true }}
       renderItem={({ data }) => (
         <Box sx={{ mt: '2em' }}>
           {data?.map((pagination) =>
             pagination.items?.map((item) => (
-              <Box key={item.id} sx={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 1.5, mb: 2 }}>
+              <Box
+                key={item.id}
+                sx={{
+                  mx: 'auto',
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1.5,
+                  ...(smUp ? { width: '100%', mb: '1em' } : { width: '350px', mb: '2em' }),
+                }}
+              >
                 <CourseCard
                   data={item}
-                  sx={{
-                    flexGrow: 1,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'nowrap',
-                    gap: '1em',
-                    '.card-banner': {
-                      width: '220px',
-                      minWidth: '220px',
-                      height: 'auto',
-                      '& img': { borderRadius: theme.shape.borderRadius / 2, aspectRatio: '16 / 9' },
-                    },
-                    '.content-title': { fontSize: '1em', mb: 0.5, fontWeight: 600, lineHeight: 1.2 },
-                  }}
+                  sx={
+                    smUp
+                      ? {
+                          flexGrow: 1,
+                          display: 'flex',
+                          flexDirection: 'row',
+                          flexWrap: 'nowrap',
+                          gap: '1em',
+                          '.card-banner': {
+                            width: '220px',
+                            minWidth: '220px',
+                            height: 'auto',
+                            '& img': { borderRadius: theme.shape.borderRadius / 2, aspectRatio: '16 / 9' },
+                          },
+                          '.content-title': { fontSize: '1em', mb: 0.5, fontWeight: 600, lineHeight: 1.2 },
+                        }
+                      : { maxWidth: '400px', alignSelf: 'center', width: '100%' }
+                  }
                 />
 
                 <Box
                   sx={{
-                    position: 'absolute',
-                    right: '1em',
-                    bottom: '4px',
+                    ...(smUp ? { position: 'absolute', bottom: '4px', right: '1em' } : {}),
                     display: 'flex',
                     gap: 2,
                     whiteSpace: 'nowrap',

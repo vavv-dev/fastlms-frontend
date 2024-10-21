@@ -116,7 +116,7 @@ export const View = () => {
             gap: 1,
             position: 'sticky',
             top: (spacerRef?.clientHeight || 0) + 32,
-            bgcolor: 'background.paper',
+            // bgcolor: 'background.paper',
             zIndex: 4,
             justifyContent: 'flex-end',
             alignItems: 'center',

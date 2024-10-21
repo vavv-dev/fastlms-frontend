@@ -65,7 +65,7 @@ export const BulkActions = ({ selection, setSelection, data }: Props) => {
   return (
     <Box sx={{ flexGrow: 1, position: 'absolute', py: 2, top: 0, left: '0.2em', zIndex: 1, transform: 'translateY(-100%)' }}>
       {selection.length > 0 && (
-        <Typography variant="caption" sx={{ mb: 1 }}>
+        <Typography variant="caption" sx={{ color: 'info.main' }}>
           {t('{{count}} member(s) selected.', { count: totalSelected ? total : selection.length })}
         </Typography>
       )}

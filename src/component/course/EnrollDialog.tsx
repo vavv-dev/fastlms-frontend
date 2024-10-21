@@ -36,9 +36,7 @@ export const EnrollDialog = ({ open, setOpen, id }: Props) => {
       .then(() => {
         setResult(t('You are now enrolled in this course.'));
         updateInfiniteCache(getDisplays, { id, enrolled: true }, 'update');
-
-        // revalidate new course count cache
-        mutate((prev) => (prev ? prev + 1 : 1), { revalidate: false });
+        mutate(1, { revalidate: false });
       })
       .catch((err) => {
         switch (err.status) {
