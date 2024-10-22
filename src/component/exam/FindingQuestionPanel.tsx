@@ -115,6 +115,7 @@ export const FindingQuestionPanel = ({ question, maxOccurrence, totalOccurrence,
             {t('Frequently mentioned items in answers.')}
           </Typography>
           <PieChart
+            slotProps={{ noDataOverlay: { message: t('No data to display.') } }}
             colors={theme.palette.colorList}
             series={[
               {

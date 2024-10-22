@@ -1,4 +1,3 @@
-import { UserMessageResponse } from '@/api';
 import { parseLocalStorage } from '@/helper/util';
 import i18next from '@/i18n';
 import { AlertProps } from '@mui/material';

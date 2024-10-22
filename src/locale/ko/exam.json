@@ -130,7 +130,6 @@
   "submitted": "제출 완료",
   "text_input": "텍스트 입력",
   "timeout": "시간 초과",
-  "{{ num }} Points": "{{ num }} 점",
-  "{{ num }} points": "{{ num }} 점",
+  "{{ num }} / 100 points": "{{ num }} / 100 점",
   "{{ point }} points": "{{ point }} 점"
 }

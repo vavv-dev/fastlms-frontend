@@ -134,7 +134,7 @@ export const Form = ({ id, userId }: { id: string; userId: string }) => {
           <Typography sx={{ display: 'block' }} variant="caption">
             {t('Grading status')}
           </Typography>
-          {t(data.status)} / {t('{{ num }} points', { num: data.score })}
+          {t(data.status)} {data.score != null && `${t('{{ num }} / 100 points', { num: data.score })}`}
         </Typography>
       )}
       <Stack
@@ -154,7 +154,7 @@ export const Form = ({ id, userId }: { id: string; userId: string }) => {
               <Typography sx={{ whiteSpace: 'pre-wrap' }}>
                 {`${i + 1}. [${t(kind)}] ${title}`}
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'inline', ml: 1 }}>
-                  {t('{{ num }} Points', { num: weight })}
+                  {t('{{ num }} points', { num: weight })}
                 </Typography>
               </Typography>
               <FindingQuestionPanel

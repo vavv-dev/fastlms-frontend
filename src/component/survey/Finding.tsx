@@ -88,6 +88,7 @@ export const Finding = ({ id }: { id: string }) => {
                     {t('Frequently mentioned items in answers.')}
                   </Typography>
                   <PieChart
+                    slotProps={{ noDataOverlay: { message: t('No data to display.') } }}
                     colors={theme.palette.colorList}
                     series={[
                       {
