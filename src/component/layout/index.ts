@@ -45,5 +45,3 @@ void [
   i18next.t('Playlist imported successfully', { ns: 'layout' }),
   i18next.t('Video imported successfully', { ns: 'layout' }),
 ];
-
-export const notificationState = atom<Array<UserMessageResponse>>([]);

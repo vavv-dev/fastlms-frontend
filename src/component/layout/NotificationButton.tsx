@@ -1,20 +1,21 @@
 import { UserMessageResponse } from '@/api';
 import { formatDatetimeLocale } from '@/helper/util';
-import { userMessageState } from '@/store';
+import { userMessageState, userState } from '@/store';
 import { NotificationsOutlined, TagFacesOutlined } from '@mui/icons-material';
 import { Badge, Box, Divider, IconButton, Popover, Stack, Typography, useTheme } from '@mui/material';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { notificationState } from '.';
 
+const notificationState = atom<Array<UserMessageResponse>>([]);
 const newNotificationCountState = atom<number>(0);
 
 export const NotificationButton = () => {
   const { t } = useTranslation('layout');
   const theme = useTheme();
   const navigate = useNavigate();
+  const user = useAtomValue(userState);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [notifications, setNotifications] = useAtom(notificationState);
   const [newNotificationCount, setNewNotificationCount] = useAtom(newNotificationCountState);
@@ -34,6 +35,15 @@ export const NotificationButton = () => {
     if (!anchorEl) return;
     setTimeout(() => setNewNotificationCount(0), 3000);
   }, [anchorEl]); // eslint-disable-line
+
+  useEffect(() => {
+    return () => {
+      setNotifications([]);
+      setNewNotificationCount(0);
+    };
+  }, []);
+
+  if (!user) return null;
 
   return (
     <>

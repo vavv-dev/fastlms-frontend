@@ -1,12 +1,10 @@
 import { MessageGetMessagesData, MessageGetMessagesResponse, UserMessageResponse, messageGetMessages } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
-import { notificationState } from '@/component/layout';
 import { calculateReverseIndex, formatRelativeTime } from '@/helper/util';
 import { userState } from '@/store';
 import { Notifications, NotificationsOutlined } from '@mui/icons-material';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { useAtom, useAtomValue } from 'jotai';
-import { useEffect, useRef } from 'react';
+import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
 export const Notification = () => {
@@ -29,22 +27,6 @@ export const Notification = () => {
 
 const NotificationTable = ({ data }: { data: MessageGetMessagesResponse[] | undefined }) => {
   const { t } = useTranslation('u');
-  const [notifications, setNotifications] = useAtom(notificationState);
-  const addedRef = useRef<Array<string>>([]);
-
-  useEffect(() => {
-    if (!data) return;
-    const notificationIds = notifications.map((notification) => notification.id);
-    const unreads = data.flatMap((pagination) =>
-      pagination.items.filter(
-        (row) => !row.read_time && !notificationIds.includes(row.id) && !addedRef.current.includes(row.id),
-      ),
-    );
-    if (unreads.length) {
-      addedRef.current = unreads.map((row) => row.id);
-      setNotifications((notifications) => [...unreads, ...notifications]);
-    }
-  }, [data]);
 
   if (!data) return null;
 
