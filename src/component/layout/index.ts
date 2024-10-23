@@ -1,3 +1,4 @@
+import { UserMessageResponse } from '@/api';
 import { parseLocalStorage } from '@/helper/util';
 import i18next from '@/i18n';
 import { AlertProps } from '@mui/material';
@@ -37,10 +38,8 @@ interface SnackBarMessage {
 }
 export const snackbarMessageState = atom<SnackBarMessage | null>(null);
 
+// notification
+export const notificationsState = atom<Array<UserMessageResponse>>([]);
+
 // gettext no-op
-void [
-  i18next.t('Profile', { ns: 'layout' }),
-  i18next.t('Logout', { ns: 'layout' }),
-  i18next.t('Playlist imported successfully', { ns: 'layout' }),
-  i18next.t('Video imported successfully', { ns: 'layout' }),
-];
+void [i18next.t('Profile', { ns: 'layout' }), i18next.t('Logout', { ns: 'layout' })];

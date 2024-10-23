@@ -1,5 +1,7 @@
 import {
   CommentDisplayResponse as DisplayResponse,
+  ThreadResponse,
+  commentGetThreads,
   commentGetDisplays as getDisplays,
   commentToggleAction as toggleAction,
   commentUpdateResource as updateResource,
@@ -48,6 +50,13 @@ export const Comment = ({ url, data, setParentHover }: Props) => {
       requestBody: { solved: !data.solved },
     }).then(() => {
       updateInfiniteCache<DisplayResponse>(getDisplays, { ...data, solved: !data.solved }, 'update', 'children');
+      // update thread
+      updateInfiniteCache<ThreadResponse>(
+        commentGetThreads,
+        (thread) =>
+          thread.id === data.thread_id ? { ...thread, unsolved_count: thread.unsolved_count + (data.solved ? 1 : -1) } : thread,
+        'update',
+      );
     });
   };
 

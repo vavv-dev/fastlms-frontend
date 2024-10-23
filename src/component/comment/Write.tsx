@@ -3,6 +3,7 @@ import {
   CommentGetThreadData as GetThreadData,
   CommentResourceCreateRequest as ResourceCreateRequest,
   ThreadResponse,
+  commentGetThreads,
   commentCreateResource as createResource,
   commentGetDisplays as getDisplays,
   commentGetThread as getThread,
@@ -48,7 +49,7 @@ const schema: yup.ObjectSchema<ResourceCreateRequest> = yup.object({
     .transform((value) => (value ? true : false)),
   solved: yup.boolean().default(false),
   pinned: yup.boolean().default(false),
-  thread_id: yup.string().required().default(null),
+  thread_id: yup.string().default(''),
   parent_id: yup.string().nullable().default(null),
   deleted: yup.boolean().default(false),
 });
@@ -100,6 +101,26 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question }: Props
           }
           updateInfiniteCache<DisplayResponse>(getDisplays, updated, data ? 'update' : 'create', 'children');
         }
+
+        // update thread
+        updateInfiniteCache<ThreadResponse>(
+          commentGetThreads,
+          data
+            ? formState.dirtyFields['is_question']
+              ? {
+                  ...thread,
+                  question_count: thread.question_count + (input.is_question ? 1 : -1),
+                  unsolved_count: thread.unsolved_count + (input.is_question && !input.solved ? 1 : -1),
+                }
+              : thread
+            : {
+                ...thread,
+                comment_count: thread.comment_count + 1,
+                question_count: thread.question_count + (input.is_question ? 1 : 0),
+                unsolved_count: thread.unsolved_count + (input.is_question && !input.solved ? 1 : 0),
+              },
+          'update',
+        );
 
         reset();
         onClose?.();

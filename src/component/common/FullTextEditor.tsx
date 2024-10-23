@@ -177,6 +177,7 @@ export const FullTextEditor = ({
             <MenuButtonSuperscript tabIndex={-1} tooltipLabel={t('Superscript')} />
             <MenuButtonSubscript tabIndex={-1} tooltipLabel={t('Subscript')} />
             <MenuButtonStrikethrough tabIndex={-1} tooltipLabel={t('Strikethrough')} />
+            <MenuDivider />
             <MenuButtonTextColor
               tabIndex={-1}
               PopperProps={{ container }}

@@ -1636,7 +1636,7 @@ export type UserMessageRequest = {
 export type UserMessageResponse = {
     title: string;
     detail: string;
-    kind: 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course';
+    kind: 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course' | 'asset' | 'lesson';
     action: 'import' | 'promote';
     object_title: string;
     object_id: string;
@@ -1646,14 +1646,14 @@ export type UserMessageResponse = {
     sender?: (Sender | null);
 };
 
-export type kind5 = 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course';
+export type kind5 = 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course' | 'asset' | 'lesson';
 
 export type action = 'import' | 'promote';
 
 export type UserMessageSchema = {
     title: string;
     detail: string;
-    kind: 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course';
+    kind: 'video' | 'short' | 'playlist' | 'quiz' | 'survey' | 'exam' | 'course' | 'asset' | 'lesson';
     action: 'import' | 'promote';
     object_title: string;
     object_id: string;
@@ -3168,3 +3168,11 @@ export type MessageGetMessagesData = {
 };
 
 export type MessageGetMessagesResponse = (Paginated_UserMessageResponse_);
+
+export type MessageReadMessageData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    requestBody: Array<(string)>;
+};
+
+export type MessageReadMessageResponse = (unknown);

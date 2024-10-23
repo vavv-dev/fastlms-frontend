@@ -63,6 +63,7 @@
   "My points": "My points",
   "N/A": "N/A",
   "No answer submitted.": "No answer submitted.",
+  "No data to display.": "No data to display.",
   "No exam found.": "No exam found.",
   "No exam submissions found.": "No exam submissions found.",
   "No report data found.": "No report data found.",
@@ -130,6 +131,7 @@
   "submitted": "submitted",
   "text_input": "text_input",
   "timeout": "timeout",
+  "{{ num }} / 100 points": "{{ num }} / 100 points",
   "{{ num }} Points": "{{ num }} Points",
   "{{ num }} points": "{{ num }} points",
   "{{ point }} points": "{{ point }} points"
