@@ -1,8 +1,9 @@
 import { accountLogout } from '@/api';
-import { accountProcessingState, userState } from '@/store';
+import { userState } from '@/store';
 import { useAtom, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { accountProcessingState } from '.';
 
 export const Logout = () => {
   const navigate = useNavigate();
@@ -37,4 +38,3 @@ export const Logout = () => {
 
   return <></>;
 };
-

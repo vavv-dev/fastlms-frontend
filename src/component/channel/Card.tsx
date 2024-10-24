@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 export const Card = ({ channel }: { channel: DisplayResponse }) => {
-  const { t } = useTranslation('home');
+  const { t } = useTranslation('channel');
   const user = useAtomValue(userState);
   const navigate = useNavigate();
 

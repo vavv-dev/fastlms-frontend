@@ -1,7 +1,7 @@
 import { Body_PublicLogin, accountGetMe, publicLogin } from '@/api';
 import { Form, TextFieldControl } from '@/component/common';
 import i18next from '@/i18n';
-import { accountProcessingState, loginExpireState, userState } from '@/store';
+import { loginExpireState, userState } from '@/store';
 import { yupResolver } from '@hookform/resolvers/yup';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Avatar, Box, Button, Container, Typography, useTheme } from '@mui/material';
@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { accountProcessingState } from '.';
 
 const t = (key: string) => i18next.t(key, { ns: 'account' });
 

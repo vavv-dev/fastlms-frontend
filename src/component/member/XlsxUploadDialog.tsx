@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-const t = (key: string) => i18next.t(key, { ns: 'video' });
+const t = (key: string) => i18next.t(key, { ns: 'member' });
 const REQUIRED = t('This field is required.');
 
 const schema: yup.ObjectSchema<Omit<MemberUploadMemberXlsxData, 'accessToken' | 'refreshToken'>> = yup.object({

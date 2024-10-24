@@ -3,13 +3,13 @@ import {
   ChannelGetDisplaysData as GetDisplaysData,
   channelGetDisplays as getDisplays,
 } from '@/api';
-import { ChannelCard } from '@/component/channel';
 import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
 import { VideoCameraFront } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import { ChannelCard } from '.';
 
-export const Channel = () => {
-  const { t } = useTranslation('home');
+export const HomeChannel = () => {
+  const { t } = useTranslation('channel');
 
   return (
     <GridInfiniteScrollPage<DisplayResponse, GetDisplaysData>

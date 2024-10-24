@@ -1,11 +1,12 @@
 import i18next from '@/i18n';
 
+export { ActionMenu as CourseActionMenu } from './ActionMenu';
 export { Card as CourseCard } from './Card';
 export { Displays as CourseDisplays } from './Displays';
 export { EnrollDialog as CourseEnrollDialog } from './EnrollDialog';
 export { Outline as CourseOutline } from './Outline';
+export { UserCourse } from './UserCourse';
 export { View as CourseView } from './View';
-export { ActionMenu as CourseActionMenu } from './ActionMenu';
 
 // gettext no-op
 void [

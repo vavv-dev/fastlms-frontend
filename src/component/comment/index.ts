@@ -4,6 +4,7 @@ import i18next from '@/i18n';
 export { Displays as CommentDisplays } from './Displays';
 export { Thread } from './Thread';
 export { ThreadDialog } from './ThreadDialog';
+export { UserComment } from './UserComment';
 
 export interface ThreadProps {
   url: string;

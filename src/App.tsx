@@ -1,27 +1,45 @@
 import { OpenAPI } from '@/api';
-import { EmailVerification, Join, Login, Logout, PasswordReset, PasswordResetConfirm } from '@/component/account';
-import { ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting, ChannelStats } from '@/component/channel';
-import { CommentDisplays, ThreadDialog } from '@/component/comment';
-import { CourseDisplays, CourseEnrollDialog, CourseOutline, CourseView } from '@/component/course';
+import {
+  EmailVerification,
+  Join,
+  Login,
+  Logout,
+  PasswordReset,
+  PasswordResetConfirm,
+  UserBookmark,
+  UserHistory,
+  UserLayout,
+  UserProfile,
+} from '@/component/account';
+import { AssetDisplays, AssetViewDialog } from '@/component/asset';
+import {
+  ChannelHome,
+  ChannelLayout,
+  ChannelRoot,
+  ChannelSetting,
+  ChannelStats,
+  HomeChannel,
+  UserChannel,
+} from '@/component/channel';
+import { CommentDisplays, ThreadDialog, UserComment } from '@/component/comment';
+import { CourseDisplays, CourseEnrollDialog, CourseOutline, CourseView, UserCourse } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamDisplays, ExamReadyDialog, ExamView, GradingDisplays } from '@/component/exam';
-import { HomeChannel, HomeVideo } from '@/component/home';
 import { BaseLayout } from '@/component/layout';
 import { LessonDisplays, LessonViewDialog } from '@/component/lesson';
 import { InvitationAccept, MemberDisplays } from '@/component/member';
+import { UserNotification } from '@/component/notification';
 import { QuizDisplays, QuizViewDialog } from '@/component/quiz';
 import { SurveyDisplays, SurveyViewDialog } from '@/component/survey';
 import {
-  Profile,
-  UserBookmark,
-  UserChannel,
-  UserComment,
-  UserCourse,
-  UserHistory,
-  UserLayout,
-  UserNotification,
-} from '@/component/u';
-import { PlaylistDisplays, PlaylistView, SearchInput, VideoDisplays, VideoSearchResult, VideoView } from '@/component/video';
+  HomeVideo,
+  PlaylistDisplays,
+  PlaylistView,
+  SearchInput,
+  VideoDisplays,
+  VideoSearchResult,
+  VideoView,
+} from '@/component/video';
 import { loginExpireState, userMessageState, userState } from '@/store';
 import { modeState, themeConfig } from '@/theme';
 import { ThemeProvider } from '@emotion/react';
@@ -40,7 +58,6 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import { AssetDisplays, AssetViewDialog } from './component/asset';
 
 const USER_MESSAGE_URL = import.meta.env.VITE_USER_MESSAGE_URL || '';
 
@@ -77,7 +94,7 @@ export const App = () => {
               <Route path="channel" element={<UserChannel />} />
               <Route path="comment" element={<UserComment />} />
               <Route path="notification" element={<UserNotification />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="profile" element={<UserProfile />} />
             </Route>
 
             {/* channel */}

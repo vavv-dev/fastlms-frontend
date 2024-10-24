@@ -12,12 +12,13 @@ import {
 import { AssetCard } from '@/component/asset';
 import { EmptyMessage, GridInfiniteScrollPage, TagGroup, useServiceImmutable } from '@/component/common';
 import { ExamCard } from '@/component/exam';
+import { notificationsState } from '@/component/notification';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
 import { VideoCard } from '@/component/video';
-import { HistoryOutlined } from '@mui/icons-material';
-import { Badge, Box, Button, useTheme } from '@mui/material';
-import { atom, useAtom } from 'jotai';
+import { ArrowRight, FiberSmartRecord, HistoryOutlined } from '@mui/icons-material';
+import { Badge, Box, Button, Typography, useTheme } from '@mui/material';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -33,24 +34,50 @@ type Kind = 'video' | 'asset' | 'quiz' | 'survey' | 'exam' | null;
 
 const kindState = atom<Kind>(null);
 
-export const History = () => {
-  const { t } = useTranslation('u');
+export const UserHistory = () => {
+  const { t } = useTranslation('account');
+  const navigate = useNavigate();
   const [kind, setKind] = useAtom(kindState);
+  const notifications = useAtomValue(notificationsState);
+
+  // unread notification count
+  const unReadCount = notifications.filter((n) => !n.read_time).length;
 
   return (
     <GridInfiniteScrollPage<HistoryDisplayResponse, AccountGetHistoryData>
       pageKey="history"
       apiService={accountGetHistory}
       apiOptions={{ kind, orderBy: 'created' }}
-      renderItem={({ data }) =>
-        data?.map((pagination) =>
-          pagination.items?.map((item) => (
-            <Box key={item.id} sx={{ mb: 1 }}>
-              <Card item={item} />
+      renderItem={({ data }) => (
+        <>
+          {!!unReadCount && (
+            <Box
+              sx={{
+                borderRadius: 1,
+                gridColumn: '1 / -1',
+                p: 3,
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <FiberSmartRecord color="error" />
+              <Typography variant="body1">{t('You have {{ count }} unread notifications.', { count: unReadCount })}</Typography>
+              <Button endIcon={<ArrowRight />} onClick={() => navigate('/u/notification')}>
+                {t('Read here')}
+              </Button>
             </Box>
-          )),
-        )
-      }
+          )}
+          {data?.map((pagination) =>
+            pagination.items?.map((item) => (
+              <Box key={item.id} sx={{ mb: 1 }}>
+                <Card item={item} />
+              </Box>
+            )),
+          )}
+        </>
+      )}
       emptyMessage={<EmptyMessage Icon={HistoryOutlined} message={t('No history found.')} />}
       gridBoxSx={{
         gap: '2em 0.5em',
@@ -87,7 +114,7 @@ interface HistoryFilterProps {
 }
 
 const HistoryFilter = ({ kind, setKind }: HistoryFilterProps) => {
-  const { t } = useTranslation('u');
+  const { t } = useTranslation('account');
   const theme = useTheme();
   const navigate = useNavigate();
   const { data, mutate } = useServiceImmutable<CourseGetNewEnrolledCountData, number>(courseGetNewEnrolledCount, undefined);

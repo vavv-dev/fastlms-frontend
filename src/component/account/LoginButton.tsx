@@ -1,4 +1,4 @@
-import { accountProcessingState, userState } from '@/store';
+import { userState } from '@/store';
 import { AssignmentIndOutlined } from '@mui/icons-material';
 import ContactMailOutlined from '@mui/icons-material/ContactMailOutlined';
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
@@ -7,9 +7,10 @@ import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { accountProcessingState } from '.';
 
 export const LoginButton = () => {
-  const { t } = useTranslation('layout');
+  const { t } = useTranslation('account');
   const theme = useTheme();
   const user = useAtomValue(userState);
   const processing = useAtomValue(accountProcessingState);

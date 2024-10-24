@@ -1,7 +1,7 @@
-import { CommentDisplays } from '@/component/comment';
 import { Box } from '@mui/material';
+import { CommentDisplays } from '.';
 
-export const Comment = () => {
+export const UserComment = () => {
   return (
     <Box sx={{ '> .MuiBox-root': { p: 0 } }}>
       <CommentDisplays mode="commenter" />

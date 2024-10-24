@@ -4,13 +4,13 @@ import {
   courseGetDisplays as getDisplays,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
-import { CourseCard } from '@/component/course';
 import { formatYYYMMDD, toFixedHuman } from '@/helper/util';
 import { School } from '@mui/icons-material';
 import { Box, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { CourseCard } from '.';
 
-export const Course = () => {
+export const UserCourse = () => {
   const { t } = useTranslation('course');
   const theme = useTheme();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));

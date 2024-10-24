@@ -1,11 +1,13 @@
 import i18next from '@/i18n';
 
-export { Stats as ChannelStats } from './Stats';
 export { Card as ChannelCard } from './Card';
-export { Home as ChannelHome } from './Home';
-export { Layout as ChannelLayout } from './Layout';
 export { DynamicRoot as ChannelRoot } from './DynamicRoot';
+export { Home as ChannelHome } from './Home';
+export { HomeChannel } from './HomeChannel';
+export { Layout as ChannelLayout } from './Layout';
 export { Setting as ChannelSetting } from './Setting';
+export { Stats as ChannelStats } from './Stats';
+export { UserChannel } from './UserChannel';
 
 void [
   i18next.t('home', { ns: 'channel' }),

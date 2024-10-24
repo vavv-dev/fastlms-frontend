@@ -28,8 +28,8 @@ const schema: yup.ObjectSchema<UserUpdateRequest> = yup.object({
   banner: yup.mixed(),
 });
 
-export const Profile = () => {
-  const { t } = useTranslation('u');
+export const UserProfile = () => {
+  const { t } = useTranslation('account');
   const navigate = useNavigate();
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const [user, setUser] = useAtom(userState);

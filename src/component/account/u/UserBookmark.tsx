@@ -14,8 +14,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-export const Bookmark = () => {
-  const { t } = useTranslation('u');
+export const UserBookmark = () => {
+  const { t } = useTranslation('account');
 
   return (
     <GridInfiniteScrollPage<BookmarkedContentResponse, AccountGetBookmarkedContentData>
@@ -47,7 +47,7 @@ export const Bookmark = () => {
 };
 
 const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
-  const { t } = useTranslation('u');
+  const { t } = useTranslation('account');
   const navigate = useNavigate();
   const user = useAtomValue(userState);
   const [bookmarked, setBookmarked] = useState(true);

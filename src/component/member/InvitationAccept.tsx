@@ -16,7 +16,7 @@ interface InvitationAcceptRequest2 extends InvitationAcceptRequest {
   new_password2?: string;
 }
 
-const t = (key: string) => i18next.t(key, { ns: 'account' });
+const t = (key: string) => i18next.t(key, { ns: 'member' });
 
 const schema: yup.ObjectSchema<InvitationAcceptRequest2> = yup.object({
   token: yup.string().required().default(''),

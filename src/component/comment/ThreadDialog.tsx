@@ -58,7 +58,15 @@ export const ThreadDialog = ({ open, setOpen, threadProps, enableSubjectOpen }: 
       }
       minHeight="400px"
       renderContent={() => <Thread {...threadProps} onLoad={() => setLoaded(true)} />}
-      sx={{ display: loaded ? 'block' : 'none' }}
+      sx={{
+        display: loaded ? 'block' : 'none',
+        '& .MuiDialogContent-root': {
+          overflowY: 'auto',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
+        },
+      }}
     />
   );
 };

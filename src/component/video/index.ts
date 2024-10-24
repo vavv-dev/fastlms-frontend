@@ -4,6 +4,7 @@ import ReactPlayer from 'react-player/youtube';
 
 export { Card as VideoCard } from './Card';
 export { Displays as VideoDisplays } from './Displays';
+export { HomeVideo } from './HomeVideo';
 export { Player as VideoPlayer } from './Player';
 export { Tracking as VideoTracking } from './Tracking';
 export { View as VideoView } from './View';

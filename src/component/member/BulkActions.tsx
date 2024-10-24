@@ -8,7 +8,7 @@ import {
   MoreVert,
   SendOutlined,
 } from '@mui/icons-material';
-import { Box, Checkbox, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography } from '@mui/material';
+import { Box, Checkbox, SpeedDial, SpeedDialAction, SpeedDialIcon, Tooltip, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -69,44 +69,51 @@ export const BulkActions = ({ selection, setSelection, data }: Props) => {
           {t('{{count}} member(s) selected.', { count: totalSelected ? total : selection.length })}
         </Typography>
       )}
-      <SpeedDial
-        ariaLabel="Member bulk actions"
-        icon={<SpeedDialIcon icon={<MoreVert />} openIcon={<MoreHoriz />} />}
-        open={open}
-        direction="right"
-        FabProps={{
-          disabled: selection.length === 0,
-          onClick: () => setOpen(!open),
-          sx: { width: 48, height: 48, bgcolor: 'warning.main', '&:hover': { bgcolor: 'warning.dark' } },
-        }}
+      <Tooltip
+        title={selection.length === 0 ? t('If you select members, you can use bulk actions.') : ''}
+        placement="bottom-start"
       >
-        {total > selectable && (
-          <SpeedDialAction
-            icon={<Checkbox checked={totalSelected} onClick={selectTotal} />}
-            tooltipTitle={t('Select all searched {{ count }} members', { count: total })}
-            tooltipPlacement="bottom"
-          />
-        )}
-        <SpeedDialAction
-          tooltipPlacement="bottom"
-          icon={<MarkUnreadChatAltOutlined />}
-          tooltipTitle={t('Send message')}
-          onClick={sendMessage}
-        />
-        <SpeedDialAction
-          tooltipPlacement="bottom"
-          icon={<SendOutlined />}
-          tooltipTitle={t('Send invitation')}
-          onClick={invite}
-        />
-        <SpeedDialAction
-          tooltipPlacement="bottom"
-          icon={<FileDownloadOutlined />}
-          tooltipTitle={t('Download xlsx file')}
-          onClick={downloadMemberlist}
-        />
-        <SpeedDialAction tooltipPlacement="bottom" icon={<CloseOutlined />} tooltipTitle={t('Delete members')} />
-      </SpeedDial>
+        <span>
+          <SpeedDial
+            ariaLabel="Member bulk actions"
+            icon={<SpeedDialIcon icon={<MoreVert />} openIcon={<MoreHoriz />} />}
+            open={open}
+            direction="right"
+            FabProps={{
+              disabled: selection.length === 0,
+              onClick: () => setOpen(!open),
+              sx: { width: 48, height: 48, bgcolor: 'warning.main', '&:hover': { bgcolor: 'warning.dark' } },
+            }}
+          >
+            {total > selectable && (
+              <SpeedDialAction
+                icon={<Checkbox checked={totalSelected} onClick={selectTotal} />}
+                tooltipTitle={t('Select all searched {{ count }} members', { count: total })}
+                tooltipPlacement="bottom"
+              />
+            )}
+            <SpeedDialAction
+              tooltipPlacement="bottom"
+              icon={<MarkUnreadChatAltOutlined />}
+              tooltipTitle={t('Send message')}
+              onClick={sendMessage}
+            />
+            <SpeedDialAction
+              tooltipPlacement="bottom"
+              icon={<SendOutlined />}
+              tooltipTitle={t('Send invitation')}
+              onClick={invite}
+            />
+            <SpeedDialAction
+              tooltipPlacement="bottom"
+              icon={<FileDownloadOutlined />}
+              tooltipTitle={t('Download xlsx file')}
+              onClick={downloadMemberlist}
+            />
+            <SpeedDialAction tooltipPlacement="bottom" icon={<CloseOutlined />} tooltipTitle={t('Delete members')} />
+          </SpeedDial>
+        </span>
+      </Tooltip>
     </Box>
   );
 };

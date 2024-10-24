@@ -17,6 +17,7 @@
   "Enter your new password.": "새로운 비밀번호를 입력하세요.",
   "Extra Data": "데이터",
   "Fullname": "이름",
+  "If you select members, you can use bulk actions.": "멤버를 선택하면 대량 작업을 사용할 수 있습니다.",
   "Invitation sent.": "초대 이메일을 발송했습니다.",
   "Invited at {{ when }}": "{{ when }} 초대 발송",
   "Login now": "지금 로그인",

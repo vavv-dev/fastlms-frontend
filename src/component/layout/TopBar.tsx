@@ -1,3 +1,5 @@
+import { LoginButton } from '@/component/account';
+import { NotificationButton } from '@/component/notification';
 import { modeState } from '@/theme';
 import { ArrowBackIos, Brightness4, Brightness7 } from '@mui/icons-material';
 import Menu from '@mui/icons-material/Menu';
@@ -6,8 +8,6 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { alertState, navState } from '.';
-import { LoginButton } from './LoginButton';
-import { NotificationButton } from './NotificationButton';
 import imgUrl from './assets/logo.svg';
 
 export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {

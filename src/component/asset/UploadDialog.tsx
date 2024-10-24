@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const UploadDialog = ({ open, setOpen, id }: Props) => {
-  const { t } = useTranslation('lesson');
+  const { t } = useTranslation('asset');
   const themeMode = useAtomValue(modeState);
   const uppy = useAtomValue(uppyFamily(id));
 

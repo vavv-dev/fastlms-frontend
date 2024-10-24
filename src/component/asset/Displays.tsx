@@ -4,10 +4,10 @@ import {
   AssetGetDisplaysData as GetDisplaysData,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage } from '@/component/common';
+import { CloudUpload } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
 import { SaveDialog } from './SaveDialog';
-import { FolderOpen } from '@mui/icons-material';
 
 export const Displays = () => {
   const { t } = useTranslation('asset');
@@ -24,7 +24,7 @@ export const Displays = () => {
       renderItem={({ data }) =>
         data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
       }
-      emptyMessage={<EmptyMessage Icon={FolderOpen} message={t('No asset found.')} />}
+      emptyMessage={<EmptyMessage Icon={CloudUpload} message={t('No asset found.')} />}
       gridBoxSx={{
         gap: '2em 1em',
         gridTemplateColumns: {

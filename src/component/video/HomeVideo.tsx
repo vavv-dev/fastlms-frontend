@@ -7,16 +7,16 @@ import {
   VideoGetTagsResponse as GetTagsResponse,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage, TagGroup, useServiceImmutable } from '@/component/common';
-import { VideoCard } from '@/component/video';
 import { VideoLibrary } from '@mui/icons-material';
 import { atom, useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { VideoCard } from '.';
 
 const tagState = atom<string>('');
 
-export const Video = () => {
-  const { t } = useTranslation('home');
+export const HomeVideo = () => {
+  const { t } = useTranslation('video');
   const { data: tagNames } = useServiceImmutable<GetTagsData, GetTagsResponse>(getTags, { limit: 8 });
   const [tag, setTag] = useAtom(tagState);
 

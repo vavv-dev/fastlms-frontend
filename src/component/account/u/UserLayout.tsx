@@ -10,7 +10,7 @@ import {
   ContactMailOutlined,
   FileUploadOutlined,
   HistoryOutlined,
-  NotificationsOutlined,
+  NotificationsActiveOutlined,
   PeopleAltOutlined,
   SchoolOutlined,
 } from '@mui/icons-material';
@@ -20,8 +20,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-export const Layout = () => {
-  const { t } = useTranslation('u');
+const t = (key: string) => i18next.t(key, { ns: 'account' });
+
+export const UserLayout = () => {
+  const { t } = useTranslation('account');
   const [user, setUser] = useAtom(userState);
   const [hover, setHover] = useState(false);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
@@ -130,15 +132,13 @@ export const Layout = () => {
   );
 };
 
-const t = (key: string) => i18next.t(key, { ns: 'u' });
-
 const tabs: [string, string, React.ElementType][] = [
   [t('History'), '', HistoryOutlined],
   [t('Course/Certificate'), 'course', SchoolOutlined],
   [t('Bookmark'), 'bookmark', BookmarkBorderOutlined],
   [t('Q&A/Comment'), 'comment', ChatOutlined],
+  [t('Notification'), 'notification', NotificationsActiveOutlined],
   [t('Joined channel'), 'channel', PeopleAltOutlined],
-  [t('Notification'), 'notification', NotificationsOutlined],
   [t('Profile'), 'profile', ContactMailOutlined],
 ];
 
