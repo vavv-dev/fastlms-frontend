@@ -47,6 +47,17 @@ const themeConfig = (mode: 'light' | 'dark') => ({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        '.mui-decoded-url': {
+          color: '#1976d2', // MUI primary color
+          textDecoration: 'none',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
+        },
+      },
+    },
     MuiTypography: {
       styleOverrides: {
         root: {

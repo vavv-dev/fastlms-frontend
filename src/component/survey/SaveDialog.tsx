@@ -50,7 +50,7 @@ const createSchema = (t: (key: string) => string) => {
         return Array.isArray(value)
           ? value
           : value
-              .split(',')
+              .split('\n')
               .filter((v: string) => v.trim())
               .map((v: string) => v.trim());
       })
@@ -61,7 +61,11 @@ const createSchema = (t: (key: string) => string) => {
           : schema.max(0, t("Input question's can not have choices."));
       })
       .label(t('Selections'))
-      .meta({ control: 'text', multiline: true }),
+      .meta({
+        control: 'text',
+        multiline: true,
+        placeholderText: t('Enter each choice on a new line.'),
+      }),
     mandatory: yup.boolean().default(true).label(t('Mandatory')).meta({ control: 'checkbox' }),
   });
 
@@ -92,6 +96,15 @@ const createSchema = (t: (key: string) => string) => {
       .meta({
         control: 'checkbox',
         helperText: t('If checked, survey will be shown in featured list.'),
+        grid: 6,
+      }),
+    hide_from_list: yup
+      .boolean()
+      .default(false)
+      .label(t('Hide from list'))
+      .meta({
+        control: 'checkbox',
+        helperText: t('If checked, will not be shown in list. But it can be accessed directly. Useful for embed only content.'),
         grid: 6,
       }),
     randomize: yup.boolean().default(true).label(t('Enable question randomize')).meta({ control: 'checkbox', grid: 6 }),

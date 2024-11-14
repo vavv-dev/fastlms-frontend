@@ -131,7 +131,9 @@ p:empty:not(.MuiFormHelperText-root)::before {
 .tiptap-content img {
   max-width: 100%;
   height: auto;
-  margin: 1em 0;
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+  display: block;
 }
 
 .tiptap-content hr {

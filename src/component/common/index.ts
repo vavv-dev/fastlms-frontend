@@ -58,5 +58,12 @@ void [
   i18next.t('lesson'),
   i18next.t('course'),
 
+  i18next.t('single_selection'),
+  i18next.t('multiple_selection'),
+  i18next.t('ox_selection'),
+  i18next.t('text_input'),
+  i18next.t('number_input'),
+  i18next.t('essay'),
+
   i18next.t('Not Found'),
 ];

@@ -1,4 +1,3 @@
-import { AssignmentIndOutlined } from '@mui/icons-material';
 import ContactMailOutlined from '@mui/icons-material/ContactMailOutlined';
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined';
 import { Avatar, Box, Button, IconButton, ListItemButton, ListItemText, Menu, useTheme } from '@mui/material';
@@ -21,7 +20,6 @@ export const LoginButton = () => {
   const open = Boolean(anchorEl);
 
   const dropdowItems: [string, string, React.ElementType][] = [
-    [t('Me'), `/u`, AssignmentIndOutlined],
     [t('Profile'), `/u/profile`, ContactMailOutlined],
     [t('Logout'), '/logout', LogoutOutlined],
   ];

@@ -21,11 +21,12 @@ declare module 'yup' {
     tooltipText?: string;
     hidden?: boolean;
     grid?: number;
-    options?: { label: string; value: string, disabled?: boolean }[];
+    options?: { label: string; value: string; disabled?: boolean }[];
     accept?: string;
     readOnly?: boolean;
     orderable?: boolean;
     max?: number;
+    useArrayNewline?: boolean;
   }
 
   interface SchemaRefDescription {

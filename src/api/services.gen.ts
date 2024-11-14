@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { PublicCreateUserData, PublicCreateUserResponse, PublicVerifyEmailData, PublicVerifyEmailResponse, PublicResendVerificationEmailData, PublicResendVerificationEmailResponse, PublicLoginData, PublicLoginResponse, PublicPasswordResetData, PublicPasswordResetResponse, PublicPasswordResetConfirmData, PublicPasswordResetConfirmResponse, PublicInvitationAcceptData, PublicInvitationAcceptResponse, AccountGetMeData, AccountGetMeResponse, AccountUpdateMeData, AccountUpdateMeResponse, AccountGetUserData, AccountGetUserResponse, AccountGetUserByUsernameData, AccountGetUserByUsernameResponse, AccountLogoutData, AccountLogoutResponse, AccountUploadFilesData, AccountUploadFilesResponse, CommentGetThreadData, CommentGetThreadResponse, CommentGetThreadsData, CommentGetThreadsResponse, CommentCreateThreadData, CommentCreateThreadResponse, CommentGetDisplaysData, CommentGetDisplaysResponse, CommentCreateResourceData, CommentCreateResourceResponse, CommentUpdateResourceData, CommentUpdateResourceResponse, CommentToggleActionData, CommentToggleActionResponse, VideoGetDisplaysData, VideoGetDisplaysResponse, VideoImportYoutubeVideoData, VideoImportYoutubeVideoResponse, VideoGetTagsData, VideoGetTagsResponse, VideoGetViewData, VideoGetViewResponse, VideoGetSubtitlesData, VideoGetSubtitlesResponse, VideoGetResourceData, VideoGetResourceResponse, VideoUpdateResourceData, VideoUpdateResourceResponse, VideoDeleteResourceData, VideoDeleteResourceResponse, VideoGetWatchBitmapData, VideoGetWatchBitmapResponse, VideoStartWatchData, VideoStartWatchResponse, VideoUpdateWatchData, VideoUpdateWatchResponse, VideoEndWatchData, VideoEndWatchResponse, VideoGetVideoReportData, VideoGetVideoReportResponse, VideoDownloadVideoReportData, VideoDownloadVideoReportResponse, VideoToggleActionData, VideoToggleActionResponse, PlaylistGetDisplaysData, PlaylistGetDisplaysResponse, PlaylistImportYoutubePlaylistData, PlaylistImportYoutubePlaylistResponse, PlaylistUpdatePlaylistVideosData, PlaylistUpdatePlaylistVideosResponse, PlaylistGetViewData, PlaylistGetViewResponse, PlaylistResumePlaylistData, PlaylistResumePlaylistResponse, PlaylistGetResourceData, PlaylistGetResourceResponse, PlaylistUpdateResourceData, PlaylistUpdateResourceResponse, PlaylistDeleteResourceData, PlaylistDeleteResourceResponse, PlaylistCreateResourceData, PlaylistCreateResourceResponse, PlaylistGetPlaylistReportData, PlaylistGetPlaylistReportResponse, PlaylistDownloadPlaylistReportData, PlaylistDownloadPlaylistReportResponse, PlaylistCheckVideoData, PlaylistCheckVideoResponse, PlaylistToggleActionData, PlaylistToggleActionResponse, AssetGetDisplaysData, AssetGetDisplaysResponse, AssetGetDisplayData, AssetGetDisplayResponse, AssetGetResourceData, AssetGetResourceResponse, AssetUpdateResourceData, AssetUpdateResourceResponse, AssetDeleteResourceData, AssetDeleteResourceResponse, AssetCreateResourceData, AssetCreateResourceResponse, AssetGetWatchBitmapData, AssetGetWatchBitmapResponse, AssetStartWatchData, AssetStartWatchResponse, AssetUpdateWatchData, AssetUpdateWatchResponse, AssetEndWatchData, AssetEndWatchResponse, AssetGetAssetReportData, AssetGetAssetReportResponse, AssetDownloadAssetReportData, AssetDownloadAssetReportResponse, AssetToggleActionData, AssetToggleActionResponse, AssetPresignedUploadUrlData, AssetPresignedUploadUrlResponse, AssetHtmlViewData, AssetHtmlViewResponse, AssetPdfViewData, AssetPdfViewResponse, QuizGetDisplaysData, QuizGetDisplaysResponse, QuizGetResourceData, QuizGetResourceResponse, QuizUpdateResourceData, QuizUpdateResourceResponse, QuizDeleteResourceData, QuizDeleteResourceResponse, QuizCreateResourceData, QuizCreateResourceResponse, QuizGetAssessData, QuizGetAssessResponse, QuizReadyAssessData, QuizReadyAssessResponse, QuizSubmitAssessData, QuizSubmitAssessResponse, QuizDeleteAssessData, QuizDeleteAssessResponse, QuizGetQuizReportData, QuizGetQuizReportResponse, QuizDownloadQuizReportData, QuizDownloadQuizReportResponse, QuizToggleActionData, QuizToggleActionResponse, QuizGetOwnedQuestionsData, QuizGetOwnedQuestionsResponse, SurveyGetDisplaysData, SurveyGetDisplaysResponse, SurveyGetResourceData, SurveyGetResourceResponse, SurveyUpdateResourceData, SurveyUpdateResourceResponse, SurveyDeleteResourceData, SurveyDeleteResourceResponse, SurveyCreateResourceData, SurveyCreateResourceResponse, SurveyGetAssessData, SurveyGetAssessResponse, SurveyReadyAssessData, SurveyReadyAssessResponse, SurveySubmitAssessData, SurveySubmitAssessResponse, SurveyDeleteAssessData, SurveyDeleteAssessResponse, SurveyGetSurveyReportData, SurveyGetSurveyReportResponse, SurveyDownloadSurveyReportData, SurveyDownloadSurveyReportResponse, SurveyToggleActionData, SurveyToggleActionResponse, SurveyGetOwnedQuestionsData, SurveyGetOwnedQuestionsResponse, ExamGetDisplaysData, ExamGetDisplaysResponse, ExamGetResourceData, ExamGetResourceResponse, ExamUpdateResourceData, ExamUpdateResourceResponse, ExamDeleteResourceData, ExamDeleteResourceResponse, ExamCreateResourceData, ExamCreateResourceResponse, ExamGetAssessData, ExamGetAssessResponse, ExamReadyAssessData, ExamReadyAssessResponse, ExamStartAssessData, ExamStartAssessResponse, ExamSubmitAssessData, ExamSubmitAssessResponse, ExamDeleteAssessData, ExamDeleteAssessResponse, ExamGetGradingData, ExamGetGradingResponse, ExamSubmitGradingData, ExamSubmitGradingResponse, ExamGetExamReportData, ExamGetExamReportResponse, ExamDownloadExamReportData, ExamDownloadExamReportResponse, ExamGetGradingSubmissionsData, ExamGetGradingSubmissionsResponse, ExamToggleActionData, ExamToggleActionResponse, ExamGetOwnedQuestionsData, ExamGetOwnedQuestionsResponse, LessonGetDisplaysData, LessonGetDisplaysResponse, LessonGetDisplayData, LessonGetDisplayResponse, LessonGetResourceData, LessonGetResourceResponse, LessonUpdateResourceData, LessonUpdateResourceResponse, LessonDeleteResourceData, LessonDeleteResourceResponse, LessonCreateResourceData, LessonCreateResourceResponse, LessonToggleActionData, LessonToggleActionResponse, CourseGetDisplaysData, CourseGetDisplaysResponse, CourseGetNewEnrolledCountData, CourseGetNewEnrolledCountResponse, CourseGetResourceData, CourseGetResourceResponse, CourseUpdateResourceData, CourseUpdateResourceResponse, CourseDeleteResourceData, CourseDeleteResourceResponse, CourseCreateResourceData, CourseCreateResourceResponse, CourseGetViewData, CourseGetViewResponse, CourseEnrollData, CourseEnrollResponse, CourseUnenrollData, CourseUnenrollResponse, CourseToggleActionData, CourseToggleActionResponse, CourseCreateEsimsaCourseData, CourseCreateEsimsaCourseResponse, SharedGetDisplaysData, SharedGetDisplaysResponse, SharedResourceSelectorData, SharedResourceSelectorResponse, SharedGetBookmarkedContentData, SharedGetBookmarkedContentResponse, SharedToggleBookmarkData, SharedToggleBookmarkResponse, PublicGetOutlineData, PublicGetOutlineResponse, SearchSearchVideoContentData, SearchSearchVideoContentResponse, SearchSuggestVideoKeywordsData, SearchSuggestVideoKeywordsResponse, ChannelGetDisplaysData, ChannelGetDisplaysResponse, ChannelGetChannelByUsernameData, ChannelGetChannelByUsernameResponse, ChannelUpdateMyChannelData, ChannelUpdateMyChannelResponse, MemberGetDisplaysData, MemberGetDisplaysResponse, MemberUploadMemberXlsxData, MemberUploadMemberXlsxResponse, MemberDownloadMemberXlsxTemplateData, MemberDownloadMemberXlsxTemplateResponse, MemberCheckMemberData, MemberCheckMemberResponse, MemberCreateMemberData, MemberCreateMemberResponse, MemberUpdateMemberData, MemberUpdateMemberResponse, MemberDeleteMemberData, MemberDeleteMemberResponse, MemberCreateRosterData, MemberCreateRosterResponse, MemberUpdateRosterData, MemberUpdateRosterResponse, MemberDeleteRosterData, MemberDeleteRosterResponse, MemberInviteUserData, MemberInviteUserResponse, MessageGetMessagesData, MessageGetMessagesResponse, MessageSendMemberMessageData, MessageSendMemberMessageResponse, MessageReadMessageData, MessageReadMessageResponse, AssistantGetMessagesData, AssistantGetMessagesResponse, AssistantSendMessageData, AssistantSendMessageResponse, AssistantDeleteAllMessagesData, AssistantDeleteAllMessagesResponse, AssistantDeleteMessageData, AssistantDeleteMessageResponse, PublicHealthCheckResponse } from './types.gen';
+import type { PublicCreateUserData, PublicCreateUserResponse, PublicVerifyEmailData, PublicVerifyEmailResponse, PublicResendVerificationEmailData, PublicResendVerificationEmailResponse, PublicLoginData, PublicLoginResponse, PublicPasswordResetData, PublicPasswordResetResponse, PublicPasswordResetConfirmData, PublicPasswordResetConfirmResponse, PublicInvitationAcceptData, PublicInvitationAcceptResponse, AccountGetMeData, AccountGetMeResponse, AccountUpdateMeData, AccountUpdateMeResponse, AccountGetUserData, AccountGetUserResponse, AccountGetUserByUsernameData, AccountGetUserByUsernameResponse, AccountLogoutData, AccountLogoutResponse, AccountUploadFilesData, AccountUploadFilesResponse, CommentGetThreadsData, CommentGetThreadsResponse, CommentCreateThreadData, CommentCreateThreadResponse, CommentCreateResourceData, CommentCreateResourceResponse, CommentUpdateResourceData, CommentUpdateResourceResponse, CommentToggleActionData, CommentToggleActionResponse, PublicGetThreadData, PublicGetThreadResponse, PublicGetCommentsData, PublicGetCommentsResponse, VideoGetDisplaysData, VideoGetDisplaysResponse, VideoImportYoutubeVideoData, VideoImportYoutubeVideoResponse, VideoGetTagsData, VideoGetTagsResponse, VideoGetViewData, VideoGetViewResponse, VideoGetSubtitlesData, VideoGetSubtitlesResponse, VideoGetResourceData, VideoGetResourceResponse, VideoUpdateResourceData, VideoUpdateResourceResponse, VideoDeleteResourceData, VideoDeleteResourceResponse, VideoGetWatchBitmapData, VideoGetWatchBitmapResponse, VideoStartWatchData, VideoStartWatchResponse, VideoUpdateWatchData, VideoUpdateWatchResponse, VideoEndWatchData, VideoEndWatchResponse, VideoGetVideoReportData, VideoGetVideoReportResponse, VideoDownloadVideoReportData, VideoDownloadVideoReportResponse, VideoToggleActionData, VideoToggleActionResponse, PlaylistGetDisplaysData, PlaylistGetDisplaysResponse, PlaylistImportYoutubePlaylistData, PlaylistImportYoutubePlaylistResponse, PlaylistUpdatePlaylistVideosData, PlaylistUpdatePlaylistVideosResponse, PlaylistGetViewData, PlaylistGetViewResponse, PlaylistResumePlaylistData, PlaylistResumePlaylistResponse, PlaylistGetResourceData, PlaylistGetResourceResponse, PlaylistUpdateResourceData, PlaylistUpdateResourceResponse, PlaylistDeleteResourceData, PlaylistDeleteResourceResponse, PlaylistCreateResourceData, PlaylistCreateResourceResponse, PlaylistGetPlaylistReportData, PlaylistGetPlaylistReportResponse, PlaylistDownloadPlaylistReportData, PlaylistDownloadPlaylistReportResponse, PlaylistCheckVideoData, PlaylistCheckVideoResponse, PlaylistToggleActionData, PlaylistToggleActionResponse, AssetGetDisplaysData, AssetGetDisplaysResponse, AssetGetDisplayData, AssetGetDisplayResponse, AssetGetResourceData, AssetGetResourceResponse, AssetUpdateResourceData, AssetUpdateResourceResponse, AssetDeleteResourceData, AssetDeleteResourceResponse, AssetCreateResourceData, AssetCreateResourceResponse, AssetGetWatchBitmapData, AssetGetWatchBitmapResponse, AssetStartWatchData, AssetStartWatchResponse, AssetUpdateWatchData, AssetUpdateWatchResponse, AssetEndWatchData, AssetEndWatchResponse, AssetGetAssetReportData, AssetGetAssetReportResponse, AssetDownloadAssetReportData, AssetDownloadAssetReportResponse, AssetToggleActionData, AssetToggleActionResponse, AssetPresignedUploadUrlData, AssetPresignedUploadUrlResponse, AssetHtmlViewData, AssetHtmlViewResponse, AssetPdfViewData, AssetPdfViewResponse, QuizGetDisplaysData, QuizGetDisplaysResponse, QuizGetResourceData, QuizGetResourceResponse, QuizUpdateResourceData, QuizUpdateResourceResponse, QuizDeleteResourceData, QuizDeleteResourceResponse, QuizCreateResourceData, QuizCreateResourceResponse, QuizGetAssessData, QuizGetAssessResponse, QuizReadyAssessData, QuizReadyAssessResponse, QuizSubmitAssessData, QuizSubmitAssessResponse, QuizDeleteAssessData, QuizDeleteAssessResponse, QuizGetQuizReportData, QuizGetQuizReportResponse, QuizDownloadQuizReportData, QuizDownloadQuizReportResponse, QuizToggleActionData, QuizToggleActionResponse, QuizGetOwnedQuestionsData, QuizGetOwnedQuestionsResponse, SurveyGetDisplaysData, SurveyGetDisplaysResponse, SurveyGetResourceData, SurveyGetResourceResponse, SurveyUpdateResourceData, SurveyUpdateResourceResponse, SurveyDeleteResourceData, SurveyDeleteResourceResponse, SurveyCreateResourceData, SurveyCreateResourceResponse, SurveyGetAssessData, SurveyGetAssessResponse, SurveyReadyAssessData, SurveyReadyAssessResponse, SurveySubmitAssessData, SurveySubmitAssessResponse, SurveyDeleteAssessData, SurveyDeleteAssessResponse, SurveyGetSurveyReportData, SurveyGetSurveyReportResponse, SurveyDownloadSurveyReportData, SurveyDownloadSurveyReportResponse, SurveyToggleActionData, SurveyToggleActionResponse, SurveyGetOwnedQuestionsData, SurveyGetOwnedQuestionsResponse, ExamGetDisplaysData, ExamGetDisplaysResponse, ExamGetResourceData, ExamGetResourceResponse, ExamUpdateResourceData, ExamUpdateResourceResponse, ExamDeleteResourceData, ExamDeleteResourceResponse, ExamCreateResourceData, ExamCreateResourceResponse, ExamGetAssessData, ExamGetAssessResponse, ExamReadyAssessData, ExamReadyAssessResponse, ExamStartAssessData, ExamStartAssessResponse, ExamSubmitAssessData, ExamSubmitAssessResponse, ExamDeleteAssessData, ExamDeleteAssessResponse, ExamGetGradingData, ExamGetGradingResponse, ExamSubmitGradingData, ExamSubmitGradingResponse, ExamGetExamReportData, ExamGetExamReportResponse, ExamDownloadExamReportData, ExamDownloadExamReportResponse, ExamGetGradingSubmissionsData, ExamGetGradingSubmissionsResponse, ExamToggleActionData, ExamToggleActionResponse, ExamGetOwnedQuestionsData, ExamGetOwnedQuestionsResponse, LessonGetDisplaysData, LessonGetDisplaysResponse, LessonGetDisplayData, LessonGetDisplayResponse, LessonGetResourceData, LessonGetResourceResponse, LessonUpdateResourceData, LessonUpdateResourceResponse, LessonDeleteResourceData, LessonDeleteResourceResponse, LessonCreateResourceData, LessonCreateResourceResponse, LessonToggleActionData, LessonToggleActionResponse, CourseGetDisplaysData, CourseGetDisplaysResponse, CourseGetNewEnrolledCountData, CourseGetNewEnrolledCountResponse, CourseGetResourceData, CourseGetResourceResponse, CourseUpdateResourceData, CourseUpdateResourceResponse, CourseDeleteResourceData, CourseDeleteResourceResponse, CourseCreateResourceData, CourseCreateResourceResponse, CourseGetViewData, CourseGetViewResponse, CourseEnrollData, CourseEnrollResponse, CourseUnenrollData, CourseUnenrollResponse, CourseToggleActionData, CourseToggleActionResponse, CourseCreateEsimsaCourseData, CourseCreateEsimsaCourseResponse, SharedGetDisplaysData, SharedGetDisplaysResponse, SharedResourceSelectorData, SharedResourceSelectorResponse, SharedGetBookmarkedContentData, SharedGetBookmarkedContentResponse, SharedToggleBookmarkData, SharedToggleBookmarkResponse, PublicGetOutlineData, PublicGetOutlineResponse, SearchSearchVideoContentData, SearchSearchVideoContentResponse, SearchSuggestVideoKeywordsData, SearchSuggestVideoKeywordsResponse, ChannelGetDisplaysData, ChannelGetDisplaysResponse, ChannelGetChannelByUsernameData, ChannelGetChannelByUsernameResponse, ChannelUpdateMyChannelData, ChannelUpdateMyChannelResponse, MemberGetDisplaysData, MemberGetDisplaysResponse, MemberUploadMemberXlsxData, MemberUploadMemberXlsxResponse, MemberDownloadMemberXlsxTemplateData, MemberDownloadMemberXlsxTemplateResponse, MemberCheckMemberData, MemberCheckMemberResponse, MemberCreateMemberData, MemberCreateMemberResponse, MemberUpdateMemberData, MemberUpdateMemberResponse, MemberDeleteMemberData, MemberDeleteMemberResponse, MemberCreateRosterData, MemberCreateRosterResponse, MemberUpdateRosterData, MemberUpdateRosterResponse, MemberDeleteRosterData, MemberDeleteRosterResponse, MemberInviteUserData, MemberInviteUserResponse, MessageGetMessagesData, MessageGetMessagesResponse, MessageSendMemberMessageData, MessageSendMemberMessageResponse, MessageReadMessageData, MessageReadMessageResponse, AssistantGetMessagesData, AssistantGetMessagesResponse, AssistantSendMessageData, AssistantSendMessageResponse, AssistantDeleteAllMessagesData, AssistantDeleteAllMessagesResponse, AssistantDeleteMessageData, AssistantDeleteMessageResponse, PublicHealthCheckResponse } from './types.gen';
 
 /**
  * Create User
@@ -286,32 +286,6 @@ export const accountUploadFiles = (data: AccountUploadFilesData): CancelableProm
 };
 
 /**
- * Get Thread
- * @param data The data for the request.
- * @param data.url
- * @param data.accessToken
- * @param data.refreshToken
- * @returns ThreadResponse Successful Response
- * @throws ApiError
- */
-export const commentGetThread = (data: CommentGetThreadData): CancelablePromise<CommentGetThreadResponse> => {
-    return __request(OpenAPI, {
-        method: 'GET',
-        url: '/api/v2/comment/thread/{url}',
-        path: {
-            url: data.url
-        },
-        cookies: {
-            access_token: data.accessToken,
-            refresh_token: data.refreshToken
-        },
-        errors: {
-            422: 'Validation Error'
-        }
-    });
-};
-
-/**
  * Get Threads
  * @param data The data for the request.
  * @param data.search
@@ -366,40 +340,6 @@ export const commentCreateThread = (data: CommentCreateThreadData): CancelablePr
         },
         body: data.requestBody,
         mediaType: 'application/json',
-        errors: {
-            422: 'Validation Error'
-        }
-    });
-};
-
-/**
- * Get Displays
- * @param data The data for the request.
- * @param data.page
- * @param data.size
- * @param data.search
- * @param data.orderBy
- * @param data.threadId
- * @param data.accessToken
- * @param data.refreshToken
- * @returns Paginated_CommentDisplayResponse_ Successful Response
- * @throws ApiError
- */
-export const commentGetDisplays = (data: CommentGetDisplaysData = {}): CancelablePromise<CommentGetDisplaysResponse> => {
-    return __request(OpenAPI, {
-        method: 'GET',
-        url: '/api/v2/comment/comment/display',
-        cookies: {
-            access_token: data.accessToken,
-            refresh_token: data.refreshToken
-        },
-        query: {
-            page: data.page,
-            size: data.size,
-            search: data.search,
-            order_by: data.orderBy,
-            thread_id: data.threadId
-        },
         errors: {
             422: 'Validation Error'
         }
@@ -481,6 +421,60 @@ export const commentToggleAction = (data: CommentToggleActionData): CancelablePr
         cookies: {
             access_token: data.accessToken,
             refresh_token: data.refreshToken
+        },
+        errors: {
+            422: 'Validation Error'
+        }
+    });
+};
+
+/**
+ * Get Thread
+ * @param data The data for the request.
+ * @param data.url
+ * @param data.ratingMode
+ * @returns ThreadResponse Successful Response
+ * @throws ApiError
+ */
+export const publicGetThread = (data: PublicGetThreadData): CancelablePromise<PublicGetThreadResponse> => {
+    return __request(OpenAPI, {
+        method: 'GET',
+        url: '/api/v2/thread/{url}',
+        path: {
+            url: data.url
+        },
+        query: {
+            rating_mode: data.ratingMode
+        },
+        errors: {
+            422: 'Validation Error'
+        }
+    });
+};
+
+/**
+ * Get Comments
+ * @param data The data for the request.
+ * @param data.page
+ * @param data.size
+ * @param data.userId
+ * @param data.search
+ * @param data.orderBy
+ * @param data.threadId
+ * @returns Paginated_CommentDisplayResponse_ Successful Response
+ * @throws ApiError
+ */
+export const publicGetComments = (data: PublicGetCommentsData = {}): CancelablePromise<PublicGetCommentsResponse> => {
+    return __request(OpenAPI, {
+        method: 'GET',
+        url: '/api/v2/comment/display',
+        query: {
+            page: data.page,
+            size: data.size,
+            user_id: data.userId,
+            search: data.search,
+            order_by: data.orderBy,
+            thread_id: data.threadId
         },
         errors: {
             422: 'Validation Error'
@@ -3644,6 +3638,7 @@ export const sharedToggleBookmark = (data: SharedToggleBookmarkData): Cancelable
  * Get Outline
  * @param data The data for the request.
  * @param data.id
+ * @param data.userId
  * @returns CourseOutlineReponse Successful Response
  * @throws ApiError
  */
@@ -3653,6 +3648,9 @@ export const publicGetOutline = (data: PublicGetOutlineData): CancelablePromise<
         url: '/api/v2/course/{id}/outline',
         path: {
             id: data.id
+        },
+        query: {
+            user_id: data.userId
         },
         errors: {
             422: 'Validation Error'

@@ -6,9 +6,12 @@ import { useNavigate } from 'react-router-dom';
 
 import {
   CourseGetNewEnrolledCountData as GetNewEnrolledCountData,
+  CourseGetViewData as GetViewData,
+  CourseGetViewResponse as GetViewResponse,
   courseEnroll as enroll,
   courseGetDisplays as getDisplays,
   courseGetNewEnrolledCount as getNewEnrolledCount,
+  courseGetView as getView,
 } from '@/api';
 import { BaseDialog, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { userState } from '@/store';
@@ -17,15 +20,17 @@ interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   id: string;
+  onEnroll?: () => void;
 }
 
-export const EnrollDialog = ({ open, setOpen, id }: Props) => {
+export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
   const { t } = useTranslation('course');
   const navigate = useNavigate();
   const user = useAtomValue(userState);
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
-  const { mutate } = useServiceImmutable<GetNewEnrolledCountData, number>(getNewEnrolledCount, undefined);
+  const { mutate: countMutate } = useServiceImmutable<GetNewEnrolledCountData, number>(getNewEnrolledCount, undefined);
+  const { data: course, mutate: courseMutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id });
 
   const closeDialog = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,7 +42,10 @@ export const EnrollDialog = ({ open, setOpen, id }: Props) => {
       .then(() => {
         setResult(t('You are now enrolled in this course.'));
         updateInfiniteCache(getDisplays, { id, enrolled: true }, 'update');
-        mutate(1, { revalidate: false });
+        countMutate(1, { revalidate: false });
+        courseMutate((prev) => prev && { ...prev, enrolled: true }, { revalidate: false });
+        onEnroll?.();
+        navigate(`/course/${id}`, { replace: window.location.pathname === `/course/${id}` });
       })
       .catch((err) => {
         switch (err.status) {
@@ -57,7 +65,7 @@ export const EnrollDialog = ({ open, setOpen, id }: Props) => {
       });
   };
 
-  if (!user || !open) return null;
+  if (!user || !open || course?.enrolled) return null;
 
   return (
     <BaseDialog

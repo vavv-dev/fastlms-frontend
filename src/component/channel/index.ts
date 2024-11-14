@@ -6,7 +6,6 @@ export { Home as ChannelHome } from './Home';
 export { HomeChannel } from './HomeChannel';
 export { Layout as ChannelLayout } from './Layout';
 export { Setting as ChannelSetting } from './Setting';
-export { Stats as ChannelStats } from './Stats';
 export { UserChannel } from './UserChannel';
 
 void [

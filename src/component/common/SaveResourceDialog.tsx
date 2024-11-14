@@ -83,6 +83,7 @@ interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { 
   partialUpdateService: (params: { id: string; requestBody: T }) => Promise<K>;
   copyAutocomplete?: CopyAutocomplete;
   maxWidth?: DialogProps['maxWidth'];
+  beforeSave?: (data: T, editKey: string | undefined) => void;
 }
 
 export const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: string }>({
@@ -97,6 +98,7 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
   partialUpdateService,
   copyAutocomplete,
   maxWidth,
+  beforeSave,
 }: SaveResourceDialogProps<T, K>) => {
   const { t } = useTranslation('common');
   const [editKey, setEditKey] = useState<string | undefined>(resourceId);
@@ -106,13 +108,23 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
     error: retrieveError,
   } = useServiceImmutable<{ id: string }, T>(retrieveService, editKey ? { id: editKey } : null);
 
-  // dynamic copy service
-  const { handleSubmit, control, formState, reset, getValues, setValue, setError, watch } = useForm<T>({
+  const { trigger, handleSubmit, control, formState, reset, getValues, setValue, setError, watch } = useForm<T>({
     mode: 'onBlur',
     reValidateMode: 'onSubmit',
     resolver: yupResolver(fieldSchema) as unknown as Resolver<T>,
     defaultValues: fieldSchema.getDefault(),
   });
+
+  useEffect(() => {
+    const subscription = watch((_, { name }) => {
+      if (name?.toString().endsWith('.kind')) {
+        setTimeout(() => {
+          trigger(name.toString().replace('.kind', '.selections') as Path<T>);
+        }, 0);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, trigger]);
 
   // scroll to newly added element
   useScrollToNewElement<T>(watch);
@@ -153,6 +165,24 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
       if (transformed[key] instanceof Promise) {
         transformed[key] = await transformed[key];
       }
+    }
+
+    try {
+      beforeSave?.(transformed, editKey);
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        error.inner.forEach((err) => {
+          if (err.path) {
+            setError(err.path as Path<T>, {
+              type: 'custom',
+              message: err.message,
+            });
+          }
+        });
+        return;
+      }
+      setError('root.server', error as Error);
+      return;
     }
 
     service({
@@ -398,6 +428,7 @@ const DrawField = <T extends FieldValues>({
             focusMultiLine
             multiline={fieldData.meta?.multiline}
             placeholder={fieldData.meta?.placeholderText}
+            useArrayNewline={fieldData.meta?.useArrayNewline}
           />
         );
     }

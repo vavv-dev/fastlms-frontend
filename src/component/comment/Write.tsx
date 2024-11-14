@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Close, InsertEmoticonOutlined } from '@mui/icons-material';
-import { Avatar, Box, Button, IconButton, TextField, useTheme } from '@mui/material';
+import { Avatar, Box, Button, IconButton, Rating, TextField, Typography, useTheme } from '@mui/material';
 import type { EmojiClickData } from 'emoji-picker-react';
 import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -11,13 +11,13 @@ import * as yup from 'yup';
 
 import {
   CommentDisplayResponse as DisplayResponse,
-  CommentGetThreadData as GetThreadData,
+  PublicGetThreadData as GetThreadData,
   CommentResourceCreateRequest as ResourceCreateRequest,
   ThreadResponse,
   commentGetThreads,
   commentCreateResource as createResource,
-  commentGetDisplays as getDisplays,
-  commentGetThread as getThread,
+  publicGetComments as getDisplays,
+  publicGetThread as getThread,
   commentUpdateResource as updateResource,
 } from '@/api';
 import {
@@ -38,6 +38,8 @@ interface Props {
   autoFocus?: boolean;
   question?: boolean;
   editor?: boolean;
+  disableSelect?: boolean;
+  ratingMode?: boolean;
 }
 
 const MAX_LENGTH = 2000;
@@ -48,7 +50,7 @@ const getPlainTextLength = (content: string) => {
   return div.textContent?.length || 0;
 };
 
-const createSchema = (t: (key: string, data?: Record<string, unknown>) => string) => {
+const createSchema = (t: (key: string, data?: Record<string, string | number>) => string, ratingMode?: boolean) => {
   const schema: yup.ObjectSchema<ResourceCreateRequest> = yup.object({
     id: yup.string().nullable(),
     content: yup
@@ -77,6 +79,9 @@ const createSchema = (t: (key: string, data?: Record<string, unknown>) => string
       .transform((value) => (value ? true : false)),
     solved: yup.boolean().default(false),
     pinned: yup.boolean().default(false),
+    rating: ratingMode
+      ? yup.number().nullable().required(t('Rating is required.')).default(null)
+      : yup.number().nullable().default(null),
     thread_id: yup.string().default(''),
     parent_id: yup.string().nullable().default(null),
     deleted: yup.boolean().default(false),
@@ -86,7 +91,7 @@ const createSchema = (t: (key: string, data?: Record<string, unknown>) => string
   return schema;
 };
 
-export const Write = ({ url, parent, data, onClose, autoFocus, question, editor }: Props) => {
+export const Write = ({ url, parent, data, onClose, autoFocus, question, editor, disableSelect, ratingMode }: Props) => {
   const { t } = useTranslation('comment');
   const theme = useTheme();
   const navigate = useNavigate();
@@ -96,9 +101,10 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question, editor 
   const emojiButtonRef = useRef<HTMLButtonElement>(null);
   const { data: thread, mutate: threadMutate } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, {
     url,
+    ratingMode,
   });
 
-  const schema = useMemo(() => createSchema(t), [t]);
+  const schema = useMemo(() => createSchema(t, ratingMode), [t, ratingMode]);
   const { handleSubmit, control, setValue, trigger, getValues, formState, reset, setError } = useForm({
     resolver: yupResolver(schema),
     defaultValues: { ...schema.getDefault(), is_question: question ? 'true' : 'false', thread_id: thread?.id },
@@ -106,7 +112,11 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question, editor 
 
   useEffect(() => {
     if (!data || !data.content) return;
-    reset({ content: data.content, is_question: !!data.is_question });
+    reset({
+      content: data.content,
+      is_question: !!data.is_question,
+      rating: data.rating || null,
+    });
     trigger();
   }, [data?.content]); // eslint-disable-line
 
@@ -239,18 +249,20 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question, editor 
                   input: {
                     startAdornment: (
                       <>
-                        <Select
-                          disableUnderline
-                          name="is_question"
-                          margin="none"
-                          variant="standard"
-                          control={control}
-                          options={[
-                            { value: 'false', label: t('Comment') },
-                            { value: 'true', label: t('Question') },
-                          ]}
-                          sx={{ width: '4em' }}
-                        />
+                        {!disableSelect && (
+                          <Select
+                            disableUnderline
+                            name="is_question"
+                            margin="none"
+                            variant="standard"
+                            control={control}
+                            options={[
+                              { value: 'false', label: t('Comment') },
+                              { value: 'true', label: t('Question') },
+                            ]}
+                            sx={{ width: '4em' }}
+                          />
+                        )}
                         <Box sx={{ position: 'relative' }}>
                           <IconButton ref={emojiButtonRef} onClick={() => setShowPicker((prev) => !prev)}>
                             <InsertEmoticonOutlined />
@@ -292,7 +304,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question, editor 
                     inputProps: { maxLength: MAX_LENGTH },
                   },
                   inputLabel: { shrink: true },
-                  formHelperText: { sx: { lineHeight: 1.2, mt: 0 } },
+                  formHelperText: { sx: { lineHeight: 1.2 } },
                 }}
                 helperText={error?.message ? error.message : ' '}
                 sx={{
@@ -318,6 +330,33 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question, editor 
           />
         )}
       </Box>
+      {ratingMode && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            mb: '1em',
+          }}
+        >
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Rating
+                precision={0.5}
+                value={value}
+                onChange={(_, newValue) => {
+                  onChange(newValue ? Math.min(Math.max(newValue, 0), 5) : null);
+                }}
+              />
+            )}
+          />
+          <Typography variant="caption" color={formState.errors.rating ? 'error' : 'textSecondary'}>
+            {t('Please rate this content.')}
+          </Typography>
+        </Box>
+      )}
     </Form>
   );
 };

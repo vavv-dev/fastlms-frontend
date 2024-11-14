@@ -1,22 +1,14 @@
-import {
-  BookmarkAddOutlined,
-  BookmarkRemoveOutlined,
-  EditOutlined,
-  FlagOutlined,
-  PushPinOutlined,
-  QuestionMarkOutlined,
-  RemoveCircleOutline,
-} from '@mui/icons-material';
+import { EditOutlined, FlagOutlined, PushPinOutlined, QuestionMarkOutlined, RemoveCircleOutline } from '@mui/icons-material';
 import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useTranslation } from 'react-i18next';
 
 import {
   CommentDisplayResponse as DisplayResponse,
-  CommentGetThreadData as GetThreadData,
+  PublicGetThreadData as GetThreadData,
   ThreadResponse,
-  commentGetDisplays as getDisplays,
-  commentGetThread as getThread,
+  publicGetComments as getDisplays,
+  publicGetThread as getThread,
   commentToggleAction as toggleAction,
   commentUpdateResource as updateResource,
 } from '@/api';
@@ -27,14 +19,16 @@ interface Props {
   url: string;
   data: DisplayResponse;
   onEdit: () => void;
+  disableSelect?: boolean;
+  ratingMode?: boolean;
 }
 
 const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
 
-export const ActionMenu = ({ url, data, onEdit }: Props) => {
+export const ActionMenu = ({ url, data, onEdit, disableSelect, ratingMode }: Props) => {
   const { t } = useTranslation('comment');
   const user = useAtomValue(userState);
-  const { data: thread } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, { url });
+  const { data: thread } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, { url, ratingMode });
 
   const toggleField = (field: 'is_question' | 'pinned' | 'deleted') => {
     updateResource({
@@ -53,10 +47,6 @@ export const ActionMenu = ({ url, data, onEdit }: Props) => {
   return (
     <ResourceActionMenu
       menuItems={[
-        <MenuItem key="bookmark" onClick={() => action('bookmark', data)}>
-          <ListItemIcon>{data.bookmarked ? <BookmarkRemoveOutlined /> : <BookmarkAddOutlined />}</ListItemIcon>
-          {data.bookmarked ? t('Remove bookmark') : t('Add bookmark')}
-        </MenuItem>,
         user.username === data.author.username && [
           <MenuItem key="edit" onClick={onEdit}>
             <ListItemIcon>
@@ -70,12 +60,14 @@ export const ActionMenu = ({ url, data, onEdit }: Props) => {
             </ListItemIcon>
             {t('Delete')}
           </MenuItem>,
-          <MenuItem key="question" onClick={() => toggleField('is_question')}>
-            <ListItemIcon>
-              <QuestionMarkOutlined />
-            </ListItemIcon>
-            {data.is_question ? t('Change to comment') : t('Change to question')}
-          </MenuItem>,
+          !disableSelect && (
+            <MenuItem key="question" onClick={() => toggleField('is_question')}>
+              <ListItemIcon>
+                <QuestionMarkOutlined />
+              </ListItemIcon>
+              {data.is_question ? t('Change to comment') : t('Change to question')}
+            </MenuItem>
+          ),
         ],
         <MenuItem key="flag" onClick={() => action('flag', data)}>
           <ListItemIcon>

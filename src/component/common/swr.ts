@@ -61,7 +61,24 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
         if (typeof itemOrUpdater === 'function') {
           throw new Error('Create mode does not support updater function');
         }
-        updated = [{ ...data[0], items: [itemOrUpdater as T, ...data[0].items], total: data[0].total + 1 }, ...data.slice(1)];
+        if (data && data.length > 0) {
+          updated = [
+            {
+              ...data[0],
+              items: [itemOrUpdater as T, ...data[0].items],
+              total: data[0].total + 1,
+            },
+            ...data.slice(1),
+          ];
+        } else {
+          updated = [
+            {
+              items: [itemOrUpdater as T],
+              page: 1,
+              total: 1,
+            },
+          ];
+        }
       }
 
       globalMutate(key, updated, { revalidate: false });

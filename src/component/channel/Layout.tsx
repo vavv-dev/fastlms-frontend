@@ -141,7 +141,7 @@ export const Layout = () => {
                 objectFit: 'cover',
                 width: '100%',
                 height: 'auto',
-                aspectRatio: '6.2 / 1',
+                aspectRatio: '6.4 / 1',
                 borderRadius: theme.shape.borderRadius,
               }}
             />
@@ -159,7 +159,7 @@ export const Layout = () => {
                   zIndex: 4,
                 }}
               >
-                <Tooltip title={t('Upload banner')}>
+                <Tooltip title={t('Upload banner. 1280 x 200 size is recommended.')}>
                   <IconButton size="small" component="label" htmlFor="banner-image">
                     <FileUploadOutlined fontSize="small" />
                   </IconButton>
@@ -224,7 +224,7 @@ export const Layout = () => {
                     zIndex: 4,
                   }}
                 >
-                  <Tooltip title={t('Upload thumbnail')}>
+                  <Tooltip title={t('Upload thumbnail. 100 x 100 size is recommended.')}>
                     <IconButton size="small" component="label" htmlFor="thumbnail-image" sx={{ p: 0.5 }}>
                       <FileUploadOutlined fontSize="small" />
                     </IconButton>
@@ -335,7 +335,6 @@ const HomeTabs = ({ activeTabs }: Props) => {
       ['', 'divider'],
       [t('Comment'), 'comment'],
       [t('Member'), 'member'],
-      [t('Stats'), 'stats'],
       [t('Setting'), 'setting'],
     ];
     return dynamicTabs.filter(([, path]) => activeTabs?.includes(path)).concat(isOwner ? privateTabs : []);

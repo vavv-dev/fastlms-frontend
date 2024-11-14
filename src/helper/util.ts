@@ -265,7 +265,7 @@ export const decodeURLText = (text: string | null | undefined): string => {
   return text.replace(urlRegex, (_, before, url) => {
     const decodedUrl = decodeIfValid(url);
     const fullUrl = decodedUrl.startsWith('www.') ? `https://${decodedUrl}` : decodedUrl;
-    return `${before}<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">${decodedUrl}</a>`;
+    return `${before}<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="mui-decoded-url">${decodedUrl}</a>`;
   });
 };
 

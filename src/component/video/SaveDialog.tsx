@@ -25,7 +25,7 @@ const createSchema = (t: (key: string) => string) => {
       .meta({
         control: 'checkbox',
         helperText: t('If not checked, only owner can see this video.'),
-        grid: 4,
+        grid: 6,
       }),
     featured: yup
       .boolean()
@@ -34,7 +34,16 @@ const createSchema = (t: (key: string) => string) => {
       .meta({
         control: 'checkbox',
         helperText: t('If checked, video will be shown in featured list.'),
-        grid: 4,
+        grid: 6,
+      }),
+    hide_from_list: yup
+      .boolean()
+      .default(false)
+      .label(t('Hide from list'))
+      .meta({
+        control: 'checkbox',
+        helperText: t('If checked, will not be shown in list. But it can be accessed directly. Useful for embed only content.'),
+        grid: 6,
       }),
     cutoff_progress: yup
       .number()
@@ -43,7 +52,7 @@ const createSchema = (t: (key: string) => string) => {
       .meta({
         control: 'number',
         helperText: t('Minimum progress percent for this video.'),
-        grid: 4,
+        grid: 6,
       }),
     thumbnail: base64ThumbnailSchema(yup, false, t),
   });

@@ -35,6 +35,7 @@ interface Props {
   setOpen: (open: boolean) => void;
   selection: string[];
   totalSelected: boolean;
+  total: number;
 }
 
 type UserMessageSchemaExt = UserMessageSchema & {
@@ -63,7 +64,7 @@ const createSchema = (t: (key: string) => string) => {
   return schema;
 };
 
-export const MessageDialog = ({ open, setOpen, selection, totalSelected }: Props) => {
+export const MessageDialog = ({ open, setOpen, selection, totalSelected, total }: Props) => {
   const { t } = useTranslation('member');
   const theme = useTheme();
   const user = useAtomValue(userState);
@@ -101,7 +102,7 @@ export const MessageDialog = ({ open, setOpen, selection, totalSelected }: Props
     })
       .then(() => {
         setSnackbarMessage({
-          message: t('Message sent to {{count}} member(s) successfully.', { count: selection.length }),
+          message: t('Message sent to {{count}} member(s) successfully.', { count: totalSelected ? total : selection.length }),
           duration: 3000,
         });
         closeDialog();
@@ -131,7 +132,7 @@ export const MessageDialog = ({ open, setOpen, selection, totalSelected }: Props
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             <Typography variant="caption">{t('Receivers')}</Typography>
             <Typography variant="body2" color="primary">
-              {t('{{count}} member(s) selected.', { count: selection.length })}
+              {t('{{count}} member(s) selected.', { count: totalSelected ? total : selection.length })}
             </Typography>
             <Typography variant="caption">
               {t('If member has not joined yet, they will receive this message when they join.')}

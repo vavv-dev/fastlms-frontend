@@ -1,4 +1,4 @@
-import { CloseOutlined, FileDownloadOutlined, MoreHoriz, MoreVert, RateReviewOutlined, SendOutlined } from '@mui/icons-material';
+import { MoreHoriz, MoreVert, RateReviewOutlined } from '@mui/icons-material';
 import { Box, Checkbox, SpeedDial, SpeedDialAction, SpeedDialIcon, Tooltip, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,14 +41,6 @@ export const BulkActions = ({ selection, setSelection, data }: Props) => {
     }
   };
 
-  const downloadMemberlist = () => {
-    // TODO
-  };
-
-  const invite = () => {
-    // TODO
-  };
-
   return (
     <Box sx={{ flexGrow: 1, position: 'absolute', py: 2, top: 0, left: '0.2em', zIndex: 1, transform: 'translateY(-100%)' }}>
       {selection.length > 0 && (
@@ -85,26 +77,6 @@ export const BulkActions = ({ selection, setSelection, data }: Props) => {
               tooltipTitle={t('Send message')}
               onClick={() => setMessageDialogOpen((prev) => !prev)}
             />
-            <SpeedDialAction
-              FabProps={{ disabled: true }}
-              tooltipPlacement="bottom"
-              icon={<SendOutlined />}
-              tooltipTitle={t('Send invitation')}
-              onClick={invite}
-            />
-            <SpeedDialAction
-              FabProps={{ disabled: true }}
-              tooltipPlacement="bottom"
-              icon={<FileDownloadOutlined />}
-              tooltipTitle={t('Download xlsx file')}
-              onClick={downloadMemberlist}
-            />
-            <SpeedDialAction
-              FabProps={{ disabled: true }}
-              tooltipPlacement="bottom"
-              icon={<CloseOutlined />}
-              tooltipTitle={t('Delete members')}
-            />
           </SpeedDial>
         </span>
       </Tooltip>
@@ -114,6 +86,7 @@ export const BulkActions = ({ selection, setSelection, data }: Props) => {
           setOpen={setMessageDialogOpen}
           selection={selection}
           totalSelected={totalSelected}
+          total={total}
         />
       )}
     </Box>

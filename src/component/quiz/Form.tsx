@@ -100,7 +100,7 @@ export const Form = ({ id }: { id: string }) => {
       {activeStep < maxSteps ? (
         <>
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography variant="h6" sx={{ mb: 3, whiteSpace: 'pre-wrap', maxWidth: '100%', wordBreak: 'break-word' }}>
+            <Typography variant="h6" sx={{ mb: 7, whiteSpace: 'pre-wrap', maxWidth: '100%', wordBreak: 'break-word' }}>
               <Typography component="span" variant="caption" sx={{ display: 'block', color: 'text.secondary', mb: 1 }}>
                 {t('Question')} {activeStep + 1}
               </Typography>

@@ -59,7 +59,7 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
       // [t('Home'), '', HomeOutlined, Home],
       [t('Video'), '', SmartDisplayOutlined, SmartDisplay],
       [t('Channel'), '/channel', PeopleOutlined, People],
-      [t('Me'), `/u`, AssignmentIndOutlined, AssignmentInd],
+      [t('Me'), '/u', AssignmentIndOutlined, AssignmentInd],
     ];
     return user?.use_channel
       ? [...baseItems, [t('My channel'), `/channel/${user.username}`, VideoCameraFrontOutlined, VideoCameraFront]]

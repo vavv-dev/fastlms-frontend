@@ -1,5 +1,6 @@
 import { Refresh } from '@mui/icons-material';
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
+import { useAtomValue } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,23 +9,33 @@ import { Comment } from './Comment';
 import { Write } from './Write';
 
 import {
-  CommentGetThreadData as GetThreadData,
+  PublicGetThreadData as GetThreadData,
   ThreadResponse,
   commentCreateThread as createThread,
-  commentGetDisplays as getDisplays,
-  commentGetThread as getThread,
+  publicGetComments as getDisplays,
+  publicGetThread as getThread,
 } from '@/api';
 import { InfiniteScrollIndicator, SimpleSearch, useInfinitePagination, useServiceImmutable } from '@/component/common';
+import { userState } from '@/store';
 
-export const Thread = ({ question, sticky, refresh, ...threadData }: ThreadProps) => {
+export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProps) => {
   const { t } = useTranslation('comment');
   const theme = useTheme();
+  const user = useAtomValue(userState);
   const [search, setSearch] = useState<string>('');
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
-  const { data: thread, mutate, error } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, { url: threadData.url });
+  const {
+    data: thread,
+    mutate,
+    error,
+  } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, {
+    url: threadProps.url,
+    ratingMode: threadProps.ratingMode,
+  });
+
   const { data, isLoading, isValidating } = useInfinitePagination({
-    apiOptions: { threadId: thread?.id, search },
     apiService: getDisplays,
+    apiOptions: { threadId: thread?.id, search, userId: user?.id },
     infiniteScrollRef,
   });
 
@@ -33,8 +44,8 @@ export const Thread = ({ question, sticky, refresh, ...threadData }: ThreadProps
     if (!error || error.status !== 404) return;
     createThread({
       requestBody: {
-        ...threadData,
-        owner_id: threadData.owner.id,
+        ...threadProps,
+        owner_id: threadProps.owner.id,
       },
     }).then((data) => mutate(data, { revalidate: false }));
   }, [error]); // eslint-disable-line
@@ -50,29 +61,40 @@ export const Thread = ({ question, sticky, refresh, ...threadData }: ThreadProps
           ...(sticky && { display: 'flex', flexDirection: 'column', gap: 1, position: 'sticky', top: 0, zIndex: 1, mb: 1 }),
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <Typography variant="h6">
-            {question ? t('Question & Answer') : t('Comment')} {thread.comment_count || 0}
-          </Typography>
-          <SimpleSearch placeholder={t("Author'name or content")} search={search} setSearch={setSearch} />
-          <Box sx={{ flexGrow: 1 }} />
-          {refresh && (
-            <IconButton color="primary" onClick={() => mutate()}>
-              <Refresh />
-            </IconButton>
-          )}
-        </Box>
-        <Write url={threadData.url} question={question} editor={threadData.editor} />
+        {!threadProps.hideHeader && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Typography variant="h6">
+              {question ? t('Question & Answer') : t('Comment')} {thread.comment_count || 0}
+            </Typography>
+            <SimpleSearch placeholder={t("Author'name or content")} search={search} setSearch={setSearch} />
+            <Box sx={{ flexGrow: 1 }} />
+            {refresh && (
+              <IconButton color="primary" onClick={() => mutate()}>
+                <Refresh />
+              </IconButton>
+            )}
+          </Box>
+        )}
+        <Write
+          url={threadProps.url}
+          question={question}
+          editor={threadProps.editor}
+          disableSelect={threadProps.disableSelect}
+          ratingMode={threadProps.ratingMode}
+        />
       </Box>
       <Box className="comment-thread" sx={{ display: 'flex', flexDirection: 'column' }}>
         {data?.map((pagination) =>
           pagination.items?.map((comment) => (
             <Comment
-              url={threadData.url}
+              url={threadProps.url}
               key={comment.id}
               data={comment}
-              resourceKind={threadData.resource_kind}
-              editor={threadData.editor}
+              resourceKind={threadProps.resource_kind}
+              editor={threadProps.editor}
+              disableSelect={threadProps.disableSelect}
+              disableReply={threadProps.disableReply}
+              ratingMode={threadProps.ratingMode}
             />
           )),
         )}

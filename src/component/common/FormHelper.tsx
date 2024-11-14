@@ -26,7 +26,7 @@ import {
   TextFieldProps,
   useTheme,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, forwardRef, useEffect, useRef, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -71,7 +71,7 @@ export const Form = ({ onSubmit, formState, setError, children, disabled, id }: 
       setNoneFieldErrors((prev) => [...prev, detail]);
     } else if (typeof serverError.message === 'string') {
       setNoneFieldErrors((prev) => [...prev, serverError.message]);
-    } else if (serverError.statusText){
+    } else if (serverError.statusText) {
       setNoneFieldErrors((prev) => [...prev, t(serverError.statusText)]);
     }
 
@@ -139,6 +139,7 @@ interface TextFieldControlProps extends Omit<TextFieldProps, 'type'> {
   endAdornment?: React.ReactNode;
   focusMultiLine?: boolean;
   focusSelect?: boolean;
+  useArrayNewline?: boolean;
 }
 
 export const TextFieldControl = ({
@@ -158,6 +159,7 @@ export const TextFieldControl = ({
   disabled,
   fullWidth = true,
   slotProps,
+  useArrayNewline,
   ...props
 }: TextFieldControlProps) => {
   const { t } = useTranslation('common');
@@ -176,7 +178,8 @@ export const TextFieldControl = ({
               {formLabel}
             </FormLabel>
           )}
-          <TextField
+          <ArrayNewlineTextField
+            useArrayNewline={useArrayNewline}
             {...field}
             {...props}
             disabled={disabled}
@@ -547,3 +550,24 @@ export const RadioGroupControl = ({
     />
   );
 };
+
+interface ArrayNewlineTextFieldProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
+  useArrayNewline?: boolean;
+  value?: unknown;
+  onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
+
+const ArrayNewlineTextField = forwardRef<HTMLDivElement, ArrayNewlineTextFieldProps>(
+  ({ value, onChange, useArrayNewline, ...rest }, ref) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (!useArrayNewline) {
+        onChange?.(e);
+        return;
+      }
+      onChange?.(e);
+    };
+
+    const displayValue = useArrayNewline && Array.isArray(value) ? value.join('\n') : value;
+    return <TextField {...rest} ref={ref} value={displayValue} onChange={handleChange} />;
+  },
+);

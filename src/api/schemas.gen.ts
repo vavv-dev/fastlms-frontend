@@ -271,6 +271,10 @@ export const AssetResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -320,7 +324,7 @@ export const AssetResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'cutoff_progress', 'duration', 'asset_kind', 'entrypoint', 'uploaded'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'cutoff_progress', 'duration', 'asset_kind', 'entrypoint', 'uploaded'],
     title: 'AssetResourceCreateRequest'
 } as const;
 
@@ -345,6 +349,10 @@ export const AssetResourceResponseSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -394,7 +402,7 @@ export const AssetResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'cutoff_progress', 'thumbnail', 'duration', 'asset_kind', 'entrypoint', 'uploaded', 'owner', 'kind'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'end_date', 'cutoff_progress', 'thumbnail', 'duration', 'asset_kind', 'entrypoint', 'uploaded', 'owner', 'kind'],
     title: 'AssetResourceResponse'
 } as const;
 
@@ -415,6 +423,10 @@ export const AssetResourceUpdateRequestSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -945,6 +957,17 @@ export const CommentDisplayResponseSchema = {
             type: 'boolean',
             title: 'Pinned'
         },
+        rating: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating'
+        },
         author: {
             '$ref': '#/components/schemas/CommentAuthor'
         },
@@ -1038,6 +1061,17 @@ export const CommentResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Pinned'
         },
+        rating: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating'
+        },
         receivers: {
             items: {
                 type: 'string'
@@ -1084,6 +1118,17 @@ export const CommentResourceResponseSchema = {
         pinned: {
             type: 'boolean',
             title: 'Pinned'
+        },
+        rating: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating'
         },
         id: {
             type: 'string',
@@ -1150,6 +1195,17 @@ export const CommentUpdateRequestSchema = {
         pinned: {
             type: 'boolean',
             title: 'Pinned'
+        },
+        rating: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating'
         },
         deleted: {
             anyOf: [
@@ -1502,6 +1558,11 @@ export const CourseOutlineReponseSchema = {
             },
             type: 'array',
             title: 'Lessons'
+        },
+        enrolled: {
+            type: 'boolean',
+            title: 'Enrolled',
+            default: false
         }
     },
     type: 'object',
@@ -2631,6 +2692,10 @@ export const ExamResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -2703,7 +2768,7 @@ export const ExamResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_percent', 'randomize', 'enable_finding', 'verification_required', 'questions'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_percent', 'randomize', 'enable_finding', 'verification_required', 'questions'],
     title: 'ExamResourceCreateRequest'
 } as const;
 
@@ -2921,6 +2986,10 @@ export const ExamResourceResponseSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -3004,7 +3073,7 @@ export const ExamResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_percent', 'randomize', 'enable_finding', 'verification_required', 'questions', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_percent', 'randomize', 'enable_finding', 'verification_required', 'questions', 'id', 'owner', 'modified'],
     title: 'ExamResourceResponse'
 } as const;
 
@@ -3025,6 +3094,10 @@ export const ExamResourceUpdateRequestSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -3378,6 +3451,10 @@ export const LessonResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -3419,7 +3496,7 @@ export const LessonResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'resources', 'grading_method'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'grading_method'],
     title: 'LessonResourceCreateRequest'
 } as const;
 
@@ -3440,6 +3517,10 @@ export const LessonResourceResponseSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -3488,7 +3569,7 @@ export const LessonResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'resources', 'grading_method', 'id', 'owner'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'grading_method', 'id', 'owner'],
     title: 'LessonResourceResponse'
 } as const;
 
@@ -3509,6 +3590,10 @@ export const LessonResourceUpdateRequestSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -5805,6 +5890,10 @@ export const QuizResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -5878,7 +5967,7 @@ export const QuizResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_percent', 'randomize', 'enable_finding', 'questions'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_percent', 'randomize', 'enable_finding', 'questions'],
     title: 'QuizResourceCreateRequest'
 } as const;
 
@@ -6016,6 +6105,10 @@ export const QuizResourceResponseSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -6100,7 +6193,7 @@ export const QuizResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_percent', 'randomize', 'enable_finding', 'questions', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_percent', 'randomize', 'enable_finding', 'questions', 'id', 'owner', 'modified'],
     title: 'QuizResourceResponse'
 } as const;
 
@@ -6121,6 +6214,10 @@ export const QuizResourceUpdateRequestSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -6843,6 +6940,10 @@ export const SurveyResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -6908,7 +7009,7 @@ export const SurveyResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'resources', 'complete_message', 'randomize', 'enable_finding', 'questions'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'complete_message', 'randomize', 'enable_finding', 'questions'],
     title: 'SurveyResourceCreateRequest'
 } as const;
 
@@ -7034,6 +7135,10 @@ export const SurveyResourceResponseSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         start_date: {
             type: 'string',
             format: 'date-time',
@@ -7110,7 +7215,7 @@ export const SurveyResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'resources', 'complete_message', 'randomize', 'enable_finding', 'questions', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'complete_message', 'randomize', 'enable_finding', 'questions', 'id', 'owner', 'modified'],
     title: 'SurveyResourceResponse'
 } as const;
 
@@ -7131,6 +7236,10 @@ export const SurveyResourceUpdateRequestSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         start_date: {
             type: 'string',
@@ -7301,6 +7410,28 @@ export const ThreadResponseSchema = {
             type: 'string',
             format: 'date-time',
             title: 'Created'
+        },
+        rating_count: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating Count'
+        },
+        rating_avg: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Rating Avg'
         }
     },
     type: 'object',
@@ -7801,6 +7932,10 @@ export const VideoResourceResponseSchema = {
             type: 'boolean',
             title: 'Featured'
         },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
+        },
         owner: {
             '$ref': '#/components/schemas/VideoOwner'
         },
@@ -7824,7 +7959,7 @@ export const VideoResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'kind', 'video_kind', 'cutoff_progress', 'uploader', 'thumbnail'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'hide_from_list', 'owner', 'kind', 'video_kind', 'cutoff_progress', 'uploader', 'thumbnail'],
     title: 'VideoResourceResponse'
 } as const;
 
@@ -7845,6 +7980,10 @@ export const VideoResourceUpdateRequestSchema = {
         featured: {
             type: 'boolean',
             title: 'Featured'
+        },
+        hide_from_list: {
+            type: 'boolean',
+            title: 'Hide From List'
         },
         cutoff_progress: {
             type: 'integer',

@@ -18,7 +18,7 @@ import {
   examSubmitGrading as submitGrading,
 } from '@/api';
 import { Form as CommonForm, TextFieldControl as Text, updateInfiniteCache, useServiceImmutable } from '@/component/common';
-
+import { toFixedHuman } from '@/helper/util';
 
 interface GradingInput {
   grading: {
@@ -139,7 +139,7 @@ export const Form = ({ id, userId }: { id: string; userId: string }) => {
           <Typography sx={{ display: 'block' }} variant="caption">
             {t('Grading status')}
           </Typography>
-          {t(data.status)} {data.score != null && `${t('{{ num }} / 100 points', { num: data.score })}`}
+          {t(data.status)} {data.score != null && `${t('{{ num }} / 100 points', { num: toFixedHuman(data.score, 1) })}`}
         </Typography>
       )}
       <Stack

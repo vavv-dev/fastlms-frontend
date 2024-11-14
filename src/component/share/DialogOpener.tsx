@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AssetViewDialog } from '@/component/asset';
 import { ThreadDialog } from '@/component/comment';
-import { CourseEnrollDialog } from '@/component/course';
 import { ExamReadyDialog } from '@/component/exam';
 import { LessonViewDialog } from '@/component/lesson';
 import { QuizViewDialog } from '@/component/quiz';
@@ -46,8 +45,7 @@ export const DialogOpener = () => {
     asset: AssetViewDialog,
     exam: ExamReadyDialog,
     lesson: LessonViewDialog,
-    course: CourseEnrollDialog,
-  }[dialog.kind as 'quiz' | 'survey' | 'asset' | 'exam' | 'lesson' | 'course'];
+  }[dialog.kind as 'quiz' | 'survey' | 'asset' | 'exam' | 'lesson' ];
 
   if (!DialogComponent) return null;
 

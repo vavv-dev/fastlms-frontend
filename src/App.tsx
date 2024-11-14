@@ -35,7 +35,6 @@ import {
   ChannelLayout,
   ChannelRoot,
   ChannelSetting,
-  ChannelStats,
   HomeChannel,
   UserChannel,
 } from '@/component/channel';
@@ -126,7 +125,6 @@ export const App = () => {
               <Route path="comment" element={<CommentDisplays />} />
               <Route path="member" element={<MemberDisplays />} />
               <Route path="exam/grading" element={<GradingDisplays />} />
-              <Route path="stats" element={<ChannelStats />} />
               <Route path="setting" element={<ChannelSetting />} />
             </Route>
           </Route>

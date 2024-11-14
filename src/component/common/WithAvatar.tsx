@@ -61,6 +61,7 @@ export const WithAvatar = ({ variant, name, username, thumbnail, use_channel, hi
       <Box
         className="avatar-children"
         sx={{
+          maxWidth: '100%',
           width: 'auto',
           flexGrow: 1,
           flexShrink: 0,

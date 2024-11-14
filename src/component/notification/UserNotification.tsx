@@ -7,9 +7,8 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
-  Tooltip,
+  Tooltip
 } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
@@ -76,31 +75,35 @@ export const UserNotification = () => {
       orderingOptions={[{ value: 'time', label: t('Recently received') }]}
       apiService={getMessages}
       apiOptions={{ receiverId: user?.id }}
-      renderItem={({ data }) => (
-        <TableContainer>
-          <Table sx={{ '& th,td:not(:nth-of-type(2))': { whiteSpace: 'nowrap' }, '& td': { height: '3.5em' } }}>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">no</TableCell>
-                <TableCell>{t('Message')}</TableCell>
-                <TableCell>{t('Received at')}</TableCell>
-                <TableCell align="center">{t('Read at')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.map((pagination, pageIndex) =>
-                pagination.items?.map((row, rowIndex) => (
-                  <NotificationRow
-                    key={row.id}
-                    row={row}
-                    index={calculateReverseIndex(data, pageIndex, rowIndex, pagination.total)}
-                  />
-                )),
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      renderItem={({ data }) => {
+        const seenIds = new Set<string>();
+        const processedData = data?.map((pagination) => ({
+          ...pagination,
+          items: pagination.items?.filter((item) => {
+            const isDuplicate = seenIds.has(item.id);
+            seenIds.add(item.id);
+            return !isDuplicate;
+          }),
+        }));
+
+        return (
+          <TableContainer>
+            <Table sx={{ '& th,td:not(:nth-of-type(2))': { whiteSpace: 'nowrap' }, '& td': { height: '3.5em' } }}>
+              <TableBody>
+                {processedData?.map((pagination, pageIndex) =>
+                  pagination.items?.map((row, rowIndex) => (
+                    <NotificationRow
+                      key={row.id}
+                      row={row}
+                      index={calculateReverseIndex(processedData, pageIndex, rowIndex, pagination.total)}
+                    />
+                  )),
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        );
+      }}
       emptyMessage={<EmptyMessage Icon={NotificationsOutlined} message={t('No message found.')} />}
       gridBoxSx={{ gap: '2em 1em', gridTemplateColumns: '1fr' }}
       boxPadding={0}
@@ -137,9 +140,9 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
       case 'asset':
       case 'exam':
       case 'lesson':
-      case 'course':
         navigate('.', { state: { dialog: { kind: row.kind, id: row.object_id } } });
         break;
+      case 'course':
       default:
         navigate(`/${row.kind}/${row.object_id}`);
     }

@@ -17,6 +17,10 @@ export interface ThreadProps {
   editor?: boolean;
   sticky?: boolean;
   refresh?: boolean;
+  hideHeader?: boolean;
+  disableSelect?: boolean;
+  disableReply?: boolean;
+  ratingMode?: boolean;
 }
 
 // gettext no-op

@@ -235,7 +235,7 @@ export const Setting: React.FC = () => {
                   key={channel.id}
                 >
                   <Avatar src={channel.thumbnail} sx={{ width: 60, height: 60 }} />
-                  <Typography variant="subtitle2" sx={{ ...textEllipsisCss(2), lineHeight: 1.2 }}>
+                  <Typography variant="subtitle2" sx={{ ...textEllipsisCss(2), lineHeight: 1.2, textAlign: 'center' }}>
                     {channel.title}
                   </Typography>
                   <IconButton

@@ -1,5 +1,6 @@
 import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
 import { Box, Button, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
+import { useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +22,8 @@ import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
 import { VideoCard } from '@/component/video';
-import { decodeURLText, formatRelativeTime, toFixedHuman } from '@/helper/util';
+import { decodeURLText, toFixedHuman } from '@/helper/util';
+import { userState } from '@/store';
 
 interface Props {
   data: DisplayResponse;
@@ -69,6 +71,7 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
           borderRadius: theme.shape.borderRadius,
           p: { xs: 2, sm: 3 },
         }),
+        '& .avatar-children .MuiTypography-root': { display: 'flex' },
       }}
     >
       {!data.is_public && (
@@ -105,7 +108,6 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
 
       <WithAvatar {...data.owner} hideAvatar={hideAvatar}>
         <Stack sx={{ color: 'text.secondary', alignItems: 'center', pr: '3em' }} direction="row" spacing={2}>
-          <Typography variant="subtitle2">{t(...formatRelativeTime(data.modified))}</Typography>
           {data.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
           {data.grading_method == 'score' && (
             <>
@@ -182,7 +184,7 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
 
           {data.resources.map((resource) => (
             <Box key={resource.id}>
-              <ResourceCard resource={resource} resourceDisplays={data.resource_displays} />
+              <ResourceCard resource={resource} resourceDisplays={data.resource_displays} lessonOwnerId={data.owner.id} />
             </Box>
           ))}
           {data.description && (
@@ -201,10 +203,12 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
 interface ResourceCardProps {
   resource: DisplayResponse['resources'][0];
   resourceDisplays: DisplayResponse['resource_displays'];
+  lessonOwnerId: string;
 }
 
-const ResourceCard = ({ resource, resourceDisplays }: ResourceCardProps) => {
+const ResourceCard = ({ resource, resourceDisplays, lessonOwnerId }: ResourceCardProps) => {
   const { t } = useTranslation('lesson');
+  const user = useAtomValue(userState);
   const theme = useTheme();
 
   const SimpleCard = () => {
@@ -240,7 +244,7 @@ const ResourceCard = ({ resource, resourceDisplays }: ResourceCardProps) => {
 
   const display = resourceDisplays?.find((display) => display.id === resource.id);
 
-  if (!display) return <SimpleCard />;
+  if (!display) return lessonOwnerId === user?.id ? <SimpleCard /> : null;
 
   switch (display.kind) {
     case 'video':

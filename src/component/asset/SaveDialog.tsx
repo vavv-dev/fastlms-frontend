@@ -37,6 +37,15 @@ const createSchema = (t: (key: string) => string) => {
         helperText: t('If checked, asset will be shown in featured list.'),
         grid: 6,
       }),
+    hide_from_list: yup
+      .boolean()
+      .default(false)
+      .label(t('Hide from list'))
+      .meta({
+        control: 'checkbox',
+        helperText: t('If checked, will not be shown in list. But it can be accessed directly. Useful for embed only content.'),
+        grid: 6,
+      }),
     asset_kind: yup
       .string()
       .required(REQUIRED)

@@ -9,7 +9,20 @@ import {
   ThumbUp,
   ThumbUpOutlined,
 } from '@mui/icons-material';
-import { Box, Button, Chip, Collapse, IconButton, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Collapse,
+  Dialog,
+  DialogContent,
+  IconButton,
+  Rating,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
@@ -24,7 +37,7 @@ import {
   LearningResourceKind,
   ThreadResponse,
   commentGetThreads,
-  commentGetDisplays as getDisplays,
+  publicGetComments as getDisplays,
   commentToggleAction as toggleAction,
   commentUpdateResource as updateResource,
 } from '@/api';
@@ -38,11 +51,14 @@ interface Props {
   resourceKind: LearningResourceKind;
   setParentHover?: (value: boolean) => void;
   editor?: boolean;
+  disableSelect?: boolean;
+  disableReply?: boolean;
+  ratingMode?: boolean;
 }
 
 const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
 
-export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Props) => {
+export const Comment = ({ url, data, resourceKind, setParentHover, editor, disableSelect, disableReply, ratingMode }: Props) => {
   const { t } = useTranslation('comment');
   const user = useAtomValue(userState);
   const [inEditing, setInEditing] = useState(false);
@@ -116,7 +132,15 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Pro
           <Box sx={{ mr: '1.5em' }}>
             {/* edit comment */}
             <Collapse in={inEditing} unmountOnExit>
-              <Write url={url} data={data} onClose={() => setInEditing(false)} autoFocus editor={editor} />
+              <Write
+                url={url}
+                data={data}
+                onClose={() => setInEditing(false)}
+                autoFocus
+                editor={editor}
+                disableSelect={disableSelect}
+                ratingMode={ratingMode}
+              />
             </Collapse>
 
             {/* view content */}
@@ -126,7 +150,7 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Pro
           </Box>
 
           {!data.deleted && (
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', gap: 1 }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', gap: 1, ...(!user && { pointerEvents: 'none' }) }}>
               {/* pinned on top of thread */}
               {data.pinned && (
                 <Tooltip title={t('Pinned')} arrow>
@@ -155,7 +179,7 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Pro
               </Box>
 
               {/* allow only first level reply. limit replies to 30 */}
-              {user && !data.parent_id && (data.children?.length || 0) < 30 && (
+              {!disableReply && user && !data.parent_id && (data.children?.length || 0) < 30 && (
                 <Button
                   onClick={() => {
                     setInEditing(false);
@@ -188,6 +212,9 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Pro
                   />
                 </Tooltip>
               )}
+
+              <Box sx={{ flexGrow: 1 }} />
+              {ratingMode && data.rating != null && <Rating value={data.rating} precision={0.5} readOnly size="small" />}
             </Stack>
           )}
 
@@ -198,7 +225,7 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Pro
             </Collapse>
           )}
 
-          {(data.children?.length as number) > 0 && (
+          {!disableReply && (data.children?.length as number) > 0 && (
             <>
               <Button sx={{ py: 0, alignSelf: 'flex-start' }} onClick={() => setShowReplies((prev) => !prev)} size="small">
                 {showReplies ? <ArrowDropDown /> : <ArrowDropUp />}
@@ -234,6 +261,8 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor }: Pro
               setInWrting(false);
               setInEditing(true);
             }}
+            disableSelect={disableSelect}
+            ratingMode={ratingMode}
           />
         </Box>
       )}
@@ -252,6 +281,8 @@ const ContentBox = ({ content, deleted, resourceKind, url }: ContentBoxProps) =>
   const { t } = useTranslation('comment');
   const theme = useTheme();
   const navigate = useNavigate();
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
 
   const baseStyles = {
     fontSize: theme.typography.body1.fontSize,
@@ -259,6 +290,7 @@ const ContentBox = ({ content, deleted, resourceKind, url }: ContentBoxProps) =>
     lineHeight: 1.4,
     display: 'block !important',
     color: deleted ? theme.palette.text.disabled : theme.palette.text.primary,
+    '& img': { cursor: 'pointer', maxWidth: '100%', height: 'auto' },
   };
 
   if (deleted) {
@@ -281,25 +313,42 @@ const ContentBox = ({ content, deleted, resourceKind, url }: ContentBoxProps) =>
   }
 
   return (
-    <Box
-      className="tiptap-content"
-      sx={{
-        ...baseStyles,
-        '& .timestamp-link:hover': {
-          backgroundColor: alpha(theme.palette.info.main, 0.2),
-        },
-      }}
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-      onClick={(e) => {
-        const target = e.target as HTMLElement;
-        if (target.classList.contains('timestamp-link')) {
-          const time = target.dataset.time;
-          const videoId = target.dataset.videoId;
-          if (time && videoId) {
-            navigate(`/video/${videoId}?t=${time}`);
+    <>
+      <Box
+        className="tiptap-content"
+        sx={{
+          ...baseStyles,
+          '& .timestamp-link:hover': {
+            backgroundColor: alpha(theme.palette.info.main, 0.2),
+          },
+        }}
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.classList.contains('timestamp-link')) {
+            const time = target.dataset.time;
+            const videoId = target.dataset.videoId;
+            if (time && videoId) {
+              navigate(`/video/${videoId}?t=${time}`);
+            }
           }
-        }
-      }}
-    />
+
+          // image click
+          if (target.tagName.toLowerCase() === 'img') {
+            const imgSrc = target.getAttribute('src');
+            if (imgSrc) {
+              setSelectedImage(imgSrc);
+              setOpenImageDialog(true);
+            }
+          }
+        }}
+      />
+
+      <Dialog open={openImageDialog} onClick={() => setOpenImageDialog(false)} maxWidth="lg">
+        <DialogContent sx={{ p: 0, textAlign: 'center', bgcolor: 'black', display: 'flex' }}>
+          <img src={selectedImage} alt="" style={{ maxWidth: '100%', maxHeight: 'calc(100vh - 64px)', objectFit: 'contain' }} />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

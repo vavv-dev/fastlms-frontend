@@ -1,5 +1,5 @@
 import { Search } from '@mui/icons-material';
-import { Box, Chip, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Chip, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ export const Result = () => {
   const navigate = useNavigate();
   const search = useSearchParams()[0].get('q');
   const theme = useTheme();
+  const mobileUp = useMediaQuery(theme.breakpoints.up('mobile'));
 
   const highlight = (searchedText: string, s: string) => {
     const sWithoutSpace = s.replace(/\s+/g, '');
@@ -50,20 +51,24 @@ export const Result = () => {
               <Card
                 data={item}
                 to={`/video/${item.id}`}
-                sx={{
-                  flexGrow: 1,
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'nowrap',
-                  gap: '1em',
-                  '.card-banner': {
-                    width: '220px',
-                    minWidth: '220px',
-                    height: 'auto',
-                    '& img': { borderRadius: theme.shape.borderRadius / 2, aspectRatio: '16 / 9' },
-                  },
-                  '.content-title': { fontSize: '1em', mb: 0.5, fontWeight: 600, lineHeight: 1.2 },
-                }}
+                sx={
+                  mobileUp
+                    ? {
+                        flexGrow: 1,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flexWrap: 'nowrap',
+                        gap: '1em',
+                        '.card-banner': {
+                          width: '220px',
+                          minWidth: '220px',
+                          height: 'auto',
+                          '& img': { borderRadius: theme.shape.borderRadius / 2, aspectRatio: '16 / 9' },
+                        },
+                        '.content-title': { fontSize: '1em', mb: 0.5, fontWeight: 600, lineHeight: 1.2 },
+                      }
+                    : {}
+                }
                 showDescription={true}
               />
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', rowGap: 1 }}>

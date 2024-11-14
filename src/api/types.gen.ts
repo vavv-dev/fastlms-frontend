@@ -59,6 +59,7 @@ export type AssetResourceCreateRequest = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     cutoff_progress: number;
@@ -75,6 +76,7 @@ export type AssetResourceResponse = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date: (string | null);
     cutoff_progress: number;
@@ -92,6 +94,7 @@ export type AssetResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
+    hide_from_list?: boolean;
     start_date?: string;
     end_date?: (string | null);
     cutoff_progress?: number;
@@ -209,6 +212,7 @@ export type CommentDisplayResponse = {
     is_question: boolean;
     solved: boolean;
     pinned: boolean;
+    rating?: (number | null);
     author: CommentAuthor;
     deleted: boolean;
     created: string;
@@ -229,6 +233,7 @@ export type CommentResourceCreateRequest = {
     is_question: boolean;
     solved: boolean;
     pinned: boolean;
+    rating?: (number | null);
     receivers?: Array<(string)>;
 };
 
@@ -239,6 +244,7 @@ export type CommentResourceResponse = {
     is_question: boolean;
     solved: boolean;
     pinned: boolean;
+    rating?: (number | null);
     id: string;
     author: CommentAuthor;
     deleted: boolean;
@@ -253,6 +259,7 @@ export type CommentUpdateRequest = {
     is_question?: boolean;
     solved?: boolean;
     pinned?: boolean;
+    rating?: (number | null);
     deleted?: (boolean | null);
 };
 
@@ -328,6 +335,7 @@ export type CourseOutlineReponse = {
     learning_days: number;
     closed: boolean;
     lessons: Array<CourseLessonResource>;
+    enrolled?: boolean;
 };
 
 export type CourseOwner = {
@@ -573,6 +581,7 @@ export type ExamResourceCreateRequest = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     success_message: string;
@@ -642,6 +651,7 @@ export type ExamResourceResponse = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     success_message: string;
@@ -665,6 +675,7 @@ export type ExamResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
+    hide_from_list?: boolean;
     start_date?: string;
     end_date?: (string | null);
     success_message?: string;
@@ -744,6 +755,7 @@ export type LessonResourceCreateRequest = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     resources: Array<ResourceSchema>;
@@ -756,6 +768,7 @@ export type LessonResourceResponse = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     resources: Array<ResourceSchema>;
@@ -770,6 +783,7 @@ export type LessonResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
+    hide_from_list?: boolean;
     start_date?: string;
     end_date?: (string | null);
     resources?: Array<ResourceSchema>;
@@ -1307,6 +1321,7 @@ export type QuizResourceCreateRequest = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     resources: (Array<ResourceSchema> | null);
@@ -1353,6 +1368,7 @@ export type QuizResourceResponse = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     resources: (Array<ResourceSchema> | null);
@@ -1373,6 +1389,7 @@ export type QuizResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
+    hide_from_list?: boolean;
     start_date?: string;
     end_date?: (string | null);
     resources?: (Array<ResourceSchema> | null);
@@ -1538,6 +1555,7 @@ export type SurveyResourceCreateRequest = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     resources: (Array<ResourceSchema> | null);
@@ -1579,6 +1597,7 @@ export type SurveyResourceResponse = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     start_date: string;
     end_date?: (string | null);
     resources: (Array<ResourceSchema> | null);
@@ -1597,6 +1616,7 @@ export type SurveyResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
+    hide_from_list?: boolean;
     start_date?: string;
     end_date?: (string | null);
     resources?: (Array<ResourceSchema> | null);
@@ -1635,6 +1655,8 @@ export type ThreadResponse = {
     question_count: number;
     unsolved_count: number;
     created: string;
+    rating_count?: (number | null);
+    rating_avg?: (number | null);
 };
 
 export type kind3 = 'thread';
@@ -1749,6 +1771,7 @@ export type VideoResourceResponse = {
     description: string;
     is_public: boolean;
     featured: boolean;
+    hide_from_list: boolean;
     owner: VideoOwner;
     kind: LearningResourceKind;
     video_kind: VideoKind;
@@ -1762,6 +1785,7 @@ export type VideoResourceUpdateRequest = {
     description?: string;
     is_public?: boolean;
     featured?: boolean;
+    hide_from_list?: boolean;
     cutoff_progress?: number;
     thumbnail?: (string | null);
 };
@@ -1930,14 +1954,6 @@ export type AccountUploadFilesData = {
 
 export type AccountUploadFilesResponse = (Array<(string)>);
 
-export type CommentGetThreadData = {
-    accessToken?: (string | null);
-    refreshToken?: (string | null);
-    url: string;
-};
-
-export type CommentGetThreadResponse = (ThreadResponse);
-
 export type CommentGetThreadsData = {
     accessToken?: (string | null);
     commenterId?: (string | null);
@@ -1958,18 +1974,6 @@ export type CommentCreateThreadData = {
 };
 
 export type CommentCreateThreadResponse = (ThreadResponse);
-
-export type CommentGetDisplaysData = {
-    accessToken?: (string | null);
-    orderBy?: 'created' | 'like_count';
-    page?: number;
-    refreshToken?: (string | null);
-    search?: (string | null);
-    size?: number;
-    threadId?: (string | null);
-};
-
-export type CommentGetDisplaysResponse = (Paginated_CommentDisplayResponse_);
 
 export type CommentCreateResourceData = {
     accessToken?: (string | null);
@@ -1996,6 +2000,24 @@ export type CommentToggleActionData = {
 };
 
 export type CommentToggleActionResponse = (unknown);
+
+export type PublicGetThreadData = {
+    ratingMode?: boolean;
+    url: string;
+};
+
+export type PublicGetThreadResponse = (ThreadResponse);
+
+export type PublicGetCommentsData = {
+    orderBy?: 'created' | 'like_count';
+    page?: number;
+    search?: (string | null);
+    size?: number;
+    threadId?: (string | null);
+    userId?: (string | null);
+};
+
+export type PublicGetCommentsResponse = (Paginated_CommentDisplayResponse_);
 
 export type VideoGetDisplaysData = {
     accessToken?: (string | null);
@@ -3017,6 +3039,7 @@ export type SharedToggleBookmarkResponse = (unknown);
 
 export type PublicGetOutlineData = {
     id: string;
+    userId?: (string | null);
 };
 
 export type PublicGetOutlineResponse = (CourseOutlineReponse);

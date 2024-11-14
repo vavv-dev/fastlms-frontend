@@ -30,12 +30,11 @@ export const UserCourse = () => {
               <Box
                 key={item.id}
                 sx={{
-                  mx: 'auto',
+                  justifySelf: { xs: 'center', sm: 'inherit' },
+                  width: '100%',
+                  margin: '0 auto',
                   position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1.5,
-                  ...(smUp ? { width: '100%', mb: '1em' } : { width: '350px', mb: '2em' }),
+                  ...(smUp ? { maxWidth: '100%', mb: '1em' } : { maxWidth: '344px', mb: '2em' }),
                 }}
               >
                 <CourseCard
@@ -56,13 +55,13 @@ export const UserCourse = () => {
                           },
                           '.content-title': { fontSize: '1em', mb: 0.5, fontWeight: 600, lineHeight: 1.2 },
                         }
-                      : { maxWidth: '400px', alignSelf: 'center', width: '100%' }
+                      : {}
                   }
                 />
 
                 <Box
                   sx={{
-                    ...(smUp ? { position: 'absolute', bottom: '4px', right: '1em' } : {}),
+                    ...(smUp ? { position: 'absolute', bottom: '4px', right: '1em' } : { mt: '1em' }),
                     display: 'flex',
                     gap: 2,
                     whiteSpace: 'nowrap',
@@ -106,7 +105,7 @@ export const UserCourse = () => {
         </Box>
       )}
       emptyMessage={<EmptyMessage Icon={School} message={t('No course found.')} />}
-      gridBoxSx={{ gap: '.5em 1em', gridTemplateColumns: '1fr' }}
+      gridBoxSx={{ gridTemplateColumns: { xs: 'repeat(1, minmax(0, 1fr))' } }}
       boxPadding={0}
     />
   );

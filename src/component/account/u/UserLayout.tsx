@@ -75,7 +75,7 @@ export const UserLayout = () => {
             <Avatar alt={user.name} src={user.thumbnail || ''} sx={{ width: 60, height: 60 }} />
             <Fade in={hover || !user.thumbnail}>
               <Box sx={{ position: 'absolute', bottom: '-1em', left: 0, display: 'flex', alignItems: 'center', zIndex: 4 }}>
-                <Tooltip title={t('Upload thumbnail')}>
+                <Tooltip title={t('Upload thumbnail. 60 x 60 size recommended.')}>
                   <IconButton size="small" component="label" htmlFor="thumbnail-image" sx={{ p: 0.5 }}>
                     <FileUploadOutlined fontSize="small" />
                   </IconButton>

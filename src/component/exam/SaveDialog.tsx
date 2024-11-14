@@ -50,7 +50,7 @@ const createSchema = (t: (key: string) => string) => {
         Array.isArray(value)
           ? value
           : value
-              .split(',')
+              .split('\n')
               .filter((v: string) => v.trim())
               .map((v: string) => v.trim()),
       )
@@ -61,7 +61,12 @@ const createSchema = (t: (key: string) => string) => {
           : schema.max(0, t('Input question can not have choices.'));
       })
       .label(t('Selections'))
-      .meta({ control: 'text', multiline: true }),
+      .meta({
+        control: 'text',
+        multiline: true,
+        useArrayNewline: true,
+        placeholderText: t('Enter each choice on a new line.'),
+      }),
     weight: yup.number().default(1).label(t('Weight')).required(REQUIRED).meta({ control: 'number' }),
     correct_answer: yup
       .string()
@@ -162,6 +167,15 @@ const createSchema = (t: (key: string) => string) => {
         helperText: t('If checked, exam will be shown in featured list.'),
         grid: 6,
       }),
+    hide_from_list: yup
+      .boolean()
+      .default(false)
+      .label(t('Hide from list'))
+      .meta({
+        control: 'checkbox',
+        helperText: t('If checked, will not be shown in list. But it can be accessed directly. Useful for embed only content.'),
+        grid: 6,
+      }),
     verification_required: yup.boolean().default(false).label(t('Verification required')).meta({ control: 'checkbox', grid: 6 }),
     randomize: yup.boolean().default(true).label(t('Enable question randomize')).meta({ control: 'checkbox', grid: 6 }),
     enable_finding: yup.boolean().default(true).label(t('Enable finding')).meta({ control: 'checkbox', grid: 6 }),
@@ -206,6 +220,40 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
 
   const schema = useMemo(() => createSchema(t), [t]);
 
+  const beforeSave = (data: ResourceUpdateRequest) => {
+    if (!data.questions || !data.question_composition) return;
+
+    const questionCounts = data.questions.reduce(
+      (acc, q) => {
+        const kind = q.kind as keyof typeof acc;
+        if (!kind) return acc;
+        acc[kind] = (acc[kind] || 0) + 1;
+        return acc;
+      },
+      {} as { [kind in keyof ResourceQuestionComposition]: number },
+    );
+
+    const errors: yup.ValidationError[] = [];
+    Object.entries(data.question_composition).forEach(([kind, count]) => {
+      const _kind = kind as keyof ResourceQuestionComposition;
+      const available = questionCounts[_kind] || 0;
+      if (count && count > available) {
+        const error = new yup.ValidationError(
+          available == 0
+            ? t('No question available. set 0.')
+            : t('Greater than 0 and less than or equal to available count {{ count }}.', { count: available }),
+          count,
+          `question_composition.${kind}`,
+        );
+        errors.push(error);
+      }
+    });
+
+    if (errors.length > 0) {
+      throw new yup.ValidationError(errors);
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -226,6 +274,7 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
         },
       }}
       maxWidth="xl"
+      beforeSave={beforeSave}
     />
   );
 };
