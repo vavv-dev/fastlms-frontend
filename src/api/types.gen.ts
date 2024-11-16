@@ -287,6 +287,8 @@ export type CourseDisplayResponse = {
     marketing_url: string;
     target: string;
     level: CourseLevel;
+    cutoff_progress: number;
+    cutoff_score: number;
     registration_limit: number;
     entrance_verification: boolean;
     invitation_required: boolean;
@@ -306,9 +308,16 @@ export type CourseDisplayResponse = {
     study_end?: (string | null);
 };
 
+export type CourseEnrollResponse = {
+    enrollment_date: string;
+    study_start: string;
+    study_end: string;
+};
+
 export type CourseLessonResource = {
     id: string;
     title: string;
+    weight?: number;
 };
 
 export type CourseLevel = 'beginner' | 'intermediate' | 'advanced' | 'general';
@@ -358,7 +367,7 @@ export type CourseResourceCreateRequest = {
     target: string;
     level: CourseLevel;
     cutoff_progress: number;
-    cutoff_percent: number;
+    cutoff_score: number;
     marketing_url: string;
     enrollment_start: string;
     enrollment_end?: (string | null);
@@ -382,7 +391,7 @@ export type CourseResourceResponse = {
     target: string;
     level: CourseLevel;
     cutoff_progress: number;
-    cutoff_percent: number;
+    cutoff_score: number;
     marketing_url: string;
     enrollment_start: string;
     enrollment_end?: (string | null);
@@ -409,7 +418,7 @@ export type CourseResourceUpdateRequest = {
     target?: string;
     level?: CourseLevel;
     cutoff_progress?: number;
-    cutoff_percent?: number;
+    cutoff_score?: number;
     marketing_url?: string;
     enrollment_start?: string;
     enrollment_end?: (string | null);
@@ -442,7 +451,7 @@ export type ExamAssessResponse = {
     featured: boolean;
     start_date: string;
     end_date: (string | null);
-    cutoff_percent: number;
+    cutoff_score: number;
     submission: (ExamAssessSubmission | null);
     kind: LearningResourceKind;
     owner: ExamOwner;
@@ -499,7 +508,7 @@ export type ExamDisplayResponse = {
     modified: string;
     exam_kind: ExamKind;
     duration: number;
-    cutoff_percent: number;
+    cutoff_score: number;
     verification_required: boolean;
     question_composition: {
         [key: string]: (number);
@@ -589,7 +598,7 @@ export type ExamResourceCreateRequest = {
     exam_kind: ExamKind;
     duration: number;
     question_composition: ExamResourceQuestionComposition;
-    cutoff_percent: number;
+    cutoff_score: number;
     randomize: boolean;
     enable_finding: boolean;
     verification_required: boolean;
@@ -659,7 +668,7 @@ export type ExamResourceResponse = {
     exam_kind: ExamKind;
     duration: number;
     question_composition: ExamResourceQuestionComposition;
-    cutoff_percent: number;
+    cutoff_score: number;
     randomize: boolean;
     enable_finding: boolean;
     verification_required: boolean;
@@ -683,7 +692,7 @@ export type ExamResourceUpdateRequest = {
     exam_kind?: ExamKind;
     duration?: number;
     question_composition?: ExamResourceQuestionComposition;
-    cutoff_percent?: number;
+    cutoff_score?: number;
     randomize?: boolean;
     enable_finding?: boolean;
     verification_required?: boolean;
@@ -740,6 +749,7 @@ export type LessonDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
+    weight?: (number | null);
 };
 
 export type LessonOwner = {
@@ -1220,7 +1230,7 @@ export type QuizAssessResponse = {
     start_date: string;
     end_date: (string | null);
     resources: Array<ResourceSchema>;
-    cutoff_percent: number;
+    cutoff_score: number;
     submission: (QuizAssessSubmission | null);
     kind: LearningResourceKind;
     owner: QuizOwner;
@@ -1327,7 +1337,7 @@ export type QuizResourceCreateRequest = {
     resources: (Array<ResourceSchema> | null);
     success_message: string;
     failure_message: string;
-    cutoff_percent: number;
+    cutoff_score: number;
     randomize: boolean;
     enable_finding: boolean;
     questions: Array<QuizResourceQuestionCreate>;
@@ -1374,7 +1384,7 @@ export type QuizResourceResponse = {
     resources: (Array<ResourceSchema> | null);
     success_message: string;
     failure_message: string;
-    cutoff_percent: number;
+    cutoff_score: number;
     randomize: boolean;
     enable_finding: boolean;
     questions: Array<QuizResourceQuestionResource>;
@@ -1395,7 +1405,7 @@ export type QuizResourceUpdateRequest = {
     resources?: (Array<ResourceSchema> | null);
     success_message?: string;
     failure_message?: string;
-    cutoff_percent?: number;
+    cutoff_score?: number;
     randomize?: boolean;
     enable_finding?: boolean;
     questions?: Array<QuizResourceQuestionUpdate>;
@@ -2963,7 +2973,7 @@ export type CourseEnrollData = {
     refreshToken?: (string | null);
 };
 
-export type CourseEnrollResponse = (unknown);
+export type CourseEnrollResponse2 = (CourseEnrollResponse);
 
 export type CourseUnenrollData = {
     accessToken?: (string | null);

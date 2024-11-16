@@ -103,6 +103,7 @@ const createSchema = (t: (key: string) => string) => {
     resources: yup
       .array()
       .of(resourceSchema)
+      .required(REQUIRED)
       .label(t('Resources'))
       .min(1, t('At least one item is required'))
       .default([])

@@ -15,13 +15,15 @@ import {
   VideoGetViewResponse as GetViewResponse,
   VideoGetWatchBitmapData as GetWatchBitmapData,
   VideoGetWatchBitmapResponse as GetWatchBitmapResponse,
+  VideoDisplayResponse as DisplayResponse,
   WatchUpdateRequest,
   videoGetView as getView,
   videoGetWatchBitmap as getWatchBitmap,
   videoStartWatch as startWatch,
   videoUpdateWatch as updateWatch,
+  videoGetDisplays as getDisplays,
 } from '@/api';
-import { useServiceImmutable } from '@/component/common';
+import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { formatDuration, toFixedHuman } from '@/helper/util';
 import { userState } from '@/store';
 
@@ -265,7 +267,14 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
 
     updateWatch({ id, requestBody: watch })
       .then(() => {
-        // TODO: update cache
+        const currentBitmap = watchBitmapsRef.current[id];
+        const progress = currentBitmap ? (currentBitmap.filter((v) => v === 1).length / currentBitmap.length) * 100 : 0;
+        const updated = {
+          id: id,
+          progress: Math.min(progress, 100),
+          passed: progress >= data.cutoff_progress,
+        };
+        updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })
       .catch((e) => console.error(e));
   };

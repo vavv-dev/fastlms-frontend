@@ -280,7 +280,7 @@ export const Write = ({ url, parent, data, onClose, autoFocus, question, editor,
                       <>
                         {/* save comment */}
                         <Button
-                          sx={{ whiteSpace: 'nowrap', minWidth: 0, px: 3 }}
+                          sx={{ whiteSpace: 'nowrap', minWidth: 0, px: { xs: 1, sm: 3 } }}
                           type="submit"
                           disabled={!formState.isDirty || formState.isSubmitting}
                         >

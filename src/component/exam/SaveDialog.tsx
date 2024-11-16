@@ -142,7 +142,7 @@ const createSchema = (t: (key: string) => string) => {
       .label(t('Duration'))
       .required(REQUIRED)
       .meta({ control: 'number', grid: 4 }),
-    cutoff_percent: yup
+    cutoff_score: yup
       .number()
       .typeError(REQUIRED)
       .required(REQUIRED)
@@ -203,7 +203,13 @@ const createSchema = (t: (key: string) => string) => {
       .label(t('Failure message'))
       .meta({ control: 'editor', placeholderText: t('Optional') }),
     question_composition: questionCompositionSchema,
-    questions: yup.array().of(questionSchema).label(t('Questions')).min(1, t('At least one question is required')).default([]),
+    questions: yup
+      .array()
+      .of(questionSchema)
+      .required(REQUIRED)
+      .label(t('Questions'))
+      .min(1, t('At least one question is required'))
+      .default([]),
   });
 
   return schema;

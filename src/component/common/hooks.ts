@@ -41,8 +41,8 @@ export const useInfinitePagination = <T, K extends PaginateProps>(options: Infin
     },
     {
       revalidateOnFocus: false,
-      // revalidateOnReconnect: false,
-      // revalidateFirstPage: false,
+      revalidateOnReconnect: false,
+      revalidateFirstPage: false,
       // revalidateOnMount: false,
       // revalidateIfStale: false,
       initialSize: 1,

@@ -110,7 +110,7 @@ const createSchema = (t: (key: string) => string) => {
     randomize: yup.boolean().default(true).label(t('Enable question randomize')).meta({ control: 'checkbox', grid: 6 }),
     enable_finding: yup.boolean().default(true).label(t('Enable finding')).meta({ control: 'checkbox', grid: 6 }),
     thumbnail: base64ThumbnailSchema(yup, false, t),
-    cutoff_percent: yup
+    cutoff_score: yup
       .number()
       .typeError(REQUIRED)
       .required(REQUIRED)

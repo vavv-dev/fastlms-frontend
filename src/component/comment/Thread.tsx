@@ -58,6 +58,7 @@ export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProp
         className="comment-thread-header"
         sx={{
           bgcolor: theme.palette.background.paper,
+          whiteSpace: 'nowrap',
           ...(sticky && { display: 'flex', flexDirection: 'column', gap: 1, position: 'sticky', top: 0, zIndex: 1, mb: 1 }),
         }}
       >

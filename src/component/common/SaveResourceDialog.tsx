@@ -662,6 +662,7 @@ const ArrayFieldTable = <T extends FieldValues>({
             const updated = [
               ...(arrayValues || []),
               ...selected.map((s) => ({
+                ...fieldData.innerType.default,
                 ...s,
                 id: copyAutocomplete[fieldKey].mode === 'select' ? s.id : undefined,
               })),

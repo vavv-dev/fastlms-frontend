@@ -161,7 +161,7 @@ export const Subtitle = ({ id }: { id: string }) => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflow: 'auto' }}>
         {config.enabled && Object.values(tracksRef.current).length > 0 && (
           <>
             {Object.keys(langs).map((lang) => (

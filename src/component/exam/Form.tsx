@@ -132,6 +132,7 @@ export const Form = ({ id }: { id: string }) => {
       .then(async (updated) => {
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         await mutate(updated, { revalidate: false });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch((error) => setError('root.server', error));
     setSubmitConfirmOpen(false);

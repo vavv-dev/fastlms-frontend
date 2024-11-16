@@ -13,12 +13,13 @@ import {
 } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
 import { EnrollDialog } from './EnrollDialog';
+import { WeightedScore } from './WeightedScore';
 
 import {
   CourseGetViewData as GetViewData,
@@ -49,7 +50,7 @@ export const View = () => {
   const { id } = useParams();
   const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
   const {
-    data: lessons,
+    data: _lessons,
     mutate: lessonMutate,
     isLoading,
     isValidating,
@@ -60,6 +61,7 @@ export const View = () => {
   const [showAll, setShowAll] = useState(false);
   const [activeStep, setActiveStep] = useAtom(activeStepFamily(id as string));
   const spacerRef = useAtomValue(spacerRefState);
+  const lessonViewportRef = useRef<HTMLDivElement>(null);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
 
   // update spacerRef height
@@ -72,6 +74,9 @@ export const View = () => {
     }
   }, [location.state?.activeStep, setActiveStep]);
 
+  // _lessons?.[0]?.items is all lessons with size 100 limit
+  const lessons = _lessons?.[0]?.items;
+
   useEffect(() => {
     if (!data?.enrolled) setEnrollDialogOpen(true);
   }, [data?.enrolled, data, navigate]);
@@ -80,27 +85,6 @@ export const View = () => {
     mutate();
     lessonMutate();
   };
-
-  const totalStats = useMemo(() => {
-    if (!lessons) return;
-    let passed = 0;
-    let total = 0;
-    lessons?.forEach((lesson) => {
-      lesson.items.forEach((item) => {
-        if (item.grading_method == 'progress') {
-          total += 1;
-          if (item.passed) passed += 1;
-        }
-      });
-    });
-
-    if (total == 0) return null;
-    return (
-      <Typography variant="subtitle1" sx={{ color: data?.passed ? 'success.main' : 'warning.main', display: 'flex', gap: 2 }}>
-        <span>{t('Total progress')}:</span> {`${toFixedHuman((passed / total) * 100, 1)} % (${passed} / ${total})`}
-      </Typography>
-    );
-  }, [lessons, data, t]);
 
   if (!id || !data) return null;
 
@@ -111,7 +95,7 @@ export const View = () => {
           variant="h5"
           sx={{
             position: 'sticky',
-            top: spacerRef?.clientHeight,
+            top: `${spacerRef?.clientHeight || 0}px`,
             bgcolor: 'background.paper',
             gap: 1,
             alignItems: 'center',
@@ -132,22 +116,24 @@ export const View = () => {
         )}
         <WithAvatar variant="small" {...data.owner} sx={{ mx: 'auto' }} />
         <Box
+          ref={lessonViewportRef}
           sx={{
             display: 'flex',
             gap: 1,
             position: 'sticky',
-            top: (spacerRef?.clientHeight || 0) + 32,
+            top: `${(spacerRef?.clientHeight || 0) + 32}px`,
             bgcolor: 'background.paper',
             zIndex: 5,
             justifyContent: 'flex-end',
             alignItems: 'center',
+            flexWrap: 'wrap',
           }}
         >
-          {totalStats}
+          <WeightedScore course={data} lessons={lessons} sx={{ pt: 3 }} />
           <Box sx={{ flexGrow: 1 }} />
 
           {data.enrolled && (
-            <>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
                 {showAll ? <ArrowDropDown /> : <ArrowDropUp />}
               </IconButton>
@@ -155,7 +141,7 @@ export const View = () => {
                 <Refresh />
               </IconButton>
               <ActionMenu data={data} />
-            </>
+            </Box>
           )}
         </Box>
 
@@ -168,14 +154,15 @@ export const View = () => {
               </Box>
             )}
             <Stepper nonLinear activeStep={activeStep} orientation="vertical" sx={{ flexGrow: 1 }}>
-              {lessons?.[0].items.map((lesson, i) => (
+              {lessons?.map((lesson, i) => (
                 <LessonStep
+                  key={i}
                   lesson={lesson}
                   stepIndex={i}
                   activeStep={activeStep}
                   setActiveStep={setActiveStep}
                   showAll={showAll}
-                  key={i}
+                  lessonViewportRef={lessonViewportRef}
                 />
               ))}
             </Stepper>
@@ -195,14 +182,14 @@ interface LessonStepProps {
   activeStep: number;
   setActiveStep: (value: number | ((prev: number) => number)) => void;
   showAll: boolean;
+  lessonViewportRef?: React.RefObject<HTMLDivElement>;
 }
 
-const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...props }: LessonStepProps) => {
+const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, lessonViewportRef, ...props }: LessonStepProps) => {
   const { t } = useTranslation('course');
   const [, setHover] = useState(false);
   const [active, setActive] = useState(false);
   const stepRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<number>();
 
   useEffect(() => {
     if (stepIndex != activeStep) setActive(showAll);
@@ -211,31 +198,24 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...
   useEffect(() => {
     const newActive = stepIndex == activeStep;
     setActive(newActive);
-
-    // Clear any pending scroll timeout
-    if (scrollTimeoutRef.current) {
-      window.clearTimeout(scrollTimeoutRef.current);
-    }
-
-    if (newActive && stepRef.current) {
-      scrollTimeoutRef.current = window.setTimeout(() => {
-        setTimeout(() => {
-          const yOffset = 150;
-          const element = stepRef.current;
-          if (element) {
-            const y = element.getBoundingClientRect().top + window.scrollY - yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-          }
-        }, 20);
-      }, 330);
-    }
-
-    return () => {
-      if (scrollTimeoutRef.current) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
-    };
   }, [stepIndex, activeStep]);
+
+  const handleScroll = () => {
+    const element = stepRef.current;
+    const viewport = lessonViewportRef?.current;
+    if (element && viewport) {
+      const viewportRect = viewport.getBoundingClientRect();
+      const offset = viewportRect.bottom + 10;
+      const y = element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    if (stepIndex === activeStep) {
+      handleScroll();
+    }
+  }, []); // eslint-disable-line
 
   return (
     <Step
@@ -262,17 +242,22 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...
       >
         <Typography variant="h6">{lesson.title}</Typography>
         {!!lesson.score && (
-          <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'error'}>
+          <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'warning'}>
             {t('Score {{ value }}', { value: toFixedHuman(lesson.score, 1) })}
           </Typography>
         )}
         {!!lesson.progress && (
-          <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'error'}>
-            {t('Progress {{ value }} %', { value: toFixedHuman(lesson.progress, 1) })}
+          <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'warning'}>
+            {t('Progress {{ value }}%', { value: toFixedHuman(lesson.progress, 1) })}
           </Typography>
         )}
       </StepLabel>
-      <StepContent TransitionProps={{ unmountOnExit: false }}>
+      <StepContent
+        TransitionProps={{
+          unmountOnExit: false,
+          onEntered: handleScroll,
+        }}
+      >
         <LessonCard data={lesson} embeded hideAvatar />
       </StepContent>
     </Step>

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import {
+  CourseEnrollResponse as EnrollResponse,
   CourseGetNewEnrolledCountData as GetNewEnrolledCountData,
   CourseGetViewData as GetViewData,
   CourseGetViewResponse as GetViewResponse,
@@ -39,11 +40,16 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
 
   const enrollCourse = async () => {
     enroll({ id })
-      .then(() => {
+      .then((r: EnrollResponse) => {
+        const updated = {
+          enrolled: true,
+          study_start: r.study_start,
+          study_end: r.study_end,
+        };
         setResult(t('You are now enrolled in this course.'));
-        updateInfiniteCache(getDisplays, { id, enrolled: true }, 'update');
+        updateInfiniteCache(getDisplays, { id, ...updated }, 'update');
         countMutate(1, { revalidate: false });
-        courseMutate((prev) => prev && { ...prev, enrolled: true }, { revalidate: false });
+        courseMutate((prev) => prev && { ...prev, ...updated }, { revalidate: false });
         onEnroll?.();
         navigate(`/course/${id}`, { replace: window.location.pathname === `/course/${id}` });
       })

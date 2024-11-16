@@ -111,7 +111,7 @@ const Info = ({ data }: { data: DisplayResponse }) => {
           </TableRow>
           <TableRow>
             <TableCell>{t('Cutoff %')}</TableCell>
-            <TableCell>{data.cutoff_percent} %</TableCell>
+            <TableCell>{data.cutoff_score} %</TableCell>
           </TableRow>
           <TableRow>
             <TableCell sx={{ verticalAlign: 'top' }}>{t('Questions')}</TableCell>

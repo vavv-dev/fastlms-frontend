@@ -1320,6 +1320,14 @@ export const CourseDisplayResponseSchema = {
         level: {
             '$ref': '#/components/schemas/CourseLevel'
         },
+        cutoff_progress: {
+            type: 'integer',
+            title: 'Cutoff Progress'
+        },
+        cutoff_score: {
+            type: 'integer',
+            title: 'Cutoff Score'
+        },
         registration_limit: {
             type: 'integer',
             title: 'Registration Limit'
@@ -1427,8 +1435,31 @@ export const CourseDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'thumbnail', 'kind', 'preview', 'marketing_url', 'target', 'level', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'enrolled', 'score', 'progress', 'passed'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'thumbnail', 'kind', 'preview', 'marketing_url', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'enrolled', 'score', 'progress', 'passed'],
     title: 'CourseDisplayResponse'
+} as const;
+
+export const CourseEnrollResponseSchema = {
+    properties: {
+        enrollment_date: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Enrollment Date'
+        },
+        study_start: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Study Start'
+        },
+        study_end: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Study End'
+        }
+    },
+    type: 'object',
+    required: ['enrollment_date', 'study_start', 'study_end'],
+    title: 'CourseEnrollResponse'
 } as const;
 
 export const CourseLessonResourceSchema = {
@@ -1440,6 +1471,12 @@ export const CourseLessonResourceSchema = {
         title: {
             type: 'string',
             title: 'Title'
+        },
+        weight: {
+            type: 'integer',
+            maximum: 100,
+            minimum: 0,
+            title: 'Weight'
         }
     },
     type: 'object',
@@ -1659,9 +1696,9 @@ export const CourseResourceCreateRequestSchema = {
             type: 'integer',
             title: 'Cutoff Progress'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         marketing_url: {
             type: 'string',
@@ -1713,7 +1750,7 @@ export const CourseResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_percent', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons'],
+    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons'],
     title: 'CourseResourceCreateRequest'
 } as const;
 
@@ -1778,9 +1815,9 @@ export const CourseResourceResponseSchema = {
             type: 'integer',
             title: 'Cutoff Progress'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         marketing_url: {
             type: 'string',
@@ -1844,7 +1881,7 @@ export const CourseResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_percent', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons', 'id', 'owner', 'modified'],
     title: 'CourseResourceResponse'
 } as const;
 
@@ -1909,9 +1946,9 @@ export const CourseResourceUpdateRequestSchema = {
             type: 'integer',
             title: 'Cutoff Progress'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         marketing_url: {
             type: 'string',
@@ -2051,9 +2088,9 @@ export const ExamAssessResponseSchema = {
             ],
             title: 'End Date'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         submission: {
             anyOf: [
@@ -2134,7 +2171,7 @@ export const ExamAssessResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'cutoff_percent', 'submission', 'kind', 'owner', 'finding', 'final_message', 'verification_required', 'duration', 'exam_kind', 'score', 'passed', 'status'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'cutoff_score', 'submission', 'kind', 'owner', 'finding', 'final_message', 'verification_required', 'duration', 'exam_kind', 'score', 'passed', 'status'],
     title: 'ExamAssessResponse'
 } as const;
 
@@ -2318,9 +2355,9 @@ export const ExamDisplayResponseSchema = {
             type: 'integer',
             title: 'Duration'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         verification_required: {
             type: 'boolean',
@@ -2398,7 +2435,7 @@ export const ExamDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'exam_kind', 'duration', 'cutoff_percent', 'verification_required', 'question_composition', 'thumbnail', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'score', 'passed', 'status'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'exam_kind', 'duration', 'cutoff_score', 'verification_required', 'question_composition', 'thumbnail', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'score', 'passed', 'status'],
     title: 'ExamDisplayResponse'
 } as const;
 
@@ -2731,9 +2768,9 @@ export const ExamResourceCreateRequestSchema = {
         question_composition: {
             '$ref': '#/components/schemas/ExamResourceQuestionComposition'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         randomize: {
             type: 'boolean',
@@ -2768,7 +2805,7 @@ export const ExamResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_percent', 'randomize', 'enable_finding', 'verification_required', 'questions'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_score', 'randomize', 'enable_finding', 'verification_required', 'questions'],
     title: 'ExamResourceCreateRequest'
 } as const;
 
@@ -3025,9 +3062,9 @@ export const ExamResourceResponseSchema = {
         question_composition: {
             '$ref': '#/components/schemas/ExamResourceQuestionComposition'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         randomize: {
             type: 'boolean',
@@ -3073,7 +3110,7 @@ export const ExamResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_percent', 'randomize', 'enable_finding', 'verification_required', 'questions', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_score', 'randomize', 'enable_finding', 'verification_required', 'questions', 'id', 'owner', 'modified'],
     title: 'ExamResourceResponse'
 } as const;
 
@@ -3134,9 +3171,9 @@ export const ExamResourceUpdateRequestSchema = {
         question_composition: {
             '$ref': '#/components/schemas/ExamResourceQuestionComposition'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         randomize: {
             type: 'boolean',
@@ -3398,6 +3435,17 @@ export const LessonDisplayResponseSchema = {
         flagged: {
             type: 'boolean',
             title: 'Flagged'
+        },
+        weight: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Weight'
         }
     },
     type: 'object',
@@ -5417,9 +5465,9 @@ export const QuizAssessResponseSchema = {
             type: 'array',
             title: 'Resources'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         submission: {
             anyOf: [
@@ -5489,7 +5537,7 @@ export const QuizAssessResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'resources', 'cutoff_percent', 'submission', 'kind', 'owner', 'finding', 'final_message', 'score', 'passed', 'status'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'resources', 'cutoff_score', 'submission', 'kind', 'owner', 'finding', 'final_message', 'score', 'passed', 'status'],
     title: 'QuizAssessResponse'
 } as const;
 
@@ -5934,9 +5982,9 @@ export const QuizResourceCreateRequestSchema = {
             type: 'string',
             title: 'Failure Message'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         randomize: {
             type: 'boolean',
@@ -5967,7 +6015,7 @@ export const QuizResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_percent', 'randomize', 'enable_finding', 'questions'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_score', 'randomize', 'enable_finding', 'questions'],
     title: 'QuizResourceCreateRequest'
 } as const;
 
@@ -6149,9 +6197,9 @@ export const QuizResourceResponseSchema = {
             type: 'string',
             title: 'Failure Message'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         randomize: {
             type: 'boolean',
@@ -6193,7 +6241,7 @@ export const QuizResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_percent', 'randomize', 'enable_finding', 'questions', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'resources', 'success_message', 'failure_message', 'cutoff_score', 'randomize', 'enable_finding', 'questions', 'id', 'owner', 'modified'],
     title: 'QuizResourceResponse'
 } as const;
 
@@ -6259,9 +6307,9 @@ export const QuizResourceUpdateRequestSchema = {
             type: 'string',
             title: 'Failure Message'
         },
-        cutoff_percent: {
+        cutoff_score: {
             type: 'integer',
-            title: 'Cutoff Percent'
+            title: 'Cutoff Score'
         },
         randomize: {
             type: 'boolean',

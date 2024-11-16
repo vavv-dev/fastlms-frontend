@@ -23,6 +23,14 @@ const createSchema = (t: (key: string) => string) => {
   const resourceSchema: yup.ObjectSchema<Resource> = yup.object({
     id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
     title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
+    weight: yup
+      .number()
+      .required(REQUIRED)
+      .min(0, t('Minimum value is 0.'))
+      .max(100, t('Maximum value is 100.'))
+      .default(0)
+      .label(t('Grade weight %'))
+      .meta({ control: 'number' }),
   });
 
   const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
@@ -136,16 +144,18 @@ const createSchema = (t: (key: string) => string) => {
       .default(80)
       .label(t('Cutoff progress %'))
       .meta({ control: 'number', grid: 3, helperText: t('Minimum progress percent') }),
-    cutoff_percent: yup
+    cutoff_score: yup
       .number()
       .typeError(REQUIRED)
       .required(REQUIRED)
       .default(60)
-      .label(t('Cutoff percent %'))
+      .label(t('Cutoff score %'))
       .meta({ control: 'number', grid: 3, helperText: t('Minimum score percent') }),
     lessons: yup
       .array()
+      .required(REQUIRED)
       .of(resourceSchema)
+      .max(100, t('Maximum value is 100.'))
       .label(t('Lessons'))
       .min(1, t('At least one item is required'))
       .default([])
