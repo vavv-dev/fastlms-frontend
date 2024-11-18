@@ -60,7 +60,6 @@
   "Upload xlsx member file": "멤버 엑셀 파일 업로드",
   "User not found. If you provide the user's name and email, you can invite the user.": "사용자를 찾을 수 없습니다. 이름과 이메일을 제공하면 사용자를 초대할 수 있습니다.",
   "You can add this user to member.": "이 사용자를 멤버로 추가할 수 있습니다.",
-  "You can add yourself as a member and send a message to yourself to test the message.": "자신을 멤버로 추가하고 자신에게 메시지를 보내 메시지를 테스트할 수 있습니다.",
   "add_member": "멤버 추가",
   "add_roster": "멤버 초대 추가",
   "asset": "자료",

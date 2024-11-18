@@ -318,28 +318,29 @@ export const imageToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const base64ThumbnailSchema = (
+export const base64ImageSchema = (
   yup: typeof import('yup'),
   required: boolean,
   t: (key: string, options?: { [key: string]: string | number }) => string,
+  size: number = 1,
 ) => {
   const schema = yup
     .mixed<string>()
     .meta({ control: 'file', grid: 6, accept: 'image/*' })
-    .label(t('Select thumbnail', { ns: 'common' }))
+    .label(t('Select image', { ns: 'common' }))
     // if unchanged, set empty string
     .transform(async (value: string | File[]) => {
       return Array.isArray(value) ? await imageToBase64(value[0]) : value;
     })
     .test(
       'fileSize',
-      t('File size is too large. Max size is {{ size }}MB.', { size: 1, ns: 'common' }),
+      t('File size is too large. Max size is {{ size }}MB.', { size, ns: 'common' }),
       async (value: string | Promise<string> | undefined) => {
         if (!value) return true;
         if (typeof value === 'string' && value.startsWith('http')) return true;
         const resolvedValue = await value;
         if (!resolvedValue) return true;
-        return resolvedValue.length <= 1024 * 1024 * 1.33; // 1MB of base64 string
+        return resolvedValue.length <= 1024 * 1024 * size * 1.33; // 1MB of base64 string
       },
     );
 

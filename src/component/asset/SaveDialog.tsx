@@ -11,7 +11,7 @@ import {
   assetUpdateResource as updateResource,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
-import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
+import { base64ImageSchema, datetimeLocalString } from '@/helper/util';
 
 const createSchema = (t: (key: string) => string) => {
   const REQUIRED = t('This field is required.');
@@ -101,7 +101,7 @@ const createSchema = (t: (key: string) => string) => {
       .transform((v) => (v ? v : null))
       .label(t('End date'))
       .meta({ control: 'datetime-local', grid: 6 }),
-    thumbnail: base64ThumbnailSchema(yup, true, t),
+    thumbnail: base64ImageSchema(yup, true, t),
     uploaded: yup.boolean().default(false).meta({ hidden: true }),
   });
 

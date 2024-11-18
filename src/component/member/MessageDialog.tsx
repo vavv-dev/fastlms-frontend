@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AddOutlined, Close, InfoOutlined } from '@mui/icons-material';
+import { AddOutlined, Close } from '@mui/icons-material';
 import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useMemo, useRef, useState } from 'react';
@@ -260,10 +260,6 @@ export const MessageDialog = ({ open, setOpen, selection, totalSelected, total }
               </Box>
             </Box>
           </Box>
-          <Typography variant="caption" sx={{ color: 'info.main', display: 'flex', alignItems: 'center', gap: 1 }}>
-            <InfoOutlined fontSize="small" />
-            {t('You can add yourself as a member and send a message to yourself to test the message.')}
-          </Typography>
         </Box>
       )}
       actions={

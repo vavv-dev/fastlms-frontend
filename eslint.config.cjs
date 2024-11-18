@@ -49,6 +49,14 @@ const config = [
       'react-hooks/exhaustive-deps': ['error'],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true,
+        },
+      ],
       'react/prop-types': 'off',
       'react/display-name': 'off',
       'import/order': [

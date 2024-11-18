@@ -15,7 +15,7 @@ import {
   surveyUpdateResource as updateResource,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
-import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
+import { base64ImageSchema, datetimeLocalString } from '@/helper/util';
 
 const createSchema = (t: (key: string) => string) => {
   const REQUIRED = t('This field is required.');
@@ -109,7 +109,7 @@ const createSchema = (t: (key: string) => string) => {
       }),
     randomize: yup.boolean().default(true).label(t('Enable question randomize')).meta({ control: 'checkbox', grid: 6 }),
     enable_finding: yup.boolean().default(true).label(t('Enable finding')).meta({ control: 'checkbox', grid: 6 }),
-    thumbnail: base64ThumbnailSchema(yup, false, t),
+    thumbnail: base64ImageSchema(yup, false, t),
     start_date: yup
       .string()
       .required(REQUIRED)

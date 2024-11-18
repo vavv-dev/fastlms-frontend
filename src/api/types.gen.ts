@@ -148,6 +148,12 @@ export type BookmarkedContentResponse = {
 
 export type kind = 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
 
+export type CertificateTemplateSchema = {
+    id: string;
+    title: string;
+    thumbnail: string;
+};
+
 export type ChannelDisplayResponse = {
     id: string;
     modified: string;
@@ -376,6 +382,7 @@ export type CourseResourceCreateRequest = {
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
+    certificate_templates: (Array<CertificateTemplateSchema> | null);
     lessons: Array<CourseLessonResource>;
 };
 
@@ -400,6 +407,7 @@ export type CourseResourceResponse = {
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
+    certificate_templates: (Array<CertificateTemplateSchema> | null);
     lessons: Array<CourseLessonResource>;
     id: string;
     owner: CourseOwner;
@@ -427,6 +435,7 @@ export type CourseResourceUpdateRequest = {
     invitation_required?: boolean;
     learning_days?: number;
     closed?: boolean;
+    certificate_templates?: (Array<CertificateTemplateSchema> | null);
     lessons?: Array<CourseLessonResource>;
 };
 
@@ -1026,6 +1035,14 @@ export type Paginated_SurveyDisplayResponse_ = {
 
 export type Paginated_SurveyReportResponse_ = {
     items: Array<SurveyReportResponse>;
+    total: number;
+    page: number;
+    size: number;
+    pages: number;
+};
+
+export type Paginated_TemplateDisplayResponse_ = {
+    items: Array<TemplateDisplayResponse>;
     total: number;
     page: number;
     size: number;
@@ -1637,6 +1654,79 @@ export type SurveyResourceUpdateRequest = {
     thumbnail?: (string | null);
 };
 
+export type TemplateControl = {
+    id: string;
+    kind: 'title' | 'document_number' | 'completion_title' | 'completion_period' | 'learning_hours' | 'name' | 'date_of_birth' | 'issuer' | 'issue_date';
+    left: string;
+    top: string;
+    width: string;
+    font_size: number;
+    is_placeholder: boolean;
+    text_align: 'left' | 'center' | 'right';
+    content: string;
+};
+
+export type kind3 = 'title' | 'document_number' | 'completion_title' | 'completion_period' | 'learning_hours' | 'name' | 'date_of_birth' | 'issuer' | 'issue_date';
+
+export type text_align = 'left' | 'center' | 'right';
+
+export type TemplateDisplayResponse = {
+    id: string;
+    title: string;
+    owner: TemplateOwner;
+    modified: string;
+    thumbnail: string;
+};
+
+export type TemplateMeta = {
+    page_size: 'A4_PORTRAIT' | 'A4_LANDSCAPE' | 'LETTER_PORTRAIT' | 'LETTER_LANDSCAPE';
+    controls: Array<TemplateControl>;
+};
+
+export type page_size = 'A4_PORTRAIT' | 'A4_LANDSCAPE' | 'LETTER_PORTRAIT' | 'LETTER_LANDSCAPE';
+
+export type TemplateOwner = {
+    id: string;
+    username: string;
+    name: string;
+    thumbnail: string;
+    use_channel: boolean;
+};
+
+export type TemplateResourceCreateRequest = {
+    title: string;
+    description: string;
+    meta: TemplateMeta;
+    content: string;
+    background: string;
+};
+
+export type TemplateResourceResponse = {
+    title: string;
+    description: string;
+    meta: TemplateMeta;
+    content: string;
+    background: string;
+    id: string;
+    owner: TemplateOwner;
+    modified: string;
+    thumbnail: string;
+};
+
+export type TemplateResourceUpdateRequest = {
+    title?: string;
+    description?: string;
+    meta?: TemplateMeta;
+    content?: string;
+    background?: string;
+};
+
+export type TemplateSelectorResponse = {
+    id: string;
+    title: string;
+    thumbnail: string;
+};
+
 export type ThreadCreateRequest = {
     owner_id: string;
     thumbnail?: string;
@@ -1669,7 +1759,7 @@ export type ThreadResponse = {
     rating_avg?: (number | null);
 };
 
-export type kind3 = 'thread';
+export type kind4 = 'thread';
 
 export type UserCreateRequest = {
     username: string;
@@ -3262,5 +3352,57 @@ export type AssistantDeleteMessageData = {
 };
 
 export type AssistantDeleteMessageResponse = (unknown);
+
+export type CertificateGetDisplaysData = {
+    accessToken?: (string | null);
+    orderBy?: 'modified';
+    owner?: (string | null);
+    page?: number;
+    refreshToken?: (string | null);
+    search?: (string | null);
+    size?: number;
+};
+
+export type CertificateGetDisplaysResponse = (Paginated_TemplateDisplayResponse_);
+
+export type CertificateTemplateSelectorData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+};
+
+export type CertificateTemplateSelectorResponse = (Array<TemplateSelectorResponse>);
+
+export type CertificateGetResourceData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+};
+
+export type CertificateGetResourceResponse = (TemplateResourceResponse);
+
+export type CertificateUpdateResourceData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+    requestBody: TemplateResourceUpdateRequest;
+};
+
+export type CertificateUpdateResourceResponse = (TemplateResourceResponse);
+
+export type CertificateDeleteResourceData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+};
+
+export type CertificateDeleteResourceResponse = (unknown);
+
+export type CertificateCreateResourceData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    requestBody: TemplateResourceCreateRequest;
+};
+
+export type CertificateCreateResourceResponse = (TemplateResourceResponse);
 
 export type PublicHealthCheckResponse = (unknown);

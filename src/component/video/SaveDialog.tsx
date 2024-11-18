@@ -10,7 +10,7 @@ import {
   videoUpdateResource as updateResource,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
-import { base64ThumbnailSchema } from '@/helper/util';
+import { base64ImageSchema } from '@/helper/util';
 
 const createSchema = (t: (key: string) => string) => {
   const REQUIRED = t('This field is required.');
@@ -54,7 +54,7 @@ const createSchema = (t: (key: string) => string) => {
         helperText: t('Minimum progress percent for this video.'),
         grid: 6,
       }),
-    thumbnail: base64ThumbnailSchema(yup, false, t),
+    thumbnail: base64ImageSchema(yup, false, t),
   });
 
   return schema;

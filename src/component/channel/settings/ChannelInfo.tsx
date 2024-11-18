@@ -1,14 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  ClearOutlined,
-  Close,
-  InfoOutlined,
-  LibraryAddOutlined,
-  NotificationsOutlined,
-  Refresh,
-  WorkspacePremiumRounded,
-} from '@mui/icons-material';
-import { Avatar, Box, Button, IconButton, Tab, Tabs, Theme, Typography, useMediaQuery } from '@mui/material';
+import { ClearOutlined, Close, LibraryAddOutlined, Refresh } from '@mui/icons-material';
+import { Avatar, Box, Button, IconButton, Typography } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -26,7 +18,6 @@ import {
   sharedResourceSelector as resourceSelector,
   channelUpdateMyChannel as updateMyChannel,
 } from '@/api';
-import { TemplateDisplays } from '@/component/certificate';
 import {
   AutocompleteSelect2,
   CheckboxAutocomplete,
@@ -36,84 +27,8 @@ import {
   useServiceImmutable,
 } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
-import { NotificationSetting } from '@/component/notification';
 import { textEllipsisCss } from '@/helper/util';
 import { userState } from '@/store';
-
-export const Setting: React.FC = () => {
-  const { t } = useTranslation('channel');
-  const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const [tabValue, setTabValue] = useState(0);
-
-  const tabs = [
-    { label: t('Channel Info'), icon: InfoOutlined, Component: ChannelInfo },
-    { label: t('Certificate'), icon: WorkspacePremiumRounded, Component: TemplateDisplays },
-    { label: t('Notification'), icon: NotificationsOutlined, Component: NotificationSetting },
-  ];
-
-  const CurrentComponent = tabs[tabValue].Component;
-
-  return (
-    <Box sx={{ display: 'block', p: 3, width: '100%' }}>
-      <Box
-        sx={{
-          maxWidth: 'lg',
-          display: 'flex',
-          mx: 'auto',
-          flexDirection: { xs: 'column-reverse', md: 'row' },
-          gap: { xs: 2, md: 5 },
-        }}
-      >
-        <Box sx={{ flex: 1 }}>
-          <CurrentComponent />
-        </Box>
-        <Tabs
-          orientation={mdDown ? 'horizontal' : 'vertical'}
-          value={tabValue}
-          onChange={(_, newValue: number) => {
-            setTabValue(newValue);
-          }}
-          variant={mdDown ? 'scrollable' : 'standard'}
-          scrollButtons={true}
-          allowScrollButtonsMobile
-          sx={{
-            bgcolor: 'background.paper',
-            minHeight: 'unset',
-            alignSelf: { xs: 'center', md: 'flex-start' },
-            '& .MuiButtonBase-root': {
-              justifyContent: 'flex-start',
-              minHeight: 'inherit',
-              px: 3,
-              minWidth: 'unset',
-              cursor: 'pointer',
-              alignItems: { xs: 'center', md: 'flex-start' },
-            },
-            '& .MuiTabs-indicator': { left: 0, right: 'auto' },
-            minWidth: { md: 150 },
-            borderLeft: { md: 1 },
-            borderColor: { md: 'divider' },
-          }}
-        >
-          {tabs.map((tab, index) => {
-            const Icon = tab.icon;
-            return (
-              <Tab
-                key={index}
-                label={
-                  <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Icon fontSize="small" />
-                    {tab.label}
-                  </Typography>
-                }
-                sx={{ bgcolor: tabValue === index && !mdDown ? 'action.selected' : 'inherit' }}
-              />
-            );
-          })}
-        </Tabs>
-      </Box>
-    </Box>
-  );
-};
 
 const createSchema = (t: (key: string) => string) => {
   const REQUIRED = t('This field is required.');
@@ -225,7 +140,7 @@ export const ChannelInfo: React.FC = () => {
   return (
     <Form onSubmit={handleSubmit(updateChannel)} formState={formState} setError={setError}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="body2" sx={{ my: 1 }}>
+        <Typography variant="body2" sx={{ mb: 2 }}>
           {t('Update your channel information.')}
         </Typography>
         <Text

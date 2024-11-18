@@ -5,14 +5,18 @@ import i18next from '@/i18n';
 
 export { AutocompleteSelect2 } from './AutocompleteSelect2';
 export { BaseDialog } from './BaseDialog';
+export { CheckboxAutocomplete } from './CheckboxAutocomplete';
 export { DeleteResourceDialog } from './DeleteResourceDialog';
 export { EmojiPickerWrapper } from './EmojiPickerWrapper';
 export { EmptyMessage } from './EmptyMessage';
 export {
   CheckboxControl,
   FileFieldControl,
-  Form, RadioGroupControl, SelectControl, TextEditorControl,
-  TextFieldControl
+  Form,
+  RadioGroupControl,
+  SelectControl,
+  TextEditorControl,
+  TextFieldControl,
 } from './FormHelper';
 export { GradientCircularProgress } from './GradientCircularProgress';
 export { GridInfiniteScrollPage } from './GridInfiniteScrollPage';

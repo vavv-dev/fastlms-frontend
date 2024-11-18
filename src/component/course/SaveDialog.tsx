@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 import {
+  CertificateTemplateSchema,
   CourseLessonResource as Resource,
   CourseResourceResponse as ResourceResponse,
   CourseResourceUpdateRequest as ResourceUpdateRequest,
+  certificateTemplateSelector,
   courseCreateResource as createResource,
   courseGetDisplays as getDisplays,
   courseGetResource as getResource,
@@ -13,30 +15,36 @@ import {
   courseUpdateResource as updateResource,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
-import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
+import { base64ImageSchema, datetimeLocalString } from '@/helper/util';
 
-const createSchema = (t: (key: string) => string) => {
+const createSchema = (t: (key: string, options?: Record<string, unknown>) => string) => {
   const REQUIRED = t('This field is required.');
   const INVALID_URL = t('Invalid URL.');
   const INVALID_IFRAME = t('Invalid iframe code.');
 
-  const resourceSchema: yup.ObjectSchema<Resource> = yup.object({
+  const lessonSchema: yup.ObjectSchema<Resource> = yup.object({
     id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
     title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
     weight: yup
       .number()
       .required(REQUIRED)
-      .min(0, t('Minimum value is 0.'))
-      .max(100, t('Maximum value is 100.'))
+      .min(0, t('Minimum value is {{ min }}.', { min: 0 }))
+      .max(100, t('Maximum value is {{ max }}.', { max: 100 }))
       .default(0)
       .label(t('Grade weight %'))
       .meta({ control: 'number' }),
   });
 
+  const certificateTemplatesSchema: yup.ObjectSchema<CertificateTemplateSchema> = yup.object({
+    thumbnail: yup.string().default('').meta({ readOnly: true, control: 'thumbnail' }),
+    id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
+    title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
+  });
+
   const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text' }),
     description: yup.string().default('').label(t('Description')).meta({ control: 'editor', multiline: true }),
-    thumbnail: base64ThumbnailSchema(yup, true, t).meta({ grid: 12 }),
+    thumbnail: base64ImageSchema(yup, true, t).meta({ grid: 12 }),
     is_public: yup
       .boolean()
       .default(false)
@@ -151,11 +159,19 @@ const createSchema = (t: (key: string) => string) => {
       .default(60)
       .label(t('Cutoff score %'))
       .meta({ control: 'number', grid: 3, helperText: t('Minimum score percent') }),
+    certificate_templates: yup
+      .array()
+      .max(2, t('Maximum value is {{ max }}.', { max: 2 }))
+      .of(certificateTemplatesSchema)
+      .label(t('Certificate template. If not selected, certificate will not be disabled.'))
+      .default([])
+      .nullable()
+      .meta({ max: 2 }),
     lessons: yup
       .array()
       .required(REQUIRED)
-      .of(resourceSchema)
-      .max(100, t('Maximum value is 100.'))
+      .of(lessonSchema)
+      .max(100, t('Maximum value is {{ max }}.', { max: 100 }))
       .label(t('Lessons'))
       .min(1, t('At least one item is required'))
       .default([])
@@ -190,6 +206,12 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
       createService={createResource}
       partialUpdateService={updateResource}
       copyAutocomplete={{
+        certificate_templates: {
+          service: certificateTemplateSelector,
+          labelField: 'title',
+          mode: 'select',
+          hideAddButton: true,
+        },
         lessons: {
           service: resourceSelector,
           serviceParams: { kinds: ['lesson'] },

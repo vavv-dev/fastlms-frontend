@@ -682,6 +682,26 @@ export const BookmarkedContentResponseSchema = {
     title: 'BookmarkedContentResponse'
 } as const;
 
+export const CertificateTemplateSchemaSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'thumbnail'],
+    title: 'CertificateTemplateSchema'
+} as const;
+
 export const ChannelDisplayResponseSchema = {
     properties: {
         id: {
@@ -1741,6 +1761,21 @@ export const CourseResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        certificate_templates: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/CertificateTemplateSchema'
+                    },
+                    type: 'array',
+                    maxItems: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Certificate Templates'
+        },
         lessons: {
             items: {
                 '$ref': '#/components/schemas/CourseLessonResource'
@@ -1750,7 +1785,7 @@ export const CourseResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons'],
+    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'certificate_templates', 'lessons'],
     title: 'CourseResourceCreateRequest'
 } as const;
 
@@ -1860,6 +1895,21 @@ export const CourseResourceResponseSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        certificate_templates: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/CertificateTemplateSchema'
+                    },
+                    type: 'array',
+                    maxItems: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Certificate Templates'
+        },
         lessons: {
             items: {
                 '$ref': '#/components/schemas/CourseLessonResource'
@@ -1881,7 +1931,7 @@ export const CourseResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'certificate_templates', 'lessons', 'id', 'owner', 'modified'],
     title: 'CourseResourceResponse'
 } as const;
 
@@ -1990,6 +2040,21 @@ export const CourseResourceUpdateRequestSchema = {
         closed: {
             type: 'boolean',
             title: 'Closed'
+        },
+        certificate_templates: {
+            anyOf: [
+                {
+                    items: {
+                        '$ref': '#/components/schemas/CertificateTemplateSchema'
+                    },
+                    type: 'array',
+                    maxItems: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Certificate Templates'
         },
         lessons: {
             items: {
@@ -4608,6 +4673,37 @@ export const Paginated_SurveyReportResponse_Schema = {
     type: 'object',
     required: ['items', 'total', 'page', 'size', 'pages'],
     title: 'Paginated[SurveyReportResponse]'
+} as const;
+
+export const Paginated_TemplateDisplayResponse_Schema = {
+    properties: {
+        items: {
+            items: {
+                '$ref': '#/components/schemas/TemplateDisplayResponse'
+            },
+            type: 'array',
+            title: 'Items'
+        },
+        total: {
+            type: 'integer',
+            title: 'Total'
+        },
+        page: {
+            type: 'integer',
+            title: 'Page'
+        },
+        size: {
+            type: 'integer',
+            title: 'Size'
+        },
+        pages: {
+            type: 'integer',
+            title: 'Pages'
+        }
+    },
+    type: 'object',
+    required: ['items', 'total', 'page', 'size', 'pages'],
+    title: 'Paginated[TemplateDisplayResponse]'
 } as const;
 
 export const Paginated_ThreadResponse_Schema = {
@@ -7354,6 +7450,244 @@ export const SurveyResourceUpdateRequestSchema = {
     },
     type: 'object',
     title: 'SurveyResourceUpdateRequest'
+} as const;
+
+export const TemplateControlSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        kind: {
+            type: 'string',
+            enum: ['title', 'document_number', 'completion_title', 'completion_period', 'learning_hours', 'name', 'date_of_birth', 'issuer', 'issue_date'],
+            title: 'Kind'
+        },
+        left: {
+            type: 'string',
+            title: 'Left'
+        },
+        top: {
+            type: 'string',
+            title: 'Top'
+        },
+        width: {
+            type: 'string',
+            title: 'Width'
+        },
+        font_size: {
+            type: 'integer',
+            title: 'Font Size'
+        },
+        is_placeholder: {
+            type: 'boolean',
+            title: 'Is Placeholder'
+        },
+        text_align: {
+            type: 'string',
+            enum: ['left', 'center', 'right'],
+            title: 'Text Align'
+        },
+        content: {
+            type: 'string',
+            title: 'Content'
+        }
+    },
+    type: 'object',
+    required: ['id', 'kind', 'left', 'top', 'width', 'font_size', 'is_placeholder', 'text_align', 'content'],
+    title: 'TemplateControl'
+} as const;
+
+export const TemplateDisplayResponseSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        owner: {
+            '$ref': '#/components/schemas/TemplateOwner'
+        },
+        modified: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Modified'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'owner', 'modified', 'thumbnail'],
+    title: 'TemplateDisplayResponse'
+} as const;
+
+export const TemplateMetaSchema = {
+    properties: {
+        page_size: {
+            type: 'string',
+            enum: ['A4_PORTRAIT', 'A4_LANDSCAPE', 'LETTER_PORTRAIT', 'LETTER_LANDSCAPE'],
+            title: 'Page Size'
+        },
+        controls: {
+            items: {
+                '$ref': '#/components/schemas/TemplateControl'
+            },
+            type: 'array',
+            title: 'Controls'
+        }
+    },
+    type: 'object',
+    required: ['page_size', 'controls'],
+    title: 'TemplateMeta'
+} as const;
+
+export const TemplateOwnerSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        username: {
+            type: 'string',
+            title: 'Username'
+        },
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        },
+        use_channel: {
+            type: 'boolean',
+            title: 'Use Channel'
+        }
+    },
+    type: 'object',
+    required: ['id', 'username', 'name', 'thumbnail', 'use_channel'],
+    title: 'TemplateOwner'
+} as const;
+
+export const TemplateResourceCreateRequestSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        meta: {
+            '$ref': '#/components/schemas/TemplateMeta'
+        },
+        content: {
+            type: 'string',
+            title: 'Content'
+        },
+        background: {
+            type: 'string',
+            title: 'Background'
+        }
+    },
+    type: 'object',
+    required: ['title', 'description', 'meta', 'content', 'background'],
+    title: 'TemplateResourceCreateRequest'
+} as const;
+
+export const TemplateResourceResponseSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        meta: {
+            '$ref': '#/components/schemas/TemplateMeta'
+        },
+        content: {
+            type: 'string',
+            title: 'Content'
+        },
+        background: {
+            type: 'string',
+            title: 'Background'
+        },
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        owner: {
+            '$ref': '#/components/schemas/TemplateOwner'
+        },
+        modified: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Modified'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    required: ['title', 'description', 'meta', 'content', 'background', 'id', 'owner', 'modified', 'thumbnail'],
+    title: 'TemplateResourceResponse'
+} as const;
+
+export const TemplateResourceUpdateRequestSchema = {
+    properties: {
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        description: {
+            type: 'string',
+            title: 'Description'
+        },
+        meta: {
+            '$ref': '#/components/schemas/TemplateMeta'
+        },
+        content: {
+            type: 'string',
+            title: 'Content'
+        },
+        background: {
+            type: 'string',
+            title: 'Background'
+        }
+    },
+    type: 'object',
+    title: 'TemplateResourceUpdateRequest'
+} as const;
+
+export const TemplateSelectorResponseSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'thumbnail'],
+    title: 'TemplateSelectorResponse'
 } as const;
 
 export const ThreadCreateRequestSchema = {

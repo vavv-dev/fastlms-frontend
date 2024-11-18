@@ -13,7 +13,7 @@ import {
   lessonUpdateResource as updateResource,
 } from '@/api';
 import { SaveResourceDialog } from '@/component/common';
-import { base64ThumbnailSchema, datetimeLocalString } from '@/helper/util';
+import { base64ImageSchema, datetimeLocalString } from '@/helper/util';
 
 const createSchema = (t: (key: string) => string) => {
   const REQUIRED = t('This field is required.');
@@ -99,7 +99,7 @@ const createSchema = (t: (key: string) => string) => {
         helperText: t('If video or asset is included, select progress. Otherwise, select score.'),
         grid: 6,
       }),
-    thumbnail: base64ThumbnailSchema(yup, false, t),
+    thumbnail: base64ImageSchema(yup, false, t),
     resources: yup
       .array()
       .of(resourceSchema)
