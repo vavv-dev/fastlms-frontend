@@ -4,10 +4,18 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useSWRConfig } from 'swr/_internal';
 
 import { notificationsState } from '.';
 
-import { UserMessageResponse, messageGetMessages as getMessages, messageReadMessage as readMessage } from '@/api';
+import {
+  CertificateResponse,
+  CourseDisplayResponse,
+  UserMessageResponse,
+  courseGetDisplays,
+  messageGetMessages as getMessages,
+  messageReadMessage as readMessage,
+} from '@/api';
 import { updateInfiniteCache } from '@/component/common';
 import { formatRelativeTime, stripHtml, textEllipsisCss } from '@/helper/util';
 import { userMessageState, userState } from '@/store';
@@ -25,16 +33,40 @@ export const NotificationButton = () => {
   const newNotificationCount = notifications.filter((notification) => !notification.read_time).length;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
+  const { mutate } = useSWRConfig();
+
   useEffect(() => {
     if (userMessage) {
       const handleMessage = (e: MessageEvent) => {
         const data = JSON.parse(e.data);
-        const messages = Array.isArray(data) ? data : [data];
+        const messages = (Array.isArray(data) ? data : [data]) as UserMessageResponse[];
         const newMessages = messages.filter((message) => !notifications.find((notification) => notification.id === message.id));
         if (newMessages.length) {
           setNotifications((notifications) => [...newMessages, ...notifications]);
           newMessages.forEach((message) => {
             updateInfiniteCache<UserMessageResponse>(getMessages, message, 'create');
+
+            // temporary parcel: newly issuded certificates
+            const certificates = (message.parcel?.certificates || []) as CertificateResponse[];
+            if (certificates.length) {
+              const courseId = message.object_id;
+              // update course list
+              updateInfiniteCache<CourseDisplayResponse>(
+                courseGetDisplays,
+                { id: courseId, certificates: [...certificates] },
+                'update',
+              );
+              // update course view
+              mutate(
+                (key) => {
+                  if (!key || typeof key !== 'string') return false;
+                  const r = new RegExp(`courseGetView/.+${courseId}`);
+                  return r.test(key);
+                },
+                (prev) => ({ ...prev, certificates: [...certificates] }),
+                { revalidate: false },
+              );
+            }
           });
         }
       };
@@ -44,14 +76,14 @@ export const NotificationButton = () => {
         userMessage.onmessage = null;
       };
     }
-  }, [userMessage, notifications, setNotifications]);
+  }, [userMessage, notifications, setNotifications, mutate]);
 
   if (!user) return null;
 
   return (
     <>
       <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <Badge badgeContent={newNotificationCount} color="error">
+        <Badge badgeContent={newNotificationCount > 10 ? '10+' : newNotificationCount} color="error">
           <NotificationsOutlined />
         </Badge>
       </IconButton>

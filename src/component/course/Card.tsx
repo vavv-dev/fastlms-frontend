@@ -18,10 +18,11 @@ import { formatRelativeTime, textEllipsisCss } from '@/helper/util';
 interface Props {
   data: DisplayResponse;
   hideAvatar?: boolean;
+  footer?: React.ReactNode;
   sx?: SxProps;
 }
 
-export const Card = ({ data, hideAvatar, sx }: Props) => {
+export const Card = ({ data, hideAvatar, footer, sx }: Props) => {
   const { t } = useTranslation('course');
   const navigate = useNavigate();
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
@@ -81,6 +82,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
         partialUpdateService={updateResource}
         listService={getDisplays}
         bannerBorder={!data.thumbnail}
+        footer={footer}
         sx={sx}
       />
       {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}

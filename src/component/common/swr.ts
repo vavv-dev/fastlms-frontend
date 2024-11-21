@@ -1,9 +1,59 @@
 import { INFINITE_PREFIX, cache as globalCache, mutate as globalMutate } from 'swr/_internal';
 
-import { LessonGetDisplaysResponse, SharedGetDisplaysResponse, lessonGetDisplays, sharedGetDisplays } from '@/api';
+import { GradingEnum, LessonGetDisplaysResponse, SharedGetDisplaysResponse, lessonGetDisplays, sharedGetDisplays } from '@/api';
+
+const ServiceType = {
+  LESSON_DISPLAYS: 'lessonGetDisplays',
+  SHARED_DISPLAYS: 'sharedGetDisplays',
+} as const;
 
 type NestedItem<T> = T & { [field: string]: Array<T> };
 type UpdaterFunction<T> = (item: T) => T;
+
+interface ResourceDisplay {
+  id: number | string;
+  kind: string;
+  progress?: number;
+  score?: number;
+  passed?: boolean;
+}
+
+interface Lesson {
+  id: number | string;
+  grading_method: GradingEnum;
+  resource_displays: ResourceDisplay[];
+  progress?: number | null;
+  score?: number | null;
+  passed?: boolean | null;
+}
+
+const calculateLessonMetrics = (lesson: Lesson): Partial<Lesson> => {
+  const gradingKinds = lesson.grading_method === 'progress' ? ['video', 'asset'] : ['quiz', 'exam'];
+  const relevantDisplays = lesson.resource_displays.filter((r) => gradingKinds.includes(r.kind));
+
+  if (relevantDisplays.length === 0) {
+    return { progress: null, score: null, passed: null };
+  }
+
+  let metrics: Partial<Lesson> = {};
+
+  if (lesson.grading_method === 'progress') {
+    const total = relevantDisplays.reduce((sum, r) => sum + (r.progress || 0), 0);
+    metrics.progress = total / relevantDisplays.length;
+  }
+
+  if (lesson.grading_method === 'score') {
+    const total = relevantDisplays.reduce((sum, r) => sum + (r.score || 0), 0);
+    metrics.score = total / relevantDisplays.length;
+  }
+
+  if (lesson.grading_method !== 'none') {
+    const passed = relevantDisplays.map((r) => r.passed);
+    metrics.passed = passed.length > 0 ? passed.every((p) => p) : null;
+  }
+
+  return metrics;
+};
 
 export const updateInfiniteCache = <T extends { id: number | string }>(
   listService: () => Promise<{ items: T[]; page: number; total: number }>,
@@ -12,7 +62,7 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
   children?: string,
   isPin?: boolean,
   skipAccountHistory?: boolean,
-  skipLessonHistory?: boolean,
+  skipLessonDisplays?: boolean,
 ) => {
   const getItemId = () => {
     if (typeof itemOrUpdater === 'object') {
@@ -36,7 +86,14 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
           }
         }
         if (children && Array.isArray(i[children as keyof T])) {
-          return { ...i, [children]: updateNestedItems(i[children as keyof T] as Array<T>) };
+          const updatedItem = { ...i, [children]: updateNestedItems(i[children as keyof T] as Array<T>) };
+
+          if (listService.name === ServiceType.LESSON_DISPLAYS && children === 'resource_displays') {
+            const metrics = calculateLessonMetrics(updatedItem as unknown as Lesson);
+            return { ...updatedItem, ...metrics };
+          }
+
+          return updatedItem;
         }
         return i;
       })
@@ -83,30 +140,32 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
   });
 
   try {
-    // Update shared displays cache
-    if (!skipAccountHistory && listService.name !== 'sharedGetDisplays' && mode !== 'create') {
+    if (!skipAccountHistory && listService.name !== ServiceType.SHARED_DISPLAYS && mode !== 'create') {
       updateInfiniteCache(
         sharedGetDisplays,
         typeof itemOrUpdater === 'function'
           ? (itemOrUpdater as unknown as UpdaterFunction<SharedGetDisplaysResponse['items'][0]>)
           : (itemOrUpdater as unknown as SharedGetDisplaysResponse['items'][0]),
         mode,
-        'items', // items field for shared displays
+        'items',
         undefined,
         true,
-        skipLessonHistory,
+        skipLessonDisplays,
       );
     }
 
-    // Update lesson displays cache
-    if (!skipLessonHistory && listService.name !== 'lessonGetDisplays' && mode !== 'create') {
-      // For lesson displays, we need to modify the data structure
-      const transformLessonData = (data: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (!skipLessonDisplays && listService.name !== ServiceType.LESSON_DISPLAYS && mode !== 'create') {
+      const transformLessonData = (
+        data: any, // eslint-disable-line
+      ) => {
         if (typeof data === 'function') {
-          return (lesson: LessonGetDisplaysResponse['items'][0]) => ({
-            ...lesson,
-            resource_displays: data(lesson.resource_displays),
-          });
+          return (lesson: LessonGetDisplaysResponse['items'][0]) => {
+            const updatedLesson = {
+              ...lesson,
+              resource_displays: data(lesson.resource_displays),
+            };
+            return updatedLesson;
+          };
         }
         return {
           ...data,
@@ -116,9 +175,9 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
 
       updateInfiniteCache(
         lessonGetDisplays,
-        transformLessonData(itemOrUpdater) as UpdaterFunction<LessonGetDisplaysResponse['items'][0]>,
+        transformLessonData(itemOrUpdater),
         mode,
-        'resource_displays', // resource_displays field for lesson displays
+        'resource_displays',
         undefined,
         skipAccountHistory,
         true,

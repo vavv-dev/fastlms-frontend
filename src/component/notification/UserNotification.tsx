@@ -155,7 +155,7 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
       <TableCell align="center">{index}</TableCell>
       <TableCell>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', fontWeight: hasRead || row.read_time ? 400 : 600 }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', fontWeight: hasRead || row.read_time ? 400 : 700 }}>
             {row.sender ? (
               <WithAvatar variant="small" {...row.sender}>
                 {t(row.title)}

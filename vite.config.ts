@@ -34,9 +34,14 @@ export default defineConfig({
     chunkSizeWarningLimit: 800,
     minify: 'terser',
     terserOptions: {
+      // TODO: remove.
+      // currently common.swr and notification.NotifcationButton refer to function names
+      mangle: {
+        keep_fnames: true,
+      },
       compress: {
-        drop_console: true,
-        drop_debugger: true,
+        // drop_console: true,
+        // drop_debugger: true,
       },
     },
   },

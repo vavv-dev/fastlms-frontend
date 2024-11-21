@@ -11,17 +11,17 @@ import { useReward } from 'react-rewards';
 import { playerInstanceState, playerProgressState } from '.';
 
 import {
+  VideoDisplayResponse as DisplayResponse,
   VideoGetViewData as GetViewData,
   VideoGetViewResponse as GetViewResponse,
   VideoGetWatchBitmapData as GetWatchBitmapData,
   VideoGetWatchBitmapResponse as GetWatchBitmapResponse,
-  VideoDisplayResponse as DisplayResponse,
   WatchUpdateRequest,
+  videoGetDisplays as getDisplays,
   videoGetView as getView,
   videoGetWatchBitmap as getWatchBitmap,
   videoStartWatch as startWatch,
   videoUpdateWatch as updateWatch,
-  videoGetDisplays as getDisplays,
 } from '@/api';
 import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { formatDuration, toFixedHuman } from '@/helper/util';
@@ -181,10 +181,13 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
 
     // persist watch event wrapper
     const eventWrapper = (e: Event) => {
-      if (e.type === 'visibilitychange' && !(document.visibilityState === 'hidden')) {
-        return;
+      if (e.type === 'visibilitychange') {
+        if (document.visibilityState !== 'hidden') return;
+        // do not use throttle
+        persistWatch(data.id);
+      } else {
+        throttlePersistWatch(data.id);
       }
-      throttlePersistWatch(data.id);
     };
 
     // add event listener

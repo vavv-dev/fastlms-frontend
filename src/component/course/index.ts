@@ -1,3 +1,6 @@
+import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
+
 import i18next from '@/i18n';
 
 export { ActionMenu as CourseActionMenu } from './ActionMenu';
@@ -23,3 +26,8 @@ void [
   i18next.t('advanced', { ns: 'course' }),
   i18next.t('general', { ns: 'course' }),
 ];
+
+
+type CertificateStatus = 'notEligible' | 'eligible' | 'requested' | 'issued';
+
+export const certificateStatusFamily = atomFamily(() => atom<CertificateStatus>('notEligible'));

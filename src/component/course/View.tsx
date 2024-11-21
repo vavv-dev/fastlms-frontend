@@ -17,7 +17,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { certificateStatusFamily } from '.';
 import { ActionMenu } from './ActionMenu';
+import { CertificateRequest } from './CertificateRequest';
 import { EnrollDialog } from './EnrollDialog';
 import { WeightedScore } from './WeightedScore';
 
@@ -61,8 +63,9 @@ export const View = () => {
   const [showAll, setShowAll] = useState(false);
   const [activeStep, setActiveStep] = useAtom(activeStepFamily(id as string));
   const spacerRef = useAtomValue(spacerRefState);
-  const lessonViewportRef = useRef<HTMLDivElement>(null);
+  const stickyPanelRef = useRef<HTMLDivElement>(null);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
+  const certificateStatus = useAtomValue(certificateStatusFamily(id));
 
   // update spacerRef height
   const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -80,6 +83,12 @@ export const View = () => {
   useEffect(() => {
     if (!data?.enrolled) setEnrollDialogOpen(true);
   }, [data?.enrolled, data, navigate]);
+
+  useEffect(() => {
+    if (data?.certificates.length) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [data?.certificates.length]);
 
   const refresh = () => {
     mutate();
@@ -115,58 +124,69 @@ export const View = () => {
           />
         )}
         <WithAvatar variant="small" {...data.owner} sx={{ mx: 'auto' }} />
-        <Box
-          ref={lessonViewportRef}
-          sx={{
-            display: 'flex',
-            gap: 1,
-            position: 'sticky',
-            top: `${(spacerRef?.clientHeight || 0) + 32}px`,
-            bgcolor: 'background.paper',
-            zIndex: 5,
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-          }}
-        >
-          <WeightedScore course={data} lessons={lessons} sx={{ pt: 3 }} />
-          <Box sx={{ flexGrow: 1 }} />
 
-          {data.enrolled && (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
-                {showAll ? <ArrowDropDown /> : <ArrowDropUp />}
-              </IconButton>
-              <IconButton color="primary" onClick={refresh}>
-                <Refresh />
-              </IconButton>
-              <ActionMenu data={data} />
-            </Box>
-          )}
-        </Box>
-
-        {/* lessons */}
         {data.enrolled ? (
-          <Box sx={{ position: 'relative', mt: 3 }}>
-            {(isLoading || isValidating) && (
-              <Box sx={{ position: 'absolute', width: '100%', textAlign: 'center', top: '2em' }}>
-                <GradientCircularProgress />
+          <>
+            <Box
+              ref={stickyPanelRef}
+              sx={{
+                display: 'flex',
+                position: 'sticky',
+                top: `${(spacerRef?.clientHeight || 0) + 32}px`,
+                bgcolor: 'background.paper',
+                zIndex: 5,
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                flexWrap: { xs: 'wrap', md: 'nowrap' },
+                borderBottom: 1,
+                py: 2,
+                borderColor: 'divider',
+                gap: { xs: 1, md: 5 },
+              }}
+            >
+              <WeightedScore course={data} lessons={lessons} sx={{ pt: 3 }} />
+              {['eligible', 'requested'].includes(certificateStatus) && <CertificateRequest course={data} />}
+
+              <Box sx={{ flexGrow: 1 }} />
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {!smDown && (
+                  <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
+                    {showAll ? <ArrowDropDown /> : <ArrowDropUp />}
+                  </IconButton>
+                )}
+                <IconButton color="primary" onClick={refresh}>
+                  <Refresh />
+                </IconButton>
+                <ActionMenu data={data} />
               </Box>
-            )}
-            <Stepper nonLinear activeStep={activeStep} orientation="vertical" sx={{ flexGrow: 1 }}>
-              {lessons?.map((lesson, i) => (
-                <LessonStep
-                  key={i}
-                  lesson={lesson}
-                  stepIndex={i}
-                  activeStep={activeStep}
-                  setActiveStep={setActiveStep}
-                  showAll={showAll}
-                  lessonViewportRef={lessonViewportRef}
-                />
-              ))}
-            </Stepper>
-          </Box>
+            </Box>
+            <Box sx={{ position: 'relative', mt: 3 }}>
+              {(isLoading || isValidating) && (
+                <Box sx={{ position: 'absolute', width: '100%', textAlign: 'center', top: '2em' }}>
+                  <GradientCircularProgress />
+                </Box>
+              )}
+              {certificateStatus == 'issued' && <CertificateRequest course={data} />}
+              <Stepper
+                nonLinear
+                activeStep={activeStep}
+                orientation="vertical"
+                sx={{ '& .MuiStepConnector-line': { minHeight: '12px' } }}
+              >
+                {lessons?.map((lesson, i) => (
+                  <LessonStep
+                    key={i}
+                    lesson={lesson}
+                    stepIndex={i}
+                    activeStep={activeStep}
+                    setActiveStep={setActiveStep}
+                    showAll={showAll}
+                    stickyPanelRef={stickyPanelRef}
+                  />
+                ))}
+              </Stepper>
+            </Box>
+          </>
         ) : (
           <EmptyMessage Icon={NotificationImportantOutlined} message={t('You are not enrolled in this course')} />
         )}
@@ -182,10 +202,10 @@ interface LessonStepProps {
   activeStep: number;
   setActiveStep: (value: number | ((prev: number) => number)) => void;
   showAll: boolean;
-  lessonViewportRef?: React.RefObject<HTMLDivElement>;
+  stickyPanelRef?: React.RefObject<HTMLDivElement>;
 }
 
-const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, lessonViewportRef, ...props }: LessonStepProps) => {
+const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, stickyPanelRef, ...props }: LessonStepProps) => {
   const { t } = useTranslation('course');
   const [, setHover] = useState(false);
   const [active, setActive] = useState(false);
@@ -202,7 +222,7 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, les
 
   const handleScroll = () => {
     const element = stepRef.current;
-    const viewport = lessonViewportRef?.current;
+    const viewport = stickyPanelRef?.current;
     if (element && viewport) {
       const viewportRect = viewport.getBoundingClientRect();
       const offset = viewportRect.bottom + 10;
@@ -240,7 +260,9 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, les
           '& .MuiStepLabel-label': { display: 'flex', gap: 3, alignItems: 'center' },
         }}
       >
-        <Typography variant="h6">{lesson.title}</Typography>
+        <Typography variant="h6" sx={{ lineHeight: 1.4 }}>
+          {lesson.title}
+        </Typography>
         {!!lesson.score && (
           <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'warning'}>
             {t('Score {{ value }}', { value: toFixedHuman(lesson.score, 1) })}

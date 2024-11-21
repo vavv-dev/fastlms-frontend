@@ -682,6 +682,34 @@ export const BookmarkedContentResponseSchema = {
     title: 'BookmarkedContentResponse'
 } as const;
 
+export const CertificateCreateRequestSchema = {
+    properties: {
+        resource_id: {
+            type: 'string',
+            title: 'Resource Id'
+        }
+    },
+    type: 'object',
+    required: ['resource_id'],
+    title: 'CertificateCreateRequest'
+} as const;
+
+export const CertificateResponseSchema = {
+    properties: {
+        pdf: {
+            type: 'string',
+            title: 'Pdf'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    required: ['pdf', 'thumbnail'],
+    title: 'CertificateResponse'
+} as const;
+
 export const CertificateTemplateSchemaSchema = {
     properties: {
         id: {
@@ -1271,6 +1299,22 @@ export const ContentOwnerSchema = {
     title: 'ContentOwner'
 } as const;
 
+export const CourseCertificateSchemaSchema = {
+    properties: {
+        pdf: {
+            type: 'string',
+            title: 'Pdf'
+        },
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        }
+    },
+    type: 'object',
+    required: ['pdf', 'thumbnail'],
+    title: 'CourseCertificateSchema'
+} as const;
+
 export const CourseDisplayResponseSchema = {
     properties: {
         id: {
@@ -1429,6 +1473,10 @@ export const CourseDisplayResponseSchema = {
             ],
             title: 'Passed'
         },
+        certificate_enabled: {
+            type: 'boolean',
+            title: 'Certificate Enabled'
+        },
         study_start: {
             anyOf: [
                 {
@@ -1452,10 +1500,17 @@ export const CourseDisplayResponseSchema = {
                 }
             ],
             title: 'Study End'
+        },
+        certificates: {
+            items: {
+                '$ref': '#/components/schemas/CourseCertificateSchema'
+            },
+            type: 'array',
+            title: 'Certificates'
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'thumbnail', 'kind', 'preview', 'marketing_url', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'enrolled', 'score', 'progress', 'passed'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'thumbnail', 'kind', 'preview', 'marketing_url', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'enrolled', 'score', 'progress', 'passed', 'certificate_enabled', 'certificates'],
     title: 'CourseDisplayResponse'
 } as const;
 
@@ -7460,7 +7515,7 @@ export const TemplateControlSchema = {
         },
         kind: {
             type: 'string',
-            enum: ['title', 'document_number', 'completion_title', 'completion_period', 'learning_hours', 'name', 'date_of_birth', 'issuer', 'issue_date'],
+            enum: ['title', 'document_number', 'completion_title', 'completion_period', 'learning_hours', 'name', 'birthdate', 'issuer', 'issue_date'],
             title: 'Kind'
         },
         left: {
@@ -7869,6 +7924,11 @@ export const UserMessageResponseSchema = {
             type: 'string',
             title: 'Object Id'
         },
+        parcel: {
+            type: 'object',
+            title: 'Parcel',
+            default: {}
+        },
         id: {
             type: 'string',
             title: 'Id'
@@ -7922,6 +7982,11 @@ export const UserMessageSchemaSchema = {
         object_id: {
             type: 'string',
             title: 'Object Id'
+        },
+        parcel: {
+            type: 'object',
+            title: 'Parcel',
+            default: {}
         }
     },
     type: 'object',
@@ -7956,6 +8021,18 @@ export const UserResponseSchema = {
             format: 'email',
             title: 'Email'
         },
+        birthdate: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birthdate'
+        },
         description: {
             type: 'string',
             title: 'Description'
@@ -7967,7 +8044,7 @@ export const UserResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'username', 'name', 'thumbnail', 'use_channel', 'email', 'description', 'created'],
+    required: ['id', 'username', 'name', 'thumbnail', 'use_channel', 'email', 'birthdate', 'description', 'created'],
     title: 'UserResponse'
 } as const;
 
@@ -7981,6 +8058,18 @@ export const UserUpdateRequestSchema = {
             type: 'string',
             format: 'email',
             title: 'Email'
+        },
+        birthdate: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Birthdate'
         },
         name: {
             type: 'string',

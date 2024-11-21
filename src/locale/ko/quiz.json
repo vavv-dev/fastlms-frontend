@@ -62,7 +62,7 @@
   "Submit your answers": "응답 제출 하기",
   "Success message": "성공했을 때 보여질 메시지",
   "This field is required.": "필수 입력 항목입니다.",
-  "This quiz's cutoff score is {{ cutoff }} %.": "이 퀴즈의 합격 기준은 {{ cutoff }} % 입니다.",
+  "This quiz's cutoff score is {{ cutoff }}%.": "이 퀴즈의 합격 기준은 {{ cutoff }}% 입니다.",
   "Thumbnail or description here": "설명 또는 썸네일이 여기에 표시됩니다.",
   "Title": "제목",
   "Up to": "~ 까지",

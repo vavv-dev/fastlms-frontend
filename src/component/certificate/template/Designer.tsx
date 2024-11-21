@@ -54,7 +54,7 @@ const CONTROL_CONFIG: Record<TemplateControl['kind'], TemplateControl> = {
   completion_period: { id: '', kind: 'completion_period', left: '10%', top: '36%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Completion period', },
   learning_hours: { id: '', kind: 'learning_hours', left: '10%', top: '40%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Learning hours', },
   name: { id: '', kind: 'name', left: '10%', top: '44%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Name', },
-  date_of_birth: { id: '', kind: 'name', left: '10%', top: '48%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Date of birth', },
+  birthdate: { id: '', kind: 'birthdate', left: '10%', top: '48%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Date of birth', },
   issuer: { id: '', kind: 'issuer', left: '10%', top: '84%', width: '80%', font_size: 20, is_placeholder: false, text_align: 'center', content: 'Issuer', },
   issue_date: { id: '', kind: 'issue_date', left: '40%', top: '78%', width: '20%', font_size: 14, is_placeholder: true, text_align: 'center', content: 'Issue date', },
 };

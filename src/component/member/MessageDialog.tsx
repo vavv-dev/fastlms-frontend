@@ -59,6 +59,7 @@ const createSchema = (t: (key: string) => string) => {
       .label(t('Message caption'))
       .max(200, t('Message caption is too long. Max {{ max }} characters.')),
     attachment: yup.mixed<ResourceSchema>().nullable().default(null),
+    parcel: yup.mixed(),
   });
 
   return schema;

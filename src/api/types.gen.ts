@@ -148,6 +148,15 @@ export type BookmarkedContentResponse = {
 
 export type kind = 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course';
 
+export type CertificateCreateRequest = {
+    resource_id: string;
+};
+
+export type CertificateResponse = {
+    pdf: string;
+    thumbnail: string;
+};
+
 export type CertificateTemplateSchema = {
     id: string;
     title: string;
@@ -277,6 +286,11 @@ export type ContentOwner = {
     use_channel: boolean;
 };
 
+export type CourseCertificateSchema = {
+    pdf: string;
+    thumbnail: string;
+};
+
 export type CourseDisplayResponse = {
     id: string;
     title: string;
@@ -310,8 +324,10 @@ export type CourseDisplayResponse = {
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
+    certificate_enabled: boolean;
     study_start?: (string | null);
     study_end?: (string | null);
+    certificates: Array<CourseCertificateSchema>;
 };
 
 export type CourseEnrollResponse = {
@@ -1656,7 +1672,7 @@ export type SurveyResourceUpdateRequest = {
 
 export type TemplateControl = {
     id: string;
-    kind: 'title' | 'document_number' | 'completion_title' | 'completion_period' | 'learning_hours' | 'name' | 'date_of_birth' | 'issuer' | 'issue_date';
+    kind: 'title' | 'document_number' | 'completion_title' | 'completion_period' | 'learning_hours' | 'name' | 'birthdate' | 'issuer' | 'issue_date';
     left: string;
     top: string;
     width: string;
@@ -1666,7 +1682,7 @@ export type TemplateControl = {
     content: string;
 };
 
-export type kind3 = 'title' | 'document_number' | 'completion_title' | 'completion_period' | 'learning_hours' | 'name' | 'date_of_birth' | 'issuer' | 'issue_date';
+export type kind3 = 'title' | 'document_number' | 'completion_title' | 'completion_period' | 'learning_hours' | 'name' | 'birthdate' | 'issuer' | 'issue_date';
 
 export type text_align = 'left' | 'center' | 'right';
 
@@ -1774,6 +1790,9 @@ export type UserMessageResponse = {
     kind: LearningResourceKind;
     object_title: string;
     object_id: string;
+    parcel?: {
+        [key: string]: unknown;
+    };
     id: string;
     time: string;
     read_time?: (string | null);
@@ -1785,6 +1804,9 @@ export type UserMessageSchema = {
     kind: LearningResourceKind;
     object_title: string;
     object_id: string;
+    parcel?: {
+        [key: string]: unknown;
+    };
 };
 
 export type UserResponse = {
@@ -1794,6 +1816,7 @@ export type UserResponse = {
     thumbnail: string;
     use_channel: boolean;
     email: string;
+    birthdate: (string | null);
     description: string;
     created: string;
 };
@@ -1801,6 +1824,7 @@ export type UserResponse = {
 export type UserUpdateRequest = {
     username?: string;
     email?: string;
+    birthdate?: (string | null);
     name?: string;
     description?: string;
     thumbnail?: (string | null);
@@ -3353,6 +3377,22 @@ export type AssistantDeleteMessageData = {
 
 export type AssistantDeleteMessageResponse = (unknown);
 
+export type CertificateGetCourseCertificatesData = {
+    accessToken?: (string | null);
+    courseId: string;
+    refreshToken?: (string | null);
+};
+
+export type CertificateGetCourseCertificatesResponse = (Array<CertificateResponse>);
+
+export type CertificateRequestCourseCertificateData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+    requestBody: CertificateCreateRequest;
+};
+
+export type CertificateRequestCourseCertificateResponse = (unknown);
+
 export type CertificateGetDisplaysData = {
     accessToken?: (string | null);
     orderBy?: 'modified';
@@ -3404,5 +3444,11 @@ export type CertificateCreateResourceData = {
 };
 
 export type CertificateCreateResourceResponse = (TemplateResourceResponse);
+
+export type PublicVerifyCertificateData = {
+    id: string;
+};
+
+export type PublicVerifyCertificateResponse = (unknown);
 
 export type PublicHealthCheckResponse = (unknown);

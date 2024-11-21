@@ -22,7 +22,7 @@
   "No grading": "평가 없음",
   "No lesson found.": "강의가 없습니다.",
   "Progress": "진도율",
-  "Progress {{ value }} %": "진도율 {{ value }} %",
+  "Progress {{ value }}%": "진도율 {{ value }}%",
   "Public": "공개",
   "Quiz": "퀴즈",
   "Recently modified": "최근 수정",

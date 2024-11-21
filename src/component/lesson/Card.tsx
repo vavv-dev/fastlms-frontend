@@ -129,7 +129,7 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
                 sx={{ width: '100px', flexGrow: 1 }}
               />
               <Typography variant="subtitle2">
-                {t('Progress {{ value }} %', { value: toFixedHuman(data.progress, 1) })}
+                {t('Progress {{ value }}%', { value: toFixedHuman(data.progress, 1) })}
               </Typography>
             </>
           )}

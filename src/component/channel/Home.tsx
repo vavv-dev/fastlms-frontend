@@ -65,6 +65,20 @@ export const Home = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mobileDown = useMediaQuery(theme.breakpoints.down('mobile'));
 
+  const kindLabel = useMemo(
+    () => ({
+      video: t('Videos'),
+      short: t('Short videos'),
+      playlist: t('Playlists'),
+      asset: t('Assets'),
+      quiz: t('Quizzes'),
+      survey: t('Surveys'),
+      exam: t('Exams'),
+      course: t('Courses'),
+    }),
+    [t],
+  );
+
   const { data, mutate, isLoading, isValidating } = useInfinitePagination<GetDisplaysData, GetDisplaysResponse>({
     apiService: getDisplays,
     apiOptions: {
@@ -134,7 +148,7 @@ export const Home = () => {
               resources.length > 0 && (
                 <GridSlider
                   key={kind}
-                  title={t(kind)}
+                  title={kindLabel[kind as Kind]}
                   itemWidth={mobileDown ? 344 : GRID_SIZE[kind]?.[0]}
                   itemGap={GRID_SIZE[kind]?.[1]}
                   containerRef={containerRef}

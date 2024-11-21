@@ -96,7 +96,7 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
                   <Typography variant="h5">{t("Let's start the quiz!")}</Typography>
                 </Button>
                 <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-                  {t("This quiz's cutoff score is {{ cutoff }} %.", { cutoff: data.cutoff_score || 0 })}
+                  {t("This quiz's cutoff score is {{ cutoff }}%.", { cutoff: data.cutoff_score || 0 })}
                 </Typography>
                 <Typography variant="caption" sx={{ whiteSpace: 'pre-wrap', maxWidth: '100%', wordBreak: 'break-word' }}>
                   {data.description}

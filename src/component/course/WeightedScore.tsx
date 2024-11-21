@@ -17,9 +17,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { certificateStatusFamily } from '.';
 
 import { CourseDisplayResponse, LessonDisplayResponse } from '@/api';
 import { formatYYYMMDD, toFixedHuman } from '@/helper/util';
@@ -36,9 +39,22 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const setCertificateStatus = useSetAtom(certificateStatusFamily(course.id));
 
   const stats = useMemo(() => calculateStats(lessons, t), [lessons, t]);
   const { progress, score } = stats;
+
+  useEffect(() => {
+    if (course.certificates.length > 0) {
+      setCertificateStatus('issued');
+      return;
+    } else if (course.certificate_enabled) {
+      if (progress >= course.cutoff_progress && score >= course.cutoff_score) {
+        setCertificateStatus('eligible');
+        return;
+      }
+    }
+  }, [progress, score, course, setCertificateStatus]);
 
   useEffect(() => {
     const updateWidth = debounce(() => {
@@ -84,10 +100,9 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
     <Box
       ref={containerRef}
       sx={{
-        mt: 3,
         mb: 1,
         width: '100%',
-        maxWidth: 600,
+        maxWidth: { xs: '100%', md: 600 },
         position: 'relative',
         visibility: containerWidth ? 'visible' : 'hidden',
         ...sx,
@@ -201,7 +216,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
                 <Typography variant="body2">
                   {t('Total Score = {{calcScore}} = {{finalScore}} points', {
                     calcScore: stats.calcScore,
-                    finalScore: stats.score.toFixed(1),
+                    finalScore: toFixedHuman(stats.score, 1),
                   })}
                 </Typography>
               </Box>
@@ -243,17 +258,19 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
                       <TableCell>{lesson.title}</TableCell>
                       <TableCell align="right">{lesson.method === 'progress' ? t('Progress') : t('Score')}</TableCell>
                       <TableCell align="right">
-                        {`${(lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score).toFixed(1)}%`}
+                        {`${toFixedHuman(lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score, 1)}%`}
                       </TableCell>
                       <TableCell align="right">
-                        {lesson.weight === 0 ? '0.0%' : `${((lesson.weight / stats.totalWeight) * 100).toFixed(1)}%`}
+                        {lesson.weight === 0 ? '0.0%' : `${toFixedHuman((lesson.weight / stats.totalWeight) * 100, 1)}%`}
                       </TableCell>
                       <TableCell align="right">
-                        {`${(lesson.weight === 0
-                          ? 0
-                          : (lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score) *
-                            (lesson.weight / stats.totalWeight)
-                        ).toFixed(1)}%`}
+                        {`${toFixedHuman(
+                          lesson.weight === 0
+                            ? 0
+                            : (lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score) *
+                                (lesson.weight / stats.totalWeight),
+                          1,
+                        )}%`}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -266,10 +283,6 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
     </Box>
   );
 };
-
-interface TranslationFunction {
-  (key: string, options?: Record<string, string | number>): string;
-}
 
 type GradingMethod = 'progress' | 'score' | 'none';
 
@@ -290,7 +303,10 @@ interface Stats {
   calcScore: string;
 }
 
-const calculateStats = (lessons: LessonDisplayResponse[] | undefined, t: TranslationFunction): Stats => {
+const calculateStats = (
+  lessons: LessonDisplayResponse[] | undefined,
+  t: (key: string, options?: Record<string, string | number>) => string,
+): Stats => {
   if (!lessons?.length) return { progress: 0, score: 0, lessons: [], totalWeight: 0, calcProgress: '', calcScore: '' };
 
   const result = lessons.reduce(
@@ -331,14 +347,14 @@ const calculateStats = (lessons: LessonDisplayResponse[] | undefined, t: Transla
     score,
     lessons: result.lessons,
     totalWeight: result.totalWeight,
-    calcProgress: `${result.progressPassed}(${t('completed lessons')}) ÷ ${result.progressCount}(${t('all lessons')}) × 100 = ${progress.toFixed(1)}`,
+    calcProgress: `${result.progressPassed}(${t('completed lessons')}) ÷ ${result.progressCount}(${t('all lessons')}) × 100 = ${toFixedHuman(progress, 1)}`,
     calcScore: !result.lessons.filter((l) => l.weight > 0).length
       ? t('No lessons with weight')
       : result.lessons
           .filter((l) => l.weight > 0)
           .map(
             (l) =>
-              `${(l.method === 'progress' ? l.progress * 100 : l.score).toFixed(1)}% × ${((l.weight / result.totalWeight) * 100).toFixed(1)}%`,
+              `${toFixedHuman(l.method === 'progress' ? l.progress : l.score, 1)}% × ${toFixedHuman((l.weight / result.totalWeight) * 100, 1)}%`,
           )
           .join(' + '),
   };

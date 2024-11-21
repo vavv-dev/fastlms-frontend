@@ -6,7 +6,7 @@ import {
   LibraryAddOutlined,
   NotificationsOutlined,
   Refresh,
-  WorkspacePremiumRounded,
+  VerifiedOutlined
 } from '@mui/icons-material';
 import { Avatar, Box, Button, IconButton, Tab, Tabs, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -47,7 +47,7 @@ export const Setting: React.FC = () => {
 
   const tabs = [
     { label: t('Channel Info'), icon: InfoOutlined, Component: ChannelInfo },
-    { label: t('Certificate'), icon: WorkspacePremiumRounded, Component: TemplateDisplays },
+    { label: t('Certificate'), icon: VerifiedOutlined, Component: TemplateDisplays },
     { label: t('Notification'), icon: NotificationsOutlined, Component: NotificationSetting },
   ];
 
@@ -176,7 +176,6 @@ export const ChannelInfo: React.FC = () => {
 
   const MEMBER_FIELD_OPTIONS = useMemo(
     () => [
-      { label: t('Birth Date'), value: 'birthdate' },
       { label: t('Company'), value: 'company' },
       { label: t('Department'), value: 'department' },
       { label: t('Position'), value: 'position' },
@@ -190,6 +189,7 @@ export const ChannelInfo: React.FC = () => {
       { label: t('Name'), value: 'name' },
       { label: t('Email'), value: 'email' },
       { label: t('Cellphone'), value: 'cellphone' },
+      { label: t('Birth Date'), value: 'birthdate' },
     ],
     [t],
   );

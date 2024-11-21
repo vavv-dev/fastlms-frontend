@@ -4,6 +4,8 @@ import { alpha } from '@mui/material/styles';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { toFixedHuman } from '@/helper/util';
+
 type TextFieldWithFileProps = TextFieldProps & {
   attachedFiles: File[];
   setAttachedFiles: (files: File[]) => void;
@@ -168,7 +170,7 @@ export const TextFieldWithFile = ({ attachedFiles, setAttachedFiles, sx, ...text
               color="text.secondary"
               sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              {file.name} ({(file.size / 1024 / 1024).toFixed(1)}MB)
+              {file.name} ({toFixedHuman(file.size / 1024 / 1024, 1)}MB)
               <Close
                 sx={{ fontSize: theme.typography.caption.fontSize, cursor: 'pointer', color: 'error.main' }}
                 onClick={() => handleRemoveFile(file.name)}

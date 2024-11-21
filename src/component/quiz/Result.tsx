@@ -66,7 +66,7 @@ export const Result = ({ id }: { id: string }) => {
               </TableRow>
               <TableRow>
                 <TableCell>{t('Cutoff %')}</TableCell>
-                <TableCell>{data.cutoff_score || 0} %</TableCell>
+                <TableCell>{data.cutoff_score || 0}%</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>{t('My score')}</TableCell>
