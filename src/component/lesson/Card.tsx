@@ -1,5 +1,5 @@
-import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, Button, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
+import { BookmarkBorderOutlined } from '@mui/icons-material';
+import { Box, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,11 +13,9 @@ import {
   QuizDisplayResponse,
   SurveyDisplayResponse,
   VideoDisplayResponse,
-  lessonGetDisplays as getDisplays,
-  lessonUpdateResource as updateResource,
 } from '@/api';
 import { AssetCard } from '@/component/asset';
-import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
+import { WithAvatar, useFixMouseLeave } from '@/component/common';
 import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
@@ -43,15 +41,6 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
     setHover(false);
   });
 
-  const toPublic = async () => {
-    await updateResource({
-      id: data.id,
-      requestBody: { is_public: true },
-    }).then(() => {
-      updateInfiniteCache<DisplayResponse>(getDisplays, { id: data.id, is_public: true }, 'update');
-    });
-  };
-
   return (
     <Box
       ref={cardRef}
@@ -64,7 +53,6 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
         display: 'flex',
         gap: 3,
         flexDirection: 'column',
-        position: 'relative',
         pb: 2,
         ...(borderBox && {
           border: `1px solid ${theme.palette.divider}`,
@@ -74,38 +62,6 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
         '& .avatar-children .MuiTypography-root': { display: 'flex' },
       }}
     >
-      {!data.is_public && (
-        <Box
-          sx={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            top: 0,
-            right: 0,
-            background: 'rgba(0,0,0,0.2)',
-            color: 'white',
-            zIndex: 3,
-            p: 1,
-            borderRadius: theme.shape.borderRadius / 2,
-            pointerEvents: 'none',
-            '& > *': { pointerEvents: 'none' },
-            '& .MuiButton-root': { pointerEvents: 'auto' },
-          }}
-        >
-          <Button
-            size="small"
-            sx={{ color: 'white', p: 0 }}
-            endIcon={<ArrowRight />}
-            onClick={(e) => {
-              e.stopPropagation();
-              toPublic();
-            }}
-          >
-            {t('Change to public')}
-          </Button>
-        </Box>
-      )}
-
       <WithAvatar {...data.owner} hideAvatar={hideAvatar}>
         <Stack sx={{ color: 'text.secondary', alignItems: 'center', pr: '3em' }} direction="row" spacing={2}>
           {data.bookmarked && <BookmarkBorderOutlined fontSize="small" />}
@@ -153,15 +109,7 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
           }}
         >
           {!embeded && (
-            <Box
-              sx={{
-                gridColumn: { xs: '1 / -1' },
-                mt: 0.5,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
+            <Box sx={{ gridColumn: { xs: '1 / -1' }, mt: 0.5, display: 'flex', alignItems: 'center', gap: 2 }}>
               {data.thumbnail && (
                 <Box
                   sx={{
@@ -195,6 +143,26 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
             />
           )}
         </Box>
+        {!data.is_public && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '-0.5em',
+              bottom: '-0.5em',
+              left: 0,
+              right: 0,
+              background: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              zIndex: 3,
+              p: 1,
+              borderRadius: theme.shape.borderRadius / 2,
+              '& > *': { pointerEvents: 'none' },
+              '& .MuiButton-root': { pointerEvents: 'auto' },
+            }}
+          >
+            {t('Not public')}
+          </Box>
+        )}
       </Box>
     </Box>
   );

@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Tooltip, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,12 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 import {
   CourseEnrollResponse as EnrollResponse,
-  CourseGetNewEnrolledCountData as GetNewEnrolledCountData,
   CourseGetViewData as GetViewData,
   CourseGetViewResponse as GetViewResponse,
   courseEnroll as enroll,
   courseGetDisplays as getDisplays,
-  courseGetNewEnrolledCount as getNewEnrolledCount,
   courseGetView as getView,
 } from '@/api';
 import { BaseDialog, updateInfiniteCache, useServiceImmutable } from '@/component/common';
@@ -30,8 +28,7 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
   const user = useAtomValue(userState);
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
-  const { mutate: countMutate } = useServiceImmutable<GetNewEnrolledCountData, number>(getNewEnrolledCount, undefined);
-  const { data: course, mutate: courseMutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id });
+  const { data: course, mutate: courseMutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
 
   const closeDialog = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -47,8 +44,10 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
           study_end: r.study_end,
         };
         setResult(t('You are now enrolled in this course.'));
+        // channel course list
         updateInfiniteCache(getDisplays, { id, ...updated }, 'update');
-        countMutate(1, { revalidate: false });
+        // user enrolled course list
+        updateInfiniteCache(getDisplays, { ...course, ...updated }, 'create');
         courseMutate((prev) => prev && { ...prev, ...updated }, { revalidate: false });
         onEnroll?.();
         navigate(`/course/${id}`, { replace: window.location.pathname === `/course/${id}` });
@@ -106,9 +105,18 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
             )}
 
             {!result && (
-              <Button onClick={enrollCourse} variant="contained">
-                {t('Enroll to this course')}
-              </Button>
+              <Box sx={{ display: 'flex', gap: 3 }}>
+                <Tooltip
+                  placement="top"
+                  arrow
+                  title={t('You can review the course information and return later to complete registration.')}
+                >
+                  <Button onClick={() => navigate(`/course/${id}/outline`)}>{t('View course info')}</Button>
+                </Tooltip>
+                <Button onClick={enrollCourse} variant="contained">
+                  {t('Enroll to this course')}
+                </Button>
+              </Box>
             )}
           </Box>
         </Box>

@@ -30,14 +30,7 @@ import {
   UserProfile,
 } from '@/component/account';
 import { AssetDisplays } from '@/component/asset';
-import {
-  ChannelHome,
-  ChannelLayout,
-  ChannelRoot,
-  ChannelSetting,
-  HomeChannel,
-  UserChannel,
-} from '@/component/channel';
+import { ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting, HomeChannel, UserChannel } from '@/component/channel';
 import { CommentDisplays, QnADisplays, UserComment } from '@/component/comment';
 import { CourseDisplays, CourseOutline, CourseView, UserCourse } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
@@ -99,8 +92,8 @@ export const App = () => {
 
             {/* user */}
             <Route path="u" element={<UserLayout />}>
-              <Route path="" element={<UserHistory />} />
-              <Route path="course" element={<UserCourse />} />
+              <Route path="" element={<UserCourse />} />
+              <Route path="history" element={<UserHistory />} />
               <Route path="bookmark" element={<UserBookmark />} />
               <Route path="channel" element={<UserChannel />} />
               <Route path="comment" element={<UserComment />} />

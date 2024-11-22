@@ -26,7 +26,7 @@ const createSchema = (t: (key: string) => string) => {
       .meta({
         control: 'checkbox',
         helperText: t('If not checked, only owner can see this playlist.'),
-        grid: 4,
+        grid: 6,
       }),
     featured: yup
       .boolean()
@@ -35,7 +35,7 @@ const createSchema = (t: (key: string) => string) => {
       .meta({
         control: 'checkbox',
         helperText: t('If checked, playlist will be shown in featured list.'),
-        grid: 4,
+        grid: 6,
       }),
     thumbnail: base64ImageSchema(yup, false, t),
   });

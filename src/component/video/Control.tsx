@@ -59,7 +59,7 @@ export const Control = ({ id }: { id: string }) => {
         variant="subtitle1"
         sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold', lineHeight: 1.2, mb: '1em', gap: 1 }}
       >
-        {data.is_live && (
+        {data.video_kind === 'live' && (
           <Typography component="span" variant="subtitle2">
             <Chip
               label={t('LIVE')}

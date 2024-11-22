@@ -7,11 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ActionMenu } from './ActionMenu';
 import { PreviewPlayer } from './PreviewPlayer';
 
-import {
-  VideoDisplayResponse as DisplayResponse,
-  videoGetDisplays as getDisplays,
-  videoUpdateResource as updateResource,
-} from '@/api';
+import { VideoDisplayResponse as DisplayResponse } from '@/api';
 import { ResourceCard } from '@/component/common';
 import { formatDuration, formatRelativeTime } from '@/helper/util';
 
@@ -55,7 +51,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
             {isHover && !disablePreview && <PreviewPlayer id={data.id} onClick={() => navigate(to || `/video/${data.id}`)} />}
           </Box>
 
-          {(data.duration != null || data.is_live) && (
+          {(data.duration != null || data.video_kind == 'live') && (
             <Typography
               variant="caption"
               sx={{
@@ -67,7 +63,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
                 fontWeight: '600',
                 zIndex: 2,
                 color: theme.palette.common.white,
-                bgcolor: data.is_live ? theme.palette.error.dark : 'rgba(0, 0, 0, 0.6)',
+                bgcolor: data.video_kind === 'live' ? theme.palette.error.dark : 'rgba(0, 0, 0, 0.6)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
@@ -92,8 +88,6 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
       actionMenu={<ActionMenu data={data} />}
       sx={sx}
       showDescription={showDescription}
-      partialUpdateService={updateResource}
-      listService={getDisplays}
     />
   );
 };

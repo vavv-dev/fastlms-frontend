@@ -4,12 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
 
-import {
-  PlaylistDisplayResponse as DisplayResponse,
-  playlistGetDisplays as getDisplays,
-  playlistResumePlaylist as resumePlay,
-  playlistUpdateResource as updateResource,
-} from '@/api';
+import { PlaylistDisplayResponse as DisplayResponse, playlistResumePlaylist as resumePlay } from '@/api';
 import { ResourceCard } from '@/component/common';
 import { formatDuration, formatRelativeTime } from '@/helper/util';
 
@@ -123,8 +118,6 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
           </Button>
         )
       }
-      partialUpdateService={updateResource}
-      listService={getDisplays}
     />
   );
 };

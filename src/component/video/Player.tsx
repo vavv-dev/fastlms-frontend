@@ -26,7 +26,7 @@ export const Player = ({ id, sx }: { id: string; sx?: SxProps }) => {
   const setPlayerHeight = useSetAtom(playerHeightState);
   const setActiveId = useSetAtom(activeIdState);
   const { data } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
-  const playerRatio = data?.video_kind === 'video' || data?.is_live ? 16 / 9 : 9 / 16;
+  const playerRatio = data?.video_kind === 'short' ? 9 / 16 : 16 / 9;
 
   const elementRef = useCallback(
     (node: HTMLDivElement | null) => {

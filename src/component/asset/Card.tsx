@@ -114,8 +114,6 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
         actionMenu={<ActionMenu data={data} />}
         sx={sx}
         showDescription={showDescription}
-        partialUpdateService={updateResource}
-        listService={getDisplays}
       />
       {uploaderOpen && (
         <Suspense fallback={null}>

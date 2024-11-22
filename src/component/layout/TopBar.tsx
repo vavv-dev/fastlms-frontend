@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 
 import { alertState, navState } from '.';
 import { LanguageSelector } from './LanguageSelector';
-import imgUrl from './assets/logo.svg';
 
 import { LoginButton } from '@/component/account';
 import { chatDrawerState } from '@/component/chat';
@@ -26,6 +25,9 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
   const user = useAtomValue(userState);
   const setChatDrawerOpen = useSetAtom(chatDrawerState);
   const mobileDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('mobile'));
+
+  // logo path
+  const logoPath = `/asset/logo-${themeMode}-25.png`;
 
   useEffect(() => {
     if (alert.open) {
@@ -46,7 +48,7 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
           </IconButton>
           {!mobileDown && (
             <Box component={Link} to="/" sx={{ display: 'flex', textDecoration: 'None', color: 'inherit' }}>
-              <Box component="img" src={imgUrl} alt="logo" sx={{ height: 25, width: 100 }} />
+              <Box component="img" src={logoPath} alt="logo" sx={{ height: 25, width: 100 }} />
             </Box>
           )}
           <Box sx={{ flexGrow: 1 }} />

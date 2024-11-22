@@ -13,6 +13,7 @@ import {
   CourseDisplayResponse,
   UserMessageResponse,
   courseGetDisplays,
+  courseGetView,
   messageGetMessages as getMessages,
   messageReadMessage as readMessage,
 } from '@/api';
@@ -60,7 +61,8 @@ export const NotificationButton = () => {
               mutate(
                 (key) => {
                   if (!key || typeof key !== 'string') return false;
-                  const r = new RegExp(`courseGetView/.+${courseId}`);
+                  // !caution: Must exlcude this function from minifying process
+                  const r = new RegExp(`${courseGetView.name}/.+${courseId}`);
                   return r.test(key);
                 },
                 (prev) => ({ ...prev, certificates: [...certificates] }),

@@ -6,6 +6,7 @@ import {
   LinearProgress,
   Paper,
   Popper,
+  Skeleton,
   SxProps,
   Table,
   TableBody,
@@ -41,7 +42,29 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const setCertificateStatus = useSetAtom(certificateStatusFamily(course.id));
 
-  const stats = useMemo(() => calculateStats(lessons, t), [lessons, t]);
+  const [isCalculating, setIsCalculating] = useState(true);
+
+  const stats = useMemo(() => {
+    if (!lessons?.length) {
+      return { progress: 0, score: 0, lessons: [], totalWeight: 0, calcProgress: '', calcScore: '' };
+    }
+
+    return calculateStats(lessons, t);
+  }, [lessons, t]);
+
+  useEffect(() => {
+    if (!lessons?.length) {
+      setIsCalculating(true);
+      return;
+    }
+
+    const timer = requestAnimationFrame(() => {
+      setIsCalculating(false);
+    });
+
+    return () => cancelAnimationFrame(timer);
+  }, [lessons]);
+
   const { progress, score } = stats;
 
   useEffect(() => {
@@ -100,186 +123,197 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
     <Box
       ref={containerRef}
       sx={{
-        mb: 1,
         width: '100%',
         maxWidth: { xs: '100%', md: 600 },
         position: 'relative',
-        visibility: containerWidth ? 'visible' : 'hidden',
         ...sx,
       }}
     >
-      <Tour sx={{ color: progressColor, position: 'absolute', top: 0, left: `calc(${progress}% - 6px)`, zIndex: 2 }} />
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          ...labelStyle,
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 1,
-          '& *': { whiteSpace: 'nowrap' },
-          zIndex: 1,
-        }}
-      >
-        <Typography variant="body2" sx={{ color: progressColor }}>
-          {t('Progress {{ value }}%', { value: toFixedHuman(progress, 1) })}
-        </Typography>
-      </Box>
-
-      <Box sx={{ position: 'relative', height: '1em' }}>
-        {!isBeforeStart && !isAfterEnd && (
-          <Tooltip title={t('Today. Remain {{ value }} days.', { value: remainDays })}>
-            <Box
-              sx={{
-                position: 'absolute',
-                left: `${elapsed}%`,
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper',
-                borderRadius: '50%',
-                p: 0.5,
-                boxShadow: 4,
-                zIndex: 1,
-                opacity: 0.9,
-              }}
-            />
-          </Tooltip>
-        )}
-        <LinearProgress
-          color={progress >= cutoffProgress ? 'success' : 'warning'}
-          variant="determinate"
-          value={Math.max(Math.min(progress, 100), 0)}
-          sx={{ height: 8, width: '100%', borderRadius: '4px', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}
-        />
-      </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, whiteSpace: 'nowrap' }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
-          {t('Start')} {formatYYYMMDD(start)}
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{ color: scoreColor, display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setAnchorEl(anchorEl ? null : e.currentTarget);
-          }}
-        >
-          {t('Total score {{ value }} points', { value: toFixedHuman(score, 1) })}
-          <ArrowDropDown fontSize="small" />
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {t('End')} {formatYYYMMDD(end)}
-        </Typography>
-      </Box>
-      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: theme.zIndex.drawer + 1 }}>
-        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-          <Paper
-            elevation={8}
+      {isCalculating ? (
+        <WeightedScoreSkeleton />
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          <Tour sx={{ color: progressColor, position: 'absolute', top: 0, left: `calc(${progress}% - 6px)`, zIndex: 2 }} />
+          <Box
             sx={{
-              borderRadius: 2,
-              position: 'relative',
-              maxHeight: 'calc(100vh - 300px)',
-              minHeight: 300,
-              scrollbarWidth: 'none',
-              '&::-webkit-scrollbar': { display: 'none' },
+              position: 'absolute',
+              top: 0,
+              ...labelStyle,
               display: 'flex',
-              flexDirection: 'column',
-              p: { xs: 2, sm: 3 },
-              gap: 3,
-              overflow: 'auto',
-              maxWidth: 'calc(100vw - 1em)',
-              mx: 1,
+              alignItems: 'flex-start',
+              gap: 1,
+              '& *': { whiteSpace: 'nowrap' },
+              zIndex: 1,
             }}
           >
-            <IconButton onClick={() => setAnchorEl(null)} sx={{ position: 'absolute', top: '8px', right: '8px' }}>
-              <Close fontSize="small" />
-            </IconButton>
+            <Typography variant="body2" sx={{ color: progressColor }}>
+              {t('Progress {{ value }}%', { value: toFixedHuman(progress, 1) })}
+            </Typography>
+          </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                {t('Calculation Method')}
-              </Typography>
-              <Box
+          <Box sx={{ position: 'relative', height: '1em' }}>
+            {!isBeforeStart && !isAfterEnd && (
+              <Tooltip title={t('Today. Remain {{ value }} days.', { value: remainDays })}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    left: `${elapsed}%`,
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    bgcolor: 'background.paper',
+                    borderRadius: '50%',
+                    p: 0.5,
+                    boxShadow: 4,
+                    zIndex: 1,
+                    opacity: 0.9,
+                  }}
+                />
+              </Tooltip>
+            )}
+            <LinearProgress
+              color={progress >= cutoffProgress ? 'success' : 'warning'}
+              variant="determinate"
+              value={Math.max(Math.min(progress, 100), 0)}
+              sx={{
+                height: 8,
+                width: '100%',
+                borderRadius: '4px',
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)',
+              }}
+            />
+          </Box>
+
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', whiteSpace: 'nowrap' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
+              {t('Start')} {formatYYYMMDD(start)}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ color: scoreColor, display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setAnchorEl(anchorEl ? null : e.currentTarget);
+              }}
+            >
+              {t('Total score {{ value }} points', { value: toFixedHuman(score, 1) })}
+              <ArrowDropDown fontSize="small" />
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {t('End')} {formatYYYMMDD(end)}
+            </Typography>
+          </Box>
+          <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} sx={{ zIndex: theme.zIndex.drawer + 1 }}>
+            <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+              <Paper
+                elevation={8}
                 sx={{
-                  backgroundColor: 'action.hover',
-                  p: 2,
-                  borderRadius: 1,
+                  borderRadius: 2,
+                  position: 'relative',
+                  maxHeight: 'calc(100vh - 300px)',
+                  minHeight: 300,
+                  scrollbarWidth: 'none',
+                  '&::-webkit-scrollbar': { display: 'none' },
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 1,
+                  p: { xs: 2, sm: 3 },
+                  gap: 3,
+                  overflow: 'auto',
+                  maxWidth: 'calc(100vw - 1em)',
+                  mx: 1,
                 }}
               >
-                <Typography variant="body2">
-                  {t('Progress = {{calcProgress}}%', { calcProgress: stats.calcProgress })}
-                </Typography>
-                <Typography variant="body2">
-                  {t('Total Score = {{calcScore}} = {{finalScore}} points', {
-                    calcScore: stats.calcScore,
-                    finalScore: toFixedHuman(stats.score, 1),
-                  })}
-                </Typography>
-              </Box>
-            </Box>
+                <IconButton onClick={() => setAnchorEl(null)} sx={{ position: 'absolute', top: '8px', right: '8px' }}>
+                  <Close fontSize="small" />
+                </IconButton>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                {t('Completion Requirements')}
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                  {t('Progress must be {{cutoff}}% or higher.', { cutoff: cutoffProgress })}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                  {t('Total score must be {{cutoff}} points or higher.', { cutoff: cutoffScore })}
-                </Typography>
-              </Box>
-            </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('Calculation Method')}
+                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: 'action.hover',
+                      p: 2,
+                      borderRadius: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1,
+                    }}
+                  >
+                    <Typography variant="body2">
+                      {t('Progress = {{calcProgress}}%', { calcProgress: stats.calcProgress })}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t('Total Score = {{calcScore}} = {{finalScore}} points', {
+                        calcScore: stats.calcScore,
+                        finalScore: toFixedHuman(stats.score, 1),
+                      })}
+                    </Typography>
+                  </Box>
+                </Box>
 
-            <TableContainer sx={{ display: 'flex', flexDirection: 'column', gap: 1, overflow: 'unset' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                {t('Lessons with weighted score')}
-              </Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ '& th': { fontWeight: 'bold', backgroundColor: 'background.default' } }}>
-                    <TableCell>No.</TableCell>
-                    <TableCell>{t('Lesson')}</TableCell>
-                    <TableCell align="right">{t('Type')}</TableCell>
-                    <TableCell align="right">{t('Score')}</TableCell>
-                    <TableCell align="right">{t('Weight')}</TableCell>
-                    <TableCell align="right">{t('Weighted Score')}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {stats.lessons.map((lesson, i) => (
-                    <TableRow key={lesson.title} sx={{ '&:hover': { backgroundColor: 'action.hover' } }}>
-                      <TableCell>{i + 1}</TableCell>
-                      <TableCell>{lesson.title}</TableCell>
-                      <TableCell align="right">{lesson.method === 'progress' ? t('Progress') : t('Score')}</TableCell>
-                      <TableCell align="right">
-                        {`${toFixedHuman(lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score, 1)}%`}
-                      </TableCell>
-                      <TableCell align="right">
-                        {lesson.weight === 0 ? '0.0%' : `${toFixedHuman((lesson.weight / stats.totalWeight) * 100, 1)}%`}
-                      </TableCell>
-                      <TableCell align="right">
-                        {`${toFixedHuman(
-                          lesson.weight === 0
-                            ? 0
-                            : (lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score) *
-                                (lesson.weight / stats.totalWeight),
-                          1,
-                        )}%`}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </ClickAwayListener>
-      </Popper>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('Completion Requirements')}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                      {t('Progress must be {{cutoff}}% or higher.', { cutoff: cutoffProgress })}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                      {t('Total score must be {{cutoff}} points or higher.', { cutoff: cutoffScore })}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <TableContainer sx={{ display: 'flex', flexDirection: 'column', gap: 1, overflow: 'unset' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                    {t('Lessons with weighted score')}
+                  </Typography>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ '& th': { fontWeight: 'bold', backgroundColor: 'background.default' } }}>
+                        <TableCell>No.</TableCell>
+                        <TableCell>{t('Lesson')}</TableCell>
+                        <TableCell align="right">{t('Type')}</TableCell>
+                        <TableCell align="right">{t('Score')}</TableCell>
+                        <TableCell align="right">{t('Weight')}</TableCell>
+                        <TableCell align="right">{t('Weighted Score')}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {stats.lessons.map((lesson, i) => (
+                        <TableRow key={lesson.title} sx={{ '&:hover': { backgroundColor: 'action.hover' } }}>
+                          <TableCell>{i + 1}</TableCell>
+                          <TableCell>{lesson.title}</TableCell>
+                          <TableCell align="right">{lesson.method === 'progress' ? t('Progress') : t('Score')}</TableCell>
+                          <TableCell align="right">
+                            {`${toFixedHuman(lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score, 1)}%`}
+                          </TableCell>
+                          <TableCell align="right">
+                            {lesson.weight === 0 ? '0.0%' : `${toFixedHuman((lesson.weight / stats.totalWeight) * 100, 1)}%`}
+                          </TableCell>
+                          <TableCell align="right">
+                            {`${toFixedHuman(
+                              lesson.weight === 0
+                                ? 0
+                                : (lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score) *
+                                    (lesson.weight / stats.totalWeight),
+                              1,
+                            )}%`}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            </ClickAwayListener>
+          </Popper>
+        </Box>
+      )}
     </Box>
   );
 };
@@ -358,4 +392,22 @@ const calculateStats = (
           )
           .join(' + '),
   };
+};
+
+const WeightedScoreSkeleton = () => {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      {/* Progress Bar and Marker */}
+      <Box sx={{ position: 'relative', height: '1em' }}>
+        <Skeleton variant="rectangular" sx={{ height: 8, width: '100%', borderRadius: '4px' }} />
+      </Box>
+
+      {/* Bottom Date Range and Score */}
+      <Box sx={{ height: '20px', display: 'flex', justifyContent: 'space-between', whiteSpace: 'nowrap' }}>
+        <Skeleton variant="text" width={120} sx={{ display: { xs: 'none', sm: 'block' } }} />
+        <Skeleton variant="text" width={100} />
+        <Skeleton variant="text" width={120} />
+      </Box>
+    </Box>
+  );
 };

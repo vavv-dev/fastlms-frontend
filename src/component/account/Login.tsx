@@ -6,6 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import * as yup from 'yup';
 
 import { accountProcessingState } from '.';
@@ -38,6 +39,7 @@ export const Login = () => {
   const [user, setUser] = useAtom(userState);
   const setProcessing = useSetAtom(accountProcessingState);
   const setLoginExpire = useSetAtom(loginExpireState);
+  const { mutate } = useSWRConfig();
 
   const schema = useMemo(() => createSchema(t), [t]);
   const { handleSubmit, control, setError, formState, setValue } = useForm<Body_PublicLogin>({
@@ -53,6 +55,9 @@ export const Login = () => {
       formData: { username: username, password: password },
     })
       .then(async (r) => {
+        // clean previous cache
+        await mutate(() => true, undefined, { revalidate: false });
+
         setLoginExpire(r.refresh_token_expire);
         const me = await accountGetMe();
         setUser(me);

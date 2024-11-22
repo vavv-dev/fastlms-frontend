@@ -34,14 +34,13 @@ export default defineConfig({
     chunkSizeWarningLimit: 800,
     minify: 'terser',
     terserOptions: {
-      // TODO: remove.
-      // currently common.swr and notification.NotifcationButton refer to function names
       mangle: {
-        keep_fnames: true,
+        // cf. component.common.swr.ts, component.notification.NotificationButton.tsx
+        reserved: ['lessonGetDisplays', 'sharedGetDisplays', 'courseGetView'],
       },
       compress: {
-        // drop_console: true,
-        // drop_debugger: true,
+        drop_console: true,
+        drop_debugger: true,
       },
     },
   },

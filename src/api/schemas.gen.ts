@@ -1537,6 +1537,29 @@ export const CourseEnrollResponseSchema = {
     title: 'CourseEnrollResponse'
 } as const;
 
+export const CourseLessonOutlineSchemaSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        resources: {
+            items: {
+                '$ref': '#/components/schemas/ResourceSchema'
+            },
+            type: 'array',
+            title: 'Resources'
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'resources'],
+    title: 'CourseLessonOutlineSchema'
+} as const;
+
 export const CourseLessonResourceSchema = {
     properties: {
         id: {
@@ -1551,7 +1574,8 @@ export const CourseLessonResourceSchema = {
             type: 'integer',
             maximum: 100,
             minimum: 0,
-            title: 'Weight'
+            title: 'Weight',
+            default: 0
         }
     },
     type: 'object',
@@ -1644,6 +1668,14 @@ export const CourseOutlineReponseSchema = {
         level: {
             '$ref': '#/components/schemas/CourseLevel'
         },
+        cutoff_progress: {
+            type: 'integer',
+            title: 'Cutoff Progress'
+        },
+        cutoff_score: {
+            type: 'integer',
+            title: 'Cutoff Score'
+        },
         registration_limit: {
             type: 'integer',
             title: 'Registration Limit'
@@ -1664,9 +1696,16 @@ export const CourseOutlineReponseSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        certificate_templates: {
+            items: {
+                '$ref': '#/components/schemas/CertificateTemplateSchema'
+            },
+            type: 'array',
+            title: 'Certificate Templates'
+        },
         lessons: {
             items: {
-                '$ref': '#/components/schemas/CourseLessonResource'
+                '$ref': '#/components/schemas/CourseLessonOutlineSchema'
             },
             type: 'array',
             title: 'Lessons'
@@ -1678,7 +1717,7 @@ export const CourseOutlineReponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'enrollment_start', 'enrollment_end', 'owner', 'modified', 'thumbnail', 'preview', 'target', 'level', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'lessons'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'enrollment_start', 'enrollment_end', 'owner', 'modified', 'thumbnail', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'certificate_templates', 'lessons'],
     title: 'CourseOutlineReponse'
 } as const;
 
@@ -2486,6 +2525,9 @@ export const ExamDisplayResponseSchema = {
         question_composition: {
             additionalProperties: {
                 type: 'integer'
+            },
+            propertyNames: {
+                enum: ['single_selection', 'ox_selection', 'text_input', 'number_input', 'essay']
             },
             type: 'object',
             title: 'Question Composition'
@@ -7824,7 +7866,6 @@ export const ThreadResponseSchema = {
         },
         kind: {
             type: 'string',
-            enum: ['thread'],
             const: 'thread',
             title: 'Kind'
         },
@@ -8215,19 +8256,8 @@ export const VideoDisplayResponseSchema = {
             format: 'date-time',
             title: 'Modified'
         },
-        is_live: {
-            type: 'boolean',
-            title: 'Is Live'
-        },
         video_kind: {
-            anyOf: [
-                {
-                    '$ref': '#/components/schemas/VideoKind'
-                },
-                {
-                    type: 'null'
-                }
-            ]
+            '$ref': '#/components/schemas/VideoKind'
         },
         kind: {
             '$ref': '#/components/schemas/LearningResourceKind'
@@ -8258,13 +8288,13 @@ export const VideoDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'is_live', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'video_kind', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged'],
     title: 'VideoDisplayResponse'
 } as const;
 
 export const VideoKindSchema = {
     type: 'string',
-    enum: ['video', 'short'],
+    enum: ['video', 'short', 'live'],
     title: 'VideoKind'
 } as const;
 
@@ -8460,6 +8490,9 @@ export const VideoResourceUpdateRequestSchema = {
             type: 'integer',
             title: 'Cutoff Progress'
         },
+        video_kind: {
+            '$ref': '#/components/schemas/VideoKind'
+        },
         thumbnail: {
             anyOf: [
                 {
@@ -8562,19 +8595,8 @@ export const VideoSearchResultResponseSchema = {
             format: 'date-time',
             title: 'Modified'
         },
-        is_live: {
-            type: 'boolean',
-            title: 'Is Live'
-        },
         video_kind: {
-            anyOf: [
-                {
-                    '$ref': '#/components/schemas/VideoKind'
-                },
-                {
-                    type: 'null'
-                }
-            ]
+            '$ref': '#/components/schemas/VideoKind'
         },
         kind: {
             '$ref': '#/components/schemas/LearningResourceKind'
@@ -8617,7 +8639,7 @@ export const VideoSearchResultResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'is_live', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'relevance'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'video_kind', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'relevance'],
     title: 'VideoSearchResultResponse'
 } as const;
 
@@ -8772,10 +8794,6 @@ export const VideoViewResponseSchema = {
             type: 'array',
             title: 'Tag Names'
         },
-        is_live: {
-            type: 'boolean',
-            title: 'Is Live'
-        },
         kind: {
             '$ref': '#/components/schemas/LearningResourceKind'
         },
@@ -8793,7 +8811,7 @@ export const VideoViewResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'uploader', 'duration', 'cutoff_progress', 'bookmark_count', 'like_count', 'flag_count', 'score', 'progress', 'passed', 'last_position', 'modified', 'video_kind', 'thumbnail', 'tag_names', 'is_live', 'kind', 'bookmarked', 'liked', 'flagged'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'uploader', 'duration', 'cutoff_progress', 'bookmark_count', 'like_count', 'flag_count', 'score', 'progress', 'passed', 'last_position', 'modified', 'video_kind', 'thumbnail', 'tag_names', 'kind', 'bookmarked', 'liked', 'flagged'],
     title: 'VideoViewResponse'
 } as const;
 

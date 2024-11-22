@@ -73,13 +73,12 @@ const TemplateRow = ({ row, index }: { row: TemplateDisplayResponse; index: numb
           sx={{
             display: { xs: 'none', sm: 'block' },
             backgroundImage: `url(${row.thumbnail})`,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             width: '100px',
             minWidth: '100px',
-            aspectRatio: '16/9',
-            borderRadius: 1,
-            bgcolor: 'action.hover',
+            aspectRatio: '1/ 1',
           }}
         />
         <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>

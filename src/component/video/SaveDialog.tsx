@@ -54,6 +54,24 @@ const createSchema = (t: (key: string) => string) => {
         helperText: t('Minimum progress percent for this video.'),
         grid: 6,
       }),
+    video_kind: yup
+      .string()
+      .required(REQUIRED)
+      .default('video')
+      .label(t('Video kind'))
+      .oneOf(['video', 'short', 'live'])
+      .meta({
+        control: 'select',
+        options: [
+          { value: 'video', label: t('Video') },
+          { value: 'short', label: t('Short video') },
+          { value: 'live', label: t('Live video') },
+        ],
+        grid: 6,
+        helperText: t(
+          'Videos under 60 seconds are automatically classified as shorts. You can change this manually. Please refresh after making changes.',
+        ),
+      }),
     thumbnail: base64ImageSchema(yup, false, t),
   });
 

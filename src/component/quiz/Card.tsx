@@ -4,11 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
 
-import {
-  QuizDisplayResponse as DisplayResponse,
-  quizGetDisplays as getDisplays,
-  quizUpdateResource as updateResource,
-} from '@/api';
+import { QuizDisplayResponse as DisplayResponse } from '@/api';
 import { ResourceCard } from '@/component/common';
 import { formatRelativeTime, textEllipsisCss } from '@/helper/util';
 
@@ -50,8 +46,6 @@ export const Card = ({ data, hideAvatar }: Props) => {
       hideAvatar={hideAvatar}
       actionMenu={<ActionMenu data={data} />}
       autoColor
-      partialUpdateService={updateResource}
-      listService={getDisplays}
       bannerBorder={!data.thumbnail}
     />
   );

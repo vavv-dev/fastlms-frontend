@@ -10,6 +10,7 @@ import {
   ListItem,
   ListItemText,
   Rating,
+  Stack,
   Theme,
   Tooltip,
   Typography,
@@ -17,19 +18,19 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ScrollRestoration, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { EnrollDialog } from './EnrollDialog';
 
 import {
-  PublicGetOutlineData,
-  PublicGetOutlineResponse,
-  PublicGetThreadData,
+  PublicGetOutlineData as GetOutlineData,
+  PublicGetOutlineResponse as GetOutlineResponse,
+  PublicGetThreadData as GetThreadData,
   ThreadResponse,
-  publicGetOutline,
-  publicGetThread,
+  publicGetOutline as getOutline,
+  publicGetThread as getThread,
 } from '@/api';
 import { Thread } from '@/component/comment';
 import { WithAvatar, useServiceImmutable } from '@/component/common';
@@ -50,15 +51,17 @@ const Section = ({ title, collapsed, onToggle, children }: SectionProps) => (
       <Divider sx={{ flexGrow: 1 }} />
       <IconButton onClick={onToggle}>{collapsed ? <ArrowDropDown /> : <ArrowDropUp />}</IconButton>
     </Typography>
-    <Collapse in={!collapsed}>{children}</Collapse>
+    <Collapse in={!collapsed} sx={{ p: { xs: 1, sm: 3 } }}>
+      {children}
+    </Collapse>
   </Box>
 );
 
-const SimpleThread = ({ url, data }: { url: string; data: PublicGetOutlineResponse }) => {
+const RatingThread = ({ url, data }: { url: string; data: GetOutlineResponse }) => {
   const { t } = useTranslation('course');
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '600px', p: 1 }}>
+    <Box sx={{ width: '100%', maxWidth: '600px', p: 1, '& .refresh-thread': { top: '-1.7em' } }}>
       <Typography variant="h6" sx={{ mb: 1 }}>
         {t('Course review')}
       </Typography>
@@ -72,6 +75,7 @@ const SimpleThread = ({ url, data }: { url: string; data: PublicGetOutlineRespon
         disableSelect
         disableReply
         ratingMode
+        refresh
       />
     </Box>
   );
@@ -89,13 +93,13 @@ export const Outline = () => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
 
-  const { data, mutate } = useServiceImmutable<PublicGetOutlineData, PublicGetOutlineResponse>(publicGetOutline, {
+  const { data, mutate } = useServiceImmutable<GetOutlineData, GetOutlineResponse>(getOutline, {
     id: id || '',
     userId: user?.id,
   });
 
   const url = encodeURIComponent(`${window.location.origin}/course/${id}/outline`);
-  const { data: thread } = useServiceImmutable<PublicGetThreadData, ThreadResponse>(publicGetThread, { url, ratingMode: true });
+  const { data: thread } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, { url, ratingMode: true });
 
   const openEnroll = () => {
     if (!data) return;
@@ -118,6 +122,25 @@ export const Outline = () => {
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, [location.state?.enrolled, mutate]); // eslint-disable-line
+
+  const preview = useMemo(() => {
+    if (!data) return null;
+    if (data.preview) return data.preview;
+    // Find first video resource in lessons
+    const firstVideo = data.lessons.reduce<{ id: string } | null>((found, lesson) => {
+      if (found) return found;
+      const videoResource = lesson.resources.find((resource) => resource.kind === 'video');
+      return videoResource || null;
+    }, null);
+    if (!firstVideo) return null;
+    return `<iframe
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/${firstVideo.id}"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+    ></iframe>`;
+  }, [data]);
 
   if (!data) return null;
 
@@ -202,27 +225,17 @@ export const Outline = () => {
             gap: 5,
           }}
         >
-          {!mdUp && <SimpleThread data={data} url={url} />}
+          {!mdUp && <RatingThread data={data} url={url} />}
 
           {/* Course Details */}
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <Section title={t('Description')} collapsed={collapsed.description} onToggle={() => toggleSection('description')}>
-              {data.description ? (
-                <Box sx={{ p: 3 }} className="tiptap-content" dangerouslySetInnerHTML={{ __html: data.description }} />
-              ) : (
-                <Typography color="text.secondary" sx={{ p: 3 }}>
-                  {t('Course description is not ready yet.')}
-                </Typography>
-              )}
-            </Section>
-
-            <Section title={t('Preview')} collapsed={collapsed.preview} onToggle={() => toggleSection('preview')}>
-              {data.preview ? (
+            {(data.preview || preview) && (
+              <Section title={t('Preview')} collapsed={collapsed.preview} onToggle={() => toggleSection('preview')}>
                 <Box
                   sx={{
-                    m: 3,
                     position: 'relative',
                     width: '100%',
+                    maxWidth: '-webkit-fill-available',
                     height: 'auto',
                     aspectRatio: '16 / 9',
                     overflow: 'hidden',
@@ -236,30 +249,75 @@ export const Outline = () => {
                       border: 0,
                     },
                   }}
-                  dangerouslySetInnerHTML={{ __html: data.preview }}
+                  dangerouslySetInnerHTML={{ __html: (data.preview || preview) as string }}
                 />
+              </Section>
+            )}
+
+            <Section title={t('Description')} collapsed={collapsed.description} onToggle={() => toggleSection('description')}>
+              {data.description ? (
+                <Box className="tiptap-content" dangerouslySetInnerHTML={{ __html: data.description }} />
               ) : (
-                <Typography color="text.secondary" sx={{ p: 3 }}>
-                  {t('Course preview is not ready yet.')}
-                </Typography>
+                <Typography color="text.secondary">{t('Course description is not ready yet.')}</Typography>
               )}
             </Section>
 
             <Section title={t('Target')} collapsed={collapsed.target} onToggle={() => toggleSection('target')}>
               {data.target ? (
-                <Typography sx={{ p: 3 }}>{data.target}</Typography>
+                <Typography>{data.target}</Typography>
               ) : (
-                <Typography color="text.secondary" sx={{ p: 3 }}>
-                  {t('Course target is not ready yet.')}
-                </Typography>
+                <Typography color="text.secondary">{t('Course target is not ready yet.')}</Typography>
               )}
             </Section>
 
-            <Section title={t('Included lessons')} collapsed={collapsed.lessons} onToggle={() => toggleSection('lessons')}>
-              <List dense sx={{ listStyle: 'decimal', pl: 5 }}>
+            <Section
+              title={t('Learning days & Completion requirements')}
+              collapsed={collapsed.target}
+              onToggle={() => toggleSection('completion')}
+            >
+              <Stack spacing={2} direction="row">
+                <span>{`${t('Learing days {{ value }} days', { value: data.learning_days })}`}</span>
+                <span>{`${t('Progress rate {{ value }}%', { value: data.cutoff_progress })}`}</span>
+                <span>{`${t('Total score {{ value }} points(%)', { value: data.cutoff_score })}`}</span>
+              </Stack>
+            </Section>
+
+            <Section title={t('Lessons')} collapsed={collapsed.lessons} onToggle={() => toggleSection('lessons')}>
+              <List dense sx={{ listStyle: 'decimal', pl: '1em' }}>
                 {data.lessons.map((lesson) => (
-                  <ListItem key={lesson.id} sx={{ display: 'list-item' }}>
-                    <ListItemText primary={<Typography component="span">{lesson.title}</Typography>} />
+                  <ListItem key={lesson.id} sx={{ display: 'list-item', mb: 1 }}>
+                    <ListItemText
+                      primary={<Typography sx={{ fontSize: '1.1em', fontWeight: 600 }}>{lesson.title}</Typography>}
+                    />
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, my: 1.2 }}>
+                      {lesson.resources.map((resource) => (
+                        <Box key={resource.id} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                          {resource.thumbnail && (
+                            <Box
+                              sx={{
+                                height: 60,
+                                backgroundImage: `url(${resource.thumbnail})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundColor: 'action.hover',
+                                aspectRatio: '16 / 9',
+                                borderRadius: 1,
+                              }}
+                            />
+                          )}
+                          <Typography variant="body1">
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              sx={{ display: 'block' }}
+                            >{`[${t(resource.kind)}]`}</Typography>
+                            {resource.title}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
                   </ListItem>
                 ))}
               </List>
@@ -267,15 +325,7 @@ export const Outline = () => {
           </Box>
 
           {/* Sidebar */}
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: { xs: '100%', md: 350 },
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3,
-            }}
-          >
+          <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: 350 }, display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Box
               sx={{
                 mt: 2,
@@ -311,7 +361,33 @@ export const Outline = () => {
                 </Button>
               )}
             </Box>
-            {mdUp && <SimpleThread data={data} url={url} />}
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography variant="h6">
+                {t('Certificate')}
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                  {t('You can get a certificate after completing this course.')}
+                </Typography>
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+                {data.certificate_templates.map((certificate) => (
+                  <Box
+                    key={certificate.id}
+                    component="img"
+                    src={certificate.thumbnail}
+                    sx={{
+                      maxWidth: { xs: '380px', md: '280px' },
+                      width: 'auto',
+                      objectFit: 'contain',
+                      borderRadius: 1,
+                      boxShadow: 2,
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+
+            {mdUp && <RatingThread data={data} url={url} />}
           </Box>
         </Box>
       </Box>
@@ -319,11 +395,15 @@ export const Outline = () => {
       {enrollDialogOpen && (
         <EnrollDialog
           open={enrollDialogOpen}
-          setOpen={setEnrollDialogOpen}
+          setOpen={() => {
+            setEnrollDialogOpen(false);
+            window.history.replaceState({}, '', window.location.pathname);
+          }}
           id={data.id}
           onEnroll={() => mutate((prev) => prev && { ...prev, enrolled: true }, { revalidate: false })}
         />
       )}
+      <ScrollRestoration />
     </Box>
   );
 };

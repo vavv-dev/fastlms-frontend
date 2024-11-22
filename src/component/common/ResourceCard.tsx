@@ -1,9 +1,9 @@
-import { ArrowRight, BookmarkBorderOutlined } from '@mui/icons-material';
-import { Box, BoxProps, Button, LinearProgress, Stack, Tooltip, Typography, darken, useTheme } from '@mui/material';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { BookmarkBorderOutlined } from '@mui/icons-material';
+import { Box, BoxProps, LinearProgress, Stack, Tooltip, Typography, darken, useTheme } from '@mui/material';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { WithAvatar, updateInfiniteCache, useFixMouseLeave } from '@/component/common';
+import { WithAvatar, useFixMouseLeave } from '@/component/common';
 import { decodeURLText, generateRandomDarkColor, stripHtml, textEllipsisCss, toFixedHuman } from '@/helper/util';
 
 interface ResourceUpdateField {
@@ -40,8 +40,6 @@ interface Props {
   sx?: BoxProps['sx'];
   showDescription?: boolean;
   bannerBorder?: boolean;
-  partialUpdateService?: (params: { id: string; requestBody: Partial<ResourceUpdateField> }) => Promise<any>; // eslint-disable-line
-  listService?: () => Promise<any>; // eslint-disable-line
 }
 
 export const ResourceCard = ({
@@ -60,8 +58,6 @@ export const ResourceCard = ({
   sx,
   showDescription,
   bannerBorder,
-  partialUpdateService,
-  listService,
 }: Props) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
@@ -73,20 +69,6 @@ export const ResourceCard = ({
   useFixMouseLeave(cardRef, () => {
     setHover(false);
   });
-
-  const updateField = useCallback(
-    async (params: Partial<ResourceUpdateField>) => {
-      if (partialUpdateService && listService) {
-        await partialUpdateService({
-          id: resource.id,
-          requestBody: params,
-        }).then(() => {
-          updateInfiniteCache(listService, { id: resource.id, is_public: true }, 'update');
-        });
-      }
-    },
-    [partialUpdateService, resource.id, listService],
-  );
 
   const Banner = useMemo(
     () =>
@@ -105,82 +87,47 @@ export const ResourceCard = ({
           }}
         >
           {banner}
-          <Box
-            sx={{
-              pointerEvents: 'none',
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              overflow: 'hidden',
-              borderRadius: 'inherit',
-              zIndex: 4,
-            }}
-          >
-            {(score != null || score != undefined) && (
-              <Tooltip title={`${toFixedHuman(score, 1)}%`} placement="bottom">
-                <LinearProgress
-                  variant="determinate"
-                  value={score}
-                  sx={{
-                    pointerEvents: 'auto',
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '4px',
-                    bgcolor: 'action.disalbedBackground',
-                  }}
-                  color={passed ? 'success' : 'warning'}
-                />
-              </Tooltip>
-            )}
-            {!resource.is_public && (
-              <Box
+          {(score != null || score != undefined) && (
+            <Tooltip title={`${toFixedHuman(score, 1)}%`} placement="bottom">
+              <LinearProgress
+                variant="determinate"
+                value={score}
                 sx={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  top: 0,
-                  right: 0,
-                  background: 'rgba(0,0,0,0.6)',
-                  color: 'white',
-                  zIndex: 3,
-                  p: 1,
                   pointerEvents: 'auto',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  bgcolor: 'action.disalbedBackground',
+                  zIndex: 3,
                 }}
-              >
-                <Tooltip title={t('If you change to public, everyone can see this resource.')}>
-                  <Button
-                    size="small"
-                    sx={{ color: 'white', p: 0 }}
-                    onClick={(e) => {
-                      if (partialUpdateService) {
-                        e.stopPropagation();
-                        updateField({ is_public: true });
-                      }
-                    }}
-                    endIcon={<ArrowRight />}
-                  >
-                    {t('Change to public')}
-                  </Button>
-                </Tooltip>
-              </Box>
-            )}
-          </Box>
+                color={passed ? 'success' : 'warning'}
+              />
+            </Tooltip>
+          )}
+          {!resource.is_public && (
+            <Box
+              onClick={(e) => e.stopPropagation()}
+              sx={{
+                position: 'absolute',
+                cursor: 'default',
+                width: '100%',
+                height: '100%',
+                top: 0,
+                right: 0,
+                background: 'rgba(0,0,0,0.6)',
+                color: 'white',
+                zIndex: 3,
+                p: 1,
+              }}
+            >
+              {t('Not public')}
+            </Box>
+          )}
         </Box>
       ),
-    [
-      banner,
-      color,
-      passed,
-      resource.is_public,
-      score,
-      t,
-      theme.shape.borderRadius,
-      updateField,
-      partialUpdateService,
-      bannerBorder,
-    ],
+    [banner, color, passed, resource.is_public, score, theme.shape.borderRadius, bannerBorder, t],
   );
 
   return (

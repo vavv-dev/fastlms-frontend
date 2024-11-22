@@ -1,15 +1,30 @@
 import {
+  ArrowRight,
   BookmarkBorderOutlined,
   ChatOutlined,
   CloseOutlined,
   ContactMailOutlined,
+  FiberSmartRecord,
   FileUploadOutlined,
   HistoryOutlined,
   NotificationsActiveOutlined,
   PeopleAltOutlined,
   SchoolOutlined,
 } from '@mui/icons-material';
-import { Avatar, Box, Fade, IconButton, Input, Tab, Tabs, Theme, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Fade,
+  IconButton,
+  Input,
+  Tab,
+  Tabs,
+  Theme,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,14 +32,20 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { accountUpdateMe } from '@/api';
 import { snackbarMessageState, spacerRefState } from '@/component/layout';
+import { notificationsState } from '@/component/notification';
 import { formatRelativeTime, imageToBase64 } from '@/helper/util';
 import { userState } from '@/store';
 
 export const UserLayout = () => {
   const { t } = useTranslation('account');
+  const navigate = useNavigate();
   const [user, setUser] = useAtom(userState);
   const [hover, setHover] = useState(false);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
+  const notifications = useAtomValue(notificationsState);
+
+  // unread notification count
+  const unReadCount = notifications.filter((n) => !n.read_time).length;
 
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement> | null) => {
     const image = e && e.target.files?.[0];
@@ -53,61 +74,71 @@ export const UserLayout = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex' }}>
-        <Box
-          sx={{
-            mb: 5,
-            display: 'flex',
-            maxWidth: 'sm',
-            width: '100%',
-            gap: 2,
-            alignItems: 'center',
-            mx: 'auto',
-            justifyContent: 'center',
-          }}
-        >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flexGrow: 1 }}>
           <Box
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            component="label"
-            htmlFor="thumbnail-image"
-            sx={{ position: 'relative', cursor: 'pointer' }}
+            sx={{
+              mb: 5,
+              display: 'flex',
+              maxWidth: 'sm',
+              width: '100%',
+              gap: 2,
+              alignItems: 'center',
+              mx: 'auto',
+              justifyContent: 'center',
+            }}
           >
-            <Avatar alt={user.name} src={user.thumbnail || ''} sx={{ width: 60, height: 60 }} />
-            <Fade in={hover || !user.thumbnail}>
-              <Box sx={{ position: 'absolute', bottom: '-1em', left: 0, display: 'flex', alignItems: 'center', zIndex: 4 }}>
-                <Tooltip title={t('Upload thumbnail. 60 x 60 size recommended.')}>
-                  <IconButton size="small" component="label" htmlFor="thumbnail-image" sx={{ p: 0.5 }}>
-                    <FileUploadOutlined fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                {user.thumbnail && (
-                  <Tooltip title={t('Remove thumbnail')}>
-                    <IconButton size="small" onClick={() => uploadImage(null)} sx={{ p: 0.5 }}>
-                      <CloseOutlined fontSize="small" />
+            <Box
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              component="label"
+              htmlFor="thumbnail-image"
+              sx={{ position: 'relative', cursor: 'pointer' }}
+            >
+              <Avatar alt={user.name} src={user.thumbnail || ''} sx={{ width: 60, height: 60 }} />
+              <Fade in={hover || !user.thumbnail}>
+                <Box sx={{ position: 'absolute', bottom: '-1em', left: 0, display: 'flex', alignItems: 'center', zIndex: 4 }}>
+                  <Tooltip title={t('Upload thumbnail. 60 x 60 size recommended.')}>
+                    <IconButton size="small" component="label" htmlFor="thumbnail-image" sx={{ p: 0.5 }}>
+                      <FileUploadOutlined fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                )}
-                <Input
-                  hidden
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => uploadImage(e)}
-                  inputProps={{ accept: 'image/*' }}
-                  id="thumbnail-image"
-                  type="file"
-                  sx={{ display: 'none' }}
-                />
-              </Box>
-            </Fade>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {user.name}
-              <Typography variant="caption">
-                {user.username}
-                {user.created && ` • ${t(...formatRelativeTime(new Date(user.created)))}`}
+                  {user.thumbnail && (
+                    <Tooltip title={t('Remove thumbnail')}>
+                      <IconButton size="small" onClick={() => uploadImage(null)} sx={{ p: 0.5 }}>
+                        <CloseOutlined fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  <Input
+                    hidden
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => uploadImage(e)}
+                    inputProps={{ accept: 'image/*' }}
+                    id="thumbnail-image"
+                    type="file"
+                    sx={{ display: 'none' }}
+                  />
+                </Box>
+              </Fade>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {user.name}
+                <Typography variant="caption">
+                  {user.username}
+                  {user.created && ` • ${t(...formatRelativeTime(new Date(user.created)))}`}
+                </Typography>
               </Typography>
-            </Typography>
-            {user.description && <Typography variant="body2">{user.description}</Typography>}
+              {user.description && <Typography variant="body2">{user.description}</Typography>}
+            </Box>
           </Box>
+          {!!unReadCount && (
+            <Box sx={{ pb: 5, display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <FiberSmartRecord color="error" />
+              <Button onClick={() => navigate('/u/notification')} endIcon={<ArrowRight />}>
+                {t('You have {{ count }} unread notifications.', { count: unReadCount })}
+              </Button>
+            </Box>
+          )}
         </Box>
         <Box sx={{ minWidth: { md: 180 } }} />
       </Box>
@@ -142,8 +173,8 @@ const VerticalTabs: React.FC = memo(() => {
 
   const tabs: [string, string, React.ElementType][] = useMemo(
     () => [
-      [t('History'), '', HistoryOutlined],
-      [t('Course / Certificate'), 'course', SchoolOutlined],
+      [t('Course'), '', SchoolOutlined],
+      [t('History'), 'history', HistoryOutlined],
       [t('Bookmark'), 'bookmark', BookmarkBorderOutlined],
       [t('Q&A/Comment'), 'comment', ChatOutlined],
       [t('Notification'), 'notification', NotificationsActiveOutlined],

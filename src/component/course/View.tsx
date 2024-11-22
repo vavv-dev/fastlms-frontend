@@ -106,8 +106,6 @@ export const View = () => {
             position: 'sticky',
             top: `${spacerRef?.clientHeight || 0}px`,
             bgcolor: 'background.paper',
-            gap: 1,
-            alignItems: 'center',
             zIndex: 5,
             textAlign: 'center',
             ...(smDown && (textEllipsisCss(1) as SxProps)),
@@ -256,7 +254,7 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, sti
         sx={{
           gap: 2,
           cursor: 'pointer',
-          minHeight: '3em',
+          minHeight: '2em',
           '& .MuiStepLabel-label': { display: 'flex', gap: 3, alignItems: 'center' },
         }}
       >
@@ -271,6 +269,11 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, sti
         {!!lesson.progress && (
           <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'warning'}>
             {t('Progress {{ value }}%', { value: toFixedHuman(lesson.progress, 1) })}
+          </Typography>
+        )}
+        {lesson.resource_displays.some((resource) => 'status' in resource && resource.status === 'grading') && (
+          <Typography variant="subtitle2" color="error">
+            {t('Grading')}
           </Typography>
         )}
       </StepLabel>

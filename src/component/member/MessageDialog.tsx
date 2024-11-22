@@ -239,7 +239,7 @@ export const MessageDialog = ({ open, setOpen, selection, totalSelected, total }
                         fontSize: '0.875rem',
                       }}
                     >
-                      {t(attachment.kind)}
+                      {!attachment.thumbnail && t(attachment.kind)}
                     </Box>
                     <Box style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <Typography style={{ fontSize: '0.875rem' }}>[{t(attachment.kind)}]</Typography>

@@ -2,11 +2,6 @@ import { INFINITE_PREFIX, cache as globalCache, mutate as globalMutate } from 's
 
 import { GradingEnum, LessonGetDisplaysResponse, SharedGetDisplaysResponse, lessonGetDisplays, sharedGetDisplays } from '@/api';
 
-const ServiceType = {
-  LESSON_DISPLAYS: 'lessonGetDisplays',
-  SHARED_DISPLAYS: 'sharedGetDisplays',
-} as const;
-
 type NestedItem<T> = T & { [field: string]: Array<T> };
 type UpdaterFunction<T> = (item: T) => T;
 
@@ -28,6 +23,11 @@ interface Lesson {
 }
 
 const calculateLessonMetrics = (lesson: Lesson): Partial<Lesson> => {
+  // Null check for resource_displays
+  if (!lesson?.resource_displays) {
+    return { progress: null, score: null, passed: null };
+  }
+
   const gradingKinds = lesson.grading_method === 'progress' ? ['video', 'asset'] : ['quiz', 'exam'];
   const relevantDisplays = lesson.resource_displays.filter((r) => gradingKinds.includes(r.kind));
 
@@ -38,18 +38,18 @@ const calculateLessonMetrics = (lesson: Lesson): Partial<Lesson> => {
   let metrics: Partial<Lesson> = {};
 
   if (lesson.grading_method === 'progress') {
-    const total = relevantDisplays.reduce((sum, r) => sum + (r.progress || 0), 0);
+    const total = relevantDisplays.reduce((sum, r) => sum + (r.progress ?? 0), 0);
     metrics.progress = total / relevantDisplays.length;
   }
 
   if (lesson.grading_method === 'score') {
-    const total = relevantDisplays.reduce((sum, r) => sum + (r.score || 0), 0);
+    const total = relevantDisplays.reduce((sum, r) => sum + (r.score ?? 0), 0);
     metrics.score = total / relevantDisplays.length;
   }
 
   if (lesson.grading_method !== 'none') {
     const passed = relevantDisplays.map((r) => r.passed);
-    metrics.passed = passed.length > 0 ? passed.every((p) => p) : null;
+    metrics.passed = passed.length > 0 && passed.every((p) => p !== undefined && p !== null) ? passed.every((p) => p) : null;
   }
 
   return metrics;
@@ -65,30 +65,50 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
   skipLessonDisplays?: boolean,
 ) => {
   const getItemId = () => {
-    if (typeof itemOrUpdater === 'object') {
+    if (typeof itemOrUpdater === 'object' && itemOrUpdater !== null) {
       return itemOrUpdater.id;
     }
     return null;
   };
 
   const updateNestedItems = (items: T[]): T[] => {
-    let found = undefined;
+    if (!Array.isArray(items)) {
+      return [];
+    }
+
+    let found: T | undefined = undefined;
     const newItems = items
       .map((i) => {
+        if (!i) return null;
+
         if (typeof itemOrUpdater === 'function') {
-          found = itemOrUpdater(i);
-          return mode === 'delete' ? null : found;
-        } else {
+          try {
+            found = itemOrUpdater(i);
+            return mode === 'delete' ? null : found;
+          } catch (error) {
+            console.error('Error in updater function:', error);
+            return i;
+          }
+        } else if (itemOrUpdater !== null) {
           const targetId = getItemId();
           if (targetId !== null && i.id === targetId) {
-            found = { ...i, ...itemOrUpdater };
+            if (listService.name === 'lessonGetDisplays') {
+              found = {
+                ...i,
+                ...itemOrUpdater,
+                resource_displays: (i as unknown as Lesson).resource_displays || [],
+              } as T;
+            } else {
+              found = { ...i, ...itemOrUpdater } as T;
+            }
             return mode === 'delete' ? null : found;
           }
         }
-        if (children && Array.isArray(i[children as keyof T])) {
+
+        if (children && i[children as keyof T] && Array.isArray(i[children as keyof T])) {
           const updatedItem = { ...i, [children]: updateNestedItems(i[children as keyof T] as Array<T>) };
 
-          if (listService.name === ServiceType.LESSON_DISPLAYS && children === 'resource_displays') {
+          if (listService.name === 'lessonGetDisplays' && children === 'resource_displays') {
             const metrics = calculateLessonMetrics(updatedItem as unknown as Lesson);
             return { ...updatedItem, ...metrics };
           }
@@ -98,49 +118,55 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
         return i;
       })
       .filter(Boolean) as T[];
+
     const targetId = getItemId();
-    return isPin && found && targetId ? [found, ...newItems.filter((i) => i.id !== targetId)] : newItems;
+    return isPin && found && targetId ? [found, ...newItems.filter((i) => i?.id !== targetId)] : newItems;
   };
 
-  Array.from(globalCache.keys()).forEach((key) => {
-    if (key.startsWith(`${INFINITE_PREFIX}${listService.name}`)) {
-      const data: Array<{ items: T[]; page: number; total: number }> = globalCache.get(key)?.data;
-      let updated = data;
-      if (mode === 'update' || mode === 'delete') {
-        updated = data.map((d) => ({
-          ...d,
-          items: updateNestedItems(d.items),
-          total: mode === 'delete' ? d.total - 1 : d.total,
-        }));
-      } else if (mode === 'create') {
-        if (typeof itemOrUpdater === 'function') {
-          throw new Error('Create mode does not support updater function');
-        }
-        if (data && data.length > 0) {
-          updated = [
-            {
-              ...data[0],
-              items: [itemOrUpdater as T, ...data[0].items],
-              total: data[0].total + 1,
-            },
-            ...data.slice(1),
-          ];
-        } else {
-          updated = [
-            {
-              items: [itemOrUpdater as T],
-              page: 1,
-              total: 1,
-            },
-          ];
-        }
-      }
-      globalMutate(key, updated, { revalidate: false });
-    }
-  });
-
   try {
-    if (!skipAccountHistory && listService.name !== ServiceType.SHARED_DISPLAYS && mode !== 'create') {
+    Array.from(globalCache.keys()).forEach((key) => {
+      if (key.startsWith(`${INFINITE_PREFIX}${listService.name}`)) {
+        const cachedData = globalCache.get(key);
+        if (!cachedData?.data) return;
+
+        const data: Array<{ items: T[]; page: number; total: number }> = cachedData.data;
+        let updated = data;
+
+        if (mode === 'update' || mode === 'delete') {
+          updated = data.map((d) => ({
+            ...d,
+            items: updateNestedItems(d.items),
+            total: mode === 'delete' ? Math.max(0, d.total - 1) : d.total,
+          }));
+        } else if (mode === 'create') {
+          if (typeof itemOrUpdater === 'function') {
+            throw new Error('Create mode does not support updater function');
+          }
+          if (data && data.length > 0) {
+            updated = [
+              {
+                ...data[0],
+                items: [itemOrUpdater as T, ...data[0].items],
+                total: data[0].total + 1,
+              },
+              ...data.slice(1),
+            ];
+          } else {
+            updated = [
+              {
+                items: [itemOrUpdater as T],
+                page: 1,
+                total: 1,
+              },
+            ];
+          }
+        }
+        globalMutate(key, updated, { revalidate: false });
+      }
+    });
+
+    // Handle related cache updates
+    if (!skipAccountHistory && listService.name !== 'sharedGetDisplays' && mode !== 'create') {
       updateInfiniteCache(
         sharedGetDisplays,
         typeof itemOrUpdater === 'function'
@@ -154,22 +180,22 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
       );
     }
 
-    if (!skipLessonDisplays && listService.name !== ServiceType.LESSON_DISPLAYS && mode !== 'create') {
+    if (!skipLessonDisplays && listService.name !== 'lessonGetDisplays' && mode !== 'create') {
       const transformLessonData = (
         data: any, // eslint-disable-line
-      ) => {
+      ): UpdaterFunction<LessonGetDisplaysResponse['items'][0]> | Partial<LessonGetDisplaysResponse['items'][0]> => {
         if (typeof data === 'function') {
           return (lesson: LessonGetDisplaysResponse['items'][0]) => {
             const updatedLesson = {
               ...lesson,
-              resource_displays: data(lesson.resource_displays),
+              resource_displays: data(lesson.resource_displays) || [],
             };
             return updatedLesson;
           };
         }
         return {
           ...data,
-          resource_displays: Array.isArray(data.items) ? data.items : data.resource_displays,
+          resource_displays: Array.isArray(data.items) ? data.items : data.resource_displays || [],
         };
       };
 
@@ -183,7 +209,7 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
         true,
       );
     }
-  } catch (e) {
-    void e;
+  } catch (error) {
+    console.error('Error in updateInfiniteCache:', error);
   }
 };

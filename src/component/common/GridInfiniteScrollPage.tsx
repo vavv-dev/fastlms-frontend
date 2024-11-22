@@ -4,7 +4,7 @@ import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { ScrollRestoration, useLocation } from 'react-router-dom';
 
 import { CancelablePromise } from '@/api';
 import { InfiniteScrollIndicator, PaginationActions, searchFamily, useInfinitePagination } from '@/component/common';
@@ -164,6 +164,7 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
         )}
         {isEmpty && <Box sx={{ opacity: 0.7, gridColumn: '1 / -1', width: '100%', textAlign: 'center' }}>{emptyMessage}</Box>}
       </Box>
+      <ScrollRestoration />
     </Box>
   );
 };

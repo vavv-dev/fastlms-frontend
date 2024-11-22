@@ -336,6 +336,12 @@ export type CourseEnrollResponse = {
     study_end: string;
 };
 
+export type CourseLessonOutlineSchema = {
+    id: string;
+    title: string;
+    resources: Array<ResourceSchema>;
+};
+
 export type CourseLessonResource = {
     id: string;
     title: string;
@@ -360,12 +366,15 @@ export type CourseOutlineReponse = {
     preview: string;
     target: string;
     level: CourseLevel;
+    cutoff_progress: number;
+    cutoff_score: number;
     registration_limit: number;
     entrance_verification: boolean;
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
-    lessons: Array<CourseLessonResource>;
+    certificate_templates: Array<CertificateTemplateSchema>;
+    lessons: Array<CourseLessonOutlineSchema>;
     enrolled?: boolean;
 };
 
@@ -1765,7 +1774,7 @@ export type ThreadResponse = {
     title: string;
     owner: ThreadOwner;
     url: string;
-    kind: 'thread';
+    kind: "thread";
     resource_kind: LearningResourceKind;
     comment_count: number;
     question_count: number;
@@ -1774,8 +1783,6 @@ export type ThreadResponse = {
     rating_count?: (number | null);
     rating_avg?: (number | null);
 };
-
-export type kind4 = 'thread';
 
 export type UserCreateRequest = {
     username: string;
@@ -1852,8 +1859,7 @@ export type VideoDisplayResponse = {
     progress: (number | null);
     passed: (boolean | null);
     modified: string;
-    is_live: boolean;
-    video_kind?: (VideoKind | null);
+    video_kind: VideoKind;
     kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
@@ -1863,7 +1869,7 @@ export type VideoDisplayResponse = {
     flagged: boolean;
 };
 
-export type VideoKind = 'video' | 'short';
+export type VideoKind = 'video' | 'short' | 'live';
 
 export type VideoOwner = {
     id: string;
@@ -1911,6 +1917,7 @@ export type VideoResourceUpdateRequest = {
     featured?: boolean;
     hide_from_list?: boolean;
     cutoff_progress?: number;
+    video_kind?: VideoKind;
     thumbnail?: (string | null);
 };
 
@@ -1929,8 +1936,7 @@ export type VideoSearchResultResponse = {
     progress: (number | null);
     passed: (boolean | null);
     modified: string;
-    is_live: boolean;
-    video_kind?: (VideoKind | null);
+    video_kind: VideoKind;
     kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
@@ -1973,7 +1979,6 @@ export type VideoViewResponse = {
     video_kind: VideoKind;
     thumbnail: string;
     tag_names: Array<(string)>;
-    is_live: boolean;
     kind: LearningResourceKind;
     bookmarked: boolean;
     liked: boolean;
@@ -2145,7 +2150,7 @@ export type PublicGetCommentsResponse = (Paginated_CommentDisplayResponse_);
 
 export type VideoGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     playlistId?: (string | null);
@@ -2286,7 +2291,7 @@ export type VideoToggleActionResponse = (unknown);
 
 export type PlaylistGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2365,7 +2370,7 @@ export type PlaylistGetPlaylistReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'created';
+    orderBy?: "created";
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2379,7 +2384,7 @@ export type PlaylistDownloadPlaylistReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'created';
+    orderBy?: "created";
     refreshToken?: (string | null);
     search?: (string | null);
     upTo?: (string | null);
@@ -2559,7 +2564,7 @@ export type AssetPdfViewResponse = (string);
 
 export type QuizGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2639,7 +2644,7 @@ export type QuizGetQuizReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'end_time';
+    orderBy?: "end_time";
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2653,7 +2658,7 @@ export type QuizDownloadQuizReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'end_time';
+    orderBy?: "end_time";
     refreshToken?: (string | null);
     search?: (string | null);
     upTo?: (string | null);
@@ -2679,7 +2684,7 @@ export type QuizGetOwnedQuestionsResponse = (Array<QuizResourceQuestionResource>
 
 export type SurveyGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2759,7 +2764,7 @@ export type SurveyGetSurveyReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'end_time';
+    orderBy?: "end_time";
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2773,7 +2778,7 @@ export type SurveyDownloadSurveyReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'end_time';
+    orderBy?: "end_time";
     refreshToken?: (string | null);
     search?: (string | null);
     upTo?: (string | null);
@@ -2799,7 +2804,7 @@ export type SurveyGetOwnedQuestionsResponse = (Array<SurveyResourceQuestionResou
 
 export type ExamGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
@@ -2960,7 +2965,7 @@ export type ExamGetOwnedQuestionsResponse = (Array<ExamResourceQuestionResource>
 export type LessonGetDisplaysData = {
     accessToken?: (string | null);
     course?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
@@ -3023,7 +3028,7 @@ export type LessonToggleActionResponse = (unknown);
 export type CourseGetDisplaysData = {
     accessToken?: (string | null);
     enrolled?: boolean;
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
@@ -3032,13 +3037,6 @@ export type CourseGetDisplaysData = {
 };
 
 export type CourseGetDisplaysResponse = (Paginated_CourseDisplayResponse_);
-
-export type CourseGetNewEnrolledCountData = {
-    accessToken?: (string | null);
-    refreshToken?: (string | null);
-};
-
-export type CourseGetNewEnrolledCountResponse = (number);
 
 export type CourseGetResourceData = {
     accessToken?: (string | null);
@@ -3121,7 +3119,7 @@ export type SharedGetDisplaysData = {
     excludes?: Array<('video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'course')>;
     filter?: 'history' | 'featured';
     kinds?: Array<('video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'course')>;
-    orderBy?: 'created';
+    orderBy?: "created";
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -3170,7 +3168,7 @@ export type PublicGetOutlineResponse = (CourseOutlineReponse);
 
 export type SearchSearchVideoContentData = {
     accessToken?: (string | null);
-    orderBy?: 'relevance';
+    orderBy?: "relevance";
     page?: number;
     q: string;
     refreshToken?: (string | null);
@@ -3190,7 +3188,7 @@ export type SearchSuggestVideoKeywordsResponse = (Array<(string)>);
 export type ChannelGetDisplaysData = {
     accessToken?: (string | null);
     joined?: (boolean | null);
-    orderBy?: 'created';
+    orderBy?: "created";
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -3315,7 +3313,7 @@ export type MemberInviteUserResponse = (unknown);
 
 export type MessageGetMessagesData = {
     accessToken?: (string | null);
-    orderBy?: 'time';
+    orderBy?: "time";
     page?: number;
     receiverId?: (string | null);
     refreshToken?: (string | null);
@@ -3344,7 +3342,7 @@ export type MessageReadMessageResponse = (unknown);
 
 export type AssistantGetMessagesData = {
     accessToken?: (string | null);
-    orderBy?: 'created';
+    orderBy?: "created";
     page?: number;
     refreshToken?: (string | null);
     role?: (MessageRole | null);
@@ -3395,7 +3393,7 @@ export type CertificateRequestCourseCertificateResponse = (unknown);
 
 export type CertificateGetDisplaysData = {
     accessToken?: (string | null);
-    orderBy?: 'modified';
+    orderBy?: "modified";
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);

@@ -69,11 +69,6 @@ export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProp
             </Typography>
             <SimpleSearch placeholder={t("Author'name or content")} search={search} setSearch={setSearch} />
             <Box sx={{ flexGrow: 1 }} />
-            {refresh && (
-              <IconButton color="primary" onClick={() => mutate()}>
-                <Refresh />
-              </IconButton>
-            )}
           </Box>
         )}
         <Write
@@ -100,6 +95,16 @@ export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProp
           )),
         )}
       </Box>
+      {refresh && (
+        <IconButton
+          className="refresh-thread"
+          color="primary"
+          onClick={() => mutate()}
+          sx={{ position: 'absolute', top: 0, right: 0 }}
+        >
+          <Refresh />
+        </IconButton>
+      )}
       <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} />
     </Box>
   );

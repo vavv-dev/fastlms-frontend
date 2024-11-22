@@ -1,7 +1,8 @@
-import { Verified } from '@mui/icons-material';
-import { Box, Button, Link, Paper, Typography, useTheme } from '@mui/material';
+import { CreateOutlined, Verified } from '@mui/icons-material';
+import { Box, Button, Link, Paper, Rating, Typography, useTheme } from '@mui/material';
 import { useAtom, useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import { certificateStatusFamily } from '.';
 
@@ -12,6 +13,7 @@ import { snackbarMessageState } from '@/component/layout';
 export const CertificateRequest = ({ course }: { course: GetViewRespons }) => {
   const { t } = useTranslation('course');
   const theme = useTheme();
+  const navigate = useNavigate();
   const [certificateStatus, setCertificateStatus] = useAtom(certificateStatusFamily(course.id));
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
@@ -96,7 +98,7 @@ export const CertificateRequest = ({ course }: { course: GetViewRespons }) => {
   }
 
   return (
-    <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2, flexDirection: 'column' }}>
+    <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1.5, flexDirection: 'column' }}>
       <Typography variant="h6">{t('Certificate issued')}</Typography>
       <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', maxWidth: '100%' }}>
         {course.certificates.map((certificate, index) => (
@@ -122,6 +124,21 @@ export const CertificateRequest = ({ course }: { course: GetViewRespons }) => {
           </Link>
         ))}
       </Box>
+      {!course.marketing_url && (
+        <Box
+          onClick={() => navigate(`/course/${course.id}/outline`)}
+          sx={{ display: 'flex', gap: 1, overflowX: 'auto', maxWidth: '100%', cursor: 'pointer' }}
+        >
+          <Typography
+            variant="body2"
+            sx={{ lineHeight: 1.4, textAlign: 'center', color: 'primary.main', display: 'flex', alignItems: 'center', gap: 0.5 }}
+          >
+            <CreateOutlined fontSize="small" />
+            {t('Write a course review')}
+          </Typography>
+          <Rating value={5} readOnly size="small" />
+        </Box>
+      )}
     </Box>
   );
 };

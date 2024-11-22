@@ -1,4 +1,4 @@
-import { ListAltOutlined, PersonAddOutlined, PersonRemoveOutlined } from '@mui/icons-material';
+import { ListAltOutlined, PersonAddOutlined, PersonRemoveOutlined, SchoolOutlined } from '@mui/icons-material';
 import BookmarkAddOutlinedIcon from '@mui/icons-material/BookmarkAddOutlined';
 import BookmarkRemoveOutlinedIcon from '@mui/icons-material/BookmarkRemoveOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -7,6 +7,7 @@ import { ListItemIcon, MenuItem } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 // import ReportDialog from './ReportDialog';
 import { EnrollDialog } from './EnrollDialog';
@@ -27,6 +28,7 @@ const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
 export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const { t } = useTranslation('course');
   const user = useAtomValue(userState);
+  const navigate = useNavigate();
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
@@ -53,6 +55,13 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
           >
             <ListItemIcon>{data.enrolled ? <PersonRemoveOutlined /> : <PersonAddOutlined />}</ListItemIcon>
             {data.enrolled ? t('Unenroll') : t('Enroll')}
+          </MenuItem>,
+
+          <MenuItem key="courseinfo" onClick={() => navigate(`/course/${data.id}/outline`)}>
+            <ListItemIcon>
+              <SchoolOutlined />
+            </ListItemIcon>
+            {t('View course info')}
           </MenuItem>,
 
           user.username === data?.owner.username && [

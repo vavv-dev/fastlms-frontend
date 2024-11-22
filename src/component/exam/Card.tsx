@@ -4,11 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
 
-import {
-  ExamDisplayResponse as DisplayResponse,
-  examGetDisplays as getDisplays,
-  examUpdateResource as updateResource,
-} from '@/api';
+import { ExamDisplayResponse as DisplayResponse } from '@/api';
 import { ResourceCard } from '@/component/common';
 import { formatDatetimeLocale, formatDuration, formatRelativeTime } from '@/helper/util';
 
@@ -71,8 +67,6 @@ export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
         autoColor
         actionMenu={<ActionMenu data={data} />}
         sx={{ ...sx, '& .content-title': { WebkitLineClamp: '1' } }}
-        partialUpdateService={updateResource}
-        listService={getDisplays}
         bannerBorder={!data.thumbnail}
       />
     </Box>

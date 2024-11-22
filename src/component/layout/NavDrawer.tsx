@@ -199,10 +199,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
 });
 
 const closedMixin = (theme: Theme, hideDrawer: boolean): CSSObject => ({
-  // transition: theme.transitions.create('width', {
-  //   easing: theme.transitions.easing.sharp,
-  //   duration: theme.transitions.duration.leavingScreen,
-  // }),
+  // do not use transition here, it will slow down the page navigation. eg video <-> home
   overflowX: 'hidden',
   width: 0,
   ...(!hideDrawer && {

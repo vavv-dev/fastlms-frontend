@@ -95,6 +95,13 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
   }, [data?.id]); // eslint-disable-line
 
   /**
+   * merge existing bitmap with new bitmap
+   */
+  const mergeBitmaps = (existingBitmap: number[], newBitmap: number[]): number[] => {
+    return existingBitmap.map((value, index) => value || newBitmap[index] || 0);
+  };
+
+  /**
    *
    * load watch bitmap
    * convert bytes to bit array
@@ -106,17 +113,23 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     const currentBitmap = watchBitmapsRef.current[id];
     watchBitmap?.arrayBuffer().then((arrayBuffer) => {
       const uint8Array = new Uint8Array(arrayBuffer);
+      const serverBitmap = Array(currentBitmap.length).fill(0);
 
       // watch bitmap to bit array
-      for (let i = 0; i < uint8Array.length && i * 8 < currentBitmap.length; i++) {
+      for (let i = 0; i < uint8Array.length && i * 8 < serverBitmap.length; i++) {
         const byte = uint8Array[i];
-        for (let j = 7; j >= 0 && i * 8 + (7 - j) < currentBitmap.length; j--) {
+        for (let j = 7; j >= 0 && i * 8 + (7 - j) < serverBitmap.length; j--) {
           const bit = (byte >> j) & 1;
-          currentBitmap[i * 8 + (7 - j)] = bit;
+          serverBitmap[i * 8 + (7 - j)] = bit;
         }
       }
 
-      currentBitmap.forEach((v, i) => {
+      // Merge server bitmap with current bitmap
+      const mergedBitmap = mergeBitmaps(currentBitmap, serverBitmap);
+      watchBitmapsRef.current[id] = mergedBitmap;
+
+      // Update progress bar
+      mergedBitmap.forEach((v, i) => {
         if (v === 1) updateWatchProgressBar(i);
       });
     });
@@ -351,10 +364,12 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'default', minHeight: '40px' }}>
         <Typography variant="subtitle2">{t('Watch segment')}</Typography>
-        <Typography
-          variant="subtitle2"
-          sx={{ py: '4px', width: '2.5em', textAlign: 'right' }}
-        >{`${toFixedHuman(percent, 0)}%`}</Typography>
+        <Tooltip title={`${toFixedHuman(percent, 1)}%`}>
+          <Typography
+            variant="subtitle2"
+            sx={{ py: '4px', width: '2.5em', textAlign: 'right' }}
+          >{`${Math.floor(percent)}%`}</Typography>
+        </Tooltip>
         <Box sx={{ flexGrow: 1, position: 'relative', height: '4px', bgcolor: alpha(progressColor, 0.4) }}>
           <Box
             ref={watchProgressRef}
