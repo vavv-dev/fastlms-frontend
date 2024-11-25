@@ -54,7 +54,7 @@ const createSchema = (t: (key: string) => string) => {
         helperText: t('Minimum progress percent for this video.'),
         grid: 6,
       }),
-    video_kind: yup
+    sub_kind: yup
       .string()
       .required(REQUIRED)
       .default('video')

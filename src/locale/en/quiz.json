@@ -18,6 +18,7 @@
   "Enter each choice on a new line.": "Enter each choice on a new line.",
   "Enter the correct answer.": "Enter the correct answer.",
   "Failed": "Failed",
+  "Failed to start the quiz. {{ message }}": "Failed to start the quiz. {{ message }}",
   "Failure message": "Failure message",
   "Featured": "Featured",
   "Go to video view": "Go to video view",

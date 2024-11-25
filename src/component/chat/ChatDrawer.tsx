@@ -190,7 +190,7 @@ export const ChatDrawer = ({ open, onClose }: ChatDrawerProps) => {
             cursor: 'ew-resize',
             zIndex: theme.zIndex.drawer + 102,
             '&:hover': {
-              backgroundColor: theme.palette.action.hover,
+              bgcolor: theme.palette.action.hover,
             },
             ...(isDragging && {
               cursor: 'ew-resize',

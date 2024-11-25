@@ -3,9 +3,9 @@ import { Box, BoxProps, Tooltip, Typography, useTheme } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
+import { ViewDialog } from './ViewDialog';
 
 import {
   AssetDisplayResponse as DisplayResponse,
@@ -27,12 +27,12 @@ interface Props {
 
 export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
   const { t } = useTranslation('asset');
-  const navigate = useNavigate();
   const theme = useTheme();
   const user = useAtomValue(userState);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const [uploaderOpen, setUploaderOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [viewOpen, setViewOpen] = useState(false);
 
   const handleUploadComplete = () => {
     updateResource({
@@ -48,7 +48,7 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
       <ResourceCard
         resource={data}
         onClick={() => {
-          if (data.uploaded) navigate('.', { state: { dialog: data } });
+          if (data.uploaded) setViewOpen(true);
           else setSnackbarMessage({ message: t('Asset is not uploaded yet'), duration: 3000 });
         }}
         banner={
@@ -76,15 +76,15 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
                 gap: 1,
               }}
             >
-              {data.asset_kind == 'epub' ? (
+              {data.sub_kind == 'epub' ? (
                 <Tooltip title="EPUB">
                   <MenuBookOutlined fontSize="small" />
                 </Tooltip>
-              ) : data.asset_kind == 'pdf' ? (
+              ) : data.sub_kind == 'pdf' ? (
                 <Tooltip title="PDF">
                   <PictureAsPdf fontSize="small" />
                 </Tooltip>
-              ) : data.asset_kind == 'html' ? (
+              ) : data.sub_kind == 'html' ? (
                 <Tooltip title="HTML">
                   <Html fontSize="small" sx={{ stroke: '#eee' }} />
                 </Tooltip>
@@ -126,6 +126,7 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
           />
         </Suspense>
       )}
+      {viewOpen && <ViewDialog open={viewOpen} setOpen={setViewOpen} id={data.id} />}
     </>
   );
 };

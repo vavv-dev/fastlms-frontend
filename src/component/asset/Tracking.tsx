@@ -1,7 +1,7 @@
-import { Box } from '@mui/material';
+import { LinearProgress, Tooltip } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import throttle from 'lodash/throttle';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { pageFamily } from '.';
 
@@ -16,6 +16,7 @@ import {
   assetUpdateWatch as updateWatch,
 } from '@/api';
 import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
+import { formatDuration, toFixedHuman } from '@/helper/util';
 import { userState } from '@/store';
 
 const PERSIST_EVENT = ['beforeunload', 'pagehide', 'visibilitychange'];
@@ -24,7 +25,7 @@ const DEBOUNCE_THROTTLE = 500;
 
 const lastPositions = {};
 
-export const Tracking = ({ data }: { data: DisplayResponse }) => {
+export const Tracking = ({ data, hidden }: { data: DisplayResponse; hidden?: boolean }) => {
   const user = useAtomValue(userState);
   const lastPositionsRef = useRef<Record<string, number>>(lastPositions);
   const { data: watchBitmap, mutate } = useServiceImmutable<GetWatchBitmapData, GetWatchBitmapResponse>(getWatchBitmap, {
@@ -35,10 +36,10 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
   const locationRef = useRef<string | null>(null);
   const [location, setLocation] = useAtom(pageFamily(data.url));
 
-  useEffect(() => {
-    if (!location) return;
-    locationRef.current = String(location);
-  }, [location]);
+  const [progress, setProgress] = useState(() => {
+    const lastPosition = lastPositionsRef.current[data.id] || 0;
+    return (lastPosition / data.duration) * 100;
+  });
 
   // no need to save last position
   const trackingImpossible = !data || !data.duration || data.duration > MAX_WATCH_DURATION || (data.progress || 0) >= 100;
@@ -99,10 +100,11 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
       const lastPosition = lastPositionsRef.current[data.id] || 0;
       if (lastPosition >= data.duration) return;
       lastPositionsRef.current[data.id] = lastPosition + 1;
+      setProgress(((lastPosition + 1) / data.duration) * 100);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [data.id]); // eslint-disable-line
+  }, [data.id, data.duration]); // eslint-disable-line
 
   /**
    *
@@ -206,5 +208,25 @@ export const Tracking = ({ data }: { data: DisplayResponse }) => {
   if (!data?.duration) return null;
   if (data.duration > MAX_WATCH_DURATION) return null;
 
-  return <Box sx={{ position: 'absolute', bottom: 0, right: '50%', zIndex: 1000 }}></Box>;
+  if (hidden) return <></>;
+
+  return (
+    <Tooltip title={`${toFixedHuman(progress, 1)}% / ${formatDuration(data.duration)}`} placement="bottom">
+      <LinearProgress
+        variant="determinate"
+        value={progress}
+        sx={{
+          pointerEvents: 'auto',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          bgcolor: 'action.disalbedBackground',
+          zIndex: 3,
+        }}
+        color={progress > data.cutoff_progress ? 'success' : 'warning'}
+      />
+    </Tooltip>
+  );
 };

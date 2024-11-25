@@ -57,7 +57,7 @@ const Section = ({ title, collapsed, onToggle, children }: SectionProps) => (
   </Box>
 );
 
-const RatingThread = ({ url, data }: { url: string; data: GetOutlineResponse }) => {
+const RatingThread = ({ url, data, refresh }: { url: string; data: GetOutlineResponse, refresh: boolean }) => {
   const { t } = useTranslation('course');
 
   return (
@@ -75,7 +75,7 @@ const RatingThread = ({ url, data }: { url: string; data: GetOutlineResponse }) 
         disableSelect
         disableReply
         ratingMode
-        refresh
+        refresh={refresh}
       />
     </Box>
   );
@@ -225,7 +225,7 @@ export const Outline = () => {
             gap: 5,
           }}
         >
-          {!mdUp && <RatingThread data={data} url={url} />}
+          {!mdUp && <RatingThread data={data} url={url} refresh={!!user} />}
 
           {/* Course Details */}
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -301,7 +301,7 @@ export const Outline = () => {
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat',
-                                backgroundColor: 'action.hover',
+                                bgcolor: 'action.hover',
                                 aspectRatio: '16 / 9',
                                 borderRadius: 1,
                               }}
@@ -376,7 +376,7 @@ export const Outline = () => {
                     component="img"
                     src={certificate.thumbnail}
                     sx={{
-                      maxWidth: { xs: '380px', md: '280px' },
+                      maxWidth: { xs: '90%', mobile: '380px', md: '280px' },
                       width: 'auto',
                       objectFit: 'contain',
                       borderRadius: 1,
@@ -387,7 +387,7 @@ export const Outline = () => {
               </Box>
             </Box>
 
-            {mdUp && <RatingThread data={data} url={url} />}
+            {mdUp && <RatingThread data={data} url={url} refresh={!!user} />}
           </Box>
         </Box>
       </Box>

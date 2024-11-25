@@ -44,6 +44,7 @@ export const UserHistory = () => {
       pageKey="history"
       apiService={sharedGetDisplays}
       apiOptions={{ kinds: kind ? [kind] : ['video', 'asset', 'quiz', 'survey', 'exam'], filter: 'history' }}
+      swrInfiniteOption={{ revalidateOnMount: true }}
       renderItem={({ data }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => (
@@ -73,7 +74,7 @@ export const UserHistory = () => {
 const Card = ({ item }: { item: HistoryDisplayResponse }) => {
   switch (item.kind) {
     case 'video':
-      return <VideoCard data={{ ...(item as VideoDisplayResponse), video_kind: 'video' }} />;
+      return <VideoCard data={{ ...(item as VideoDisplayResponse), sub_kind: 'video' }} />;
     case 'asset':
       return <AssetCard data={item as AssetDisplayResponse} />;
     case 'quiz':

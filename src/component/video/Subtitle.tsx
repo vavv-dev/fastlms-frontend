@@ -20,7 +20,7 @@ import { useServiceImmutable } from '@/component/common';
 import { getRegExp } from '@/helper/search';
 import { formatDuration, parseLocalStorage } from '@/helper/util';
 
-const _subtitleConfig = parseLocalStorage(`subtitleConfig`, { enabled: true, autoScroll: true });
+const _subtitleConfig = parseLocalStorage(`subtitleConfig`, { enabled: true, autoScroll: false });
 const subtitleConfigState = atomWithStorage<{
   enabled: boolean;
   autoScroll: boolean;
@@ -228,7 +228,11 @@ export const Subtitle = ({ id }: { id: string }) => {
         />
       </Box>
       {config.enabled && Object.values(tracksRef.current).length > 0 && (
-        <Box ref={cuelineRef} sx={{ overflow: 'scroll', border: 1, borderColor: 'divider', maxHeight: '400px' }}>
+        <Box
+          className="subtitlebox"
+          ref={cuelineRef}
+          sx={{ overflow: 'scroll', border: 1, borderColor: 'divider', maxHeight: '400px' }}
+        >
           <SubtitleLines tracksRef={tracksRef} langs={langs} />
         </Box>
       )}

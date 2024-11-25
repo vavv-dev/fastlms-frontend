@@ -70,7 +70,7 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     if (trackingImpossible) return 0;
     if (!data.duration) return 0;
     const percent = (watchBitmapsRef.current[id]?.filter((v) => v === 1).length / data.duration) * 100;
-    return isNaN(percent) ? 0 : percent;
+    return Math.min(isNaN(percent) ? 0 : percent, 100);
   }, [progress, data?.id]); // eslint-disable-line
 
   /**
@@ -147,7 +147,7 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     const player = playerInstance?.getInternalPlayer();
     if (!player) return;
 
-    const currentId = player.getVideoData()?.video_id;
+    const currentId = player.getVideoData?.()?.video_id;
     if (!currentId) return;
 
     // fix too fast switch video

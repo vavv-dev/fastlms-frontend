@@ -234,7 +234,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
                   </Typography>
                   <Box
                     sx={{
-                      backgroundColor: 'action.hover',
+                      bgcolor: 'action.hover',
                       p: 2,
                       borderRadius: 1,
                       display: 'flex',
@@ -274,7 +274,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
                   </Typography>
                   <Table size="small">
                     <TableHead>
-                      <TableRow sx={{ '& th': { fontWeight: 'bold', backgroundColor: 'background.default' } }}>
+                      <TableRow sx={{ '& th': { fontWeight: 'bold', bgcolor: 'background.default' } }}>
                         <TableCell>No.</TableCell>
                         <TableCell>{t('Lesson')}</TableCell>
                         <TableCell align="right">{t('Type')}</TableCell>
@@ -285,7 +285,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
                     </TableHead>
                     <TableBody>
                       {stats.lessons.map((lesson, i) => (
-                        <TableRow key={lesson.title} sx={{ '&:hover': { backgroundColor: 'action.hover' } }}>
+                        <TableRow key={lesson.title} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
                           <TableCell>{i + 1}</TableCell>
                           <TableCell>{lesson.title}</TableCell>
                           <TableCell align="right">{lesson.method === 'progress' ? t('Progress') : t('Score')}</TableCell>

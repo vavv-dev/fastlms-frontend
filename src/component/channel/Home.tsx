@@ -30,7 +30,7 @@ import { CourseCard } from '@/component/course';
 import { ExamCard } from '@/component/exam';
 import { QuizCard } from '@/component/quiz';
 import { SurveyCard } from '@/component/survey';
-import { PlaylistCard, VideoCard, VideoPlayer, VideoTracking } from '@/component/video';
+import { PlaylistCard, VideoCard, VideoPlayer } from '@/component/video';
 import { textEllipsisCss } from '@/helper/util';
 import { channelState } from '@/store';
 
@@ -95,7 +95,7 @@ export const Home = () => {
     data?.forEach((pagination) => {
       pagination.items.forEach((item) => {
         if (!items[item.kind as Kind]) items[item.kind as Kind] = [];
-        items[(item.kind == 'video' ? (item as VideoDisplayResponse).video_kind : item.kind) as Kind].push(item);
+        items[(item.kind == 'video' ? (item as VideoDisplayResponse).sub_kind : item.kind) as Kind].push(item);
       });
     });
     return items;
@@ -250,7 +250,6 @@ const Welcome = memo(({ mobileDown, welcome, videoId, containerRef }: WelcomePro
         {videoId && (
           <Box sx={{ width: !mobileDown ? '424px' : '100%', position: 'relative', flexShrink: 0, aspectRatio: '16/9', mb: 3 }}>
             <VideoPlayer id={videoId} sx={{ borderRadius: '8px', aspectRatio: '16/9' }} />
-            <VideoTracking id={videoId} hidden />
             <Button
               size="small"
               sx={{

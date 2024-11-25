@@ -18,6 +18,7 @@
   "Enter each choice on a new line.": "선택지를 각각 새 줄에 입력하세요",
   "Enter the correct answer.": "정답을 입력하세요.",
   "Failed": "불합격",
+  "Failed to start the quiz. {{ message }}": "Failed to start the quiz. {{ message }}",
   "Failure message": "실패했을 때 보여질 메시지",
   "Featured": "추천",
   "Go to video view": "동영상 보기",

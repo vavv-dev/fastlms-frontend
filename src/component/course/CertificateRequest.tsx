@@ -1,4 +1,4 @@
-import { CreateOutlined, Verified } from '@mui/icons-material';
+import { CreateOutlined, EmojiEvents } from '@mui/icons-material';
 import { Box, Button, Link, Paper, Rating, Typography, useTheme } from '@mui/material';
 import { useAtom, useSetAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
@@ -85,7 +85,7 @@ export const CertificateRequest = ({ course }: { course: GetViewRespons }) => {
               '100%': { left: '200%' },
             },
           }}
-          startIcon={<Verified />}
+          startIcon={<EmojiEvents />}
           size="large"
           variant="contained"
           color="primary"
@@ -100,7 +100,7 @@ export const CertificateRequest = ({ course }: { course: GetViewRespons }) => {
   return (
     <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1.5, flexDirection: 'column' }}>
       <Typography variant="h6">{t('Certificate issued')}</Typography>
-      <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', maxWidth: '100%' }}>
+      <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', maxWidth: '100%', '&::-webkit-scrollbar': { display: 'none' } }}>
         {course.certificates.map((certificate, index) => (
           <Link
             key={index}

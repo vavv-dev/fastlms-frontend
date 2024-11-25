@@ -21,7 +21,7 @@ export const Displays = ({ kind }: { kind: VideoKind }) => {
       orderingOptions={[{ value: 'modified', label: t('Recently modified') }]}
       CreateItemComponent={({ open, setOpen }) => <ImportYoutubeDialog open={open} setOpen={setOpen} kind="video" />}
       apiService={getDisplays}
-      apiOptions={{ videoKind: kind }}
+      apiOptions={{ subKind: kind }}
       renderItem={({ data }) =>
         data?.map((pagination) =>
           pagination.items?.map((item) => (

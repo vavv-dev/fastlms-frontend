@@ -2,11 +2,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {
   ClearOutlined,
   Close,
+  EmojiEventsOutlined,
   InfoOutlined,
   LibraryAddOutlined,
   NotificationsOutlined,
   Refresh,
-  VerifiedOutlined
 } from '@mui/icons-material';
 import { Avatar, Box, Button, IconButton, Tab, Tabs, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -47,7 +47,7 @@ export const Setting: React.FC = () => {
 
   const tabs = [
     { label: t('Channel Info'), icon: InfoOutlined, Component: ChannelInfo },
-    { label: t('Certificate'), icon: VerifiedOutlined, Component: TemplateDisplays },
+    { label: t('Certificate'), icon: EmojiEventsOutlined, Component: TemplateDisplays },
     { label: t('Notification'), icon: NotificationsOutlined, Component: NotificationSetting },
   ];
 
@@ -287,7 +287,7 @@ export const ChannelInfo: React.FC = () => {
               height: 100,
               aspectRatio: '16/9',
               borderRadius: 2,
-              backgroundColor: 'action.hover',
+              bgcolor: 'action.hover',
               my: 1,
               display: 'flex',
               alignItems: 'center',

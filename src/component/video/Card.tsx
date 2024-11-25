@@ -40,7 +40,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              aspectRatio: data.video_kind == 'short' ? '9 / 16' : '16 / 9',
+              aspectRatio: data.sub_kind == 'short' ? '9 / 16' : '16 / 9',
             }}
           />
           <Box
@@ -51,7 +51,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
             {isHover && !disablePreview && <PreviewPlayer id={data.id} onClick={() => navigate(to || `/video/${data.id}`)} />}
           </Box>
 
-          {(data.duration != null || data.video_kind == 'live') && (
+          {(data.duration != null || data.sub_kind == 'live') && (
             <Typography
               variant="caption"
               sx={{
@@ -63,7 +63,7 @@ export const Card = ({ data, hideAvatar, to, sx, showDescription, disablePreview
                 fontWeight: '600',
                 zIndex: 2,
                 color: theme.palette.common.white,
-                bgcolor: data.video_kind === 'live' ? theme.palette.error.dark : 'rgba(0, 0, 0, 0.6)',
+                bgcolor: data.sub_kind === 'live' ? theme.palette.error.dark : 'rgba(0, 0, 0, 0.6)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,

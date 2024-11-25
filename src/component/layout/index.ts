@@ -7,11 +7,6 @@ import i18next from '@/i18n';
 
 export { BaseLayout } from './BaseLayout';
 
-/**
- *
- * store
- *
- */
 export const navState = atomWithStorage<boolean>('navOpen', parseLocalStorage('navOpen', false));
 export const spacerRefState = atom<HTMLElement | null>(null);
 
@@ -29,6 +24,7 @@ export const alertState = atom<Alert>({
   hideClose: false,
   duration: 5000,
 });
+export { GlobalAlert } from './GlobalAlert';
 
 // snackbar message
 interface SnackBarMessage {

@@ -12,6 +12,7 @@ import {
   sharedToggleBookmark,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
+import { useViewDialog } from '@/component/share';
 import { formatDatetimeLocale, formatRelativeTime, textEllipsisCss } from '@/helper/util';
 import { userState } from '@/store';
 
@@ -53,6 +54,9 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
   const user = useAtomValue(userState);
   const [bookmarked, setBookmarked] = useState(true);
 
+  // dialog opener
+  const { open, Dialog } = useViewDialog(row.id, row.kind as 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson');
+
   const toggleBookmark = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
@@ -78,7 +82,8 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
       case 'survey':
       case 'exam':
       case 'lesson':
-        navigate('.', { state: { dialog: row } });
+        open();
+        break;
     }
   };
 
@@ -120,6 +125,7 @@ const ContentRow = ({ row }: { row: BookmarkedContentResponse }) => {
           <IconButton onClick={toggleBookmark}>{bookmarked ? <BookmarkOutlined /> : <BookmarkBorderOutlined />}</IconButton>
         </Tooltip>
       </TableCell>
+      <Dialog />
     </TableRow>
   );
 };

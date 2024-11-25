@@ -1,7 +1,6 @@
-import { ArrowForwardOutlined } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { useSetAtom } from 'jotai';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,7 +27,6 @@ export const StopWatch = ({ id, getValues }: Props) => {
   const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
   const [remainSeconds, setRemainSeconds] = useState<number>(0);
   const navigate = useNavigate();
-  const pathnameRef = useRef<string>(window.location.pathname);
   const setAlert = useSetAtom(alertState);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const submission = data?.submission;
@@ -55,7 +53,6 @@ export const StopWatch = ({ id, getValues }: Props) => {
       >
         <Typography variant="body2">{title}</Typography>
         <Typography variant="body2">{`${t('Exam is in progress.')}`}</Typography>
-        <ArrowForwardOutlined fontSize="small" />
       </Box>
     );
   }, [t, navigate]);
@@ -106,24 +103,23 @@ export const StopWatch = ({ id, getValues }: Props) => {
   }, [data?.id]); // eslint-disable-line
 
   useEffect(() => {
-    if (!data || !data.duration || !submission || submission.end_time) return;
-    const pathnameRefVal = pathnameRef.current;
+    // clean up
     return () => {
+      if (!data || !data.duration || !submission || submission.end_time) return;
       // set global alert
+      setAlert({ open: false, message: '', severity: 'info' });
       setExamMessage(null);
-      if (pathnameRefVal !== window.location.pathname) {
-        if (!submission.end_time && data.duration) {
-          const start = submission.start_time ? new Date(submission.start_time).getTime() : new Date().getTime();
-          const remain = Math.ceil((start + data.duration * 60 * 1000 - new Date().getTime()) / 1000);
-          if (remain > 0) {
-            const message = globalAlert(data.id, data.title);
-            setAlert({ open: true, message: message, severity: 'warning', duration: remain * 1000 });
-            setExamMessage(message);
-          }
+      if (!submission.end_time && data.duration) {
+        const start = submission.start_time ? new Date(submission.start_time).getTime() : new Date().getTime();
+        const remain = Math.ceil((start + data.duration * 60 * 1000 - new Date().getTime()) / 1000);
+        if (remain > 0) {
+          const message = globalAlert(data.id, data.title);
+          setAlert({ open: true, message: message, severity: 'warning', duration: remain * 1000 });
+          setExamMessage(message);
         }
       }
     };
-  }, [pathnameRef.current]); // eslint-disable-line
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (!data || !data.duration || !submission || submission.end_time) return;
@@ -152,6 +148,5 @@ export const StopWatch = ({ id, getValues }: Props) => {
     return null;
   }
 
-  // as JSX
   return null;
 };

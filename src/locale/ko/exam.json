@@ -1,5 +1,6 @@
 {
   "Add bookmark": "북마크 추가",
+  "Another exam is in progress.": "다른 시험이 진행 중입니다.",
   "Answer creteria": "채점 기준",
   "Answer criteria": "채점 기준",
   "Are you sure you want to submit answers? If submitted, the exam will be finished.": "답안을 제출하시겠습니까? 제출하면 시험이 종료됩니다.",
@@ -75,6 +76,7 @@
   "Number input": "숫자 입력",
   "OX selection": "OX 선택",
   "Optional": "선택 사항",
+  "Please complete the exam in progress before starting a new exam.": "새 시험을 시작하기 전에 진행 중인 시험을 완료하세요.",
   "Please grade this question.": "이 문제를 채점하세요.",
   "Public": "공개",
   "Question": "문제",

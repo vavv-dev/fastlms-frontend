@@ -8,7 +8,7 @@ export type AssetDisplayResponse = {
     featured: boolean;
     owner: AssetOwner;
     thumbnail: string;
-    asset_kind: AssetKind;
+    sub_kind: AssetKind;
     entrypoint: string;
     url: string;
     uploaded: boolean;
@@ -65,7 +65,7 @@ export type AssetResourceCreateRequest = {
     cutoff_progress: number;
     thumbnail?: (string | null);
     duration: number;
-    asset_kind: AssetKind;
+    sub_kind: AssetKind;
     entrypoint: string;
     uploaded: boolean;
 };
@@ -82,7 +82,7 @@ export type AssetResourceResponse = {
     cutoff_progress: number;
     thumbnail: string;
     duration: number;
-    asset_kind: AssetKind;
+    sub_kind: AssetKind;
     entrypoint: string;
     uploaded: boolean;
     owner: AssetOwner;
@@ -100,7 +100,7 @@ export type AssetResourceUpdateRequest = {
     cutoff_progress?: number;
     thumbnail?: (string | null);
     duration?: number;
-    asset_kind?: AssetKind;
+    sub_kind?: AssetKind;
     entrypoint?: string;
     uploaded?: boolean;
 };
@@ -495,7 +495,7 @@ export type ExamAssessResponse = {
     final_message: string;
     verification_required: boolean;
     duration: number;
-    exam_kind: ExamKind;
+    sub_kind: ExamKind;
     score: (number | null);
     passed: (boolean | null);
     status: (SubmissionStatus | null);
@@ -540,7 +540,7 @@ export type ExamDisplayResponse = {
     end_date: (string | null);
     owner: ExamOwner;
     modified: string;
-    exam_kind: ExamKind;
+    sub_kind: ExamKind;
     duration: number;
     cutoff_score: number;
     verification_required: boolean;
@@ -563,7 +563,7 @@ export type ExamDisplayResponse = {
 export type ExamGradingExam = {
     id: string;
     title: string;
-    exam_kind: ExamKind;
+    sub_kind: ExamKind;
 };
 
 export type ExamGradingRequest = {
@@ -629,7 +629,7 @@ export type ExamResourceCreateRequest = {
     end_date?: (string | null);
     success_message: string;
     failure_message: string;
-    exam_kind: ExamKind;
+    sub_kind: ExamKind;
     duration: number;
     question_composition: ExamResourceQuestionComposition;
     cutoff_score: number;
@@ -699,7 +699,7 @@ export type ExamResourceResponse = {
     end_date?: (string | null);
     success_message: string;
     failure_message: string;
-    exam_kind: ExamKind;
+    sub_kind: ExamKind;
     duration: number;
     question_composition: ExamResourceQuestionComposition;
     cutoff_score: number;
@@ -723,7 +723,7 @@ export type ExamResourceUpdateRequest = {
     end_date?: (string | null);
     success_message?: string;
     failure_message?: string;
-    exam_kind?: ExamKind;
+    sub_kind?: ExamKind;
     duration?: number;
     question_composition?: ExamResourceQuestionComposition;
     cutoff_score?: number;
@@ -1784,6 +1784,11 @@ export type ThreadResponse = {
     rating_avg?: (number | null);
 };
 
+export type ThreadUpdateRequest = {
+    thumbnail: string;
+    title: string;
+};
+
 export type UserCreateRequest = {
     username: string;
     email: string;
@@ -1859,7 +1864,7 @@ export type VideoDisplayResponse = {
     progress: (number | null);
     passed: (boolean | null);
     modified: string;
-    video_kind: VideoKind;
+    sub_kind: VideoKind;
     kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
@@ -1904,7 +1909,7 @@ export type VideoResourceResponse = {
     hide_from_list: boolean;
     owner: VideoOwner;
     kind: LearningResourceKind;
-    video_kind: VideoKind;
+    sub_kind: VideoKind;
     cutoff_progress: number;
     uploader: string;
     thumbnail: string;
@@ -1917,7 +1922,7 @@ export type VideoResourceUpdateRequest = {
     featured?: boolean;
     hide_from_list?: boolean;
     cutoff_progress?: number;
-    video_kind?: VideoKind;
+    sub_kind?: VideoKind;
     thumbnail?: (string | null);
 };
 
@@ -1936,7 +1941,7 @@ export type VideoSearchResultResponse = {
     progress: (number | null);
     passed: (boolean | null);
     modified: string;
-    video_kind: VideoKind;
+    sub_kind: VideoKind;
     kind: LearningResourceKind;
     bookmark_count: number;
     like_count: number;
@@ -1976,7 +1981,7 @@ export type VideoViewResponse = {
     passed: (boolean | null);
     last_position: (number | null);
     modified: string;
-    video_kind: VideoKind;
+    sub_kind: VideoKind;
     thumbnail: string;
     tag_names: Array<(string)>;
     kind: LearningResourceKind;
@@ -2104,6 +2109,15 @@ export type CommentCreateThreadData = {
 
 export type CommentCreateThreadResponse = (ThreadResponse);
 
+export type CommentUpdateThreadData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+    requestBody: ThreadUpdateRequest;
+};
+
+export type CommentUpdateThreadResponse = (unknown);
+
 export type CommentCreateResourceData = {
     accessToken?: (string | null);
     refreshToken?: (string | null);
@@ -2157,8 +2171,8 @@ export type VideoGetDisplaysData = {
     refreshToken?: (string | null);
     search?: (string | null);
     size?: number;
+    subKind?: (VideoKind | null);
     tag?: (string | null);
-    videoKind?: (VideoKind | null);
 };
 
 export type VideoGetDisplaysResponse = (Paginated_VideoDisplayResponse_);
@@ -2415,13 +2429,13 @@ export type PlaylistToggleActionResponse = (unknown);
 
 export type AssetGetDisplaysData = {
     accessToken?: (string | null);
-    assetKind?: (AssetKind | null);
     orderBy?: 'title' | 'modified';
     owner?: (string | null);
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
     size?: number;
+    subKind?: (AssetKind | null);
 };
 
 export type AssetGetDisplaysResponse = (Paginated_AssetDisplayResponse_);

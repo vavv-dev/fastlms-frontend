@@ -380,7 +380,7 @@ export const Designer = ({ id }: { id?: string }) => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      '&:hover': { backgroundColor: theme.palette.action.hover },
+                      '&:hover': { bgcolor: theme.palette.action.hover },
                       py: 0.5,
                     }}
                   >
@@ -554,11 +554,11 @@ export const Designer = ({ id }: { id?: string }) => {
                     cursor: isDragging ? 'move' : isCurrentlyEditing ? 'text' : 'move',
                     userSelect: 'none',
                     borderRadius: '1px',
-                    backgroundColor: isSelected ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
+                    bgcolor: isSelected ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
                     '&:hover': {
                       outline: '2px solid',
                       outlineColor: isSelected ? theme.palette.primary.main : 'transparent',
-                      backgroundColor: theme.palette.action.hover,
+                      bgcolor: theme.palette.action.hover,
                     },
                   }}
                 >

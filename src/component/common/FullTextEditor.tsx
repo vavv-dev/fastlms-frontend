@@ -130,6 +130,7 @@ export const FullTextEditor = ({
         '& .MuiTiptap-MenuBar-root .MuiTiptap-RichTextField-content': { py: 0.5 },
         '& .MuiTiptap-RichTextContent-readonly': { opacity: 0.6 },
         '& .MuiTiptap-FieldContainer-root': { borderRadius: '8px' },
+        '& .MuiTiptap-RichTextField-menuBar': { position: 'inherit' },
         '& .MuiTiptap-FieldContainer-notchedOutline': {
           borderColor: borderColor ? `${borderColor} !important` : 'inherit',
         },

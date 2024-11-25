@@ -56,8 +56,6 @@ interface Props {
   ratingMode?: boolean;
 }
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
-
 export const Comment = ({ url, data, resourceKind, setParentHover, editor, disableSelect, disableReply, ratingMode }: Props) => {
   const { t } = useTranslation('comment');
   const user = useAtomValue(userState);
@@ -66,6 +64,8 @@ export const Comment = ({ url, data, resourceKind, setParentHover, editor, disab
   const [showReplies, setShowReplies] = useState(true);
   const [hover, setHover] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+
+  const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
 
   const toggleSolved = () => {
     updateResource({
@@ -319,7 +319,7 @@ const ContentBox = ({ content, deleted, resourceKind, url }: ContentBoxProps) =>
         sx={{
           ...baseStyles,
           '& .timestamp-link:hover': {
-            backgroundColor: alpha(theme.palette.info.main, 0.2),
+            bgcolor: alpha(theme.palette.info.main, 0.2),
           },
         }}
         dangerouslySetInnerHTML={{ __html: htmlContent }}

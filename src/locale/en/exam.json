@@ -1,5 +1,6 @@
 {
   "Add bookmark": "Add bookmark",
+  "Another exam is in progress.": "Another exam is in progress.",
   "Answer creteria": "Answer creteria",
   "Answer criteria": "Answer criteria",
   "Are you sure you want to submit answers? If submitted, the exam will be finished.": "Are you sure you want to submit answers? If submitted, the exam will be finished.",
@@ -76,6 +77,7 @@
   "Number input": "Number input",
   "OX selection": "OX selection",
   "Optional": "Optional",
+  "Please complete the exam in progress before starting a new exam.": "Please complete the exam in progress before starting a new exam.",
   "Please grade this question.": "Please grade this question.",
   "Public": "Public",
   "Question": "Question",

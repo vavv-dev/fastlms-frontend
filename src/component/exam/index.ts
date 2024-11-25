@@ -5,8 +5,9 @@ import i18next from '@/i18n';
 
 export { Card as ExamCard } from './Card';
 export { Displays as ExamDisplays } from './Displays';
-export { ReadyDialog as ExamReadyDialog } from './ReadyDialog';
 export { View as ExamView } from './View';
+export { ViewDialog as ExamViewDialog } from './ViewDialog';
+export { ViewDialogOpener as ExamViewDialogOpener } from './ViewDialogOpener';
 export { Displays as GradingDisplays } from './grading/Displays';
 
 // gettext no-op
@@ -31,3 +32,4 @@ void [
 ];
 
 export const examMessageState = atom<ReactElement | null>(null);
+export const stopWatchPortalState = atom<HTMLDivElement | null>(null);

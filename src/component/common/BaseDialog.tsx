@@ -46,19 +46,23 @@ export const BaseDialog = ({
   const [forceFullWidth, setForceFullWidth] = useState(false);
   const smDown = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Dialog
+      transitionDuration={0}
       disableEnforceFocus={chatDrawerOpen}
       ref={ref}
       fullWidth={fullWidth}
       maxWidth={smDown ? undefined : forceFullWidth ? false : maxWidth}
-      onClose={() => setOpen(false)}
-      // fix. scroll paper empty space
-      PaperProps={{ sx: { overflow: 'unset', borderRadius: theme.shape.borderRadius } }}
+      onClose={handleClose}
+      PaperProps={{ sx: { overflow: 'unset', borderRadius: props.fullScreen ? 0 : theme.shape.borderRadius } }}
       scroll="paper"
       onClick={(e) => e.stopPropagation()}
       {...props}
-      sx={{ ...(smDown && { '& .MuiDialog-paper': { margin: '8px', width: 'calc(100% - 16px)' } }), ...sx }}
+      sx={{ ...(smDown && !props.fullScreen && { '& .MuiDialog-paper': { margin: '8px', width: 'calc(100% - 16px)' } }), ...sx }}
       open={open}
     >
       {title && (
@@ -68,12 +72,12 @@ export const BaseDialog = ({
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           {headerButtons}
-          {!smDown && maxWidth != false && maxWidth != ('sm' as DialogProps['maxWidth']) && (
+          {!smDown && maxWidth != false && maxWidth != ('sm' as DialogProps['maxWidth']) && !props.fullScreen && (
             <IconButton onClick={() => setForceFullWidth(!forceFullWidth)}>
               {!forceFullWidth ? <FullscreenOutlined fontSize="small" /> : <FullscreenExitOutlined fontSize="small" />}
             </IconButton>
           )}
-          <IconButton onClick={() => setOpen(false)}>
+          <IconButton onClick={handleClose}>
             <Close fontSize="small" />
           </IconButton>
         </DialogTitle>

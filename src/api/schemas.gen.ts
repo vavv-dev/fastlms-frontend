@@ -29,7 +29,7 @@ export const AssetDisplayResponseSchema = {
             type: 'string',
             title: 'Thumbnail'
         },
-        asset_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/AssetKind'
         },
         entrypoint: {
@@ -130,7 +130,7 @@ export const AssetDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'asset_kind', 'entrypoint', 'url', 'uploaded', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'last_location'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'sub_kind', 'entrypoint', 'url', 'uploaded', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'last_location'],
     title: 'AssetDisplayResponse'
 } as const;
 
@@ -311,7 +311,7 @@ export const AssetResourceCreateRequestSchema = {
             type: 'integer',
             title: 'Duration'
         },
-        asset_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/AssetKind'
         },
         entrypoint: {
@@ -324,7 +324,7 @@ export const AssetResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'cutoff_progress', 'duration', 'asset_kind', 'entrypoint', 'uploaded'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'cutoff_progress', 'duration', 'sub_kind', 'entrypoint', 'uploaded'],
     title: 'AssetResourceCreateRequest'
 } as const;
 
@@ -383,7 +383,7 @@ export const AssetResourceResponseSchema = {
             type: 'integer',
             title: 'Duration'
         },
-        asset_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/AssetKind'
         },
         entrypoint: {
@@ -402,7 +402,7 @@ export const AssetResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'end_date', 'cutoff_progress', 'thumbnail', 'duration', 'asset_kind', 'entrypoint', 'uploaded', 'owner', 'kind'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'end_date', 'cutoff_progress', 'thumbnail', 'duration', 'sub_kind', 'entrypoint', 'uploaded', 'owner', 'kind'],
     title: 'AssetResourceResponse'
 } as const;
 
@@ -464,7 +464,7 @@ export const AssetResourceUpdateRequestSchema = {
             type: 'integer',
             title: 'Duration'
         },
-        asset_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/AssetKind'
         },
         entrypoint: {
@@ -2293,7 +2293,7 @@ export const ExamAssessResponseSchema = {
             type: 'integer',
             title: 'Duration'
         },
-        exam_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/ExamKind'
         },
         score: {
@@ -2330,7 +2330,7 @@ export const ExamAssessResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'cutoff_score', 'submission', 'kind', 'owner', 'finding', 'final_message', 'verification_required', 'duration', 'exam_kind', 'score', 'passed', 'status'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'cutoff_score', 'submission', 'kind', 'owner', 'finding', 'final_message', 'verification_required', 'duration', 'sub_kind', 'score', 'passed', 'status'],
     title: 'ExamAssessResponse'
 } as const;
 
@@ -2507,7 +2507,7 @@ export const ExamDisplayResponseSchema = {
             format: 'date-time',
             title: 'Modified'
         },
-        exam_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/ExamKind'
         },
         duration: {
@@ -2597,7 +2597,7 @@ export const ExamDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'exam_kind', 'duration', 'cutoff_score', 'verification_required', 'question_composition', 'thumbnail', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'score', 'passed', 'status'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'sub_kind', 'duration', 'cutoff_score', 'verification_required', 'question_composition', 'thumbnail', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'score', 'passed', 'status'],
     title: 'ExamDisplayResponse'
 } as const;
 
@@ -2611,12 +2611,12 @@ export const ExamGradingExamSchema = {
             type: 'string',
             title: 'Title'
         },
-        exam_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/ExamKind'
         }
     },
     type: 'object',
-    required: ['id', 'title', 'exam_kind'],
+    required: ['id', 'title', 'sub_kind'],
     title: 'ExamGradingExam'
 } as const;
 
@@ -2920,7 +2920,7 @@ export const ExamResourceCreateRequestSchema = {
             type: 'string',
             title: 'Failure Message'
         },
-        exam_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/ExamKind'
         },
         duration: {
@@ -2967,7 +2967,7 @@ export const ExamResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_score', 'randomize', 'enable_finding', 'verification_required', 'questions'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'sub_kind', 'duration', 'question_composition', 'cutoff_score', 'randomize', 'enable_finding', 'verification_required', 'questions'],
     title: 'ExamResourceCreateRequest'
 } as const;
 
@@ -3214,7 +3214,7 @@ export const ExamResourceResponseSchema = {
             type: 'string',
             title: 'Failure Message'
         },
-        exam_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/ExamKind'
         },
         duration: {
@@ -3272,7 +3272,7 @@ export const ExamResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'exam_kind', 'duration', 'question_composition', 'cutoff_score', 'randomize', 'enable_finding', 'verification_required', 'questions', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'hide_from_list', 'start_date', 'success_message', 'failure_message', 'sub_kind', 'duration', 'question_composition', 'cutoff_score', 'randomize', 'enable_finding', 'verification_required', 'questions', 'id', 'owner', 'modified'],
     title: 'ExamResourceResponse'
 } as const;
 
@@ -3323,7 +3323,7 @@ export const ExamResourceUpdateRequestSchema = {
             type: 'string',
             title: 'Failure Message'
         },
-        exam_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/ExamKind'
         },
         duration: {
@@ -7917,6 +7917,22 @@ export const ThreadResponseSchema = {
     title: 'ThreadResponse'
 } as const;
 
+export const ThreadUpdateRequestSchema = {
+    properties: {
+        thumbnail: {
+            type: 'string',
+            title: 'Thumbnail'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        }
+    },
+    type: 'object',
+    required: ['thumbnail', 'title'],
+    title: 'ThreadUpdateRequest'
+} as const;
+
 export const UserCreateRequestSchema = {
     properties: {
         username: {
@@ -8256,7 +8272,7 @@ export const VideoDisplayResponseSchema = {
             format: 'date-time',
             title: 'Modified'
         },
-        video_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/VideoKind'
         },
         kind: {
@@ -8288,7 +8304,7 @@ export const VideoDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'video_kind', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'sub_kind', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged'],
     title: 'VideoDisplayResponse'
 } as const;
 
@@ -8443,7 +8459,7 @@ export const VideoResourceResponseSchema = {
         kind: {
             '$ref': '#/components/schemas/LearningResourceKind'
         },
-        video_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/VideoKind'
         },
         cutoff_progress: {
@@ -8460,7 +8476,7 @@ export const VideoResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'hide_from_list', 'owner', 'kind', 'video_kind', 'cutoff_progress', 'uploader', 'thumbnail'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'hide_from_list', 'owner', 'kind', 'sub_kind', 'cutoff_progress', 'uploader', 'thumbnail'],
     title: 'VideoResourceResponse'
 } as const;
 
@@ -8490,7 +8506,7 @@ export const VideoResourceUpdateRequestSchema = {
             type: 'integer',
             title: 'Cutoff Progress'
         },
-        video_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/VideoKind'
         },
         thumbnail: {
@@ -8595,7 +8611,7 @@ export const VideoSearchResultResponseSchema = {
             format: 'date-time',
             title: 'Modified'
         },
-        video_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/VideoKind'
         },
         kind: {
@@ -8639,7 +8655,7 @@ export const VideoSearchResultResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'video_kind', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'relevance'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'uploader', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'sub_kind', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'relevance'],
     title: 'VideoSearchResultResponse'
 } as const;
 
@@ -8780,7 +8796,7 @@ export const VideoViewResponseSchema = {
             format: 'date-time',
             title: 'Modified'
         },
-        video_kind: {
+        sub_kind: {
             '$ref': '#/components/schemas/VideoKind'
         },
         thumbnail: {
@@ -8811,7 +8827,7 @@ export const VideoViewResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'uploader', 'duration', 'cutoff_progress', 'bookmark_count', 'like_count', 'flag_count', 'score', 'progress', 'passed', 'last_position', 'modified', 'video_kind', 'thumbnail', 'tag_names', 'kind', 'bookmarked', 'liked', 'flagged'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'uploader', 'duration', 'cutoff_progress', 'bookmark_count', 'like_count', 'flag_count', 'score', 'progress', 'passed', 'last_position', 'modified', 'sub_kind', 'thumbnail', 'tag_names', 'kind', 'bookmarked', 'liked', 'flagged'],
     title: 'VideoViewResponse'
 } as const;
 

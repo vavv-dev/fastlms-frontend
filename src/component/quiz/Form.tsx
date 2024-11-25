@@ -106,7 +106,7 @@ export const Form = ({ id }: { id: string }) => {
               </Typography>
               {question?.question}
             </Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1 }}>
               {question?.kind === 'single_selection' ? t('Select the correct answer.') : t('Enter the correct answer.')}
             </Typography>
             {question?.kind === 'single_selection' ? (

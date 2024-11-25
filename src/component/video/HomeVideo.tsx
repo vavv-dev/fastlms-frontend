@@ -43,7 +43,7 @@ export const HomeVideo = () => {
           pagination.items?.map((item) => (
             <VideoCard
               key={item.id}
-              data={{ ...item, video_kind: 'video' }}
+              data={{ ...item, sub_kind: 'video' }}
               sx={{ mb: 2, '& .card-banner': { borderRadius: '16px', overflow: 'hidden' } }}
             />
           )),

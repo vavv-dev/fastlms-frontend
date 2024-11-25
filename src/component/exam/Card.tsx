@@ -1,8 +1,9 @@
 import { Box, BoxProps, Table, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
+import { ViewDialog } from './ViewDialog';
 
 import { ExamDisplayResponse as DisplayResponse } from '@/api';
 import { ResourceCard } from '@/component/common';
@@ -17,13 +18,13 @@ interface Props {
 
 export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
   const { t } = useTranslation('exam');
-  const navigate = useNavigate();
+  const [viewOpen, setViewOpen] = useState(false);
 
   return (
-    <Box>
+    <>
       <ResourceCard
         resource={data}
-        onClick={() => navigate('.', { state: { dialog: data } })}
+        onClick={() => setViewOpen(true)}
         bannerPlace={bannerPlace || 'bottom'}
         banner={
           <Box sx={{ p: 2, position: 'relative' }}>
@@ -69,7 +70,8 @@ export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
         sx={{ ...sx, '& .content-title': { WebkitLineClamp: '1' } }}
         bannerBorder={!data.thumbnail}
       />
-    </Box>
+      {viewOpen && <ViewDialog open={viewOpen} setOpen={setViewOpen} id={data.id} />}
+    </>
   );
 };
 
@@ -89,7 +91,7 @@ const Info = ({ data }: { data: DisplayResponse }) => {
         <TableBody>
           <TableRow>
             <TableCell>{t('Exam Type')}</TableCell>
-            <TableCell>{t(data.exam_kind)}</TableCell>
+            <TableCell>{t(data.sub_kind)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>{t('Start')}</TableCell>

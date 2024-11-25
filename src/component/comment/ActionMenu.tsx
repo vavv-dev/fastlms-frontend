@@ -23,12 +23,12 @@ interface Props {
   ratingMode?: boolean;
 }
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
-
 export const ActionMenu = ({ url, data, onEdit, disableSelect, ratingMode }: Props) => {
   const { t } = useTranslation('comment');
   const user = useAtomValue(userState);
   const { data: thread } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, { url, ratingMode });
+
+  const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays, true);
 
   const toggleField = (field: 'is_question' | 'pinned' | 'deleted') => {
     updateResource({

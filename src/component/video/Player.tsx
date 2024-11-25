@@ -26,7 +26,7 @@ export const Player = ({ id, sx }: { id: string; sx?: SxProps }) => {
   const setPlayerHeight = useSetAtom(playerHeightState);
   const setActiveId = useSetAtom(activeIdState);
   const { data } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
-  const playerRatio = data?.video_kind === 'short' ? 9 / 16 : 16 / 9;
+  const playerRatio = data?.sub_kind === 'short' ? 9 / 16 : 16 / 9;
 
   const elementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -60,7 +60,7 @@ export const Player = ({ id, sx }: { id: string; sx?: SxProps }) => {
         overflow: 'hidden',
         width: '100%',
         height: 'auto',
-        maxWidth: playerRatio >= 1 ? '100%' : `calc((100vh - 200px) * ${playerRatio})`,
+        maxWidth: playerRatio >= 1 ? '100%' : `calc((100vh - 220px) * ${playerRatio})`,
         maxHeight: 'calc(100vh - 200px)',
         mx: 'auto',
         aspectRatio: playerRatio,

@@ -83,7 +83,7 @@ const GradingRow = ({ row, index }: { row: GradingSubmissionReponse; index: numb
         <WithAvatar variant="small" {...row.user} />
       </TableCell>
       <TableCell>{row.exam.title}</TableCell>
-      <TableCell>{t(row.exam.exam_kind)}</TableCell>
+      <TableCell>{t(row.exam.sub_kind)}</TableCell>
       <TableCell>{formatDatetimeLocale(row.end_time)}</TableCell>
       <TableCell>{toFixedHuman(row.score, 1)}</TableCell>
       <TableCell>{t(row.status || '')}</TableCell>

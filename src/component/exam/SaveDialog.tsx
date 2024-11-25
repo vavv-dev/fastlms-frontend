@@ -119,7 +119,7 @@ const createSchema = (t: (key: string) => string) => {
   const schema: yup.ObjectSchema<ResourceUpdateRequest> = yup.object({
     title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text' }),
     description: yup.string().default('').label(t('Description')).meta({ control: 'text', multiline: true }),
-    exam_kind: yup
+    sub_kind: yup
       .string()
       .required(REQUIRED)
       .default('general_exam')

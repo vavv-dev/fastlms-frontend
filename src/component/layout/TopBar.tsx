@@ -1,12 +1,12 @@
-import { ArrowBackIos, Brightness4, Brightness7, LiveHelpOutlined } from '@mui/icons-material';
+import { Brightness4, Brightness7, LiveHelpOutlined, MenuOpen } from '@mui/icons-material';
 import Menu from '@mui/icons-material/Menu';
-import { Alert, AppBar, Box, Collapse, IconButton, Theme, Toolbar, Tooltip, useMediaQuery } from '@mui/material';
+import { AppBar, Box, IconButton, Theme, Toolbar, Tooltip, useMediaQuery } from '@mui/material';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { alertState, navState } from '.';
+import { navState } from '.';
+import { GlobalAlert } from './GlobalAlert';
 import { LanguageSelector } from './LanguageSelector';
 
 import { LoginButton } from '@/component/account';
@@ -21,7 +21,6 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
   const { t } = useTranslation('layout');
   const [navOpen, setNavOpen] = useAtom(navState);
   const [themeMode, setThemeMode] = useAtom(modeState);
-  const [alert, setAert] = useAtom(alertState);
   const user = useAtomValue(userState);
   const setChatDrawerOpen = useSetAtom(chatDrawerState);
   const mobileDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('mobile'));
@@ -29,22 +28,12 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
   // logo path
   const logoPath = `/asset/logo-${themeMode}-25.png`;
 
-  useEffect(() => {
-    if (alert.open) {
-      // auto close alert
-      const timer = setTimeout(() => {
-        setAert({ ...alert, open: false });
-      }, alert.duration || 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert, setAert]);
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" elevation={0} color="default" sx={{ bgcolor: 'background.paper' }}>
         <Toolbar sx={{ gap: 1 }}>
           <IconButton onClick={() => setNavOpen(!navOpen)} size="large" edge="start" color="inherit" aria-label="open drawer">
-            {navOpen ? <ArrowBackIos /> : <Menu />}
+            {navOpen ? <MenuOpen /> : <Menu />}
           </IconButton>
           {!mobileDown && (
             <Box component={Link} to="/" sx={{ display: 'flex', textDecoration: 'None', color: 'inherit' }}>
@@ -70,16 +59,7 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
             <LoginButton />
           </Box>
         </Toolbar>
-        <Collapse in={alert.open}>
-          <Alert
-            variant="filled"
-            severity={alert.severity}
-            sx={{ borderRadius: 0 }}
-            onClose={alert.hideClose ? undefined : () => setAert({ ...alert, open: false })}
-          >
-            {alert.message}
-          </Alert>
-        </Collapse>
+        <GlobalAlert />
       </AppBar>
     </Box>
   );

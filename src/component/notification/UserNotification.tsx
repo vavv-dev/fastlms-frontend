@@ -1,16 +1,6 @@
 import { FiberSmartRecord, NotificationsOutlined, SmartToy } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Tooltip
-} from '@mui/material';
-import { useAtom, useAtomValue } from 'jotai';
+import { Avatar, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableRow, Tooltip } from '@mui/material';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +14,7 @@ import {
   messageReadMessage as readMessage,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage, WithAvatar, updateInfiniteCache } from '@/component/common';
+import { useViewDialog } from '@/component/share';
 import { calculateReverseIndex, formatRelativeTime } from '@/helper/util';
 import { userState } from '@/store';
 
@@ -119,9 +110,11 @@ interface NotificationRowProps {
 const NotificationRow = ({ row, index }: NotificationRowProps) => {
   const { t } = useTranslation('notification');
   const navigate = useNavigate();
-  // '_' required to rerender component
-  const [_, setNotifications] = useAtom(notificationsState); // eslint-disable-line
+  const setNotifications = useSetAtom(notificationsState);
   const readItemsRef = useRef(readItems);
+
+  // dialog opener
+  const { open, Dialog } = useViewDialog(row.object_id, row.kind as 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson');
 
   const markAsRead = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -135,14 +128,13 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
     markAsRead(e);
 
     switch (row.kind) {
+      case 'asset':
       case 'quiz':
       case 'survey':
-      case 'asset':
       case 'exam':
       case 'lesson':
-        navigate('.', { state: { dialog: { kind: row.kind, id: row.object_id } } });
+        open();
         break;
-      case 'course':
       default:
         navigate(`/${row.kind}/${row.object_id}`);
     }
@@ -189,6 +181,7 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
           </Tooltip>
         )}
       </TableCell>
+      <Dialog />
     </TableRow>
   );
 };

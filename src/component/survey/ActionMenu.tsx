@@ -24,14 +24,14 @@ interface Props {
   data: DisplayResponse;
 }
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
-
 export const ActionMenu = ({ data }: Props) => {
   const { t } = useTranslation('survey');
   const user = useAtomValue(userState);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+
+  const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
 
   if (!user) return null;
 

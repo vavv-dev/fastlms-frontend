@@ -589,7 +589,7 @@ const ArrayFieldTable = <T extends FieldValues>({
                         '& .MuiSelect-select': { p: 0, pr: '2em' },
                         '& .MuiCheckbox-root': { p: 0 },
                         '& .MuiFormHelperText-root': { ...textEllipsisCss(1), lineHeight: '1em' },
-                        backgroundColor: theme.palette.action.hover,
+                        bgcolor: theme.palette.action.hover,
                       }
                     : {},
                 }}

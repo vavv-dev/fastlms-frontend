@@ -5,6 +5,7 @@ import { atomFamily } from 'jotai/utils';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollRestoration, useLocation } from 'react-router-dom';
+import { SWRInfiniteConfiguration } from 'swr/infinite';
 
 import { CancelablePromise } from '@/api';
 import { InfiniteScrollIndicator, PaginationActions, searchFamily, useInfinitePagination } from '@/component/common';
@@ -41,6 +42,7 @@ interface GridInfiniteScrollPageProps<Item, Params extends { orderBy?: string }>
   extraAction?: React.ReactNode;
   extraFilter?: React.ReactNode;
   disableSticky?: boolean;
+  swrInfiniteOption?: SWRInfiniteConfiguration;
 }
 
 export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }>({
@@ -59,6 +61,7 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
   extraAction,
   extraFilter,
   disableSticky,
+  swrInfiniteOption,
 }: GridInfiniteScrollPageProps<Item, Params>) => {
   const { t } = useTranslation('common');
   const location = useLocation();
@@ -81,6 +84,7 @@ export const GridInfiniteScrollPage = <Item, Params extends { orderBy?: string }
     } as Params & undefined,
     apiService: apiService,
     infiniteScrollRef,
+    swrInfiniteOption,
   });
 
   // update spacerRef height

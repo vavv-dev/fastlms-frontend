@@ -11,11 +11,19 @@ import { Write } from './Write';
 import {
   PublicGetThreadData as GetThreadData,
   ThreadResponse,
+  commentGetThreads,
+  commentUpdateThread,
   commentCreateThread as createThread,
   publicGetComments as getDisplays,
   publicGetThread as getThread,
 } from '@/api';
-import { InfiniteScrollIndicator, SimpleSearch, useInfinitePagination, useServiceImmutable } from '@/component/common';
+import {
+  InfiniteScrollIndicator,
+  SimpleSearch,
+  updateInfiniteCache,
+  useInfinitePagination,
+  useServiceImmutable,
+} from '@/component/common';
 import { userState } from '@/store';
 
 export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProps) => {
@@ -26,7 +34,7 @@ export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProp
   const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
   const {
     data: thread,
-    mutate,
+    mutate: threadMutate,
     error,
   } = useServiceImmutable<GetThreadData, ThreadResponse>(getThread, {
     url: threadProps.url,
@@ -47,8 +55,28 @@ export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProp
         ...threadProps,
         owner_id: threadProps.owner.id,
       },
-    }).then((data) => mutate(data, { revalidate: false }));
+    }).then((data) => threadMutate(data, { revalidate: false }));
   }, [error]); // eslint-disable-line
+
+  // update thread info
+  useEffect(() => {
+    if (!thread) return;
+    // only owner can update thread info
+    if (thread.owner.username !== user?.username) return;
+    if ((threadProps.thumbnail && thread.thumbnail !== threadProps.thumbnail) || threadProps.title !== thread.title) {
+      commentUpdateThread({
+        id: thread.id,
+        requestBody: {
+          title: threadProps.title,
+          thumbnail: threadProps.thumbnail,
+        },
+      }).then(async () => {
+        const updated = { ...thread, title: threadProps.title, thumbnail: threadProps.thumbnail };
+        await threadMutate(updated, { revalidate: false });
+        updateInfiniteCache<ThreadResponse>(commentGetThreads, updated, 'update');
+      });
+    }
+  }, [thread, threadProps.title, threadProps.thumbnail, threadMutate, user]);
 
   if (!thread) return null;
 
@@ -99,7 +127,7 @@ export const Thread = ({ question, sticky, refresh, ...threadProps }: ThreadProp
         <IconButton
           className="refresh-thread"
           color="primary"
-          onClick={() => mutate()}
+          onClick={() => threadMutate()}
           sx={{ position: 'absolute', top: 0, right: 0 }}
         >
           <Refresh />

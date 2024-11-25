@@ -132,6 +132,7 @@ export const ResourceCard = ({
 
   return (
     <Box
+      className="resource-card"
       ref={cardRef}
       onClick={(e) => {
         if (onClick) {

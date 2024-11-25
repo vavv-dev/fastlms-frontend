@@ -1,10 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, DialogContentText, Divider, Stack, Tooltip, Typography, Zoom, useTheme } from '@mui/material';
+import { useSetAtom } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
+import { examMessageState } from '.';
 import { StopWatch } from './StopWatch';
 
 import {
@@ -25,6 +27,7 @@ import {
   useScrollToFirstError,
   useServiceImmutable,
 } from '@/component/common';
+import { alertState } from '@/component/layout';
 
 interface AnswerInput {
   answers: {
@@ -53,6 +56,8 @@ export const Form = ({ id }: { id: string }) => {
   const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
   const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false);
   const [answerState, setAnswerState] = useState<React.ReactNode | null>(null);
+  const setAlert = useSetAtom(alertState);
+  const setExamMessage = useSetAtom(examMessageState);
 
   const schema = useMemo(() => createSchema(t), [t]);
   const { handleSubmit, control, formState, setError, reset, getValues, watch } = useForm<AnswerInput>({
@@ -133,6 +138,10 @@ export const Form = ({ id }: { id: string }) => {
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         await mutate(updated, { revalidate: false });
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // clean exam alert
+        setAlert({ open: false, message: '', severity: 'info' });
+        setExamMessage(null);
       })
       .catch((error) => setError('root.server', error));
     setSubmitConfirmOpen(false);
@@ -165,7 +174,7 @@ export const Form = ({ id }: { id: string }) => {
                     helperText={question.help_text || null}
                     kind="radio"
                   />
-                ) : data.exam_kind == 'assignment' && question.kind == 'essay' ? (
+                ) : data.sub_kind == 'assignment' && question.kind == 'essay' ? (
                   <TextEditor
                     formLabel={formLabel}
                     name={name}

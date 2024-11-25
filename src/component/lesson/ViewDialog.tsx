@@ -10,9 +10,7 @@ interface Props {
 }
 
 export const ViewDialog = ({ open, setOpen, id }: Props) => {
-  const { data } = useServiceImmutable<LessonGetDisplayData, LessonGetDisplayResponse>(lessonGetDisplay, {
-    id: open ? id : '',
-  });
+  const { data } = useServiceImmutable<LessonGetDisplayData, LessonGetDisplayResponse>(lessonGetDisplay, { id });
 
   if (!open || !data) return null;
 

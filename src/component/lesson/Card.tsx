@@ -216,7 +216,7 @@ const ResourceCard = ({ resource, resourceDisplays, lessonOwnerId }: ResourceCar
 
   switch (display.kind) {
     case 'video':
-      return <VideoCard data={{ ...(display as VideoDisplayResponse), video_kind: 'video' }} hideAvatar />;
+      return <VideoCard data={{ ...(display as VideoDisplayResponse), sub_kind: 'video' }} hideAvatar />;
     case 'asset':
       return <AssetCard data={{ ...(display as AssetDisplayResponse) }} hideAvatar />;
     case 'quiz':

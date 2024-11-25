@@ -21,6 +21,7 @@ import { certificateStatusFamily } from '.';
 import { ActionMenu } from './ActionMenu';
 import { CertificateRequest } from './CertificateRequest';
 import { EnrollDialog } from './EnrollDialog';
+import { PlayerDialog } from './PlayerDialog';
 import { WeightedScore } from './WeightedScore';
 
 import {
@@ -66,6 +67,7 @@ export const View = () => {
   const stickyPanelRef = useRef<HTMLDivElement>(null);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const certificateStatus = useAtomValue(certificateStatusFamily(id));
+  const [playerOpen, setPlayerOpen] = useState(false);
 
   // update spacerRef height
   const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -78,7 +80,7 @@ export const View = () => {
   }, [location.state?.activeStep, setActiveStep]);
 
   // _lessons?.[0]?.items is all lessons with size 100 limit
-  const lessons = _lessons?.[0]?.items;
+  const lessons = _lessons?.[0]?.items || [];
 
   useEffect(() => {
     if (!data?.enrolled) setEnrollDialogOpen(true);
@@ -93,6 +95,17 @@ export const View = () => {
   const refresh = () => {
     mutate();
     lessonMutate();
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('.avatar-children .MuiButtonBase-root')) return;
+
+    if ((e.target as HTMLElement).closest('.resource-card')) {
+      e.preventDefault();
+      e.stopPropagation();
+      setPlayerOpen(true);
+    }
   };
 
   if (!id || !data) return null;
@@ -158,7 +171,7 @@ export const View = () => {
                 <ActionMenu data={data} />
               </Box>
             </Box>
-            <Box sx={{ position: 'relative', mt: 3 }}>
+            <Box sx={{ position: 'relative', mt: 3 }} onClickCapture={handleClick}>
               {(isLoading || isValidating) && (
                 <Box sx={{ position: 'absolute', width: '100%', textAlign: 'center', top: '2em' }}>
                   <GradientCircularProgress />
@@ -179,7 +192,6 @@ export const View = () => {
                     activeStep={activeStep}
                     setActiveStep={setActiveStep}
                     showAll={showAll}
-                    stickyPanelRef={stickyPanelRef}
                   />
                 ))}
               </Stepper>
@@ -190,6 +202,7 @@ export const View = () => {
         )}
       </Box>
       {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}
+      <PlayerDialog course={data} lessons={lessons} open={playerOpen} setOpen={setPlayerOpen} />
     </Box>
   );
 };
@@ -200,10 +213,9 @@ interface LessonStepProps {
   activeStep: number;
   setActiveStep: (value: number | ((prev: number) => number)) => void;
   showAll: boolean;
-  stickyPanelRef?: React.RefObject<HTMLDivElement>;
 }
 
-const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, stickyPanelRef, ...props }: LessonStepProps) => {
+const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...props }: LessonStepProps) => {
   const { t } = useTranslation('course');
   const [, setHover] = useState(false);
   const [active, setActive] = useState(false);
@@ -217,23 +229,6 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, sti
     const newActive = stepIndex == activeStep;
     setActive(newActive);
   }, [stepIndex, activeStep]);
-
-  const handleScroll = () => {
-    const element = stepRef.current;
-    const viewport = stickyPanelRef?.current;
-    if (element && viewport) {
-      const viewportRect = viewport.getBoundingClientRect();
-      const offset = viewportRect.bottom + 10;
-      const y = element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
-  useEffect(() => {
-    if (stepIndex === activeStep) {
-      handleScroll();
-    }
-  }, []); // eslint-disable-line
 
   return (
     <Step
@@ -277,12 +272,7 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, sti
           </Typography>
         )}
       </StepLabel>
-      <StepContent
-        TransitionProps={{
-          unmountOnExit: false,
-          onEntered: handleScroll,
-        }}
-      >
+      <StepContent>
         <LessonCard data={lesson} embeded hideAvatar />
       </StepContent>
     </Step>

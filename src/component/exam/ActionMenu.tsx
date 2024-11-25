@@ -20,14 +20,14 @@ import {
 import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
-
 export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const { t } = useTranslation('exam');
   const user = useAtomValue(userState);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+
+  const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
 
   if (!user) return null;
 

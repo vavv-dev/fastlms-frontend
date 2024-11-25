@@ -202,7 +202,7 @@ export const ChannelInfo: React.FC = () => {
               height: 100,
               aspectRatio: '16/9',
               borderRadius: 2,
-              backgroundColor: 'action.hover',
+              bgcolor: 'action.hover',
               my: 1,
               display: 'flex',
               alignItems: 'center',

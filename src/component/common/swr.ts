@@ -25,14 +25,22 @@ interface Lesson {
 const calculateLessonMetrics = (lesson: Lesson): Partial<Lesson> => {
   // Null check for resource_displays
   if (!lesson?.resource_displays) {
-    return { progress: null, score: null, passed: null };
+    return {
+      progress: lesson.progress ?? null,
+      score: lesson.score ?? null,
+      passed: lesson.passed ?? null,
+    };
   }
 
   const gradingKinds = lesson.grading_method === 'progress' ? ['video', 'asset'] : ['quiz', 'exam'];
   const relevantDisplays = lesson.resource_displays.filter((r) => gradingKinds.includes(r.kind));
 
   if (relevantDisplays.length === 0) {
-    return { progress: null, score: null, passed: null };
+    return {
+      progress: lesson.progress ?? null,
+      score: lesson.score ?? null,
+      passed: lesson.passed ?? null,
+    };
   }
 
   let metrics: Partial<Lesson> = {};
@@ -49,10 +57,15 @@ const calculateLessonMetrics = (lesson: Lesson): Partial<Lesson> => {
 
   if (lesson.grading_method !== 'none') {
     const passed = relevantDisplays.map((r) => r.passed);
-    metrics.passed = passed.length > 0 && passed.every((p) => p !== undefined && p !== null) ? passed.every((p) => p) : null;
+    metrics.passed =
+      passed.length > 0 && passed.every((p) => p !== undefined && p !== null) ? passed.every((p) => p) : (lesson.passed ?? null);
   }
 
-  return metrics;
+  return {
+    progress: metrics.progress ?? lesson.progress ?? null,
+    score: metrics.score ?? lesson.score ?? null,
+    passed: metrics.passed ?? lesson.passed ?? null,
+  };
 };
 
 export const updateInfiniteCache = <T extends { id: number | string }>(
@@ -143,14 +156,21 @@ export const updateInfiniteCache = <T extends { id: number | string }>(
             throw new Error('Create mode does not support updater function');
           }
           if (data && data.length > 0) {
-            updated = [
-              {
-                ...data[0],
-                items: [itemOrUpdater as T, ...data[0].items],
-                total: data[0].total + 1,
-              },
-              ...data.slice(1),
-            ];
+            const newItemId = (itemOrUpdater as T).id;
+            const itemExists = data.some((page) => page.items.some((item) => item.id === newItemId));
+
+            if (!itemExists) {
+              updated = [
+                {
+                  ...data[0],
+                  items: [itemOrUpdater as T, ...data[0].items],
+                  total: data[0].total + 1,
+                },
+                ...data.slice(1),
+              ];
+            } else {
+              updated = data;
+            }
           } else {
             updated = [
               {

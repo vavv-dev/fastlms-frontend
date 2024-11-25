@@ -24,14 +24,14 @@ import { WithAvatar, createToggleAction, useServiceImmutable } from '@/component
 import { decodeURLText, formatRelativeTime, humanNumber, textEllipsisCss } from '@/helper/util';
 import { userState } from '@/store';
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
-
 export const Control = ({ id }: { id: string }) => {
   const { t } = useTranslation('video');
   const theme = useTheme();
   const user = useAtomValue(userState);
   const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id });
   const [collapse, setCollapse] = useState(true);
+
+  const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
 
   const handleAction = (type: 'like' | 'bookmark') => {
     if (!data) return;
@@ -59,7 +59,7 @@ export const Control = ({ id }: { id: string }) => {
         variant="subtitle1"
         sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold', lineHeight: 1.2, mb: '1em', gap: 1 }}
       >
-        {data.video_kind === 'live' && (
+        {data.sub_kind === 'live' && (
           <Typography component="span" variant="subtitle2">
             <Chip
               label={t('LIVE')}

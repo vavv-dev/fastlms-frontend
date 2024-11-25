@@ -116,7 +116,7 @@ export const TextFieldWithFile = ({ attachedFiles, setAttachedFiles, sx, ...text
             ...sx,
             ...(isDragging && {
               '& .MuiOutlinedInput-root': {
-                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
               },
             }),
           }}
@@ -134,7 +134,7 @@ export const TextFieldWithFile = ({ attachedFiles, setAttachedFiles, sx, ...text
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.9),
+              bgcolor: (theme) => alpha(theme.palette.background.paper, 0.9),
               borderRadius: 1,
               zIndex: 1,
               pointerEvents: 'none',
