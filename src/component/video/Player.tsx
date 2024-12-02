@@ -54,6 +54,7 @@ export const Player = ({ id, sx }: { id: string; sx?: SxProps }) => {
 
   return (
     <Box
+      className="player-wrapper"
       ref={elementRef}
       sx={{
         borderRadius: { xs: 0, md: theme.shape.borderRadius },
@@ -62,6 +63,8 @@ export const Player = ({ id, sx }: { id: string; sx?: SxProps }) => {
         height: 'auto',
         maxWidth: playerRatio >= 1 ? '100%' : `calc((100vh - 220px) * ${playerRatio})`,
         maxHeight: 'calc(100vh - 200px)',
+        minWidth: '300px',
+        minHeight: 'calc(300px * 9 / 16)',
         mx: 'auto',
         aspectRatio: playerRatio,
         bgcolor: 'black',

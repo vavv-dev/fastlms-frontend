@@ -1,21 +1,18 @@
-import { LinearProgress, Tooltip } from '@mui/material';
+import { LinearProgress, SxProps, Tooltip } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import throttle from 'lodash/throttle';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { pageFamily } from '.';
 
 import {
   AssetDisplayResponse as DisplayResponse,
-  AssetGetWatchBitmapData as GetWatchBitmapData,
-  AssetGetWatchBitmapResponse as GetWatchBitmapResponse,
   AssetWatchUpdateRequest as WatchUpdateRequest,
   assetGetDisplays as getDisplays,
-  assetGetWatchBitmap as getWatchBitmap,
   assetStartWatch as startWatch,
   assetUpdateWatch as updateWatch,
 } from '@/api';
-import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
+import { updateInfiniteCache } from '@/component/common';
 import { formatDuration, toFixedHuman } from '@/helper/util';
 import { userState } from '@/store';
 
@@ -23,121 +20,23 @@ const PERSIST_EVENT = ['beforeunload', 'pagehide', 'visibilitychange'];
 const MAX_WATCH_DURATION = 60 * 60 * 3; // 3 hours
 const DEBOUNCE_THROTTLE = 500;
 
+/**
+ * !important
+ * LastPostion means not real position but last elapsed seconds
+ * Because we cannot track watch bitmap about asset content.
+ */
 const lastPositions = {};
 
-export const Tracking = ({ data, hidden }: { data: DisplayResponse; hidden?: boolean }) => {
+export const Tracking = ({ data, hidden, sx }: { data: DisplayResponse; hidden?: boolean, sx?: SxProps }) => {
   const user = useAtomValue(userState);
   const lastPositionsRef = useRef<Record<string, number>>(lastPositions);
-  const { data: watchBitmap, mutate } = useServiceImmutable<GetWatchBitmapData, GetWatchBitmapResponse>(getWatchBitmap, {
-    id: data.progress != null ? data.id : '',
-  });
+  const [progress, setProgress] = useState<number>(data.progress || 0);
 
-  // for epub/pdf...
-  const locationRef = useRef<string | null>(null);
+  // for to resume epub/pdf
   const [location, setLocation] = useAtom(pageFamily(data.url));
 
-  const [progress, setProgress] = useState(() => {
-    const lastPosition = lastPositionsRef.current[data.id] || 0;
-    return (lastPosition / data.duration) * 100;
-  });
-
   // no need to save last position
-  const trackingImpossible = !data || !data.duration || data.duration > MAX_WATCH_DURATION || (data.progress || 0) >= 100;
-
-  useEffect(() => {
-    if (trackingImpossible || !watchBitmap) return;
-
-    // calculate watched seconds from watchBitmap and update lastPositions
-    watchBitmap.arrayBuffer().then((arrayBuffer) => {
-      const uint8Array = new Uint8Array(arrayBuffer);
-
-      // watch bitmap to bit array
-      const watchBitmapArray = [];
-      for (let i = 0; i < uint8Array.length; i++) {
-        const byte = uint8Array[i];
-        for (let j = 7; j >= 0; j--) {
-          const bit = (byte >> j) & 1;
-          watchBitmapArray.push(bit);
-        }
-      }
-
-      // update watched seconds
-      const watchedSeconds = watchBitmapArray.reduce((acc, bit) => acc + bit, 0);
-      lastPositionsRef.current[data.id] = watchedSeconds;
-    });
-  }, [watchBitmap]); // eslint-disable-line
-
-  /**
-   *
-   * initialize watch bitmap
-   *
-   */
-  useEffect(() => {
-    if (trackingImpossible) return;
-    // watch bitmap
-    if (!lastPositionsRef.current[data.id]) {
-      // if first watch, save first watch time
-      if (data.progress === null) throttlePersistWatch(data.id);
-      lastPositionsRef.current[data.id] = 0;
-    }
-
-    // load last location
-    if (!location && data.last_location) {
-      setLocation(data.last_location);
-    }
-  }, [data?.id, setLocation]); // eslint-disable-line
-
-  /**
-   *
-   * update position
-   *
-   */
-  useEffect(() => {
-    // update last position by every 1 second
-    const interval = setInterval(() => {
-      if (trackingImpossible) return;
-      // update last position
-      const lastPosition = lastPositionsRef.current[data.id] || 0;
-      if (lastPosition >= data.duration) return;
-      lastPositionsRef.current[data.id] = lastPosition + 1;
-      setProgress(((lastPosition + 1) / data.duration) * 100);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [data.id, data.duration]); // eslint-disable-line
-
-  /**
-   *
-   * handle beforeunload, pagehide, visibilitychange
-   *
-   */
-  useEffect(() => {
-    if (trackingImpossible) return;
-
-    // persist watch event wrapper
-    const eventWrapper = (e: Event) => {
-      if (e.type === 'visibilitychange' && !(document.visibilityState === 'hidden')) {
-        return;
-      }
-      throttlePersistWatch(data.id);
-    };
-
-    // add event listener
-    PERSIST_EVENT.forEach((event) => {
-      window.removeEventListener(event, eventWrapper);
-      window.addEventListener(event, eventWrapper);
-    });
-
-    return () => {
-      // persist watch
-      throttlePersistWatch(data.id);
-
-      // clean up
-      PERSIST_EVENT.forEach((event) => {
-        window.removeEventListener(event, eventWrapper);
-      });
-    };
-  }, [data.id]); // eslint-disable-line
+  const trackingImpossible = !data || !data.duration || data.duration > MAX_WATCH_DURATION;
 
   /**
    *
@@ -145,7 +44,7 @@ export const Tracking = ({ data, hidden }: { data: DisplayResponse; hidden?: boo
    *
    */
   const persistWatch = useCallback(
-    async (id: string) => {
+    async (id: string, currentLocation: string | number) => {
       if (trackingImpossible) return;
 
       // first watch
@@ -164,9 +63,7 @@ export const Tracking = ({ data, hidden }: { data: DisplayResponse; hidden?: boo
       };
 
       // update last location
-      if (locationRef.current) {
-        watch['last_location'] = String(locationRef.current);
-      }
+      watch['last_location'] = String(currentLocation);
 
       // convert last position to watch bitmap with data.duration
       const bitmapLength = Math.ceil(data.duration / 8);
@@ -185,24 +82,122 @@ export const Tracking = ({ data, hidden }: { data: DisplayResponse; hidden?: boo
 
       updateWatch({ id, requestBody: watch })
         .then(() => {
-          // update watch cache
-          mutate(new Blob([bitmap]), { revalidate: false });
           // update list cache
           const progress = (lastPosition / data.duration) * 100;
           const updated = {
             id: id,
             progress: Math.min(progress, 100),
             passed: progress >= data.cutoff_progress,
+            last_position: lastPosition,
           };
           updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         })
         .catch((e) => console.error(e));
     },
-    [data, mutate, locationRef, trackingImpossible],
+    [data, trackingImpossible],
   );
 
   // debounce persist watch
-  const throttlePersistWatch = throttle((id: string) => persistWatch(id), DEBOUNCE_THROTTLE);
+  const throttlePersistWatch = useMemo(
+    () =>
+      throttle((id: string) => {
+        persistWatch(id, location);
+      }, DEBOUNCE_THROTTLE),
+    [persistWatch, location],
+  );
+
+  /**
+   *
+   * initialize
+   *
+   */
+  useEffect(() => {
+    if (trackingImpossible) return;
+    // local cache
+    if (!lastPositionsRef.current[data.id]) {
+      // if first watch, save first watch time
+      if (data.last_position === null) throttlePersistWatch(data.id);
+      lastPositionsRef.current[data.id] = data.last_position || 0;
+    }
+
+    const lastPosition = lastPositionsRef.current[data.id];
+    const _progress = Math.min((lastPosition / data.duration) * 100, 100);
+    if (_progress !== progress) setProgress(_progress);
+
+    // load last location
+    if (!location && data.last_location) {
+      setLocation(data.last_location);
+    }
+  }, [data?.id, setLocation, trackingImpossible]); // eslint-disable-line
+
+  /**
+   *
+   * update position
+   *
+   */
+  useEffect(() => {
+    if (trackingImpossible) return;
+
+    let intervalId: number | null = null;
+
+    if (progress < 100) {
+      intervalId = setInterval(() => {
+        if (trackingImpossible) return;
+        const lastPosition = lastPositionsRef.current[data.id] || 0;
+        const _progress = Math.min((lastPosition / data.duration) * 100, 100);
+        if (_progress !== progress) setProgress(_progress);
+
+        if ((_progress >= data.cutoff_progress && progress < data.cutoff_progress) || (_progress >= 100 && progress < 100)) {
+          throttlePersistWatch(data.id);
+        }
+
+        if (lastPosition >= data.duration) {
+          if (intervalId) clearInterval(intervalId);
+          return;
+        }
+        lastPositionsRef.current[data.id] = lastPosition + 1;
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [data.id, trackingImpossible, data.duration, progress, data.cutoff_progress, throttlePersistWatch]);
+
+  /**
+   *
+   * handle beforeunload, pagehide, visibilitychange
+   *
+   */
+  useEffect(() => {
+    if (trackingImpossible) return;
+
+    // persist watch event wrapper
+    const eventWrapper = (e: Event) => {
+      if (e.type === 'visibilitychange') {
+        if (document.visibilityState !== 'hidden') return;
+        persistWatch(data.id, location);
+      } else {
+        throttlePersistWatch(data.id);
+      }
+    };
+
+    // add event listener
+    PERSIST_EVENT.forEach((event) => {
+      window.removeEventListener(event, eventWrapper);
+      window.addEventListener(event, eventWrapper);
+    });
+
+    return () => {
+      // persist watch
+      throttlePersistWatch(data.id);
+
+      // clean up
+      PERSIST_EVENT.forEach((event) => {
+        window.removeEventListener(event, eventWrapper);
+      });
+    };
+  }, [data.id, trackingImpossible, location, throttlePersistWatch, persistWatch]);
 
   if (!user) return null;
   if (!data?.duration) return null;
@@ -224,6 +219,7 @@ export const Tracking = ({ data, hidden }: { data: DisplayResponse; hidden?: boo
           height: '4px',
           bgcolor: 'action.disalbedBackground',
           zIndex: 3,
+          ...sx,
         }}
         color={progress > data.cutoff_progress ? 'success' : 'warning'}
       />

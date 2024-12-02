@@ -1,4 +1,4 @@
-import { Button, DialogContentText } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,14 +19,13 @@ interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   id: string;
-  title: string;
 }
 
-export const UnenrollDialog = ({ open, setOpen, id, title }: Props) => {
+export const UnenrollDialog = ({ open, setOpen, id }: Props) => {
   const { t } = useTranslation('course');
   const navigate = useNavigate();
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
-  const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id });
+  const { data, mutate, isLoading, isValidating } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id });
 
   const unenrollCourse = useCallback(() => {
     unenroll({ id })
@@ -40,19 +39,21 @@ export const UnenrollDialog = ({ open, setOpen, id, title }: Props) => {
       .finally(() => setOpen(false));
   }, [id, setOpen, setSnackbarMessage, t, mutate, navigate]);
 
-  if (!data?.enrolled) return null;
+  if (!open || !data?.enrolled) return null;
 
   return (
     <BaseDialog
+      isReady={!isLoading && !isValidating}
       open={open}
+      fullWidth
+      maxWidth="xs"
       setOpen={setOpen}
-      title={t('Unenroll from {{ title }}', { title })}
       renderContent={() => (
-        <DialogContentText>
+        <Typography variant="subtitle1" sx={{ mt: 3 }}>
           {t('Are you sure you want to unenroll from this course?')}
           <br />
           {t('This action cannot be undone.')}
-        </DialogContentText>
+        </Typography>
       )}
       actions={
         <Button onClick={() => unenrollCourse()} autoFocus>

@@ -72,12 +72,12 @@ export const UserCourse = () => {
                           {t('Study period')}
                         </Typography>
                         <Typography variant="body2" color="text.primary">
-                          <Tooltip title={item.study_start} placement="top">
-                            <span>{formatYYYMMDD(item.study_start)}</span>
+                          <Tooltip title={item.learning_start} placement="top">
+                            <span>{formatYYYMMDD(item.learning_start)}</span>
                           </Tooltip>{' '}
                           ~{' '}
-                          <Tooltip title={item.study_end} placement="top">
-                            <span>{formatYYYMMDD(item.study_end)}</span>
+                          <Tooltip title={item.learning_end} placement="top">
+                            <span>{formatYYYMMDD(item.learning_end)}</span>
                           </Tooltip>
                         </Typography>
                       </Box>
@@ -93,7 +93,7 @@ export const UserCourse = () => {
                                   width: '60px',
                                   height: '60px',
                                   objectFit: 'contain',
-                                  filter: 'drop-shadow(0 5px 5px rgba(0,0,0,0.3))',
+                                  filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.3))',
                                 }}
                               />
                             ))}

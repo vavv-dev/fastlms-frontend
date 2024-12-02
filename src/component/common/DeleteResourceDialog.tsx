@@ -1,4 +1,4 @@
-import { Button, DialogContentText } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,15 +53,18 @@ export const DeleteResourceDialog = ({ title, open, setOpen, resourceId, destroy
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
-      title={`${title} ${t('Delete')}`}
       renderContent={() => (
-        <DialogContentText>
-          {t('Are you sure you want to delete? This action will delete all related data.')}
-          <br />
-          {t('This action cannot be undone.')}
-        </DialogContentText>
+        <>
+          <Typography variant="subtitle1" sx={{ mt: 3 }}>
+            {t('Are you sure you want to delete? This action will delete all related data.')}
+            <br />
+            {t('This action cannot be undone.')}
+          </Typography>
+          <Typography variant="subtitle1">{title}</Typography>
+        </>
       )}
       actions={
         <Button onClick={() => deleteResource()} autoFocus>

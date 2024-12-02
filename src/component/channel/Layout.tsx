@@ -393,7 +393,7 @@ const HomeTabs = ({ activeTabs }: Props) => {
         value={tabIndex < 0 ? 0 : tabIndex}
         role="navigation"
         variant="scrollable"
-        scrollButtons={true}
+        scrollButtons
         allowScrollButtonsMobile
         sx={{ minHeight: 'unset' }}
       >

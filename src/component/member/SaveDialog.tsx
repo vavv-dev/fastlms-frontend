@@ -169,9 +169,9 @@ export const SaveDialog = ({ open, setOpen, data: resource }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
-      title={resource ? t('Edit member') : t('Add member')}
       actions={
         <>
           {searchStatusCode == 404 && (

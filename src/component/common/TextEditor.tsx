@@ -21,14 +21,7 @@ const FullTextEditor = lazy(() =>
 
 const TextEditorSkeleton = ({ minHeight, sx }: { minHeight: number; sx?: SxProps }) => {
   return (
-    <Box
-      sx={{
-        width: '100%',
-        border: `1px solid rgba(0, 0, 0, 0.3)`,
-        borderRadius: '8px',
-        ...sx,
-      }}
-    >
+    <Box sx={{ width: '100%', border: `1px solid rgba(0, 0, 0, 0.3)`, borderRadius: '8px', ...sx }}>
       <Stack direction="row" spacing={0.5} sx={{ py: '5px', px: '20px' }}>
         {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} variant="circular" width="28px" height="28px" />

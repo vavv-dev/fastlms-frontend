@@ -9,13 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
 import {
-  PlaylistCheckResponse,
-  PlaylistCheckVideoData,
-  PlaylistCheckVideoResponse,
-  PlaylistVideoItem,
+  PlaylistCheckResponse as CheckResponse,
+  PlaylistCheckVideoData as CheckVideoData,
+  PlaylistCheckVideoResponse as CheckVideoResponse,
   VideoDisplayResponse,
-  playlistCheckVideo,
-  playlistUpdatePlaylistVideos,
+  PlaylistVideoItem as VideoItem,
+  playlistCheckVideo as checkVideo,
+  playlistUpdatePlaylistVideos as updatePlaylistVideos,
 } from '@/api';
 import { BaseDialog, CheckboxControl as Checkbox, EmptyMessage, Form, GridInfiniteScrollPage } from '@/component/common';
 
@@ -25,7 +25,7 @@ interface Props {
   setOpen: (open: boolean) => void;
 }
 
-type PlaylistVideoItemSelected = PlaylistVideoItem & { selected: boolean };
+type PlaylistVideoItemSelected = VideoItem & { selected: boolean };
 
 const itemSchema: yup.ObjectSchema<PlaylistVideoItemSelected> = yup.object({
   playlist_id: yup.string().default(''),
@@ -48,16 +48,16 @@ export const AddToPlaylistDialog = ({ open, setOpen, video }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       fullWidth
       open={open}
       setOpen={setOpen}
       maxWidth="sm"
-      title={video.title}
       renderContent={() => (
-        <GridInfiniteScrollPage<PlaylistCheckResponse, PlaylistCheckVideoData>
+        <GridInfiniteScrollPage<CheckResponse, CheckVideoData>
           disableSticky
           pageKey="playlist"
-          apiService={playlistCheckVideo}
+          apiService={checkVideo}
           apiOptions={{ videoId: video.id, orderBy: 'created' }}
           renderItem={({ data }) => <PlaylistUpdater data={data} video={video} actionContainer={actionContainer} />}
           emptyMessage={<EmptyMessage Icon={PlaylistPlay} message={t('No playlist found.')} />}
@@ -71,7 +71,7 @@ export const AddToPlaylistDialog = ({ open, setOpen, video }: Props) => {
 };
 
 interface PlaylistUpdaterProps {
-  data: PlaylistCheckVideoResponse[] | undefined;
+  data: CheckVideoResponse[] | undefined;
   video: VideoDisplayResponse;
   actionContainer: React.MutableRefObject<null>;
 }
@@ -96,7 +96,7 @@ const PlaylistUpdater = ({ data, video, actionContainer }: PlaylistUpdaterProps)
       .filter((v) => v);
     if (!dirtyVideos) return;
 
-    playlistUpdatePlaylistVideos({ requestBody: { videos: dirtyVideos } })
+    updatePlaylistVideos({ requestBody: { videos: dirtyVideos } })
       .then(() => reset(data))
       .catch((error) => setError('root.server', error));
   };
@@ -111,7 +111,7 @@ const PlaylistUpdater = ({ data, video, actionContainer }: PlaylistUpdaterProps)
           acc[i] = { playlist_id: item.id, video_id: video.id, order: item.video_count, selected: item.is_in };
           return acc;
         },
-        [] as (PlaylistVideoItem & { selected: boolean })[],
+        [] as (VideoItem & { selected: boolean })[],
       );
 
     reset({ videos });
@@ -133,13 +133,7 @@ const PlaylistUpdater = ({ data, video, actionContainer }: PlaylistUpdaterProps)
                 </Typography>
               </Grid>
               <Grid size={2}>
-                <Checkbox
-                  margin="none"
-                  control={control}
-                  name={`videos.${i}.selected`}
-                  label=""
-                  defaultValue={item.is_in}
-                />
+                <Checkbox margin="none" control={control} name={`videos.${i}.selected`} label="" defaultValue={item.is_in} />
               </Grid>
             </Grid>
           ))}

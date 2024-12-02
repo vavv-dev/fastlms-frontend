@@ -42,13 +42,14 @@ export const UploadDialog = ({ open, setOpen, id, onProgress, onComplete }: Prop
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={t('Upload Content')}
       fullWidth
       maxWidth="sm"
       renderContent={() => <Dashboard uppy={uppy} proudlyDisplayPoweredByUppy={false} height={400} theme={themeMode} />}
+      sx={{ '& .MuiDialogContent-root': { display: 'block' } }}
     />
   );
 };

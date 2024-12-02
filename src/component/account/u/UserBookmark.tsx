@@ -12,7 +12,7 @@ import {
   sharedToggleBookmark,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage, WithAvatar } from '@/component/common';
-import { useViewDialog } from '@/component/share';
+import { useViewDialog } from '@/component/share/useViewDialog';
 import { formatDatetimeLocale, formatRelativeTime, textEllipsisCss } from '@/helper/util';
 import { userState } from '@/store';
 

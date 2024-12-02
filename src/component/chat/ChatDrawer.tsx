@@ -330,7 +330,7 @@ export const ChatDrawer = ({ open, onClose }: ChatDrawerProps) => {
               </span>
             </Typography>
 
-            <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} small={true} />
+            <InfiniteScrollIndicator ref={infiniteScrollRef} show={isLoading || isValidating} small />
           </Box>
 
           {/* Input */}

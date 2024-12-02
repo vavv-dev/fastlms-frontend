@@ -51,6 +51,7 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
   const { data: watchBitmap } = useServiceImmutable<GetWatchBitmapData, GetWatchBitmapResponse>(getWatchBitmap, {
     id: data?.last_position ? data.id : '', // not id but data.id.
   });
+  const prevPercentRef = useRef(0);
 
   const trackingImpossible = !data || !data.duration || data.duration > MAX_WATCH_DURATION;
 
@@ -178,10 +179,11 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
    */
   useEffect(() => {
     if (trackingImpossible) return;
-    if (percent >= 100) {
-      // persist watch
+
+    if ((percent >= data.cutoff_progress && prevPercentRef.current < data.cutoff_progress) || percent >= 100) {
       throttlePersistWatch(data.id);
     }
+    prevPercentRef.current = percent;
   }, [percent]); // eslint-disable-line
 
   /**
@@ -233,7 +235,7 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
   const persistWatch = async (id: string) => {
     if (trackingImpossible) return;
 
-    // first watch
+    // first watch check...
     if (!watchBitmapsRef.current[data.id] && data.last_position == null) {
       startWatch({
         id: data.id,
@@ -244,8 +246,9 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
     const position = lastPositionsRef.current[id];
     if (!position) return;
 
+    const currentPosition = Math.floor(position);
     const watch: WatchUpdateRequest = {
-      last_position: Math.floor(position),
+      last_position: currentPosition,
     };
 
     const newBitmap = watchBitmapsRef.current[id];
@@ -262,22 +265,27 @@ export const Tracking = ({ id, hidden }: { id: string; hidden?: boolean }) => {
         byteArray[i / 8] = byte;
       }
 
-      // Convert byteArray to hex string
       const newBitmapHex = Array.from(byteArray)
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('');
 
-      // Check if different from existing watchBitmap
+      let hasChanges = false;
+
       if (watchBitmap) {
         const existingBitmapHex = await blobToHex(watchBitmap);
-        if (newBitmap.length !== watchBitmap.size || newBitmapHex !== existingBitmapHex) {
+        if (newBitmapHex !== existingBitmapHex) {
           watch['length'] = newBitmap.length;
           watch['watch_bitmap'] = newBitmapHex as unknown as Blob;
+          hasChanges = true;
         }
       } else {
-        // If there's no existing watchBitmap, always update
         watch['length'] = newBitmap.length;
         watch['watch_bitmap'] = newBitmapHex as unknown as Blob;
+        hasChanges = true;
+      }
+
+      if (!hasChanges && data.last_position === currentPosition) {
+        return;
       }
     }
 

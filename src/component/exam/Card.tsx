@@ -1,6 +1,7 @@
 import { Box, BoxProps, Table, TableBody, TableCell, TableContainer, TableRow, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionMenu } from './ActionMenu';
 import { ViewDialog } from './ViewDialog';
@@ -18,13 +19,24 @@ interface Props {
 
 export const Card = ({ data, hideAvatar, bannerPlace, sx }: Props) => {
   const { t } = useTranslation('exam');
+  const navigate = useNavigate();
   const [viewOpen, setViewOpen] = useState(false);
+
+  const goToExam = () => {
+    const courseId = data.context?.course_id;
+    const lessonId = data.context?.lesson_id;
+    if (courseId && lessonId) {
+      navigate(`/course/${courseId}/player`, { state: { resourceLocation: { lesson_id: lessonId, resource_id: data.id } } });
+    } else {
+      setViewOpen(true);
+    }
+  };
 
   return (
     <>
       <ResourceCard
         resource={data}
-        onClick={() => setViewOpen(true)}
+        onClick={goToExam}
         bannerPlace={bannerPlace || 'bottom'}
         banner={
           <Box sx={{ p: 2, position: 'relative' }}>

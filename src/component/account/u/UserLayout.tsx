@@ -135,7 +135,7 @@ export const UserLayout = () => {
             <Box sx={{ pb: 5, display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
               <FiberSmartRecord color="error" />
               <Button onClick={() => navigate('/u/notification')} endIcon={<ArrowRight />}>
-                {t('You have {{ count }} unread notifications.', { count: unReadCount })}
+                {t('You have {{ val }} unread notifications.', { val: unReadCount > 10 ? t('more than 10') : unReadCount })}
               </Button>
             </Box>
           )}
@@ -222,7 +222,7 @@ const VerticalTabs: React.FC = memo(() => {
       value={tabIndex === -1 ? 0 : tabIndex}
       role="navigation"
       variant={mdDown ? 'scrollable' : 'standard'}
-      scrollButtons={true}
+      scrollButtons
       allowScrollButtonsMobile
       sx={{
         position: 'sticky',

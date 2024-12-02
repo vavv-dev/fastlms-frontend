@@ -24,7 +24,7 @@ export const Displays = () => {
       CreateItemComponent={SaveDialog}
       apiService={getDisplays}
       renderItem={({ data }) =>
-        data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar={true} />))
+        data?.map((pagination) => pagination.items?.map((item) => <Card key={item.id} data={item} hideAvatar />))
       }
       emptyMessage={<EmptyMessage Icon={CloudUpload} message={t('No asset found.')} />}
       gridBoxSx={{

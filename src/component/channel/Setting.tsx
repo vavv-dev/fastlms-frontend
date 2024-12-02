@@ -74,7 +74,7 @@ export const Setting: React.FC = () => {
             setTabValue(newValue);
           }}
           variant={mdDown ? 'scrollable' : 'standard'}
-          scrollButtons={true}
+          scrollButtons
           allowScrollButtonsMobile
           sx={{
             bgcolor: 'background.paper',

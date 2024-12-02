@@ -41,7 +41,7 @@ export const Card = ({ data, hideAvatar }: Props) => {
             />
           )
         }
-        score={data.score}
+        score={data.passed ? 100 : null}
         passed={data.passed}
         inProgress={data.status == 'in_progress'}
         avatarChildren={[t(...formatRelativeTime(data.modified))]}

@@ -78,9 +78,9 @@ export const Login = () => {
       const from = location.state?.from;
       if (from) {
         delete location.state.from;
-        navigate(from, { state: location.state });
+        navigate(from, { state: location.state, replace: true });
       } else {
-        navigate('/u', { state: location.state });
+        navigate('/u', { state: location.state, replace: true });
       }
     }
   }, [user]); // eslint-disable-line

@@ -10,7 +10,7 @@ import { FindingExplanationPanel } from '../FindingExplanationPanel';
 import { FindingQuestionPanel } from '../FindingQuestionPanel';
 
 import {
-  ExamAssessResponse as AssessResponse,
+  ExamAttemptResponse as AttemptResponse,
   ExamGetGradingData as GetGradingData,
   ExamGradingSubmissionReponse as GradingSubmissionReponse,
   examGetGrading as getGrading,
@@ -60,10 +60,7 @@ const createSchema = (t: (key: string) => string) => {
 
 export const Form = ({ id, userId }: { id: string; userId: string }) => {
   const { t } = useTranslation('exam');
-  const { data, mutate } = useServiceImmutable<GetGradingData, AssessResponse>(getGrading, {
-    id,
-    userId,
-  });
+  const { data, mutate } = useServiceImmutable<GetGradingData, AttemptResponse>(getGrading, { id, userId });
 
   const submission = data?.submission;
   const grading = submission?.grading;

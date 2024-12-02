@@ -174,7 +174,6 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
 
   return (
     <SaveResourceDialog<ResourceUpdateRequest, ResourceResponse>
-      title={t('Quiz')}
       open={open}
       setOpen={setOpen}
       resourceId={id}

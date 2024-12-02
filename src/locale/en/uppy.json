@@ -16,7 +16,6 @@
   "The total size of the files exceeds the limit of {{ max }}MB.": "The total size of the files exceeds the limit of {{ max }}MB.",
   "Upload %{smart_count} file": "Upload %{smart_count} file",
   "Upload %{smart_count} files": "Upload %{smart_count} files",
-  "Upload Content": "Upload Content",
   "Upload complete": "Upload complete",
   "browse files": "browse files"
 }

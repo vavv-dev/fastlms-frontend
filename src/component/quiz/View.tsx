@@ -1,6 +1,6 @@
 import { ArrowRight } from '@mui/icons-material';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import { Box, Paper, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useSetAtom } from 'jotai';
@@ -11,12 +11,12 @@ import { Form } from './Form';
 import { Result } from './Result';
 
 import {
-  QuizAssessResponse as AssessResponse,
+  QuizAttemptResponse as AttemptResponse,
   QuizDisplayResponse as DisplayResponse,
-  QuizGetAssessData as GetAssessData,
-  quizGetAssess as getAssess,
+  QuizGetAttemptData as GetAttemptData,
+  quizGetAttempt as getAttempt,
   quizGetDisplays as getDisplays,
-  quizReadyAssess as readyAssess,
+  quizReadyAttempt as readyAttempt,
 } from '@/api';
 import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
@@ -26,13 +26,13 @@ export const View = ({ id }: { id: string }) => {
   const { t } = useTranslation('quiz');
   const theme = useTheme();
   const navigate = useNavigate();
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
   const ready = () => {
     if (!data) return;
-    readyAssess({ id: data.id })
-      .then((updated: AssessResponse) => {
+    readyAttempt({ id: data.id })
+      .then((updated: AttemptResponse) => {
         mutate(updated, { revalidate: false });
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })
@@ -49,11 +49,9 @@ export const View = ({ id }: { id: string }) => {
   const videoId = data.resources?.find((r) => r.kind === 'video')?.id ?? null;
 
   return (
-    <Paper
+    <Box
       sx={{
-        borderRadius: 3,
         p: 3,
-        my: 'auto',
         width: '100%',
         maxWidth: 'smm',
         display: 'flex',
@@ -119,6 +117,6 @@ export const View = ({ id }: { id: string }) => {
           <Form id={data.id} />
         )}
       </Box>
-    </Paper>
+    </Box>
   );
 };

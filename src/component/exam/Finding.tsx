@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { FindingExplanationPanel } from './FindingExplanationPanel';
 import { FindingQuestionPanel } from './FindingQuestionPanel';
 
-import { ExamAssessResponse as AssessResponse, ExamGetAssessData as GetAssessData, examGetAssess as getAssess } from '@/api';
+import { ExamAttemptResponse as AttemptResponse, ExamGetAttemptData as GetAttemptData, examGetAttempt as getAttempt } from '@/api';
 import { useServiceImmutable } from '@/component/common';
 
 export const Finding = ({ id }: { id: string }) => {
   const { t } = useTranslation('exam');
-  const { data } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id: id });
+  const { data } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id: id });
   const submission = data?.submission;
   const grading = submission?.grading;
   const feedback = submission?.feedback;

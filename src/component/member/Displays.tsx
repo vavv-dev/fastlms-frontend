@@ -89,7 +89,7 @@ const MemberTable = ({ data }: MemberTableProps) => {
 
   return (
     <Box sx={{ position: 'relative', display: 'inherit' }}>
-      <BulkActions selection={selection} setSelection={setSelection} data={data} />
+      {selection.length !== 0 && <BulkActions selection={selection} setSelection={setSelection} data={data} />}
       <TableContainer>
         <Table
           sx={{

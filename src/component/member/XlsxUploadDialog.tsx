@@ -83,10 +83,10 @@ export const XlsxUploadDialog = ({ open, setOpen, refresh }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={t('Member xlsx file upload')}
       fullWidth
       maxWidth="sm"
       renderContent={() => (

@@ -1,19 +1,21 @@
 import { Box, Typography } from '@mui/material';
 import { useSetAtom } from 'jotai';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { examMessageState } from '.';
+import { Message } from './Message';
 
 import {
-  ExamAssessResponse as AssessResponse,
-  ExamGetAssessData as GetAssessData,
-  examGetAssess as getAssess,
-  examStartAssess as startAssess,
-  examSubmitAssess as submitAssess,
+  ExamAttemptResponse as AttemptResponse,
+  ExamDisplayResponse as DisplayResponse,
+  ExamGetAttemptData as GetAttemptData,
+  examGetAttempt as getAttempt,
+  examGetDisplays as getDisplays,
+  examStartAttempt as startAttempt,
+  examSubmitAttempt as submitAttempt,
 } from '@/api';
-import { useServiceImmutable } from '@/component/common';
+import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { alertState, snackbarMessageState } from '@/component/layout';
 import { formatDuration } from '@/helper/util';
 
@@ -24,13 +26,13 @@ interface Props {
 
 export const StopWatch = ({ id, getValues }: Props) => {
   const { t } = useTranslation('exam');
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
   const [remainSeconds, setRemainSeconds] = useState<number>(0);
   const navigate = useNavigate();
   const setAlert = useSetAtom(alertState);
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
   const submission = data?.submission;
-  const setExamMessage = useSetAtom(examMessageState);
+  const startAttemptCalled = useRef(false);
 
   const createMessage = useMemo(() => {
     return (title: string, duration: number, remain: number, severity: string) => (
@@ -44,18 +46,10 @@ export const StopWatch = ({ id, getValues }: Props) => {
     );
   }, [t]);
 
-  const globalAlert = useMemo(() => {
-    return (id: string, title: string) => (
-      <Box
-        sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-        onClick={() => navigate(`/exam/${id}`)}
-        style={{ cursor: 'pointer' }}
-      >
-        <Typography variant="body2">{title}</Typography>
-        <Typography variant="body2">{`${t('Exam is in progress.')}`}</Typography>
-      </Box>
-    );
-  }, [t, navigate]);
+  const alertMessage = useMemo(
+    () => (!data ? null : <Message id={data.id} title={data.title} context={data.submission?.context} />),
+    [data],
+  );
 
   useEffect(() => {
     if (!data || !data.duration || !submission || submission.end_time) return;
@@ -80,8 +74,9 @@ export const StopWatch = ({ id, getValues }: Props) => {
     updateWatch();
 
     // save client start time
-    if (!submission.start_time) {
-      startAssess({
+    if (!submission.start_time && !startAttemptCalled.current) {
+      startAttemptCalled.current = true;
+      startAttempt({
         id: id,
         requestBody: {
           // real time
@@ -89,6 +84,7 @@ export const StopWatch = ({ id, getValues }: Props) => {
         },
       })
         .then((updated) => {
+          updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
           mutate(updated, { revalidate: false });
         })
         .catch(() => {
@@ -108,14 +104,11 @@ export const StopWatch = ({ id, getValues }: Props) => {
       if (!data || !data.duration || !submission || submission.end_time) return;
       // set global alert
       setAlert({ open: false, message: '', severity: 'info' });
-      setExamMessage(null);
       if (!submission.end_time && data.duration) {
         const start = submission.start_time ? new Date(submission.start_time).getTime() : new Date().getTime();
         const remain = Math.ceil((start + data.duration * 60 * 1000 - new Date().getTime()) / 1000);
         if (remain > 0) {
-          const message = globalAlert(data.id, data.title);
-          setAlert({ open: true, message: message, severity: 'warning', duration: remain * 1000 });
-          setExamMessage(message);
+          setAlert({ open: true, message: alertMessage, severity: 'warning', duration: remain * 1000 });
         }
       }
     };
@@ -125,7 +118,7 @@ export const StopWatch = ({ id, getValues }: Props) => {
     if (!data || !data.duration || !submission || submission.end_time) return;
     if (remainSeconds <= -1) {
       // force submit
-      submitAssess({
+      submitAttempt({
         id: id,
         requestBody: {
           answers: getValues('answers')

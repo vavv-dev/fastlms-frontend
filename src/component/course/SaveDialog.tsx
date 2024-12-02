@@ -81,6 +81,52 @@ const createSchema = (t: (key: string, options?: Record<string, unknown>) => str
       .default(60)
       .label(t('Learning days'))
       .meta({ control: 'number', grid: 4 }),
+    registration_limit: yup
+      .number()
+      .typeError(REQUIRED)
+      .required(REQUIRED)
+      .default(0)
+      .label(t('Registration limit'))
+      .meta({ control: 'number', grid: 4, helperText: t('0 means no limit') }),
+    cutoff_progress: yup
+      .number()
+      .typeError(REQUIRED)
+      .required()
+      .default(80)
+      .label(t('Cutoff progress %'))
+      .meta({ control: 'number', grid: 4, helperText: t('Minimum progress percent') }),
+    cutoff_score: yup
+      .number()
+      .typeError(REQUIRED)
+      .required(REQUIRED)
+      .default(60)
+      .label(t('Cutoff score %'))
+      .meta({ control: 'number', grid: 4, helperText: t('Minimum score percent') }),
+    level: yup
+      .string()
+      .required(REQUIRED)
+      .default('general')
+      .label(t('Level'))
+      .oneOf(['general', 'beginner', 'intermediate', 'advanced'])
+      .meta({
+        control: 'select',
+        options: [
+          { value: 'general', label: t('General') },
+          { value: 'beginner', label: t('Beginner') },
+          { value: 'intermediate', label: t('Intermediate') },
+          { value: 'advanced', label: t('Advanced') },
+        ],
+        grid: 4,
+      }),
+    sequential_learning: yup
+      .boolean()
+      .default(true)
+      .label(t('Sequential learning'))
+      .meta({
+        control: 'checkbox',
+        grid: 4,
+        helperText: t('If checked, user must complete lessons and all resources in order.'),
+      }),
     start_date: yup
       .string()
       .label(t('Start date'))
@@ -121,44 +167,6 @@ const createSchema = (t: (key: string, options?: Record<string, unknown>) => str
       .url(INVALID_URL)
       .label(t('Marketing url'))
       .meta({ control: 'text', helperText: t('If you want to use another marketing page, insert URL here.') }),
-
-    level: yup
-      .string()
-      .required(REQUIRED)
-      .default('general')
-      .label(t('Level'))
-      .oneOf(['general', 'beginner', 'intermediate', 'advanced'])
-      .meta({
-        control: 'select',
-        options: [
-          { value: 'general', label: t('General') },
-          { value: 'beginner', label: t('Beginner') },
-          { value: 'intermediate', label: t('Intermediate') },
-          { value: 'advanced', label: t('Advanced') },
-        ],
-        grid: 3,
-      }),
-    registration_limit: yup
-      .number()
-      .typeError(REQUIRED)
-      .required(REQUIRED)
-      .default(0)
-      .label(t('Registration limit'))
-      .meta({ control: 'number', grid: 3, helperText: t('0 means no limit') }),
-    cutoff_progress: yup
-      .number()
-      .typeError(REQUIRED)
-      .required()
-      .default(80)
-      .label(t('Cutoff progress %'))
-      .meta({ control: 'number', grid: 3, helperText: t('Minimum progress percent') }),
-    cutoff_score: yup
-      .number()
-      .typeError(REQUIRED)
-      .required(REQUIRED)
-      .default(60)
-      .label(t('Cutoff score %'))
-      .meta({ control: 'number', grid: 3, helperText: t('Minimum score percent') }),
     certificate_templates: yup
       .array()
       .max(2, t('Maximum value is {{ max }}.', { max: 2 }))
@@ -196,7 +204,6 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
 
   return (
     <SaveResourceDialog<ResourceUpdateRequest, ResourceResponse>
-      title={t('Course')}
       open={open}
       setOpen={setOpen}
       resourceId={id}

@@ -122,10 +122,10 @@ export const MessageDialog = ({ open, setOpen, selection, totalSelected, total }
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={t('Message')}
       fullWidth
       maxWidth="sm"
       renderContent={() => (

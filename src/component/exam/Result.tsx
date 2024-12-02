@@ -3,14 +3,18 @@ import { useTranslation } from 'react-i18next';
 
 import { Finding } from './Finding';
 
-import { ExamAssessResponse as AssessResponse, ExamGetAssessData as GetAssessData, examGetAssess as getAssess } from '@/api';
+import {
+  ExamAttemptResponse as AttemptResponse,
+  ExamGetAttemptData as GetAttemptData,
+  examGetAttempt as getAttempt,
+} from '@/api';
 import { useServiceImmutable } from '@/component/common';
 import { formatDatetimeLocale, toFixedHuman } from '@/helper/util';
 
 export const Result = ({ id }: { id: string }) => {
   const { t } = useTranslation('exam');
   const theme = useTheme();
-  const { data } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
 
   if (!data || !data.status || !data.submission) return null;
 

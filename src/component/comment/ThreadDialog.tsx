@@ -14,10 +14,10 @@ export const ThreadDialog = ({ open, setOpen, threadProps }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       fullWidth
       open={open}
       setOpen={setOpen}
-      title={threadProps.title}
       minHeight="400px"
       renderContent={() => <Thread {...threadProps} />}
       maxWidth={threadProps.editor ? 'md' : 'sm'}

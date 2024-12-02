@@ -72,7 +72,6 @@ interface CopyAutocomplete {
 }
 
 interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { id: string }> {
-  title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   resourceId?: string;
@@ -87,7 +86,6 @@ interface SaveResourceDialogProps<T extends { title?: string }, K extends T & { 
 }
 
 export const SaveResourceDialog = <T extends { title?: string }, K extends T & { id: string }>({
-  title,
   open,
   setOpen,
   resourceId,
@@ -231,9 +229,10 @@ export const SaveResourceDialog = <T extends { title?: string }, K extends T & {
 
   return (
     <BaseDialog
+      fullWidth
+      isReady
       open={open}
       setOpen={setOpen}
-      title={`${title} ${resource ? t('Update') : t('Add')}`}
       actions={
         <>
           <Button

@@ -161,7 +161,7 @@ export const Subtitle = ({ id }: { id: string }) => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflow: 'auto' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 1 }, overflow: 'auto' }}>
         {config.enabled && Object.values(tracksRef.current).length > 0 && (
           <>
             {Object.keys(langs).map((lang) => (
@@ -270,7 +270,7 @@ const SubtitleLines = memo(({ tracksRef, langs }: SubtitleLinesProps) => {
           }}
           onClick={() => playerInstance?.seekTo(parseInt(startTime, 10))}
         >
-          <Box sx={{ width: '50px', fontSize: '.9em' }}>{formatDuration(startTime)}</Box>
+          <Box sx={{ minWidth: '50px', fontSize: '.9em' }}>{formatDuration(startTime)}</Box>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
             {Object.keys(langs)
               .filter((lang) => langs[lang])

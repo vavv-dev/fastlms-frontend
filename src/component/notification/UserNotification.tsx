@@ -1,7 +1,7 @@
 import { FiberSmartRecord, NotificationsOutlined, SmartToy } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableRow, Tooltip } from '@mui/material';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ import {
   messageReadMessage as readMessage,
 } from '@/api';
 import { EmptyMessage, GridInfiniteScrollPage, WithAvatar, updateInfiniteCache } from '@/component/common';
-import { useViewDialog } from '@/component/share';
+import { useViewDialog } from '@/component/share/useViewDialog';
 import { calculateReverseIndex, formatRelativeTime } from '@/helper/util';
 import { userState } from '@/store';
 
@@ -112,13 +112,14 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
   const navigate = useNavigate();
   const setNotifications = useSetAtom(notificationsState);
   const readItemsRef = useRef(readItems);
+  const [localRead, setLocalRead] = useState(false);
 
-  // dialog opener
   const { open, Dialog } = useViewDialog(row.object_id, row.kind as 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson');
 
   const markAsRead = (e: React.MouseEvent) => {
     e.stopPropagation();
     readItemsRef.current[row.id] = new Date().toISOString();
+    setLocalRead(true);
     // update topbar
     setNotifications((notifications) => notifications.filter((n) => n.id !== row.id));
   };
@@ -140,7 +141,7 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
     }
   };
 
-  const hasRead = !!readItemsRef.current[row.id];
+  const hasRead = localRead || !!readItemsRef.current[row.id];
 
   return (
     <TableRow onClick={onClick} sx={{ '&:hover': { bgcolor: 'action.hover' }, cursor: 'pointer' }}>
@@ -174,7 +175,7 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
         ) : (
           <Tooltip title={t('Mark as read')}>
             <span>
-              <IconButton onClick={markAsRead} disabled={!!hasRead}>
+              <IconButton onClick={markAsRead} disabled={hasRead}>
                 <FiberSmartRecord sx={{ color: hasRead ? 'action.disabled' : 'error.main' }} />
               </IconButton>
             </span>

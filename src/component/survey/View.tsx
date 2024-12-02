@@ -1,5 +1,5 @@
 import { ArrowRight, BarChartOutlined, EditNoteOutlined, KeyboardArrowRight, Refresh } from '@mui/icons-material';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableRow, useTheme } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useSetAtom } from 'jotai';
@@ -11,13 +11,13 @@ import { Finding } from './Finding';
 import { Form } from './Form';
 
 import {
-  SurveyAssessResponse as AssessResponse,
+  SurveyAttemptResponse as AttemptResponse,
   SurveyDisplayResponse as DisplayResponse,
-  SurveyGetAssessData as GetAssessData,
-  surveyDeleteAssess as deleteAssess,
-  surveyGetAssess as getAssess,
+  SurveyGetAttemptData as GetAttemptData,
+  surveyDeleteAttempt as deleteAttempt,
+  surveyGetAttempt as getAttempt,
   surveyGetDisplays as getDisplays,
-  surveyReadyAssess as readyAssess,
+  surveyReadyAttempt as readyAttempt,
 } from '@/api';
 import { WithAvatar, updateInfiniteCache, useServiceImmutable } from '@/component/common';
 import { snackbarMessageState } from '@/component/layout';
@@ -31,13 +31,13 @@ export const View = ({ id }: { id: string }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [showResult, setShowResult] = useState(false);
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
   const setSnackbarMessage = useSetAtom(snackbarMessageState);
 
   const ready = () => {
     if (!data) return;
-    readyAssess({ id: data.id })
-      .then((updated: AssessResponse) => {
+    readyAttempt({ id: data.id })
+      .then((updated: AttemptResponse) => {
         mutate(updated, { revalidate: false });
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
       })
@@ -51,7 +51,7 @@ export const View = ({ id }: { id: string }) => {
 
   const deleteSubmission = () => {
     if (!data?.submission) return;
-    deleteAssess({ id: id }).then(() => {
+    deleteAttempt({ id: id }).then(() => {
       const cleaned = { ...data, submission: null, score: null, passed: null, status: null };
       mutate(cleaned, { revalidate: false });
       updateInfiniteCache<DisplayResponse>(getDisplays, cleaned, 'update');
@@ -63,11 +63,10 @@ export const View = ({ id }: { id: string }) => {
   const videoId = data.resources?.find((r) => r.kind === 'video')?.id ?? null;
 
   return (
-    <Paper
+    <Box
       sx={{
         borderRadius: 3,
         p: 3,
-        my: 'auto',
         width: '100%',
         maxWidth: 'smm',
         display: 'flex',
@@ -186,6 +185,6 @@ export const View = ({ id }: { id: string }) => {
       ) : (
         <Form id={data.id} />
       )}
-    </Paper>
+    </Box>
   );
 };

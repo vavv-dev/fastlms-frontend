@@ -40,6 +40,7 @@ interface Props {
   sx?: BoxProps['sx'];
   showDescription?: boolean;
   bannerBorder?: boolean;
+  children?: React.ReactNode;
 }
 
 export const ResourceCard = ({
@@ -58,6 +59,7 @@ export const ResourceCard = ({
   sx,
   showDescription,
   bannerBorder,
+  children,
 }: Props) => {
   const { t } = useTranslation('common');
   const theme = useTheme();
@@ -132,7 +134,6 @@ export const ResourceCard = ({
 
   return (
     <Box
-      className="resource-card"
       ref={cardRef}
       onClick={(e) => {
         if (onClick) {
@@ -188,6 +189,7 @@ export const ResourceCard = ({
       </Box>
       {bannerPlace === 'bottom' && Banner}
       {footer}
+      {children}
     </Box>
   );
 };

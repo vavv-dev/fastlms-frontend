@@ -28,7 +28,7 @@ export const Displays = ({ kind }: { kind: VideoKind }) => {
             <Card
               key={item.id}
               data={item}
-              hideAvatar={true}
+              hideAvatar
               sx={kind == 'short' ? { '& .card-banner': { borderRadius: '16px', overflow: 'hidden' } } : {}}
             />
           )),

@@ -98,7 +98,7 @@ export const EmojiPickerWrapper = ({ insertEmoji, showPicker, setShowPicker, emo
             <EmojiPicker
               theme={mode as Theme}
               searchDisabled
-              lazyLoadEmojis={true}
+              lazyLoadEmojis
               onEmojiClick={(emoji) => insertEmoji(emoji)}
               previewConfig={{ showPreview: false }}
               height={290}

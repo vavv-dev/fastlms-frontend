@@ -35,8 +35,8 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       mangle: {
-        // cf. component.common.swr.ts, component.notification.NotificationButton.tsx
-        reserved: ['lessonGetDisplays', 'sharedGetDisplays', 'courseGetView'],
+        // cf. component.common.swr.ts, component.notification.NotificationButton.tsx, component.exam.ActionMenu.tsx
+        reserved: ['lessonGetDisplays', 'sharedGetDisplays', 'courseGetView', 'examGetAttempt'],
       },
       compress: {
         drop_console: true,

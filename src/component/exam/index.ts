@@ -1,5 +1,4 @@
 import { atom } from 'jotai';
-import { ReactElement } from 'react';
 
 import i18next from '@/i18n';
 
@@ -7,8 +6,8 @@ export { Card as ExamCard } from './Card';
 export { Displays as ExamDisplays } from './Displays';
 export { View as ExamView } from './View';
 export { ViewDialog as ExamViewDialog } from './ViewDialog';
-export { ViewDialogOpener as ExamViewDialogOpener } from './ViewDialogOpener';
 export { Displays as GradingDisplays } from './grading/Displays';
+export { Message as ExamMessage } from './Message';
 
 // gettext no-op
 void [
@@ -31,5 +30,4 @@ void [
   i18next.t('passed', { ns: 'exam' }),
 ];
 
-export const examMessageState = atom<ReactElement | null>(null);
 export const stopWatchPortalState = atom<HTMLDivElement | null>(null);

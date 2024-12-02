@@ -23,8 +23,6 @@ import {
 import { DeleteResourceDialog, ResourceActionMenu, createToggleAction } from '@/component/common';
 import { userState } from '@/store';
 
-const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
-
 export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const { t } = useTranslation('course');
   const user = useAtomValue(userState);
@@ -34,6 +32,8 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
   // const [reportDialogOpen, setReportDialogOpen] = useState(false);
+
+  const action = createToggleAction<DisplayResponse>(toggleAction, getDisplays);
 
   if (!user) return null;
 
@@ -99,9 +99,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
         />
       )}
       {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}
-      {unenrollDialogOpen && (
-        <UnenrollDialog open={unenrollDialogOpen} setOpen={setUnenrollDialogOpen} id={data.id} title={data.title} />
-      )}
+      {unenrollDialogOpen && <UnenrollDialog open={unenrollDialogOpen} setOpen={setUnenrollDialogOpen} id={data.id} />}
     </>
   );
 };

@@ -50,7 +50,7 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const matches = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const [navOpen, setNavOpen] = useAtom(navState);
   const alert = useAtomValue(alertState);
 
@@ -71,17 +71,17 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
   }, [hideDrawer]); // eslint-disable-line
 
   useEffect(() => {
-    if (matches) {
+    if (mdDown) {
       setNavOpen(false);
     }
-  }, [matches]); // eslint-disable-line
+  }, [mdDown]); // eslint-disable-line
 
   return (
     <>
-      {(matches || hideDrawer) && (navOpen || false) && (
+      {(mdDown || hideDrawer) && (navOpen || false) && (
         <Backdrop
           sx={{ zIndex: theme.zIndex.appBar - 2 }}
-          open={(matches || hideDrawer) && (navOpen || false)}
+          open={(mdDown || hideDrawer) && (navOpen || false)}
           onClick={() => setNavOpen(false)}
         />
       )}
@@ -107,7 +107,7 @@ export const NavDrawer = ({ hideDrawer = false }: { hideDrawer?: boolean }) => {
                 disablePadding
                 onClick={() => {
                   navigate(path || '/');
-                  if (matches) setNavOpen(false);
+                  if (mdDown) setNavOpen(false);
                 }}
                 sx={{ bgcolor: active ? theme.palette.action.selected : 'inherit' }}
               >

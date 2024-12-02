@@ -1,5 +1,4 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { VideoLibraryOutlined } from '@mui/icons-material';
 import { Box, Button, DialogContentText, LinearProgress } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';
@@ -8,13 +7,13 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 import {
+  VideoDisplayResponse as DisplayResponse,
   ImportYoutubeRequest,
   PlaylistDisplayResponse,
-  VideoDisplayResponse,
+  videoGetDisplays as getDisplays,
+  videoImportYoutubeVideo as importYoutubeVideo,
   playlistGetDisplays,
   playlistImportYoutubePlaylist,
-  videoGetDisplays,
-  videoImportYoutubeVideo,
 } from '@/api';
 import { BaseDialog, Form, TextFieldControl as Text, updateInfiniteCache } from '@/component/common';
 import { userState } from '@/store';
@@ -51,12 +50,12 @@ export const ImportYoutubeDialog = ({ open, setOpen, kind }: Props) => {
   const importYoutube = async (data: ImportYoutubeRequest) => {
     if (!user) return;
     clearErrors();
-    await (kind == 'video' ? videoImportYoutubeVideo : playlistImportYoutubePlaylist)({ requestBody: data })
+    await (kind == 'video' ? importYoutubeVideo : playlistImportYoutubePlaylist)({ requestBody: data })
       .then((imported) => {
         closeDialog();
 
         if (kind == 'video' || kind == 'short') {
-          updateInfiniteCache<VideoDisplayResponse>(videoGetDisplays, imported as VideoDisplayResponse, 'create');
+          updateInfiniteCache<DisplayResponse>(getDisplays, imported as DisplayResponse, 'create');
         } else {
           updateInfiniteCache<PlaylistDisplayResponse>(playlistGetDisplays, imported as PlaylistDisplayResponse, 'create');
         }
@@ -68,15 +67,10 @@ export const ImportYoutubeDialog = ({ open, setOpen, kind }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <VideoLibraryOutlined sx={{ color: 'error.main' }} />
-          {t('Import youtube')}
-        </Box>
-      }
       fullWidth
       maxWidth="sm"
       renderContent={() => (

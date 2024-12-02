@@ -32,7 +32,6 @@ export const useViewDialog = (id: string, kind: Kind): UseViewDialogReturn => {
   const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const Component = DIALOG_COMPONENT[kind];
-
   const Dialog = useCallback(() => (isOpen ? <Component id={id} open setOpen={close} /> : null), [isOpen, id, close, Component]);
 
   return { isOpen, open, close, toggle, Dialog };

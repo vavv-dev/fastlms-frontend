@@ -1,10 +1,10 @@
-import { Alert, Collapse } from '@mui/material';
+import { Alert, AlertProps, Collapse } from '@mui/material';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 
 import { alertState } from '.';
 
-export const GlobalAlert = () => {
+export const GlobalAlert = (props: AlertProps) => {
   const [alert, setAlert] = useAtom(alertState);
 
   useEffect(() => {
@@ -22,8 +22,9 @@ export const GlobalAlert = () => {
       <Alert
         variant="filled"
         severity={alert.severity}
-        sx={{ borderRadius: 0 }}
+        sx={{ borderRadius: 0, alignItems: 'center' }}
         onClose={alert.hideClose ? undefined : () => setAlert({ ...alert, open: false })}
+        {...props}
       >
         {alert.message}
       </Alert>

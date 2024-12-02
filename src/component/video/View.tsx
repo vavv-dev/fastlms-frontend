@@ -11,7 +11,6 @@ import { Subtitle } from './Subtitle';
 import { Tracking } from './Tracking';
 import { Videos } from './playlist/Videos';
 
-
 import { VideoGetViewData as GetViewData, VideoGetViewResponse as GetViewResponse, videoGetView as getView } from '@/api';
 import { Thread } from '@/component/comment';
 import { useServiceImmutable } from '@/component/common';
@@ -34,7 +33,6 @@ export const View = () => {
           maxWidth: 'xxl',
           alignSelf: 'center',
           p: { xs: 0, md: 3 },
-          // pt: '1em !important',
           gap: { xs: 0, md: 3 },
           flexWrap: { xs: 'wrap', mdl: 'nowrap' },
         }}
@@ -47,7 +45,7 @@ export const View = () => {
             gap: 2,
             minWidth: { xs: '100%', md: '650px' },
             '& > :not(div:first-of-type)': {
-              px: { xs: 3, md: 0 },
+              px: { xs: 2, md: 0 },
             },
           }}
         >
@@ -72,7 +70,7 @@ export const View = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
-            p: { xs: 3, md: 0 },
+            p: { xs: 2, md: 0 },
             width: '100%',
             maxWidth: { mdl: '402px' },
           }}

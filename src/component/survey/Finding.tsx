@@ -5,9 +5,9 @@ import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-  SurveyAssessResponse as AssessResponse,
-  SurveyGetAssessData as GetAssessData,
-  surveyGetAssess as getAssess,
+  SurveyAttemptResponse as AttemptResponse,
+  SurveyGetAttemptData as GetAttemptData,
+  surveyGetAttempt as getAttempt,
 } from '@/api';
 import { useServiceImmutable } from '@/component/common';
 import { textEllipsisCss, toFixedHuman } from '@/helper/util';
@@ -28,7 +28,7 @@ const ChartLoader = () => (
 export const Finding = ({ id }: { id: string }) => {
   const { t } = useTranslation('survey');
   const theme = useTheme();
-  const { data } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
 
   if (!data || !data.finding) return null;
 

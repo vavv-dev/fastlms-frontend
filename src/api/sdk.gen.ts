@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { PublicCreateUserData, PublicCreateUserResponse, PublicVerifyEmailData, PublicVerifyEmailResponse, PublicResendVerificationEmailData, PublicResendVerificationEmailResponse, PublicLoginData, PublicLoginResponse, PublicPasswordResetData, PublicPasswordResetResponse, PublicPasswordResetConfirmData, PublicPasswordResetConfirmResponse, PublicInvitationAcceptData, PublicInvitationAcceptResponse, AccountGetMeData, AccountGetMeResponse, AccountUpdateMeData, AccountUpdateMeResponse, AccountGetUserData, AccountGetUserResponse, AccountGetUserByUsernameData, AccountGetUserByUsernameResponse, AccountLogoutData, AccountLogoutResponse, AccountUploadFilesData, AccountUploadFilesResponse, CommentGetThreadsData, CommentGetThreadsResponse, CommentCreateThreadData, CommentCreateThreadResponse, CommentUpdateThreadData, CommentUpdateThreadResponse, CommentCreateResourceData, CommentCreateResourceResponse, CommentUpdateResourceData, CommentUpdateResourceResponse, CommentToggleActionData, CommentToggleActionResponse, PublicGetThreadData, PublicGetThreadResponse, PublicGetCommentsData, PublicGetCommentsResponse, VideoGetDisplaysData, VideoGetDisplaysResponse, VideoImportYoutubeVideoData, VideoImportYoutubeVideoResponse, VideoGetTagsData, VideoGetTagsResponse, VideoGetViewData, VideoGetViewResponse, VideoGetSubtitlesData, VideoGetSubtitlesResponse, VideoGetResourceData, VideoGetResourceResponse, VideoUpdateResourceData, VideoUpdateResourceResponse, VideoDeleteResourceData, VideoDeleteResourceResponse, VideoGetWatchBitmapData, VideoGetWatchBitmapResponse, VideoStartWatchData, VideoStartWatchResponse, VideoUpdateWatchData, VideoUpdateWatchResponse, VideoEndWatchData, VideoEndWatchResponse, VideoGetVideoReportData, VideoGetVideoReportResponse, VideoDownloadVideoReportData, VideoDownloadVideoReportResponse, VideoToggleActionData, VideoToggleActionResponse, PlaylistGetDisplaysData, PlaylistGetDisplaysResponse, PlaylistImportYoutubePlaylistData, PlaylistImportYoutubePlaylistResponse, PlaylistUpdatePlaylistVideosData, PlaylistUpdatePlaylistVideosResponse, PlaylistGetViewData, PlaylistGetViewResponse, PlaylistResumePlaylistData, PlaylistResumePlaylistResponse, PlaylistGetResourceData, PlaylistGetResourceResponse, PlaylistUpdateResourceData, PlaylistUpdateResourceResponse, PlaylistDeleteResourceData, PlaylistDeleteResourceResponse, PlaylistCreateResourceData, PlaylistCreateResourceResponse, PlaylistGetPlaylistReportData, PlaylistGetPlaylistReportResponse, PlaylistDownloadPlaylistReportData, PlaylistDownloadPlaylistReportResponse, PlaylistCheckVideoData, PlaylistCheckVideoResponse, PlaylistToggleActionData, PlaylistToggleActionResponse, AssetGetDisplaysData, AssetGetDisplaysResponse, AssetGetDisplayData, AssetGetDisplayResponse, AssetGetResourceData, AssetGetResourceResponse, AssetUpdateResourceData, AssetUpdateResourceResponse, AssetDeleteResourceData, AssetDeleteResourceResponse, AssetCreateResourceData, AssetCreateResourceResponse, AssetGetWatchBitmapData, AssetGetWatchBitmapResponse, AssetStartWatchData, AssetStartWatchResponse, AssetUpdateWatchData, AssetUpdateWatchResponse, AssetEndWatchData, AssetEndWatchResponse, AssetGetAssetReportData, AssetGetAssetReportResponse, AssetDownloadAssetReportData, AssetDownloadAssetReportResponse, AssetToggleActionData, AssetToggleActionResponse, AssetPresignedUploadUrlData, AssetPresignedUploadUrlResponse, AssetHtmlViewData, AssetHtmlViewResponse, AssetPdfViewData, AssetPdfViewResponse, QuizGetDisplaysData, QuizGetDisplaysResponse, QuizGetResourceData, QuizGetResourceResponse, QuizUpdateResourceData, QuizUpdateResourceResponse, QuizDeleteResourceData, QuizDeleteResourceResponse, QuizCreateResourceData, QuizCreateResourceResponse, QuizGetAssessData, QuizGetAssessResponse, QuizReadyAssessData, QuizReadyAssessResponse, QuizSubmitAssessData, QuizSubmitAssessResponse, QuizDeleteAssessData, QuizDeleteAssessResponse, QuizGetQuizReportData, QuizGetQuizReportResponse, QuizDownloadQuizReportData, QuizDownloadQuizReportResponse, QuizToggleActionData, QuizToggleActionResponse, QuizGetOwnedQuestionsData, QuizGetOwnedQuestionsResponse, SurveyGetDisplaysData, SurveyGetDisplaysResponse, SurveyGetResourceData, SurveyGetResourceResponse, SurveyUpdateResourceData, SurveyUpdateResourceResponse, SurveyDeleteResourceData, SurveyDeleteResourceResponse, SurveyCreateResourceData, SurveyCreateResourceResponse, SurveyGetAssessData, SurveyGetAssessResponse, SurveyReadyAssessData, SurveyReadyAssessResponse, SurveySubmitAssessData, SurveySubmitAssessResponse, SurveyDeleteAssessData, SurveyDeleteAssessResponse, SurveyGetSurveyReportData, SurveyGetSurveyReportResponse, SurveyDownloadSurveyReportData, SurveyDownloadSurveyReportResponse, SurveyToggleActionData, SurveyToggleActionResponse, SurveyGetOwnedQuestionsData, SurveyGetOwnedQuestionsResponse, ExamGetDisplaysData, ExamGetDisplaysResponse, ExamGetResourceData, ExamGetResourceResponse, ExamUpdateResourceData, ExamUpdateResourceResponse, ExamDeleteResourceData, ExamDeleteResourceResponse, ExamCreateResourceData, ExamCreateResourceResponse, ExamGetAssessData, ExamGetAssessResponse, ExamReadyAssessData, ExamReadyAssessResponse, ExamStartAssessData, ExamStartAssessResponse, ExamSubmitAssessData, ExamSubmitAssessResponse, ExamDeleteAssessData, ExamDeleteAssessResponse, ExamGetGradingData, ExamGetGradingResponse, ExamSubmitGradingData, ExamSubmitGradingResponse, ExamGetExamReportData, ExamGetExamReportResponse, ExamDownloadExamReportData, ExamDownloadExamReportResponse, ExamGetGradingSubmissionsData, ExamGetGradingSubmissionsResponse, ExamToggleActionData, ExamToggleActionResponse, ExamGetOwnedQuestionsData, ExamGetOwnedQuestionsResponse, LessonGetDisplaysData, LessonGetDisplaysResponse, LessonGetDisplayData, LessonGetDisplayResponse, LessonGetResourceData, LessonGetResourceResponse, LessonUpdateResourceData, LessonUpdateResourceResponse, LessonDeleteResourceData, LessonDeleteResourceResponse, LessonCreateResourceData, LessonCreateResourceResponse, LessonToggleActionData, LessonToggleActionResponse, CourseGetDisplaysData, CourseGetDisplaysResponse, CourseGetResourceData, CourseGetResourceResponse, CourseUpdateResourceData, CourseUpdateResourceResponse, CourseDeleteResourceData, CourseDeleteResourceResponse, CourseCreateResourceData, CourseCreateResourceResponse, CourseGetViewData, CourseGetViewResponse, CourseEnrollData, CourseEnrollResponse2, CourseUnenrollData, CourseUnenrollResponse, CourseToggleActionData, CourseToggleActionResponse, CourseCreateEsimsaCourseData, CourseCreateEsimsaCourseResponse, SharedGetDisplaysData, SharedGetDisplaysResponse, SharedResourceSelectorData, SharedResourceSelectorResponse, SharedGetBookmarkedContentData, SharedGetBookmarkedContentResponse, SharedToggleBookmarkData, SharedToggleBookmarkResponse, PublicGetOutlineData, PublicGetOutlineResponse, SearchSearchVideoContentData, SearchSearchVideoContentResponse, SearchSuggestVideoKeywordsData, SearchSuggestVideoKeywordsResponse, ChannelGetDisplaysData, ChannelGetDisplaysResponse, ChannelGetChannelByUsernameData, ChannelGetChannelByUsernameResponse, ChannelUpdateMyChannelData, ChannelUpdateMyChannelResponse, MemberGetDisplaysData, MemberGetDisplaysResponse, MemberUploadMemberXlsxData, MemberUploadMemberXlsxResponse, MemberDownloadMemberXlsxTemplateData, MemberDownloadMemberXlsxTemplateResponse, MemberCheckMemberData, MemberCheckMemberResponse, MemberCreateMemberData, MemberCreateMemberResponse, MemberUpdateMemberData, MemberUpdateMemberResponse, MemberDeleteMemberData, MemberDeleteMemberResponse, MemberCreateRosterData, MemberCreateRosterResponse, MemberUpdateRosterData, MemberUpdateRosterResponse, MemberDeleteRosterData, MemberDeleteRosterResponse, MemberInviteUserData, MemberInviteUserResponse, MessageGetMessagesData, MessageGetMessagesResponse, MessageSendMemberMessageData, MessageSendMemberMessageResponse, MessageReadMessageData, MessageReadMessageResponse, AssistantGetMessagesData, AssistantGetMessagesResponse, AssistantSendMessageData, AssistantSendMessageResponse, AssistantDeleteAllMessagesData, AssistantDeleteAllMessagesResponse, AssistantDeleteMessageData, AssistantDeleteMessageResponse, CertificateGetCourseCertificatesData, CertificateGetCourseCertificatesResponse, CertificateRequestCourseCertificateData, CertificateRequestCourseCertificateResponse, CertificateGetDisplaysData, CertificateGetDisplaysResponse, CertificateTemplateSelectorData, CertificateTemplateSelectorResponse, CertificateGetResourceData, CertificateGetResourceResponse, CertificateUpdateResourceData, CertificateUpdateResourceResponse, CertificateDeleteResourceData, CertificateDeleteResourceResponse, CertificateCreateResourceData, CertificateCreateResourceResponse, PublicVerifyCertificateData, PublicVerifyCertificateResponse, PublicHealthCheckResponse } from './types.gen';
+import type { PublicCreateUserData, PublicCreateUserResponse, PublicVerifyEmailData, PublicVerifyEmailResponse, PublicResendVerificationEmailData, PublicResendVerificationEmailResponse, PublicLoginData, PublicLoginResponse, PublicPasswordResetData, PublicPasswordResetResponse, PublicPasswordResetConfirmData, PublicPasswordResetConfirmResponse, PublicInvitationAcceptData, PublicInvitationAcceptResponse, AccountGetMeData, AccountGetMeResponse, AccountUpdateMeData, AccountUpdateMeResponse, AccountGetUserData, AccountGetUserResponse, AccountGetUserByUsernameData, AccountGetUserByUsernameResponse, AccountLogoutData, AccountLogoutResponse, AccountUploadFilesData, AccountUploadFilesResponse, CommentGetThreadsData, CommentGetThreadsResponse, CommentCreateThreadData, CommentCreateThreadResponse, CommentUpdateThreadData, CommentUpdateThreadResponse, CommentCreateResourceData, CommentCreateResourceResponse, CommentUpdateResourceData, CommentUpdateResourceResponse, CommentToggleActionData, CommentToggleActionResponse, PublicGetThreadData, PublicGetThreadResponse, PublicGetCommentsData, PublicGetCommentsResponse, VideoGetDisplaysData, VideoGetDisplaysResponse, VideoImportYoutubeVideoData, VideoImportYoutubeVideoResponse, VideoGetTagsData, VideoGetTagsResponse, VideoGetViewData, VideoGetViewResponse, VideoGetSubtitlesData, VideoGetSubtitlesResponse, VideoGetResourceData, VideoGetResourceResponse, VideoUpdateResourceData, VideoUpdateResourceResponse, VideoDeleteResourceData, VideoDeleteResourceResponse, VideoGetWatchBitmapData, VideoGetWatchBitmapResponse, VideoStartWatchData, VideoStartWatchResponse, VideoUpdateWatchData, VideoUpdateWatchResponse, VideoEndWatchData, VideoEndWatchResponse, VideoGetVideoReportData, VideoGetVideoReportResponse, VideoDownloadVideoReportData, VideoDownloadVideoReportResponse, VideoToggleActionData, VideoToggleActionResponse, PlaylistGetDisplaysData, PlaylistGetDisplaysResponse, PlaylistImportYoutubePlaylistData, PlaylistImportYoutubePlaylistResponse, PlaylistUpdatePlaylistVideosData, PlaylistUpdatePlaylistVideosResponse, PlaylistGetViewData, PlaylistGetViewResponse, PlaylistResumePlaylistData, PlaylistResumePlaylistResponse, PlaylistGetResourceData, PlaylistGetResourceResponse, PlaylistUpdateResourceData, PlaylistUpdateResourceResponse, PlaylistDeleteResourceData, PlaylistDeleteResourceResponse, PlaylistCreateResourceData, PlaylistCreateResourceResponse, PlaylistGetPlaylistReportData, PlaylistGetPlaylistReportResponse, PlaylistDownloadPlaylistReportData, PlaylistDownloadPlaylistReportResponse, PlaylistCheckVideoData, PlaylistCheckVideoResponse, PlaylistToggleActionData, PlaylistToggleActionResponse, AssetGetDisplaysData, AssetGetDisplaysResponse, AssetGetDisplayData, AssetGetDisplayResponse, AssetGetResourceData, AssetGetResourceResponse, AssetUpdateResourceData, AssetUpdateResourceResponse, AssetDeleteResourceData, AssetDeleteResourceResponse, AssetCreateResourceData, AssetCreateResourceResponse, AssetGetWatchBitmapData, AssetGetWatchBitmapResponse, AssetStartWatchData, AssetStartWatchResponse, AssetUpdateWatchData, AssetUpdateWatchResponse, AssetEndWatchData, AssetEndWatchResponse, AssetGetAssetReportData, AssetGetAssetReportResponse, AssetDownloadAssetReportData, AssetDownloadAssetReportResponse, AssetToggleActionData, AssetToggleActionResponse, AssetPresignedUploadUrlData, AssetPresignedUploadUrlResponse, AssetHtmlViewData, AssetHtmlViewResponse, AssetPdfViewData, AssetPdfViewResponse, QuizGetDisplaysData, QuizGetDisplaysResponse, QuizGetResourceData, QuizGetResourceResponse, QuizUpdateResourceData, QuizUpdateResourceResponse, QuizDeleteResourceData, QuizDeleteResourceResponse, QuizCreateResourceData, QuizCreateResourceResponse, QuizGetAttemptData, QuizGetAttemptResponse, QuizReadyAttemptData, QuizReadyAttemptResponse, QuizSubmitAttemptData, QuizSubmitAttemptResponse, QuizDeleteAttemptData, QuizDeleteAttemptResponse, QuizGetQuizReportData, QuizGetQuizReportResponse, QuizDownloadQuizReportData, QuizDownloadQuizReportResponse, QuizToggleActionData, QuizToggleActionResponse, QuizGetOwnedQuestionsData, QuizGetOwnedQuestionsResponse, SurveyGetDisplaysData, SurveyGetDisplaysResponse, SurveyGetResourceData, SurveyGetResourceResponse, SurveyUpdateResourceData, SurveyUpdateResourceResponse, SurveyDeleteResourceData, SurveyDeleteResourceResponse, SurveyCreateResourceData, SurveyCreateResourceResponse, SurveyGetAttemptData, SurveyGetAttemptResponse, SurveyReadyAttemptData, SurveyReadyAttemptResponse, SurveySubmitAttemptData, SurveySubmitAttemptResponse, SurveyDeleteAttemptData, SurveyDeleteAttemptResponse, SurveyGetSurveyReportData, SurveyGetSurveyReportResponse, SurveyDownloadSurveyReportData, SurveyDownloadSurveyReportResponse, SurveyToggleActionData, SurveyToggleActionResponse, SurveyGetOwnedQuestionsData, SurveyGetOwnedQuestionsResponse, ExamGetDisplaysData, ExamGetDisplaysResponse, ExamGetResourceData, ExamGetResourceResponse, ExamUpdateResourceData, ExamUpdateResourceResponse, ExamDeleteResourceData, ExamDeleteResourceResponse, ExamCreateResourceData, ExamCreateResourceResponse, ExamGetAttemptData, ExamGetAttemptResponse, ExamReadyAttemptData, ExamReadyAttemptResponse, ExamStartAttemptData, ExamStartAttemptResponse, ExamSubmitAttemptData, ExamSubmitAttemptResponse, ExamDeleteAttemptData, ExamDeleteAttemptResponse, ExamGetGradingData, ExamGetGradingResponse, ExamSubmitGradingData, ExamSubmitGradingResponse, ExamGetExamReportData, ExamGetExamReportResponse, ExamDownloadExamReportData, ExamDownloadExamReportResponse, ExamGetGradingSubmissionsData, ExamGetGradingSubmissionsResponse, ExamToggleActionData, ExamToggleActionResponse, ExamGetOwnedQuestionsData, ExamGetOwnedQuestionsResponse, LessonGetDisplaysData, LessonGetDisplaysResponse, LessonGetDisplayData, LessonGetDisplayResponse, LessonGetResourceData, LessonGetResourceResponse, LessonUpdateResourceData, LessonUpdateResourceResponse, LessonDeleteResourceData, LessonDeleteResourceResponse, LessonCreateResourceData, LessonCreateResourceResponse, LessonToggleActionData, LessonToggleActionResponse, CourseGetDisplaysData, CourseGetDisplaysResponse, CourseGetResourceData, CourseGetResourceResponse, CourseUpdateResourceData, CourseUpdateResourceResponse, CourseDeleteResourceData, CourseDeleteResourceResponse, CourseCreateResourceData, CourseCreateResourceResponse, CourseGetViewData, CourseGetViewResponse, CourseEnrollData, CourseEnrollResponse2, CourseUnenrollData, CourseUnenrollResponse, CourseUpdateLearningData, CourseUpdateLearningResponse, CourseToggleActionData, CourseToggleActionResponse, CourseCreateEsimsaCourseData, CourseCreateEsimsaCourseResponse, SharedGetDisplaysData, SharedGetDisplaysResponse, SharedResourceSelectorData, SharedResourceSelectorResponse, SharedGetBookmarkedContentData, SharedGetBookmarkedContentResponse, SharedToggleBookmarkData, SharedToggleBookmarkResponse, SharedGetImportantData, SharedGetImportantResponse, PublicGetOutlineData, PublicGetOutlineResponse, SearchSearchVideoContentData, SearchSearchVideoContentResponse, SearchSuggestVideoKeywordsData, SearchSuggestVideoKeywordsResponse, ChannelGetDisplaysData, ChannelGetDisplaysResponse, ChannelGetChannelByUsernameData, ChannelGetChannelByUsernameResponse, ChannelUpdateMyChannelData, ChannelUpdateMyChannelResponse, MemberGetDisplaysData, MemberGetDisplaysResponse, MemberUploadMemberXlsxData, MemberUploadMemberXlsxResponse, MemberDownloadMemberXlsxTemplateData, MemberDownloadMemberXlsxTemplateResponse, MemberCheckMemberData, MemberCheckMemberResponse, MemberCreateMemberData, MemberCreateMemberResponse, MemberUpdateMemberData, MemberUpdateMemberResponse, MemberDeleteMemberData, MemberDeleteMemberResponse, MemberCreateRosterData, MemberCreateRosterResponse, MemberUpdateRosterData, MemberUpdateRosterResponse, MemberDeleteRosterData, MemberDeleteRosterResponse, MemberInviteUserData, MemberInviteUserResponse, MessageGetMessagesData, MessageGetMessagesResponse, MessageSendMemberMessageData, MessageSendMemberMessageResponse, MessageReadMessageData, MessageReadMessageResponse, AssistantGetMessagesData, AssistantGetMessagesResponse, AssistantSendMessageData, AssistantSendMessageResponse, AssistantDeleteAllMessagesData, AssistantDeleteAllMessagesResponse, AssistantDeleteMessageData, AssistantDeleteMessageResponse, CertificateGetCourseCertificatesData, CertificateGetCourseCertificatesResponse, CertificateRequestCourseCertificateData, CertificateRequestCourseCertificateResponse, CertificateGetDisplaysData, CertificateGetDisplaysResponse, CertificateTemplateSelectorData, CertificateTemplateSelectorResponse, CertificateGetResourceData, CertificateGetResourceResponse, CertificateUpdateResourceData, CertificateUpdateResourceResponse, CertificateDeleteResourceData, CertificateDeleteResourceResponse, CertificateCreateResourceData, CertificateCreateResourceResponse, PublicVerifyCertificateData, PublicVerifyCertificateResponse, PublicHealthCheckResponse } from './types.gen';
 
 /**
  * Create User
@@ -1936,18 +1936,18 @@ export const quizCreateResource = (data: QuizCreateResourceData): CancelableProm
 };
 
 /**
- * Get Assess
+ * Get Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
  * @param data.refreshToken
- * @returns QuizAssessResponse Successful Response
+ * @returns QuizAttemptResponse Successful Response
  * @throws ApiError
  */
-export const quizGetAssess = (data: QuizGetAssessData): CancelablePromise<QuizGetAssessResponse> => {
+export const quizGetAttempt = (data: QuizGetAttemptData): CancelablePromise<QuizGetAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'GET',
-        url: '/api/v2/quiz/quiz/{id}/assess',
+        url: '/api/v2/quiz/quiz/{id}/attempt',
         path: {
             id: data.id
         },
@@ -1962,18 +1962,18 @@ export const quizGetAssess = (data: QuizGetAssessData): CancelablePromise<QuizGe
 };
 
 /**
- * Ready Assess
+ * Ready Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
  * @param data.refreshToken
- * @returns QuizAssessResponse Successful Response
+ * @returns QuizAttemptResponse Successful Response
  * @throws ApiError
  */
-export const quizReadyAssess = (data: QuizReadyAssessData): CancelablePromise<QuizReadyAssessResponse> => {
+export const quizReadyAttempt = (data: QuizReadyAttemptData): CancelablePromise<QuizReadyAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'POST',
-        url: '/api/v2/quiz/quiz/{id}/assess',
+        url: '/api/v2/quiz/quiz/{id}/attempt',
         path: {
             id: data.id
         },
@@ -1988,19 +1988,19 @@ export const quizReadyAssess = (data: QuizReadyAssessData): CancelablePromise<Qu
 };
 
 /**
- * Submit Assess
+ * Submit Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.requestBody
  * @param data.accessToken
  * @param data.refreshToken
- * @returns QuizAssessResponse Successful Response
+ * @returns QuizAttemptResponse Successful Response
  * @throws ApiError
  */
-export const quizSubmitAssess = (data: QuizSubmitAssessData): CancelablePromise<QuizSubmitAssessResponse> => {
+export const quizSubmitAttempt = (data: QuizSubmitAttemptData): CancelablePromise<QuizSubmitAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'PATCH',
-        url: '/api/v2/quiz/quiz/{id}/assess',
+        url: '/api/v2/quiz/quiz/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2017,7 +2017,7 @@ export const quizSubmitAssess = (data: QuizSubmitAssessData): CancelablePromise<
 };
 
 /**
- * Delete Assess
+ * Delete Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
@@ -2025,10 +2025,10 @@ export const quizSubmitAssess = (data: QuizSubmitAssessData): CancelablePromise<
  * @returns unknown Successful Response
  * @throws ApiError
  */
-export const quizDeleteAssess = (data: QuizDeleteAssessData): CancelablePromise<QuizDeleteAssessResponse> => {
+export const quizDeleteAttempt = (data: QuizDeleteAttemptData): CancelablePromise<QuizDeleteAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'DELETE',
-        url: '/api/v2/quiz/quiz/{id}/assess',
+        url: '/api/v2/quiz/quiz/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2309,18 +2309,18 @@ export const surveyCreateResource = (data: SurveyCreateResourceData): Cancelable
 };
 
 /**
- * Get Assess
+ * Get Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
  * @param data.refreshToken
- * @returns SurveyAssessResponse Successful Response
+ * @returns SurveyAttemptResponse Successful Response
  * @throws ApiError
  */
-export const surveyGetAssess = (data: SurveyGetAssessData): CancelablePromise<SurveyGetAssessResponse> => {
+export const surveyGetAttempt = (data: SurveyGetAttemptData): CancelablePromise<SurveyGetAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'GET',
-        url: '/api/v2/survey/survey/{id}/assess',
+        url: '/api/v2/survey/survey/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2335,18 +2335,18 @@ export const surveyGetAssess = (data: SurveyGetAssessData): CancelablePromise<Su
 };
 
 /**
- * Ready Assess
+ * Ready Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
  * @param data.refreshToken
- * @returns SurveyAssessResponse Successful Response
+ * @returns SurveyAttemptResponse Successful Response
  * @throws ApiError
  */
-export const surveyReadyAssess = (data: SurveyReadyAssessData): CancelablePromise<SurveyReadyAssessResponse> => {
+export const surveyReadyAttempt = (data: SurveyReadyAttemptData): CancelablePromise<SurveyReadyAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'POST',
-        url: '/api/v2/survey/survey/{id}/assess',
+        url: '/api/v2/survey/survey/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2361,19 +2361,19 @@ export const surveyReadyAssess = (data: SurveyReadyAssessData): CancelablePromis
 };
 
 /**
- * Submit Assess
+ * Submit Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.requestBody
  * @param data.accessToken
  * @param data.refreshToken
- * @returns SurveyAssessResponse Successful Response
+ * @returns SurveyAttemptResponse Successful Response
  * @throws ApiError
  */
-export const surveySubmitAssess = (data: SurveySubmitAssessData): CancelablePromise<SurveySubmitAssessResponse> => {
+export const surveySubmitAttempt = (data: SurveySubmitAttemptData): CancelablePromise<SurveySubmitAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'PATCH',
-        url: '/api/v2/survey/survey/{id}/assess',
+        url: '/api/v2/survey/survey/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2390,7 +2390,7 @@ export const surveySubmitAssess = (data: SurveySubmitAssessData): CancelableProm
 };
 
 /**
- * Delete Assess
+ * Delete Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
@@ -2398,10 +2398,10 @@ export const surveySubmitAssess = (data: SurveySubmitAssessData): CancelableProm
  * @returns unknown Successful Response
  * @throws ApiError
  */
-export const surveyDeleteAssess = (data: SurveyDeleteAssessData): CancelablePromise<SurveyDeleteAssessResponse> => {
+export const surveyDeleteAttempt = (data: SurveyDeleteAttemptData): CancelablePromise<SurveyDeleteAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'DELETE',
-        url: '/api/v2/survey/survey/{id}/assess',
+        url: '/api/v2/survey/survey/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2682,18 +2682,18 @@ export const examCreateResource = (data: ExamCreateResourceData): CancelableProm
 };
 
 /**
- * Get Assess
+ * Get Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
  * @param data.refreshToken
- * @returns ExamAssessResponse Successful Response
+ * @returns ExamAttemptResponse Successful Response
  * @throws ApiError
  */
-export const examGetAssess = (data: ExamGetAssessData): CancelablePromise<ExamGetAssessResponse> => {
+export const examGetAttempt = (data: ExamGetAttemptData): CancelablePromise<ExamGetAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'GET',
-        url: '/api/v2/exam/exam/{id}/assess',
+        url: '/api/v2/exam/exam/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2702,25 +2702,26 @@ export const examGetAssess = (data: ExamGetAssessData): CancelablePromise<ExamGe
             refresh_token: data.refreshToken
         },
         errors: {
+            409: 'Another exam is in progress',
             422: 'Validation Error'
         }
     });
 };
 
 /**
- * Ready Assess
+ * Ready Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.requestBody
  * @param data.accessToken
  * @param data.refreshToken
- * @returns ExamAssessResponse Successful Response
+ * @returns ExamAttemptResponse Successful Response
  * @throws ApiError
  */
-export const examReadyAssess = (data: ExamReadyAssessData): CancelablePromise<ExamReadyAssessResponse> => {
+export const examReadyAttempt = (data: ExamReadyAttemptData): CancelablePromise<ExamReadyAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'POST',
-        url: '/api/v2/exam/exam/{id}/assess',
+        url: '/api/v2/exam/exam/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2737,19 +2738,19 @@ export const examReadyAssess = (data: ExamReadyAssessData): CancelablePromise<Ex
 };
 
 /**
- * Start Assess
+ * Start Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.requestBody
  * @param data.accessToken
  * @param data.refreshToken
- * @returns ExamAssessResponse Successful Response
+ * @returns ExamAttemptResponse Successful Response
  * @throws ApiError
  */
-export const examStartAssess = (data: ExamStartAssessData): CancelablePromise<ExamStartAssessResponse> => {
+export const examStartAttempt = (data: ExamStartAttemptData): CancelablePromise<ExamStartAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'PUT',
-        url: '/api/v2/exam/exam/{id}/assess',
+        url: '/api/v2/exam/exam/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2766,19 +2767,19 @@ export const examStartAssess = (data: ExamStartAssessData): CancelablePromise<Ex
 };
 
 /**
- * Submit Assess
+ * Submit Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.requestBody
  * @param data.accessToken
  * @param data.refreshToken
- * @returns ExamAssessResponse Successful Response
+ * @returns ExamAttemptResponse Successful Response
  * @throws ApiError
  */
-export const examSubmitAssess = (data: ExamSubmitAssessData): CancelablePromise<ExamSubmitAssessResponse> => {
+export const examSubmitAttempt = (data: ExamSubmitAttemptData): CancelablePromise<ExamSubmitAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'PATCH',
-        url: '/api/v2/exam/exam/{id}/assess',
+        url: '/api/v2/exam/exam/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2795,7 +2796,7 @@ export const examSubmitAssess = (data: ExamSubmitAssessData): CancelablePromise<
 };
 
 /**
- * Delete Assess
+ * Delete Attempt
  * @param data The data for the request.
  * @param data.id
  * @param data.accessToken
@@ -2803,10 +2804,10 @@ export const examSubmitAssess = (data: ExamSubmitAssessData): CancelablePromise<
  * @returns unknown Successful Response
  * @throws ApiError
  */
-export const examDeleteAssess = (data: ExamDeleteAssessData): CancelablePromise<ExamDeleteAssessResponse> => {
+export const examDeleteAttempt = (data: ExamDeleteAttemptData): CancelablePromise<ExamDeleteAttemptResponse> => {
     return __request(OpenAPI, {
         method: 'DELETE',
-        url: '/api/v2/exam/exam/{id}/assess',
+        url: '/api/v2/exam/exam/{id}/attempt',
         path: {
             id: data.id
         },
@@ -2827,7 +2828,7 @@ export const examDeleteAssess = (data: ExamDeleteAssessData): CancelablePromise<
  * @param data.userId
  * @param data.accessToken
  * @param data.refreshToken
- * @returns ExamAssessResponse Successful Response
+ * @returns ExamAttemptResponse Successful Response
  * @throws ApiError
  */
 export const examGetGrading = (data: ExamGetGradingData): CancelablePromise<ExamGetGradingResponse> => {
@@ -2856,7 +2857,7 @@ export const examGetGrading = (data: ExamGetGradingData): CancelablePromise<Exam
  * @param data.requestBody
  * @param data.accessToken
  * @param data.refreshToken
- * @returns ExamAssessResponse Successful Response
+ * @returns ExamAttemptResponse Successful Response
  * @throws ApiError
  */
 export const examSubmitGrading = (data: ExamSubmitGradingData): CancelablePromise<ExamSubmitGradingResponse> => {
@@ -3040,6 +3041,15 @@ export const examGetOwnedQuestions = (data: ExamGetOwnedQuestionsData = {}): Can
 
 /**
  * Get Displays
+ * Retrieve paginated lesson displays.
+ *
+ * When a course filter is provided:
+ * - Page size is automatically set to 100 items
+ * - Lesson weights are included in the response
+ *
+ * Without a course filter:
+ * - Uses the requested page size from pagination parameters
+ * - Regular lesson display information is returned
  * @param data The data for the request.
  * @param data.search
  * @param data.course
@@ -3455,6 +3465,35 @@ export const courseUnenroll = (data: CourseUnenrollData): CancelablePromise<Cour
 };
 
 /**
+ * Update Learning
+ * @param data The data for the request.
+ * @param data.id
+ * @param data.requestBody
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns unknown Successful Response
+ * @throws ApiError
+ */
+export const courseUpdateLearning = (data: CourseUpdateLearningData): CancelablePromise<CourseUpdateLearningResponse> => {
+    return __request(OpenAPI, {
+        method: 'PATCH',
+        url: '/api/v2/course/course/{id}/learning',
+        path: {
+            id: data.id
+        },
+        cookies: {
+            access_token: data.accessToken,
+            refresh_token: data.refreshToken
+        },
+        body: data.requestBody,
+        mediaType: 'application/json',
+        errors: {
+            422: 'Validation Error'
+        }
+    });
+};
+
+/**
  * Toggle Action
  * @param data The data for the request.
  * @param data.id
@@ -3631,6 +3670,28 @@ export const sharedToggleBookmark = (data: SharedToggleBookmarkData): Cancelable
             kind: data.kind,
             id: data.id
         },
+        cookies: {
+            access_token: data.accessToken,
+            refresh_token: data.refreshToken
+        },
+        errors: {
+            422: 'Validation Error'
+        }
+    });
+};
+
+/**
+ * Get Important
+ * @param data The data for the request.
+ * @param data.accessToken
+ * @param data.refreshToken
+ * @returns ImportantResponse Successful Response
+ * @throws ApiError
+ */
+export const sharedGetImportant = (data: SharedGetImportantData = {}): CancelablePromise<SharedGetImportantResponse> => {
+    return __request(OpenAPI, {
+        method: 'GET',
+        url: '/api/v2/shared/u/important',
         cookies: {
             access_token: data.accessToken,
             refresh_token: data.refreshToken

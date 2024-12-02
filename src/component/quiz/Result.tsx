@@ -7,11 +7,11 @@ import { useReward } from 'react-rewards';
 import { Finding } from './Finding';
 
 import {
-  QuizAssessResponse as AssessResponse,
+  QuizAttemptResponse as AttemptResponse,
   QuizDisplayResponse as DisplayResponse,
-  QuizGetAssessData as GetAssessData,
-  quizDeleteAssess as deleteAssess,
-  quizGetAssess as getAssess,
+  QuizGetAttemptData as GetAttemptData,
+  quizDeleteAttempt as deleteAttempt,
+  quizGetAttempt as getAttempt,
   quizGetDisplays as getDisplays,
 } from '@/api';
 import { updateInfiniteCache, useServiceImmutable } from '@/component/common';
@@ -20,7 +20,7 @@ import { formatDatetimeLocale } from '@/helper/util';
 export const Result = ({ id }: { id: string }) => {
   const { t } = useTranslation('quiz');
   const rewardRef = useRef<HTMLDivElement>(null);
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
   const { reward } = useReward('passed-reward', 'confetti');
   const submission = data?.submission;
   const isPassed = data?.status == 'passed';
@@ -32,7 +32,7 @@ export const Result = ({ id }: { id: string }) => {
 
   const deleteSubmission = () => {
     if (!data?.submission) return;
-    deleteAssess({ id: data.id }).then(() => {
+    deleteAttempt({ id: data.id }).then(() => {
       const cleaned = { ...data, submission: null, score: null, passed: null, status: null };
       mutate(cleaned, { revalidate: false });
       updateInfiniteCache<DisplayResponse>(getDisplays, cleaned, 'update');

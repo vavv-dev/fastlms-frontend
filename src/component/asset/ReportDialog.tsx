@@ -1,5 +1,16 @@
 import { BarChart } from '@mui/icons-material';
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,11 +50,11 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       fullWidth
       open={open}
       setOpen={setOpen}
       maxWidth="md"
-      title={data.title}
       actions={<Button onClick={downlaodXlsxFile}>{t('Download report')}</Button>}
       renderContent={() => (
         <GridInfiniteScrollPage<ReportResponse, GetReportData>
@@ -56,7 +67,10 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
             upTo: String(new Date(upTo).getTime() || ''),
           }}
           renderItem={({ data: item }) => (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Typography variant="subtitle1" sx={{ alignSelf: 'center' }}>
+                {data.title}
+              </Typography>
               <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <TextField
                   label={t('As of')}

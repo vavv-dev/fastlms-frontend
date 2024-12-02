@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { accountProcessingState } from '.';
 
 import { accountLogout } from '@/api';
+import { alertState } from '@/component/layout';
 import { userState } from '@/store';
 
 export const Logout = () => {
@@ -12,6 +13,7 @@ export const Logout = () => {
 
   const [user, setUser] = useAtom(userState);
   const setProcessing = useSetAtom(accountProcessingState);
+  const setAlert = useSetAtom(alertState);
 
   useEffect(() => {
     const login = '/login';
@@ -27,6 +29,7 @@ export const Logout = () => {
       accountLogout()
         .then(() => {
           setUser(null);
+          setAlert({ open: false, severity: 'success', message: '' });
           navigate(login);
         })
         .finally(() => setProcessing(false));

@@ -10,18 +10,22 @@ interface Props {
 }
 
 export const ViewDialog = ({ open, setOpen, id }: Props) => {
-  const { data } = useServiceImmutable<LessonGetDisplayData, LessonGetDisplayResponse>(lessonGetDisplay, { id });
+  const { data, isLoading, isValidating } = useServiceImmutable<LessonGetDisplayData, LessonGetDisplayResponse>(
+    lessonGetDisplay,
+    { id },
+  );
 
-  if (!open || !data) return null;
+  if (!open) return null;
 
   return (
     <BaseDialog
+      isReady={!isLoading && !isValidating}
       fullWidth
       open={open}
       setOpen={setOpen}
       maxWidth="lg"
-      title={data.title}
-      renderContent={() => <Card data={data} borderBox={false} />}
+      renderContent={() => data && <Card data={data} borderBox={false} />}
+      sx={{ '& .MuiDialogContent-root > div': { width: '100%' } }}
     />
   );
 };

@@ -1,6 +1,7 @@
-import { ArrowDropDown, ArrowDropUp, NotificationImportantOutlined, Refresh } from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropUp, NotificationImportantOutlined, PlaylistPlayOutlined, Refresh } from '@mui/icons-material';
 import {
   Box,
+  Button,
   IconButton,
   Step,
   StepContent,
@@ -11,9 +12,11 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
+import { StepIconProps } from '@mui/material/StepIcon';
+import { useTheme } from '@mui/material/styles';
 import { useAtom, useAtomValue } from 'jotai';
 import { atomFamily, atomWithStorage } from 'jotai/utils';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -21,7 +24,6 @@ import { certificateStatusFamily } from '.';
 import { ActionMenu } from './ActionMenu';
 import { CertificateRequest } from './CertificateRequest';
 import { EnrollDialog } from './EnrollDialog';
-import { PlayerDialog } from './PlayerDialog';
 import { WeightedScore } from './WeightedScore';
 
 import {
@@ -50,8 +52,8 @@ export const View = () => {
   const { t } = useTranslation('course');
   const location = useLocation();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id: id || '' });
+  const { id } = useParams() as { id: string };
+  const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
   const {
     data: _lessons,
     mutate: lessonMutate,
@@ -59,15 +61,14 @@ export const View = () => {
     isValidating,
   } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
     apiService: lessonGetDisplays,
-    apiOptions: data?.enrolled ? { course: id, size: 100 } : {},
+    apiOptions: data?.enrolled ? { course: id } : {},
   });
   const [showAll, setShowAll] = useState(false);
-  const [activeStep, setActiveStep] = useAtom(activeStepFamily(id as string));
+  const [activeStep, setActiveStep] = useAtom(activeStepFamily(id));
   const spacerRef = useAtomValue(spacerRefState);
   const stickyPanelRef = useRef<HTMLDivElement>(null);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const certificateStatus = useAtomValue(certificateStatusFamily(id));
-  const [playerOpen, setPlayerOpen] = useState(false);
 
   // update spacerRef height
   const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
@@ -97,14 +98,21 @@ export const View = () => {
     lessonMutate();
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const openCoursePlayer = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.closest('.avatar-children .MuiButtonBase-root')) return;
+    if (target.closest('.avatar-children .asset-upload')) return;
 
-    if ((e.target as HTMLElement).closest('.resource-card')) {
+    const element = (e.target as HTMLElement).closest('[data-lesson-id][data-resource-id]');
+    if (element) {
       e.preventDefault();
       e.stopPropagation();
-      setPlayerOpen(true);
+
+      const lessonId = element.getAttribute('data-lesson-id');
+      const resourceId = element.getAttribute('data-resource-id');
+      if (lessonId && resourceId) {
+        navigate(`/course/${id}/player`, { state: { resourceLocation: { lesson_id: lessonId, resource_id: resourceId } } });
+      }
     }
   };
 
@@ -152,7 +160,7 @@ export const View = () => {
                 borderBottom: 1,
                 py: 2,
                 borderColor: 'divider',
-                gap: { xs: 1, md: 5 },
+                gap: { xs: 2, md: 5 },
               }}
             >
               <WeightedScore course={data} lessons={lessons} sx={{ pt: 3 }} />
@@ -160,6 +168,15 @@ export const View = () => {
 
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate(`/course/${id}/player`)}
+                  sx={{ whiteSpace: 'nowrap' }}
+                  startIcon={<PlaylistPlayOutlined />}
+                >
+                  {data.resource_location ? t('Resume') : t('Start learning')}
+                </Button>
                 {!smDown && (
                   <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
                     {showAll ? <ArrowDropDown /> : <ArrowDropUp />}
@@ -171,7 +188,7 @@ export const View = () => {
                 <ActionMenu data={data} />
               </Box>
             </Box>
-            <Box sx={{ position: 'relative', mt: 3 }} onClickCapture={handleClick}>
+            <Box sx={{ position: 'relative', mt: 3 }} onClickCapture={(e) => openCoursePlayer(e)}>
               {(isLoading || isValidating) && (
                 <Box sx={{ position: 'absolute', width: '100%', textAlign: 'center', top: '2em' }}>
                   <GradientCircularProgress />
@@ -202,7 +219,6 @@ export const View = () => {
         )}
       </Box>
       {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}
-      <PlayerDialog course={data} lessons={lessons} open={playerOpen} setOpen={setPlayerOpen} />
     </Box>
   );
 };
@@ -252,6 +268,9 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...
           minHeight: '2em',
           '& .MuiStepLabel-label': { display: 'flex', gap: 3, alignItems: 'center' },
         }}
+        slots={{
+          stepIcon: lesson.grading_method === 'none' ? NoGradingStepIcon : undefined,
+        }}
       >
         <Typography variant="h6" sx={{ lineHeight: 1.4 }}>
           {lesson.title}
@@ -277,4 +296,38 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...
       </StepContent>
     </Step>
   );
+};
+
+const NoGradingStepIcon = (props: StepIconProps) => {
+  const theme = useTheme();
+  const { active, completed, error, icon } = props;
+
+  const style = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 24,
+    height: 24,
+    borderRadius: '50%',
+    border: '1px solid',
+    borderColor: error
+      ? theme.palette.error.main
+      : completed
+        ? theme.palette.primary.main
+        : active
+          ? theme.palette.primary.main
+          : theme.palette.grey[400],
+    backgroundColor: 'transparent',
+    color: error
+      ? theme.palette.error.main
+      : completed
+        ? theme.palette.primary.main
+        : active
+          ? theme.palette.primary.main
+          : theme.palette.grey[600],
+    fontSize: '0.875rem',
+    fontWeight: 500,
+  };
+
+  return <div style={style}>{icon}</div>;
 };

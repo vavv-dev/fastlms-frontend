@@ -1,9 +1,11 @@
-import { Close } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
-
 import { View } from './View';
 
-import { BaseDialog } from '@/component/common';
+import {
+  QuizAttemptResponse as AttemptResponse,
+  QuizGetAttemptData as GetAttemptData,
+  quizGetAttempt as getAttempt,
+} from '@/api';
+import { BaseDialog, useServiceImmutable } from '@/component/common';
 
 interface Props {
   open: boolean;
@@ -12,26 +14,19 @@ interface Props {
 }
 
 export const ViewDialog = ({ open, setOpen, id }: Props) => {
+  const { isLoading, isValidating } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
+
   if (!open) return null;
 
   return (
     <BaseDialog
+      isReady={!isLoading && !isValidating}
       fullWidth
       maxWidth="smm"
       open={open}
       setOpen={setOpen}
-      renderContent={() => (
-        <>
-          <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', top: '0.5em', right: '0.5em' }}>
-            <Close />
-          </IconButton>
-          <View id={id} />
-        </>
-      )}
-      sx={{
-        '& .MuiDialog-paper': { bgcolor: 'transparent' },
-        '& .MuiDialogContent-root': { padding: 0 },
-      }}
+      renderContent={() => <View id={id} />}
+      sx={{ '& .MuiDialogContent-root': { padding: 0 } }}
     />
   );
 };

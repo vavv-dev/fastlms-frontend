@@ -41,7 +41,7 @@ export const Result = () => {
         </Typography>
       }
       orderingOptions={[{ value: 'relevance', label: t('Most relevant') }]}
-      disableSearch={true}
+      disableSearch
       apiService={searchVideoContent}
       apiOptions={search ? { q: search } : undefined}
       renderItem={({ data }) =>
@@ -69,7 +69,7 @@ export const Result = () => {
                       }
                     : {}
                 }
-                showDescription={true}
+                showDescription
               />
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', rowGap: 1 }}>
                 {item.search_subtitles?.map((found) => (

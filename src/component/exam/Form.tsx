@@ -1,24 +1,22 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, DialogContentText, Divider, Stack, Tooltip, Typography, Zoom, useTheme } from '@mui/material';
+import { Backdrop, Box, Button, Divider, Popover, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 import { useSetAtom } from 'jotai';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-import { examMessageState } from '.';
 import { StopWatch } from './StopWatch';
 
 import {
-  ExamAssessResponse as AssessResponse,
+  ExamAttemptResponse as AttemptResponse,
   ExamDisplayResponse as DisplayResponse,
-  ExamGetAssessData as GetAssessData,
-  examGetAssess as getAssess,
+  ExamGetAttemptData as GetAttemptData,
+  examGetAttempt as getAttempt,
   examGetDisplays as getDisplays,
-  examSubmitAssess as submitAssess,
+  examSubmitAttempt as submitAttempt,
 } from '@/api';
 import {
-  BaseDialog,
   Form as CommonForm,
   RadioGroupControl as Radio,
   TextFieldControl as Text,
@@ -53,11 +51,11 @@ const createSchema = (t: (key: string) => string) => {
 export const Form = ({ id }: { id: string }) => {
   const { t } = useTranslation('exam');
   const theme = useTheme();
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
   const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false);
   const [answerState, setAnswerState] = useState<React.ReactNode | null>(null);
   const setAlert = useSetAtom(alertState);
-  const setExamMessage = useSetAtom(examMessageState);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   const schema = useMemo(() => createSchema(t), [t]);
   const { handleSubmit, control, formState, setError, reset, getValues, watch } = useForm<AnswerInput>({
@@ -122,7 +120,10 @@ export const Form = ({ id }: { id: string }) => {
   const submitForm = async (input: AnswerInput) => {
     if (!data) return;
 
-    await submitAssess({
+    // exam dialog
+    const examPaper = submitButtonRef.current?.closest('.exam-paper');
+
+    await submitAttempt({
       id: data.id,
       requestBody: {
         answers: input.answers.reduce(
@@ -137,11 +138,11 @@ export const Form = ({ id }: { id: string }) => {
       .then(async (updated) => {
         updateInfiniteCache<DisplayResponse>(getDisplays, updated, 'update');
         await mutate(updated, { revalidate: false });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // scroll to top
+        examPaper?.parentElement?.scrollTo({ top: 0, behavior: 'smooth' });
 
         // clean exam alert
         setAlert({ open: false, message: '', severity: 'info' });
-        setExamMessage(null);
       })
       .catch((error) => setError('root.server', error));
     setSubmitConfirmOpen(false);
@@ -156,7 +157,10 @@ export const Form = ({ id }: { id: string }) => {
         <Stack
           spacing={3}
           divider={<Divider />}
-          sx={{ '& .MuiFormLabel-root': { mb: 2, fontWeight: 600, color: 'text.primary', whiteSpace: 'pre-wrap' } }}
+          sx={{
+            px: { xs: 0, sm: 2, lg: 3 },
+            '& .MuiFormLabel-root': { mb: 2, fontWeight: 600, color: 'text.primary', whiteSpace: 'pre-wrap' },
+          }}
         >
           {submission.questions.map((question, i) => {
             const name = `answers.${i}.answer`;
@@ -168,7 +172,7 @@ export const Form = ({ id }: { id: string }) => {
                   <Radio
                     name={name}
                     formLabel={formLabel}
-                    required={true}
+                    required
                     control={control}
                     selections={question.selections || []}
                     helperText={question.help_text || null}
@@ -178,11 +182,11 @@ export const Form = ({ id }: { id: string }) => {
                   <TextEditor
                     formLabel={formLabel}
                     name={name}
-                    required={true}
+                    required
                     control={control}
                     helperText={question.help_text || null}
                     minHeight={150}
-                    disableFormLabelFocus={true}
+                    disableFormLabelFocus
                     sx={{ my: 1 }}
                   />
                 ) : (
@@ -190,7 +194,7 @@ export const Form = ({ id }: { id: string }) => {
                     variant="outlined"
                     name={name}
                     formLabel={formLabel}
-                    required={true}
+                    required
                     control={control}
                     type={question.kind == 'number_input' ? 'number' : 'text'}
                     helperText={question.help_text || null}
@@ -217,6 +221,7 @@ export const Form = ({ id }: { id: string }) => {
               {answerState}
             </Box>
             <Button
+              ref={submitButtonRef}
               fullWidth
               disabled={!formState.isDirty || formState.isSubmitting || !formState.isValid}
               type="submit"
@@ -228,39 +233,41 @@ export const Form = ({ id }: { id: string }) => {
           </Box>
         </Stack>
       </CommonForm>
-      <>
-        <BaseDialog
-          open={submitConfirmOpen}
-          setOpen={setSubmitConfirmOpen}
-          title={data.title}
-          renderContent={() => (
-            <DialogContentText component="div">
-              <Box sx={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
-                <Zoom
-                  in={formState.isSubmitting}
-                  style={{ position: 'absolute', top: '4em', transitionDelay: '500ms' }}
-                  timeout={10}
-                  unmountOnExit
-                >
-                  <Typography component="span" variant="caption" sx={{ color: 'info.main' }}>
-                    {t('Submitting answers...')}
-                  </Typography>
-                </Zoom>
-              </Box>
+      {submitConfirmOpen && (
+        <Backdrop open={submitConfirmOpen} onClick={() => setSubmitConfirmOpen(false)} sx={{ zIndex: theme.zIndex.modal + 1 }}>
+          <Popover
+            open={submitConfirmOpen}
+            anchorEl={submitButtonRef.current}
+            onClose={() => setSubmitConfirmOpen(false)}
+            anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'center', horizontal: 'center' }}
+            sx={{
+              '& .MuiPaper-root': {
+                borderRadius: theme.shape.borderRadius,
+                top: '50% !important',
+                transform: 'translateY(-50%) !important',
+              },
+              zIndex: theme.zIndex.modal + 2,
+            }}
+          >
+            <Box sx={{ p: 3, maxWidth: 'xs' }}>
+              <Typography variant="body1">
+                {t('Are you sure you want to submit answers? If submitted, the exam will be finished.')}
+                <br />
+                {t('This action cannot be undone.')}
+              </Typography>
 
-              {t('Are you sure you want to submit answers? If submitted, the exam will be finished.')}
-              <br />
-              {t('This action cannot be undone.')}
-            </DialogContentText>
-          )}
-          actions={
-            <Button size="large" onClick={confirmSubmit} autoFocus sx={{ position: 'relative' }}>
-              {t('Submit')}
-            </Button>
-          }
-        />
-        <StopWatch id={id} getValues={getValues} />
-      </>
+              <Stack direction="row" spacing={1} sx={{ mt: 3, justifyContent: 'flex-end' }}>
+                <Button onClick={() => setSubmitConfirmOpen(false)}>{t('Cancel')}</Button>
+                <Button onClick={confirmSubmit} variant="contained" autoFocus>
+                  {t('Submit')}
+                </Button>
+              </Stack>
+            </Box>
+          </Popover>
+        </Backdrop>
+      )}
+      <StopWatch id={id} getValues={getValues} />
     </>
   );
 };

@@ -4,6 +4,13 @@ body,
   height: 100%;
 }
 
+@media print {
+  div {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 /* remove browser default margin */
 
 p {

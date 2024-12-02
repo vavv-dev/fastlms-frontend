@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 import {
-  SurveyAssessResponse as AssessResponse,
+  SurveyAttemptResponse as AttemptResponse,
   SurveyDisplayResponse as DisplayResponse,
-  SurveyGetAssessData as GetAssessData,
-  surveyGetAssess as getAssess,
+  SurveyGetAttemptData as GetAttemptData,
+  surveyGetAttempt as getAttempt,
   surveyGetDisplays as getDisplays,
-  surveySubmitAssess as submitAssess,
+  surveySubmitAttempt as submitAttempt,
 } from '@/api';
 import {
   Form as CommonForm,
@@ -55,7 +55,7 @@ const createSchema = (t: (key: string) => string) => {
 
 export const Form = ({ id }: { id: string }) => {
   const { t } = useTranslation('survey');
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
 
   const schema = useMemo(() => createSchema(t), [t]);
   const { handleSubmit, control, formState, setError, reset } = useForm<AnswerInput>({
@@ -78,7 +78,7 @@ export const Form = ({ id }: { id: string }) => {
   }, [data]); // eslint-disable-line
 
   const submitForm = async (data: AnswerInput) => {
-    submitAssess({
+    submitAttempt({
       id,
       requestBody: {
         answers: data.answers.reduce(

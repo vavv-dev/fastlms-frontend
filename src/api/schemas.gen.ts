@@ -74,6 +74,17 @@ export const AssetDisplayResponseSchema = {
             ],
             title: 'Progress'
         },
+        last_location: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Location'
+        },
         passed: {
             anyOf: [
                 {
@@ -84,6 +95,17 @@ export const AssetDisplayResponseSchema = {
                 }
             ],
             title: 'Passed'
+        },
+        last_position: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Position'
         },
         modified: {
             type: 'string',
@@ -116,21 +138,10 @@ export const AssetDisplayResponseSchema = {
         flagged: {
             type: 'boolean',
             title: 'Flagged'
-        },
-        last_location: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Last Location'
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'sub_kind', 'entrypoint', 'url', 'uploaded', 'duration', 'cutoff_progress', 'score', 'progress', 'passed', 'modified', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'last_location'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'owner', 'thumbnail', 'sub_kind', 'entrypoint', 'url', 'uploaded', 'duration', 'cutoff_progress', 'score', 'progress', 'last_location', 'passed', 'last_position', 'modified', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged'],
     title: 'AssetDisplayResponse'
 } as const;
 
@@ -1412,6 +1423,10 @@ export const CourseDisplayResponseSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        sequential_learning: {
+            type: 'boolean',
+            title: 'Sequential Learning'
+        },
         bookmark_count: {
             type: 'integer',
             title: 'Bookmark Count'
@@ -1473,11 +1488,21 @@ export const CourseDisplayResponseSchema = {
             ],
             title: 'Passed'
         },
+        resource_location: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ResourceLocation'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
         certificate_enabled: {
             type: 'boolean',
             title: 'Certificate Enabled'
         },
-        study_start: {
+        learning_start: {
             anyOf: [
                 {
                     type: 'string',
@@ -1487,9 +1512,9 @@ export const CourseDisplayResponseSchema = {
                     type: 'null'
                 }
             ],
-            title: 'Study Start'
+            title: 'Learning Start'
         },
-        study_end: {
+        learning_end: {
             anyOf: [
                 {
                     type: 'string',
@@ -1499,7 +1524,7 @@ export const CourseDisplayResponseSchema = {
                     type: 'null'
                 }
             ],
-            title: 'Study End'
+            title: 'Learning End'
         },
         certificates: {
             items: {
@@ -1510,7 +1535,7 @@ export const CourseDisplayResponseSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'thumbnail', 'kind', 'preview', 'marketing_url', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'enrolled', 'score', 'progress', 'passed', 'certificate_enabled', 'certificates'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'thumbnail', 'kind', 'preview', 'marketing_url', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'sequential_learning', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'enrolled', 'score', 'progress', 'passed', 'resource_location', 'certificate_enabled', 'certificates'],
     title: 'CourseDisplayResponse'
 } as const;
 
@@ -1521,20 +1546,67 @@ export const CourseEnrollResponseSchema = {
             format: 'date-time',
             title: 'Enrollment Date'
         },
-        study_start: {
+        learning_start: {
             type: 'string',
             format: 'date-time',
-            title: 'Study Start'
+            title: 'Learning Start'
         },
-        study_end: {
+        learning_end: {
             type: 'string',
             format: 'date-time',
-            title: 'Study End'
+            title: 'Learning End'
         }
     },
     type: 'object',
-    required: ['enrollment_date', 'study_start', 'study_end'],
+    required: ['enrollment_date', 'learning_start', 'learning_end'],
     title: 'CourseEnrollResponse'
+} as const;
+
+export const CourseLearningRequestSchema = {
+    properties: {
+        progress: {
+            anyOf: [
+                {
+                    type: 'number',
+                    maximum: 100,
+                    minimum: 0
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Progress'
+        },
+        score: {
+            anyOf: [
+                {
+                    type: 'number',
+                    maximum: 100,
+                    minimum: 0
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Score'
+        },
+        passed: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Passed'
+        },
+        resource_location: {
+            '$ref': '#/components/schemas/ResourceLocation'
+        }
+    },
+    type: 'object',
+    title: 'CourseLearningRequest'
 } as const;
 
 export const CourseLessonOutlineSchemaSchema = {
@@ -1855,6 +1927,10 @@ export const CourseResourceCreateRequestSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        sequential_learning: {
+            type: 'boolean',
+            title: 'Sequential Learning'
+        },
         certificate_templates: {
             anyOf: [
                 {
@@ -1879,7 +1955,7 @@ export const CourseResourceCreateRequestSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'certificate_templates', 'lessons'],
+    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'sequential_learning', 'certificate_templates', 'lessons'],
     title: 'CourseResourceCreateRequest'
 } as const;
 
@@ -1989,6 +2065,10 @@ export const CourseResourceResponseSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        sequential_learning: {
+            type: 'boolean',
+            title: 'Sequential Learning'
+        },
         certificate_templates: {
             anyOf: [
                 {
@@ -2025,7 +2105,7 @@ export const CourseResourceResponseSchema = {
         }
     },
     type: 'object',
-    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'certificate_templates', 'lessons', 'id', 'owner', 'modified'],
+    required: ['title', 'description', 'is_public', 'featured', 'start_date', 'preview', 'target', 'level', 'cutoff_progress', 'cutoff_score', 'marketing_url', 'enrollment_start', 'registration_limit', 'entrance_verification', 'invitation_required', 'learning_days', 'closed', 'sequential_learning', 'certificate_templates', 'lessons', 'id', 'owner', 'modified'],
     title: 'CourseResourceResponse'
 } as const;
 
@@ -2135,6 +2215,10 @@ export const CourseResourceUpdateRequestSchema = {
             type: 'boolean',
             title: 'Closed'
         },
+        sequential_learning: {
+            type: 'boolean',
+            title: 'Sequential Learning'
+        },
         certificate_templates: {
             anyOf: [
                 {
@@ -2162,7 +2246,23 @@ export const CourseResourceUpdateRequestSchema = {
     title: 'CourseResourceUpdateRequest'
 } as const;
 
-export const ExamAssessQuestionSchema = {
+export const ExamAttemptContextSchema = {
+    properties: {
+        course_id: {
+            type: 'string',
+            title: 'Course Id'
+        },
+        lesson_id: {
+            type: 'string',
+            title: 'Lesson Id'
+        }
+    },
+    type: 'object',
+    required: ['course_id', 'lesson_id'],
+    title: 'ExamAttemptContext'
+} as const;
+
+export const ExamAttemptQuestionSchema = {
     properties: {
         id: {
             type: 'integer',
@@ -2193,22 +2293,33 @@ export const ExamAssessQuestionSchema = {
     },
     type: 'object',
     required: ['id', 'question', 'help_text', 'kind', 'selections', 'weight'],
-    title: 'ExamAssessQuestion'
+    title: 'ExamAttemptQuestion'
 } as const;
 
-export const ExamAssessReadyRequestSchema = {
+export const ExamAttemptReadyRequestSchema = {
     properties: {
         verification_code: {
             type: 'string',
             title: 'Verification Code',
             default: ''
+        },
+        context: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ExamAttemptContext'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         }
     },
     type: 'object',
-    title: 'ExamAssessReadyRequest'
+    required: ['context'],
+    title: 'ExamAttemptReadyRequest'
 } as const;
 
-export const ExamAssessResponseSchema = {
+export const ExamAttemptResponseSchema = {
     properties: {
         id: {
             type: 'string',
@@ -2254,7 +2365,7 @@ export const ExamAssessResponseSchema = {
         submission: {
             anyOf: [
                 {
-                    '$ref': '#/components/schemas/ExamAssessSubmission'
+                    '$ref': '#/components/schemas/ExamAttemptSubmission'
                 },
                 {
                     type: 'null'
@@ -2331,10 +2442,10 @@ export const ExamAssessResponseSchema = {
     },
     type: 'object',
     required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'cutoff_score', 'submission', 'kind', 'owner', 'finding', 'final_message', 'verification_required', 'duration', 'sub_kind', 'score', 'passed', 'status'],
-    title: 'ExamAssessResponse'
+    title: 'ExamAttemptResponse'
 } as const;
 
-export const ExamAssessStartRequestSchema = {
+export const ExamAttemptStartRequestSchema = {
     properties: {
         start_time: {
             type: 'string',
@@ -2344,10 +2455,10 @@ export const ExamAssessStartRequestSchema = {
     },
     type: 'object',
     required: ['start_time'],
-    title: 'ExamAssessStartRequest'
+    title: 'ExamAttemptStartRequest'
 } as const;
 
-export const ExamAssessSubmissionSchema = {
+export const ExamAttemptSubmissionSchema = {
     properties: {
         verification_code: {
             type: 'string',
@@ -2434,18 +2545,28 @@ export const ExamAssessSubmissionSchema = {
         },
         questions: {
             items: {
-                '$ref': '#/components/schemas/ExamAssessQuestion'
+                '$ref': '#/components/schemas/ExamAttemptQuestion'
             },
             type: 'array',
             title: 'Questions'
+        },
+        context: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ExamAttemptContext'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         }
     },
     type: 'object',
-    required: ['verification_code', 'start_time', 'end_time', 'answers', 'grading', 'feedback', 'earned_score', 'possible_score', 'graded_time', 'questions'],
-    title: 'ExamAssessSubmission'
+    required: ['verification_code', 'start_time', 'end_time', 'answers', 'grading', 'feedback', 'earned_score', 'possible_score', 'graded_time', 'questions', 'context'],
+    title: 'ExamAttemptSubmission'
 } as const;
 
-export const ExamAssessSubmitRequestSchema = {
+export const ExamAttemptSubmitRequestSchema = {
     properties: {
         answers: {
             additionalProperties: {
@@ -2457,7 +2578,7 @@ export const ExamAssessSubmitRequestSchema = {
     },
     type: 'object',
     required: ['answers'],
-    title: 'ExamAssessSubmitRequest'
+    title: 'ExamAttemptSubmitRequest'
 } as const;
 
 export const ExamDisplayResponseSchema = {
@@ -2594,10 +2715,20 @@ export const ExamDisplayResponseSchema = {
                     type: 'null'
                 }
             ]
+        },
+        context: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ExamAttemptContext'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         }
     },
     type: 'object',
-    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'sub_kind', 'duration', 'cutoff_score', 'verification_required', 'question_composition', 'thumbnail', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'score', 'passed', 'status'],
+    required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'owner', 'modified', 'sub_kind', 'duration', 'cutoff_score', 'verification_required', 'question_composition', 'thumbnail', 'kind', 'bookmark_count', 'like_count', 'flag_count', 'bookmarked', 'liked', 'flagged', 'score', 'passed', 'status', 'context'],
     title: 'ExamDisplayResponse'
 } as const;
 
@@ -2717,6 +2848,36 @@ export const ExamGradingSubmissionReponseSchema = {
     type: 'object',
     required: ['id', 'user', 'score', 'status', 'end_time', 'graded_time', 'exam'],
     title: 'ExamGradingSubmissionReponse'
+} as const;
+
+export const ExamInProgressSchemaSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            title: 'Id'
+        },
+        title: {
+            type: 'string',
+            title: 'Title'
+        },
+        remains: {
+            type: 'integer',
+            title: 'Remains'
+        },
+        context: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ExamAttemptContext'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        }
+    },
+    type: 'object',
+    required: ['id', 'title', 'remains', 'context'],
+    title: 'ExamInProgressSchema'
 } as const;
 
 export const ExamKindSchema = {
@@ -3400,6 +3561,25 @@ export const ExamSubmissionUserSchema = {
     title: 'ExamSubmissionUser'
 } as const;
 
+export const ExamsInprogressErrorSchema = {
+    properties: {
+        message: {
+            type: 'string',
+            title: 'Message'
+        },
+        exams_in_progress: {
+            items: {
+                '$ref': '#/components/schemas/ExamInProgressSchema'
+            },
+            type: 'array',
+            title: 'Exams In Progress'
+        }
+    },
+    type: 'object',
+    required: ['message', 'exams_in_progress'],
+    title: 'ExamsInprogressError'
+} as const;
+
 export const GradingEnumSchema = {
     type: 'string',
     enum: ['none', 'progress', 'score'],
@@ -3430,6 +3610,21 @@ export const ImportYoutubeRequestSchema = {
     type: 'object',
     required: ['youtube_id'],
     title: 'ImportYoutubeRequest'
+} as const;
+
+export const ImportantResponseSchema = {
+    properties: {
+        exams_in_progress: {
+            items: {
+                '$ref': '#/components/schemas/ExamInProgressSchema'
+            },
+            type: 'array',
+            title: 'Exams In Progress'
+        }
+    },
+    type: 'object',
+    required: ['exams_in_progress'],
+    title: 'ImportantResponse'
 } as const;
 
 export const InvitationAcceptRequestSchema = {
@@ -5578,7 +5773,7 @@ export const PlaylistViewResponseSchema = {
     title: 'PlaylistViewResponse'
 } as const;
 
-export const QuizAssessQuestionSchema = {
+export const QuizAttemptQuestionSchema = {
     properties: {
         id: {
             type: 'integer',
@@ -5609,10 +5804,10 @@ export const QuizAssessQuestionSchema = {
     },
     type: 'object',
     required: ['id', 'question', 'help_text', 'kind', 'selections', 'weight'],
-    title: 'QuizAssessQuestion'
+    title: 'QuizAttemptQuestion'
 } as const;
 
-export const QuizAssessResponseSchema = {
+export const QuizAttemptResponseSchema = {
     properties: {
         id: {
             type: 'string',
@@ -5665,7 +5860,7 @@ export const QuizAssessResponseSchema = {
         submission: {
             anyOf: [
                 {
-                    '$ref': '#/components/schemas/QuizAssessSubmission'
+                    '$ref': '#/components/schemas/QuizAttemptSubmission'
                 },
                 {
                     type: 'null'
@@ -5731,10 +5926,10 @@ export const QuizAssessResponseSchema = {
     },
     type: 'object',
     required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'resources', 'cutoff_score', 'submission', 'kind', 'owner', 'finding', 'final_message', 'score', 'passed', 'status'],
-    title: 'QuizAssessResponse'
+    title: 'QuizAttemptResponse'
 } as const;
 
-export const QuizAssessSubmissionSchema = {
+export const QuizAttemptSubmissionSchema = {
     properties: {
         verification_code: {
             type: 'string',
@@ -5809,7 +6004,7 @@ export const QuizAssessSubmissionSchema = {
         },
         questions: {
             items: {
-                '$ref': '#/components/schemas/QuizAssessQuestion'
+                '$ref': '#/components/schemas/QuizAttemptQuestion'
             },
             type: 'array',
             title: 'Questions'
@@ -5817,10 +6012,10 @@ export const QuizAssessSubmissionSchema = {
     },
     type: 'object',
     required: ['verification_code', 'start_time', 'end_time', 'answers', 'grading', 'feedback', 'earned_score', 'possible_score', 'questions'],
-    title: 'QuizAssessSubmission'
+    title: 'QuizAttemptSubmission'
 } as const;
 
-export const QuizAssessSubmitRequestSchema = {
+export const QuizAttemptSubmitRequestSchema = {
     properties: {
         answers: {
             additionalProperties: {
@@ -5832,7 +6027,7 @@ export const QuizAssessSubmitRequestSchema = {
     },
     type: 'object',
     required: ['answers'],
-    title: 'QuizAssessSubmitRequest'
+    title: 'QuizAttemptSubmitRequest'
 } as const;
 
 export const QuizDisplayResponseSchema = {
@@ -6554,6 +6749,22 @@ export const ResendVerificationEmailRequestSchema = {
     title: 'ResendVerificationEmailRequest'
 } as const;
 
+export const ResourceLocationSchema = {
+    properties: {
+        resource_id: {
+            type: 'string',
+            title: 'Resource Id'
+        },
+        lesson_id: {
+            type: 'string',
+            title: 'Lesson Id'
+        }
+    },
+    type: 'object',
+    required: ['resource_id', 'lesson_id'],
+    title: 'ResourceLocation'
+} as const;
+
 export const ResourceSchemaSchema = {
     properties: {
         kind: {
@@ -6684,7 +6895,7 @@ export const SubmissionStatusSchema = {
     title: 'SubmissionStatus'
 } as const;
 
-export const SurveyAssessQuestionSchema = {
+export const SurveyAttemptQuestionSchema = {
     properties: {
         id: {
             type: 'integer',
@@ -6715,10 +6926,10 @@ export const SurveyAssessQuestionSchema = {
     },
     type: 'object',
     required: ['id', 'question', 'help_text', 'kind', 'selections', 'mandatory'],
-    title: 'SurveyAssessQuestion'
+    title: 'SurveyAttemptQuestion'
 } as const;
 
-export const SurveyAssessResponseSchema = {
+export const SurveyAttemptResponseSchema = {
     properties: {
         id: {
             type: 'string',
@@ -6767,7 +6978,7 @@ export const SurveyAssessResponseSchema = {
         submission: {
             anyOf: [
                 {
-                    '$ref': '#/components/schemas/SurveyAssessSubmission'
+                    '$ref': '#/components/schemas/SurveyAttemptSubmission'
                 },
                 {
                     type: 'null'
@@ -6841,10 +7052,10 @@ export const SurveyAssessResponseSchema = {
     },
     type: 'object',
     required: ['id', 'title', 'description', 'is_public', 'featured', 'start_date', 'end_date', 'resources', 'submission', 'kind', 'owner', 'finding', 'final_message', 'score', 'passed', 'status', 'enable_finding', 'submission_count'],
-    title: 'SurveyAssessResponse'
+    title: 'SurveyAttemptResponse'
 } as const;
 
-export const SurveyAssessSubmissionSchema = {
+export const SurveyAttemptSubmissionSchema = {
     properties: {
         start_time: {
             anyOf: [
@@ -6879,7 +7090,7 @@ export const SurveyAssessSubmissionSchema = {
         },
         questions: {
             items: {
-                '$ref': '#/components/schemas/SurveyAssessQuestion'
+                '$ref': '#/components/schemas/SurveyAttemptQuestion'
             },
             type: 'array',
             title: 'Questions'
@@ -6887,10 +7098,10 @@ export const SurveyAssessSubmissionSchema = {
     },
     type: 'object',
     required: ['start_time', 'end_time', 'answers', 'questions'],
-    title: 'SurveyAssessSubmission'
+    title: 'SurveyAttemptSubmission'
 } as const;
 
-export const SurveyAssessSubmitRequestSchema = {
+export const SurveyAttemptSubmitRequestSchema = {
     properties: {
         answers: {
             additionalProperties: {
@@ -6902,7 +7113,7 @@ export const SurveyAssessSubmitRequestSchema = {
     },
     type: 'object',
     required: ['answers'],
-    title: 'SurveyAssessSubmitRequest'
+    title: 'SurveyAttemptSubmitRequest'
 } as const;
 
 export const SurveyDisplayResponseSchema = {

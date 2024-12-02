@@ -85,6 +85,7 @@ const createSchema = (t: (key: string) => string) => {
   });
 
   const N_VALIDATION = t(`Input number of question kind to issue.`);
+  const QUESTION_COUNT = t('Question count to issue.');
 
   const questionCompositionSchema: yup.ObjectSchema<ResourceQuestionComposition> = yup
     .object({
@@ -93,26 +94,31 @@ const createSchema = (t: (key: string) => string) => {
         .typeError(N_VALIDATION)
         .required(REQUIRED)
         .label(t('Single selection'))
-        .meta({ control: 'number', grid: 3 }),
+        .meta({ control: 'number', grid: 3, placeholderText: QUESTION_COUNT }),
       ox_selection: yup
         .number()
         .typeError(N_VALIDATION)
         .required(REQUIRED)
         .label(t('OX selection'))
-        .meta({ control: 'number', grid: 3 }),
+        .meta({ control: 'number', grid: 3, placeholderText: QUESTION_COUNT }),
       text_input: yup
         .number()
         .typeError(N_VALIDATION)
         .required(REQUIRED)
         .label(t('Text input'))
-        .meta({ control: 'number', grid: 3 }),
+        .meta({ control: 'number', grid: 3, placeholderText: QUESTION_COUNT }),
       number_input: yup
         .number()
         .typeError(N_VALIDATION)
         .required(REQUIRED)
         .label(t('Number input'))
-        .meta({ control: 'number', grid: 3 }),
-      essay: yup.number().typeError(N_VALIDATION).required(REQUIRED).label(t('Essay')).meta({ control: 'number', grid: 3 }),
+        .meta({ control: 'number', grid: 3, placeholderText: QUESTION_COUNT }),
+      essay: yup
+        .number()
+        .typeError(N_VALIDATION)
+        .required(REQUIRED)
+        .label(t('Essay'))
+        .meta({ control: 'number', grid: 3, placeholderText: QUESTION_COUNT }),
     })
     .label(t('Question composition'));
 
@@ -133,7 +139,7 @@ const createSchema = (t: (key: string) => string) => {
           { value: 'assignment', label: t('Assignment') },
           { value: 'general_exam', label: t('General exam') },
         ],
-        grid: 4,
+        grid: 6,
       }),
     duration: yup
       .number()
@@ -141,14 +147,14 @@ const createSchema = (t: (key: string) => string) => {
       .min(1, t('Duration must be greater than 1 minute.'))
       .label(t('Duration'))
       .required(REQUIRED)
-      .meta({ control: 'number', grid: 4 }),
+      .meta({ control: 'number', grid: 6 }),
     cutoff_score: yup
       .number()
       .typeError(REQUIRED)
       .required(REQUIRED)
       .default(60)
       .label(t('Cutoff %'))
-      .meta({ control: 'number', grid: 4 }),
+      .meta({ control: 'number', grid: 6 }),
     is_public: yup
       .boolean()
       .default(false)
@@ -264,7 +270,6 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
 
   return (
     <SaveResourceDialog<ResourceUpdateRequest, ResourceResponse>
-      title={t('Exam')}
       open={open}
       setOpen={setOpen}
       resourceId={id}

@@ -16,7 +16,6 @@
   "The total size of the files exceeds the limit of {{ max }}MB.": "파일의 총 크기가 {{ max }}MB 제한을 초과합니다.",
   "Upload %{smart_count} file": "%{smart_count} 파일 업로드",
   "Upload %{smart_count} files": "%{smart_count} 파일 업로드",
-  "Upload Content": "업로드 내용",
   "Upload complete": "업로드 완료",
   "browse files": "파일 찾기. 클릭하거나 파일을 여기에 드래그&드랍 하세요."
 }

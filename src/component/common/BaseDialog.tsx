@@ -1,25 +1,15 @@
-import { Close, FullscreenExitOutlined, FullscreenOutlined } from '@mui/icons-material';
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogProps,
-  DialogTitle,
-  IconButton,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, Tooltip, useTheme } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { GradientCircularProgress } from './GradientCircularProgress';
 
 import { chatDrawerState } from '@/component/chat';
-import { textEllipsisCss } from '@/helper/util';
 
 interface Props extends Omit<DialogProps, 'title'> {
+  isReady: boolean;
   setOpen: (open: boolean) => void;
-  title?: React.ReactNode;
   headerButtons?: React.ReactNode;
   renderContent: (ref: React.RefObject<HTMLDivElement>) => React.ReactNode;
   actions?: React.ReactNode;
@@ -28,62 +18,114 @@ interface Props extends Omit<DialogProps, 'title'> {
 }
 
 export const BaseDialog = ({
+  isReady,
   open,
   fullWidth,
   setOpen,
-  title,
   headerButtons,
   renderContent,
   actions,
   maxWidth = 'sm',
   minHeight,
+  fullScreen,
   sx,
   ...props
 }: Props) => {
+  const { t } = useTranslation('common');
   const theme = useTheme();
   const ref = useRef<HTMLDivElement>(null);
   const chatDrawerOpen = useAtomValue(chatDrawerState);
-  const [forceFullWidth, setForceFullWidth] = useState(false);
-  const smDown = useMediaQuery(theme.breakpoints.down('sm'));
+  const [forceFullScreen, setForceFullScreen] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  if (!isReady) {
+    return (
+      <Box
+        sx={{ zIndex: theme.zIndex.modal + 1, position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+      >
+        <GradientCircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Dialog
-      transitionDuration={0}
-      disableEnforceFocus={chatDrawerOpen}
-      ref={ref}
-      fullWidth={fullWidth}
-      maxWidth={smDown ? undefined : forceFullWidth ? false : maxWidth}
-      onClose={handleClose}
-      PaperProps={{ sx: { overflow: 'unset', borderRadius: props.fullScreen ? 0 : theme.shape.borderRadius } }}
-      scroll="paper"
-      onClick={(e) => e.stopPropagation()}
-      {...props}
-      sx={{ ...(smDown && !props.fullScreen && { '& .MuiDialog-paper': { margin: '8px', width: 'calc(100% - 16px)' } }), ...sx }}
-      open={open}
-    >
-      {title && (
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary', ...textEllipsisCss(1) }}>
-            {title}
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
+    <>
+      <Dialog
+        fullScreen={forceFullScreen || fullScreen}
+        disableEnforceFocus={chatDrawerOpen}
+        ref={ref}
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
+        onClose={handleClose}
+        scroll="paper"
+        onClick={(e) => e.stopPropagation()}
+        {...props}
+        sx={{
+          '& > div > .MuiDialog-paper': {
+            // mobile
+            [theme.breakpoints.down('mobile')]:
+              forceFullScreen || fullScreen
+                ? { m: 0, width: '100vw', maxHeight: '100vh' }
+                : { m: '8px', width: 'calc(100vw - 16px)', maxHeight: 'calc(100vh - 16px)' },
+            // mobile landscape
+            [`${theme.breakpoints.down('md')} and (orientation: landscape)`]:
+              forceFullScreen || fullScreen
+                ? { m: 0, width: '100vw', maxHeight: '100vh' }
+                : { m: '8px', width: 'calc(100vw - 16px)', maxHeight: 'calc(100vh - 16px)' },
+            borderRadius: forceFullScreen || fullScreen ? 0 : 3,
+          },
+          ...sx,
+        }}
+        open={open}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1.5, px: 2, py: '6px' }}>
           {headerButtons}
-          {!smDown && maxWidth != false && maxWidth != ('sm' as DialogProps['maxWidth']) && !props.fullScreen && (
-            <IconButton onClick={() => setForceFullWidth(!forceFullWidth)}>
-              {!forceFullWidth ? <FullscreenOutlined fontSize="small" /> : <FullscreenExitOutlined fontSize="small" />}
-            </IconButton>
+          {fullWidth && !fullScreen && (
+            <Tooltip title={forceFullScreen || fullScreen ? t('Exit full screen') : t('Full screen')}>
+              <Button
+                onClick={() => setForceFullScreen(!forceFullScreen)}
+                sx={{
+                  width: 10,
+                  minWidth: 10,
+                  aspectRatio: 1,
+                  borderRadius: '50%',
+                  bgcolor: 'success.light',
+                  '&:hover': { bgcolor: 'success.main' },
+                }}
+              />
+            </Tooltip>
           )}
-          <IconButton onClick={handleClose}>
-            <Close fontSize="small" />
-          </IconButton>
-        </DialogTitle>
-      )}
-      <DialogContent sx={{ minHeight: minHeight }}>{renderContent(ref)}</DialogContent>
-      {actions && <DialogActions>{actions}</DialogActions>}
-    </Dialog>
+          <Tooltip title={t('Close')}>
+            <Button
+              onClick={handleClose}
+              sx={{
+                width: 10,
+                minWidth: 10,
+                aspectRatio: 1,
+                borderRadius: '50%',
+                bgcolor: 'error.light',
+                '&:hover': { bgcolor: 'error.main' },
+              }}
+            />
+          </Tooltip>
+        </Box>
+        <DialogContent
+          sx={{
+            minHeight: minHeight,
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            '& > div': { alignSelf: 'center', width: '100%', maxWidth: maxWidth || undefined },
+          }}
+        >
+          {renderContent(ref)}
+        </DialogContent>
+        {actions && <DialogActions>{actions}</DialogActions>}
+      </Dialog>
+    </>
   );
 };

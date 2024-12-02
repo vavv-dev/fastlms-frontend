@@ -58,7 +58,6 @@ export const SaveDialog = ({ open, setOpen, id }: Props) => {
 
   return (
     <SaveResourceDialog<ResourceUpdateRequest, ResourceResponse>
-      title={t('Playlist')}
       open={open}
       setOpen={setOpen}
       resourceId={id}

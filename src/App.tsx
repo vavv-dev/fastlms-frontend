@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, createTheme } from '@mui/material';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Navigate,
@@ -15,7 +16,7 @@ import {
 
 import './App.css';
 
-import { OpenAPI } from '@/api';
+import { OpenAPI, sharedGetImportant } from '@/api';
 import {
   EmailVerification,
   Join,
@@ -31,10 +32,10 @@ import {
 import { AssetDisplays } from '@/component/asset';
 import { ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting, HomeChannel, UserChannel } from '@/component/channel';
 import { CommentDisplays, QnADisplays, UserComment } from '@/component/comment';
-import { CourseDisplays, CourseOutline, CourseView, UserCourse } from '@/component/course';
+import { CourseDisplays, CourseOutline, CoursePlayer, CourseView, UserCourse } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
-import { ExamDisplays, ExamViewDialogOpener, GradingDisplays } from '@/component/exam';
-import { BaseLayout } from '@/component/layout';
+import { ExamDisplays, ExamMessage, ExamViewDialog, GradingDisplays } from '@/component/exam';
+import { BaseLayout, alertState } from '@/component/layout';
 import { LessonDisplays } from '@/component/lesson';
 import { InvitationAccept, MemberDisplays } from '@/component/member';
 import { UserNotification } from '@/component/notification';
@@ -67,6 +68,7 @@ const Protected = () => {
   const [loginExpire, setLoginExpire] = useAtom(loginExpireState);
   const setUserMessage = useSetAtom(userMessageState);
   const socketRef = useRef<WebSocket | null>(null);
+  const setAlert = useSetAtom(alertState);
 
   const forceLogout = useCallback(() => {
     setUser(null);
@@ -100,6 +102,31 @@ const Protected = () => {
       return response;
     });
   }, []); // eslint-disable-line
+
+  /**
+   *
+   * set important events
+   *
+   */
+  useEffect(() => {
+    if (!user?.id) return;
+    const debouncedGetImportant = debounce(() => {
+      sharedGetImportant().then((important) => {
+        important.exams_in_progress.forEach((exam) => {
+          setAlert({
+            open: true,
+            message: <ExamMessage key={exam.id} {...exam} />,
+            severity: 'warning',
+            duration: exam.remains * 1000,
+          });
+        });
+      });
+    }, 300);
+    debouncedGetImportant();
+    return () => {
+      debouncedGetImportant.cancel();
+    };
+  }, [user?.id, setAlert]);
 
   /**
    *
@@ -183,10 +210,11 @@ const router = createBrowserRouter(
           </Route>
         </Route>
 
+        {/* course player */}
+        <Route path="course/:id/player" element={<CoursePlayer />} />
+
         {/* exam opener */}
-        <Route path="" element={<BaseLayout hideDrawer />}>
-          <Route path="exam/:id" element={<ExamViewDialogOpener />} />
-        </Route>
+        <Route path="exam/:id" element={<ExamViewDialog open />} />
 
         {/* top level page without drawer */}
         <Route path="" element={<BaseLayout searchBar={<SearchInput />} hideDrawer />}>

@@ -1,10 +1,12 @@
-import { useMediaQuery } from '@mui/material';
-import { useAtomValue } from 'jotai';
+import { useTheme } from '@mui/material';
 
 import { View } from './View';
 
-import { AssetDisplayResponse, AssetGetDisplayData, assetGetDisplay } from '@/api';
-import { chatDrawerState } from '@/component/chat';
+import {
+  AssetDisplayResponse as DisplayResponse,
+  AssetGetDisplayData as GetDisplayData,
+  assetGetDisplay as getDisplay,
+} from '@/api';
 import { BaseDialog, useServiceImmutable } from '@/component/common';
 
 interface Props {
@@ -14,14 +16,14 @@ interface Props {
 }
 
 export const ViewDialog = ({ open, setOpen, id }: Props) => {
-  const { data } = useServiceImmutable<AssetGetDisplayData, AssetDisplayResponse>(assetGetDisplay, { id });
-  const chatDrawerOpen = useAtomValue(chatDrawerState);
-  const smDown = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+  const theme = useTheme();
+  const { data, isLoading, isValidating } = useServiceImmutable<GetDisplayData, DisplayResponse>(getDisplay, { id });
 
-  if (!open || !data) return null;
+  if (!open) return null;
 
   return (
     <BaseDialog
+      isReady={!isLoading && !isValidating}
       fullWidth
       maxWidth="lg"
       open={open}
@@ -31,16 +33,13 @@ export const ViewDialog = ({ open, setOpen, id }: Props) => {
       sx={{
         '& .MuiDialogContent-root': { padding: 0 },
         '& .MuiDialog-paper': {
-          borderRadius: 3,
-          overflow: 'hidden',
-          ...(smDown && {
-            margin: '8px',
-            width: 'calc(100% - 16px)',
-            height: data.sub_kind === 'html' ? 'calc(100% - 16px)' : 'auto',
-          }),
+          // mobile
+          [theme.breakpoints.down('mobile')]: data?.sub_kind === 'html' && { height: '100%' },
+          // mobile landscape
+          [`${theme.breakpoints.down('md')} and (orientation: landscape)`]: data?.sub_kind === 'html' && { height: '100%' },
+          ...(data?.sub_kind === 'pdf' && { height: '100%' }),
         },
       }}
-      disableEnforceFocus={chatDrawerOpen}
     />
   );
 };

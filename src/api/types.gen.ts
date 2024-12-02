@@ -16,7 +16,9 @@ export type AssetDisplayResponse = {
     cutoff_progress: number;
     score: (number | null);
     progress: (number | null);
+    last_location: (string | null);
     passed: (boolean | null);
+    last_position: (number | null);
     modified: string;
     kind: LearningResourceKind;
     bookmark_count: number;
@@ -25,7 +27,6 @@ export type AssetDisplayResponse = {
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
-    last_location: (string | null);
 };
 
 export type AssetKind = 'html' | 'pdf' | 'pptx' | 'epub';
@@ -314,6 +315,7 @@ export type CourseDisplayResponse = {
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
+    sequential_learning: boolean;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -324,16 +326,24 @@ export type CourseDisplayResponse = {
     score: (number | null);
     progress: (number | null);
     passed: (boolean | null);
+    resource_location: (ResourceLocation | null);
     certificate_enabled: boolean;
-    study_start?: (string | null);
-    study_end?: (string | null);
+    learning_start?: (string | null);
+    learning_end?: (string | null);
     certificates: Array<CourseCertificateSchema>;
 };
 
 export type CourseEnrollResponse = {
     enrollment_date: string;
-    study_start: string;
-    study_end: string;
+    learning_start: string;
+    learning_end: string;
+};
+
+export type CourseLearningRequest = {
+    progress?: (number | null);
+    score?: (number | null);
+    passed?: (boolean | null);
+    resource_location?: ResourceLocation;
 };
 
 export type CourseLessonOutlineSchema = {
@@ -407,6 +417,7 @@ export type CourseResourceCreateRequest = {
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
+    sequential_learning: boolean;
     certificate_templates: (Array<CertificateTemplateSchema> | null);
     lessons: Array<CourseLessonResource>;
 };
@@ -432,6 +443,7 @@ export type CourseResourceResponse = {
     invitation_required: boolean;
     learning_days: number;
     closed: boolean;
+    sequential_learning: boolean;
     certificate_templates: (Array<CertificateTemplateSchema> | null);
     lessons: Array<CourseLessonResource>;
     id: string;
@@ -460,11 +472,17 @@ export type CourseResourceUpdateRequest = {
     invitation_required?: boolean;
     learning_days?: number;
     closed?: boolean;
+    sequential_learning?: boolean;
     certificate_templates?: (Array<CertificateTemplateSchema> | null);
     lessons?: Array<CourseLessonResource>;
 };
 
-export type ExamAssessQuestion = {
+export type ExamAttemptContext = {
+    course_id: string;
+    lesson_id: string;
+};
+
+export type ExamAttemptQuestion = {
     id: number;
     question: string;
     help_text: string;
@@ -473,11 +491,12 @@ export type ExamAssessQuestion = {
     weight: number;
 };
 
-export type ExamAssessReadyRequest = {
+export type ExamAttemptReadyRequest = {
     verification_code?: string;
+    context: (ExamAttemptContext | null);
 };
 
-export type ExamAssessResponse = {
+export type ExamAttemptResponse = {
     id: string;
     title: string;
     description: string;
@@ -486,7 +505,7 @@ export type ExamAssessResponse = {
     start_date: string;
     end_date: (string | null);
     cutoff_score: number;
-    submission: (ExamAssessSubmission | null);
+    submission: (ExamAttemptSubmission | null);
     kind: LearningResourceKind;
     owner: ExamOwner;
     finding: ({
@@ -501,11 +520,11 @@ export type ExamAssessResponse = {
     status: (SubmissionStatus | null);
 };
 
-export type ExamAssessStartRequest = {
+export type ExamAttemptStartRequest = {
     start_time: string;
 };
 
-export type ExamAssessSubmission = {
+export type ExamAttemptSubmission = {
     verification_code: string;
     start_time: (string | null);
     end_time: (string | null);
@@ -521,10 +540,11 @@ export type ExamAssessSubmission = {
     earned_score: number;
     possible_score: number;
     graded_time: (string | null);
-    questions: Array<ExamAssessQuestion>;
+    questions: Array<ExamAttemptQuestion>;
+    context: (ExamAttemptContext | null);
 };
 
-export type ExamAssessSubmitRequest = {
+export type ExamAttemptSubmitRequest = {
     answers: {
         [key: string]: (string);
     };
@@ -558,6 +578,7 @@ export type ExamDisplayResponse = {
     score: (number | null);
     passed: (boolean | null);
     status: (SubmissionStatus | null);
+    context: (ExamAttemptContext | null);
 };
 
 export type ExamGradingExam = {
@@ -583,6 +604,13 @@ export type ExamGradingSubmissionReponse = {
     end_time: (string | null);
     graded_time: (string | null);
     exam: ExamGradingExam;
+};
+
+export type ExamInProgressSchema = {
+    id: string;
+    title: string;
+    remains: number;
+    context: (ExamAttemptContext | null);
 };
 
 export type ExamKind = 'midterm_exam' | 'final_exam' | 'assignment' | 'general_exam';
@@ -734,6 +762,11 @@ export type ExamResourceUpdateRequest = {
     thumbnail?: (string | null);
 };
 
+export type ExamsInprogressError = {
+    message: string;
+    exams_in_progress: Array<ExamInProgressSchema>;
+};
+
 export type ExamSubmissionUser = {
     id: string;
     username: string;
@@ -746,6 +779,10 @@ export type GradingEnum = 'none' | 'progress' | 'score';
 
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
+};
+
+export type ImportantResponse = {
+    exams_in_progress: Array<ExamInProgressSchema>;
 };
 
 export type ImportYoutubeRequest = {
@@ -1254,7 +1291,7 @@ export type PlaylistViewResponse = {
     flagged: boolean;
 };
 
-export type QuizAssessQuestion = {
+export type QuizAttemptQuestion = {
     id: number;
     question: string;
     help_text: string;
@@ -1263,7 +1300,7 @@ export type QuizAssessQuestion = {
     weight: number;
 };
 
-export type QuizAssessResponse = {
+export type QuizAttemptResponse = {
     id: string;
     title: string;
     description: string;
@@ -1273,7 +1310,7 @@ export type QuizAssessResponse = {
     end_date: (string | null);
     resources: Array<ResourceSchema>;
     cutoff_score: number;
-    submission: (QuizAssessSubmission | null);
+    submission: (QuizAttemptSubmission | null);
     kind: LearningResourceKind;
     owner: QuizOwner;
     finding: ({
@@ -1285,7 +1322,7 @@ export type QuizAssessResponse = {
     status: (SubmissionStatus | null);
 };
 
-export type QuizAssessSubmission = {
+export type QuizAttemptSubmission = {
     verification_code: string;
     start_time: (string | null);
     end_time: (string | null);
@@ -1300,10 +1337,10 @@ export type QuizAssessSubmission = {
     };
     earned_score: number;
     possible_score: number;
-    questions: Array<QuizAssessQuestion>;
+    questions: Array<QuizAttemptQuestion>;
 };
 
-export type QuizAssessSubmitRequest = {
+export type QuizAttemptSubmitRequest = {
     answers: {
         [key: string]: (string);
     };
@@ -1459,6 +1496,11 @@ export type ResendVerificationEmailRequest = {
     email_verification_url: string;
 };
 
+export type ResourceLocation = {
+    resource_id: string;
+    lesson_id: string;
+};
+
 export type ResourceSchema = {
     kind: 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course' | 'channel';
     id: string;
@@ -1499,7 +1541,7 @@ export type Sender = {
 
 export type SubmissionStatus = 'passed' | 'failed' | 'grading' | 'timeout' | 'in_progress' | 'ready';
 
-export type SurveyAssessQuestion = {
+export type SurveyAttemptQuestion = {
     id: number;
     question: string;
     help_text: string;
@@ -1508,7 +1550,7 @@ export type SurveyAssessQuestion = {
     mandatory: boolean;
 };
 
-export type SurveyAssessResponse = {
+export type SurveyAttemptResponse = {
     id: string;
     title: string;
     description: string;
@@ -1517,7 +1559,7 @@ export type SurveyAssessResponse = {
     start_date: string;
     end_date: (string | null);
     resources: Array<ResourceSchema>;
-    submission: (SurveyAssessSubmission | null);
+    submission: (SurveyAttemptSubmission | null);
     kind: LearningResourceKind;
     owner: SurveyOwner;
     finding: ({
@@ -1531,16 +1573,16 @@ export type SurveyAssessResponse = {
     submission_count: number;
 };
 
-export type SurveyAssessSubmission = {
+export type SurveyAttemptSubmission = {
     start_time: (string | null);
     end_time: (string | null);
     answers: {
         [key: string]: (string);
     };
-    questions: Array<SurveyAssessQuestion>;
+    questions: Array<SurveyAttemptQuestion>;
 };
 
-export type SurveyAssessSubmitRequest = {
+export type SurveyAttemptSubmitRequest = {
     answers: {
         [key: string]: (string);
     };
@@ -2621,38 +2663,38 @@ export type QuizCreateResourceData = {
 
 export type QuizCreateResourceResponse = (QuizResourceResponse);
 
-export type QuizGetAssessData = {
+export type QuizGetAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type QuizGetAssessResponse = (QuizAssessResponse);
+export type QuizGetAttemptResponse = (QuizAttemptResponse);
 
-export type QuizReadyAssessData = {
+export type QuizReadyAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type QuizReadyAssessResponse = (QuizAssessResponse);
+export type QuizReadyAttemptResponse = (QuizAttemptResponse);
 
-export type QuizSubmitAssessData = {
+export type QuizSubmitAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
-    requestBody: QuizAssessSubmitRequest;
+    requestBody: QuizAttemptSubmitRequest;
 };
 
-export type QuizSubmitAssessResponse = (QuizAssessResponse);
+export type QuizSubmitAttemptResponse = (QuizAttemptResponse);
 
-export type QuizDeleteAssessData = {
+export type QuizDeleteAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type QuizDeleteAssessResponse = (unknown);
+export type QuizDeleteAttemptResponse = (unknown);
 
 export type QuizGetQuizReportData = {
     accessToken?: (string | null);
@@ -2741,38 +2783,38 @@ export type SurveyCreateResourceData = {
 
 export type SurveyCreateResourceResponse = (SurveyResourceResponse);
 
-export type SurveyGetAssessData = {
+export type SurveyGetAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type SurveyGetAssessResponse = (SurveyAssessResponse);
+export type SurveyGetAttemptResponse = (SurveyAttemptResponse);
 
-export type SurveyReadyAssessData = {
+export type SurveyReadyAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type SurveyReadyAssessResponse = (SurveyAssessResponse);
+export type SurveyReadyAttemptResponse = (SurveyAttemptResponse);
 
-export type SurveySubmitAssessData = {
+export type SurveySubmitAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
-    requestBody: SurveyAssessSubmitRequest;
+    requestBody: SurveyAttemptSubmitRequest;
 };
 
-export type SurveySubmitAssessResponse = (SurveyAssessResponse);
+export type SurveySubmitAttemptResponse = (SurveyAttemptResponse);
 
-export type SurveyDeleteAssessData = {
+export type SurveyDeleteAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type SurveyDeleteAssessResponse = (unknown);
+export type SurveyDeleteAttemptResponse = (unknown);
 
 export type SurveyGetSurveyReportData = {
     accessToken?: (string | null);
@@ -2861,48 +2903,48 @@ export type ExamCreateResourceData = {
 
 export type ExamCreateResourceResponse = (ExamResourceResponse);
 
-export type ExamGetAssessData = {
+export type ExamGetAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type ExamGetAssessResponse = (ExamAssessResponse);
+export type ExamGetAttemptResponse = (ExamAttemptResponse);
 
-export type ExamReadyAssessData = {
+export type ExamReadyAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
-    requestBody: ExamAssessReadyRequest;
+    requestBody: ExamAttemptReadyRequest;
 };
 
-export type ExamReadyAssessResponse = (ExamAssessResponse);
+export type ExamReadyAttemptResponse = (ExamAttemptResponse);
 
-export type ExamStartAssessData = {
+export type ExamStartAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
-    requestBody: ExamAssessStartRequest;
+    requestBody: ExamAttemptStartRequest;
 };
 
-export type ExamStartAssessResponse = (ExamAssessResponse);
+export type ExamStartAttemptResponse = (ExamAttemptResponse);
 
-export type ExamSubmitAssessData = {
+export type ExamSubmitAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
-    requestBody: ExamAssessSubmitRequest;
+    requestBody: ExamAttemptSubmitRequest;
 };
 
-export type ExamSubmitAssessResponse = (ExamAssessResponse);
+export type ExamSubmitAttemptResponse = (ExamAttemptResponse);
 
-export type ExamDeleteAssessData = {
+export type ExamDeleteAttemptData = {
     accessToken?: (string | null);
     id: string;
     refreshToken?: (string | null);
 };
 
-export type ExamDeleteAssessResponse = (unknown);
+export type ExamDeleteAttemptResponse = (unknown);
 
 export type ExamGetGradingData = {
     accessToken?: (string | null);
@@ -2911,7 +2953,7 @@ export type ExamGetGradingData = {
     userId: string;
 };
 
-export type ExamGetGradingResponse = (ExamAssessResponse);
+export type ExamGetGradingResponse = (ExamAttemptResponse);
 
 export type ExamSubmitGradingData = {
     accessToken?: (string | null);
@@ -2921,7 +2963,7 @@ export type ExamSubmitGradingData = {
     userId: string;
 };
 
-export type ExamSubmitGradingResponse = (ExamAssessResponse);
+export type ExamSubmitGradingResponse = (ExamAttemptResponse);
 
 export type ExamGetExamReportData = {
     accessToken?: (string | null);
@@ -3109,6 +3151,15 @@ export type CourseUnenrollData = {
 
 export type CourseUnenrollResponse = (unknown);
 
+export type CourseUpdateLearningData = {
+    accessToken?: (string | null);
+    id: string;
+    refreshToken?: (string | null);
+    requestBody: CourseLearningRequest;
+};
+
+export type CourseUpdateLearningResponse = (unknown);
+
 export type CourseToggleActionData = {
     accessToken?: (string | null);
     action: 'bookmark' | 'like' | 'flag';
@@ -3172,6 +3223,13 @@ export type SharedToggleBookmarkData = {
 };
 
 export type SharedToggleBookmarkResponse = (unknown);
+
+export type SharedGetImportantData = {
+    accessToken?: (string | null);
+    refreshToken?: (string | null);
+};
+
+export type SharedGetImportantResponse = (ImportantResponse);
 
 export type PublicGetOutlineData = {
     id: string;

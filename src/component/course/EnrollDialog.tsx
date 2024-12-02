@@ -28,7 +28,12 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
   const user = useAtomValue(userState);
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
-  const { data: course, mutate: courseMutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
+  const {
+    data: course,
+    mutate: courseMutate,
+    isLoading,
+    isValidating,
+  } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
 
   const closeDialog = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,8 +45,8 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
       .then((r: EnrollResponse) => {
         const updated = {
           enrolled: true,
-          study_start: r.study_start,
-          study_end: r.study_end,
+          learning_start: r.learning_start,
+          learning_end: r.learning_end,
         };
         setResult(t('You are now enrolled in this course.'));
         // channel course list
@@ -74,14 +79,14 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
 
   return (
     <BaseDialog
+      isReady={!isLoading && !isValidating}
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={t('Course enrollment')}
       fullWidth
       maxWidth="sm"
       renderContent={() => (
-        <Box>
+        <>
           <Typography variant="body1">Course enrollment process</Typography>
           <Typography variant="body2">Working on it...</Typography>
 
@@ -119,7 +124,7 @@ export const EnrollDialog = ({ open, setOpen, id, onEnroll }: Props) => {
               </Box>
             )}
           </Box>
-        </Box>
+        </>
       )}
       actions={<Button onClick={closeDialog}>{t('Cancel')}</Button>}
     />

@@ -1,5 +1,5 @@
 import { StreamOutlined } from '@mui/icons-material';
-import { Chip, Paper, Typography } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import { Player } from './Player';
@@ -17,36 +17,38 @@ export const SimpleView = ({ id }: { id: string }) => {
   if (!data) return null;
 
   return (
-    <Paper
+    <Box
       sx={{
-        overflow: 'auto',
         width: '100%',
         maxWidth: 'lg',
-        borderRadius: 3,
-        p: 3,
-        my: 'auto',
-        '& .subtitlebox': { height: '400px', flexGrow: 1 },
+        p: { xs: 0, md: 3 },
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        flexWrap: 'wrap',
       }}
     >
       <Player id={id} />
-      <Typography
-        variant="subtitle1"
-        sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold', lineHeight: 1.2, my: '1em', gap: 1 }}
-      >
-        {data.sub_kind === 'live' && (
-          <Typography component="span" variant="subtitle2">
-            <Chip
-              label={t('LIVE')}
-              color="error"
-              sx={{ borderRadius: '4px', bgcolor: '#da0100', height: '1.8em' }}
-              icon={<StreamOutlined sx={{ fontSize: '1rem' }} />}
-            />
-          </Typography>
-        )}
-        {!!data.uploader && `${[data.uploader]}`} {data.title}
-      </Typography>
-      <Tracking id={id} />
-      <Subtitle id={id} />
-    </Paper>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, px: { xs: 2, md: 0 } }}>
+        <Tracking id={id} />
+        <Typography
+          variant="subtitle1"
+          sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold', lineHeight: 1.2, gap: 1 }}
+        >
+          {data.sub_kind === 'live' && (
+            <Typography component="span" variant="subtitle2">
+              <Chip
+                label={t('LIVE')}
+                color="error"
+                sx={{ borderRadius: '4px', bgcolor: '#da0100', height: '1.8em' }}
+                icon={<StreamOutlined sx={{ fontSize: '1rem' }} />}
+              />
+            </Typography>
+          )}
+          {!!data.uploader && `${[data.uploader]}`} {data.title}
+        </Typography>
+        <Subtitle id={id} />
+      </Box>
+    </Box>
   );
 };

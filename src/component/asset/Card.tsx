@@ -99,6 +99,7 @@ export const Card = ({ data, hideAvatar, sx, showDescription }: Props) => {
           t(...formatRelativeTime(data.modified)),
           user && user.username == data.owner.username && (
             <Box
+              className="asset-upload"
               sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
               onClick={(e) => {
                 e.stopPropagation();

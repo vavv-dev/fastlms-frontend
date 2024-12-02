@@ -131,7 +131,7 @@ export const Card = ({ data, hideAvatar, embeded, borderBox = true }: Props) => 
           )}
 
           {data.resources.map((resource) => (
-            <Box key={resource.id}>
+            <Box key={resource.id} data-lesson-id={data.id} data-resource-id={resource.id}>
               <ResourceCard resource={resource} resourceDisplays={data.resource_displays} lessonOwnerId={data.owner.id} />
             </Box>
           ))}

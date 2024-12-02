@@ -67,35 +67,6 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
             <span>{formatDuration(data.duration)}</span>
             <span>{t('{{ count }} videos', { count: data.video_count })}</span>
           </Typography>
-          <Box
-            sx={{
-              height: 'calc(100% - 8px)',
-              position: 'absolute',
-              top: '-5px',
-              left: '8px',
-              width: 'calc(100% - 16px)',
-              borderRadius: '8px',
-              zIndex: -1,
-              overflow: 'hidden',
-              willChange: 'transform',
-            }}
-          >
-            <Box
-              component="img"
-              alt=""
-              src={data.thumbnail}
-              loading="lazy"
-              sx={{
-                objectFit: 'cover',
-                scale: 5,
-                aspectRatio: '16 / 9',
-                width: '100%',
-                height: '100%',
-                filter: 'blur(10px)',
-                willChange: 'filter',
-              }}
-            />
-          </Box>
         </>
       }
       score={data.progress}
@@ -103,7 +74,7 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
       avatarChildren={[t(...formatRelativeTime(data.modified))]}
       hideAvatar={hideAvatar}
       actionMenu={<ActionMenu data={data} />}
-      sx={{ ...sx, '& .card-banner': { overflow: 'visible' } }}
+      sx={sx}
       footer={
         data.progress && (
           <Button
@@ -118,6 +89,44 @@ export const Card = ({ data, hideAvatar, sx }: Props) => {
           </Button>
         )
       }
-    />
+    >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '-6px',
+          left: '8px',
+          width: 'calc(100% - 16px)',
+          borderRadius: '8px',
+          zIndex: -1,
+          overflow: 'hidden',
+          willChange: 'transform',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: '4px',
+            left: 0,
+            width: '100%',
+            height: '5px',
+            background: theme.palette.background.paper,
+          },
+        }}
+      >
+        <Box
+          component="img"
+          alt=""
+          src={data.thumbnail}
+          loading="lazy"
+          sx={{
+            objectFit: 'cover',
+            scale: 5,
+            aspectRatio: '16 / 9',
+            width: '100%',
+            height: '100%',
+            filter: 'blur(10px)',
+            willChange: 'filter',
+          }}
+        />
+      </Box>
+    </ResourceCard>
   );
 };

@@ -9,14 +9,14 @@ import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 
-import { QuizAssessResponse as AssessResponse, QuizGetAssessData as GetAssessData, quizGetAssess as getAssess } from '@/api';
+import { QuizAttemptResponse as AttemptResponse, QuizGetAttemptData as GetAttemptData, quizGetAttempt as getAttempt } from '@/api';
 import { useServiceImmutable } from '@/component/common';
 import { textEllipsisCss, toFixedHuman } from '@/helper/util';
 
 export const Finding = ({ id }: { id: string }) => {
   const { t } = useTranslation('quiz');
   const theme = useTheme();
-  const { data } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
 
   if (!data || !data.finding) return null;
 

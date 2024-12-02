@@ -271,7 +271,7 @@ export const Outline = () => {
             </Section>
 
             <Section
-              title={t('Learning days & Completion requirements')}
+              title={t('Completion requirements')}
               collapsed={collapsed.target}
               onToggle={() => toggleSection('completion')}
             >

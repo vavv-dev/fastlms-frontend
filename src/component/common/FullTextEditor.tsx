@@ -177,7 +177,7 @@ export const FullTextEditor = ({
         renderControls={() => (
           <MenuControlsContainer>
             <Box // fix select box flicking
-              sx={{ height: 20, display: 'flex', alignItems: 'center' }}
+              sx={{ height: 30, '& .MuiSelect-select': { height: 20, py: '5px', maxHeight: 20, minHeight: 20 } }}
             >
               <MenuSelectFontSize
                 options={['8px', '10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px']}

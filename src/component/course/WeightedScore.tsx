@@ -42,39 +42,23 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const setCertificateStatus = useSetAtom(certificateStatusFamily(course.id));
 
-  const [isCalculating, setIsCalculating] = useState(true);
+  const shouldShowSkeleton = !lessons?.length;
 
   const stats = useMemo(() => {
     if (!lessons?.length) {
       return { progress: 0, score: 0, lessons: [], totalWeight: 0, calcProgress: '', calcScore: '' };
     }
-
     return calculateStats(lessons, t);
   }, [lessons, t]);
-
-  useEffect(() => {
-    if (!lessons?.length) {
-      setIsCalculating(true);
-      return;
-    }
-
-    const timer = requestAnimationFrame(() => {
-      setIsCalculating(false);
-    });
-
-    return () => cancelAnimationFrame(timer);
-  }, [lessons]);
 
   const { progress, score } = stats;
 
   useEffect(() => {
     if (course.certificates.length > 0) {
       setCertificateStatus('issued');
-      return;
     } else if (course.certificate_enabled) {
       if (progress >= course.cutoff_progress && score >= course.cutoff_score) {
         setCertificateStatus('eligible');
-        return;
       }
     }
   }, [progress, score, course, setCertificateStatus]);
@@ -87,10 +71,15 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
     }, 100);
 
     updateWidth();
-    window.addEventListener('resize', updateWidth);
+    const resizeObserver = new ResizeObserver(updateWidth);
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     return () => {
-      window.removeEventListener('resize', updateWidth);
       updateWidth.cancel();
+      resizeObserver.disconnect();
     };
   }, []);
 
@@ -100,11 +89,16 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
     return progress >= threshold ? 'left' : 'right';
   }, [containerWidth, progress]);
 
-  const { study_start: studyStart, study_end: studyEnd, cutoff_progress: cutoffProgress, cutoff_score: cutoffScore } = course;
-  if (!studyStart || !studyEnd) return null;
+  const {
+    learning_start: learningStart,
+    learning_end: learningEnd,
+    cutoff_progress: cutoffProgress,
+    cutoff_score: cutoffScore,
+  } = course;
+  if (!learningStart || !learningEnd) return null;
 
-  const start = new Date(studyStart);
-  const end = new Date(studyEnd);
+  const start = new Date(learningStart);
+  const end = new Date(learningEnd);
   const today = new Date();
   const totalDuration = end.getTime() - start.getTime();
   const elapsedTime = today.getTime() - start.getTime();
@@ -129,7 +123,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
         ...sx,
       }}
     >
-      {isCalculating ? (
+      {shouldShowSkeleton ? (
         <WeightedScoreSkeleton />
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -189,17 +183,19 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
             <Typography variant="body2" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
               {t('Start')} {formatYYYMMDD(start)}
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ color: scoreColor, display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setAnchorEl(anchorEl ? null : e.currentTarget);
-              }}
-            >
-              {t('Total score {{ value }} points', { value: toFixedHuman(score, 1) })}
-              <ArrowDropDown fontSize="small" />
-            </Typography>
+            {stats.totalWeight > 0 && (
+              <Typography
+                variant="body2"
+                sx={{ color: scoreColor, display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(anchorEl ? null : e.currentTarget);
+                }}
+              >
+                {t('Total score {{ value }} points', { value: toFixedHuman(score, 1) })}
+                <ArrowDropDown fontSize="small" />
+              </Typography>
+            )}
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {t('End')} {formatYYYMMDD(end)}
             </Typography>
@@ -256,7 +252,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                    {t('Completion Requirements')}
+                    {t('Completion requirements')}
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <Typography variant="body2" sx={{ color: 'text.primary' }}>

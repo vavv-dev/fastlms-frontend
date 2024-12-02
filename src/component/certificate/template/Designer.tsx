@@ -48,15 +48,15 @@ const PAGE_RATIOS = {
 
 // prettier-ignore
 const CONTROL_CONFIG: Record<TemplateControl['kind'], TemplateControl> = {
-  title: { id: '', kind: 'title', left: '10%', top: '10%', width: '80%', font_size: 36, is_placeholder: false, text_align: 'center', content: 'Certificate', },
+  title: { id: '', kind: 'title', left: '10%', top: '10%', width: '80%', font_size: 50, is_placeholder: false, text_align: 'center', content: 'Certificate', },
   document_number: { id: '', kind: 'document_number', left: '3%', top: '3%', width: 'auto', font_size: 12, is_placeholder: true, text_align: 'left', content: 'Document number', },
   completion_title: { id: '', kind: 'completion_title', left: '10%', top: '28%', width: 'auto', font_size: 24, is_placeholder: true, text_align: 'left', content: 'Completion title', },
   completion_period: { id: '', kind: 'completion_period', left: '10%', top: '36%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Completion period', },
   learning_hours: { id: '', kind: 'learning_hours', left: '10%', top: '40%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Learning hours', },
   name: { id: '', kind: 'name', left: '10%', top: '44%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Name', },
   birthdate: { id: '', kind: 'birthdate', left: '10%', top: '48%', width: 'auto', font_size: 14, is_placeholder: true, text_align: 'left', content: 'Date of birth', },
-  issuer: { id: '', kind: 'issuer', left: '10%', top: '84%', width: '80%', font_size: 20, is_placeholder: false, text_align: 'center', content: 'Issuer', },
-  issue_date: { id: '', kind: 'issue_date', left: '40%', top: '78%', width: '20%', font_size: 14, is_placeholder: true, text_align: 'center', content: 'Issue date', },
+  issuer: { id: '', kind: 'issuer', left: '10%', top: '84%', width: '80%', font_size: 30, is_placeholder: false, text_align: 'center', content: 'Issuer', },
+  issue_date: { id: '', kind: 'issue_date', left: '40%', top: '78%', width: '20%', font_size: 20, is_placeholder: true, text_align: 'center', content: 'Issue date', },
 };
 
 type PageSize = TemplateMeta['page_size'];
@@ -415,7 +415,7 @@ export const Designer = ({ id }: { id?: string }) => {
                   value={controls.find((c) => c.id === selectedControl)?.font_size || 16}
                   onChange={(_, newValue) => handleFontSizeChange(selectedControl, newValue as number)}
                   min={8}
-                  max={40}
+                  max={60}
                   step={1}
                   valueLabelDisplay="auto"
                 />

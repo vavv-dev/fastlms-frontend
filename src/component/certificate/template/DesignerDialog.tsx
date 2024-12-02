@@ -1,7 +1,6 @@
 import { Box } from '@mui/material';
 import { useAtomValue } from 'jotai';
 import { Suspense, lazy } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { BaseDialog, GradientCircularProgress } from '@/component/common';
 import { userState } from '@/store';
@@ -25,7 +24,6 @@ interface Props {
 }
 
 export const DesignerDialog = ({ id, open, setOpen }: Props) => {
-  const { t } = useTranslation('certificate');
   const user = useAtomValue(userState);
 
   const closeDialog = () => {
@@ -36,10 +34,10 @@ export const DesignerDialog = ({ id, open, setOpen }: Props) => {
 
   return (
     <BaseDialog
+      isReady
       open={open}
       setOpen={setOpen}
       onClose={closeDialog}
-      title={id ? t('Edit certificate template') : t('Create certificate template')}
       fullWidth
       maxWidth="lg"
       renderContent={() => (

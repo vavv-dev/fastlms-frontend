@@ -12,12 +12,12 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 import {
-  QuizAssessResponse as AssessResponse,
+  QuizAttemptResponse as AttemptResponse,
   QuizDisplayResponse as DisplayResponse,
-  QuizGetAssessData as GetAssessData,
-  quizGetAssess as getAssess,
+  QuizGetAttemptData as GetAttemptData,
+  quizGetAttempt as getAttempt,
   quizGetDisplays as getDisplays,
-  quizSubmitAssess as submitAssess,
+  quizSubmitAttempt as submitAttempt,
 } from '@/api';
 import {
   Form as CommonForm,
@@ -51,7 +51,7 @@ const createSchema = (t: (key: string) => string) => {
 
 export const Form = ({ id }: { id: string }) => {
   const { t } = useTranslation('quiz');
-  const { data, mutate } = useServiceImmutable<GetAssessData, AssessResponse>(getAssess, { id });
+  const { data, mutate } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
   const submission = data?.submission;
   const [activeStep, setActiveStep] = useState<number>(0);
   const question = submission?.questions?.[activeStep];
@@ -76,7 +76,7 @@ export const Form = ({ id }: { id: string }) => {
   const submitForm = (input: AnswerInput) => {
     if (!user || !data) return;
 
-    submitAssess({
+    submitAttempt({
       id: data.id,
       requestBody: {
         answers: input.answers.reduce(
@@ -96,7 +96,7 @@ export const Form = ({ id }: { id: string }) => {
   };
 
   return (
-    <CommonForm id="assess-form" onSubmit={handleSubmit(submitForm)} formState={formState} setError={setError}>
+    <CommonForm id="attempt-form" onSubmit={handleSubmit(submitForm)} formState={formState} setError={setError}>
       {activeStep < maxSteps ? (
         <>
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -156,7 +156,7 @@ export const Form = ({ id }: { id: string }) => {
       ) : (
         <>
           <Button
-            form="assess-form"
+            form="attempt-form"
             disabled={!formState.isDirty || formState.isSubmitting}
             type="submit"
             endIcon={<KeyboardArrowRight />}
