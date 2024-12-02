@@ -181,8 +181,8 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
             </span>
           </Tooltip>
         )}
+        <Dialog />
       </TableCell>
-      <Dialog />
     </TableRow>
   );
 };

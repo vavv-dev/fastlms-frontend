@@ -109,7 +109,14 @@ export const useServiceImmutable = <T, K>(apiService: (params: T) => Promise<K>,
     async () => {
       return await apiService(params as T);
     },
-    { keepPreviousData: true },
+    {
+      keepPreviousData: true,
+      onErrorRetry: (error, _, __, revalidate, { retryCount }) => {
+        if (error.status === 404) return;
+        if (retryCount >= 10) return;
+        setTimeout(() => revalidate({ retryCount }), 5000);
+      },
+    },
   );
   return { data, mutate, isValidating, isLoading, error };
 };

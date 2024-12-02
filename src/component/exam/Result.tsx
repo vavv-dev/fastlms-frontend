@@ -1,4 +1,4 @@
-import { Box, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from '@mui/material';
+import { Box, Chip, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import { Finding } from './Finding';
@@ -15,6 +15,19 @@ export const Result = ({ id }: { id: string }) => {
   const { t } = useTranslation('exam');
   const theme = useTheme();
   const { data } = useServiceImmutable<GetAttemptData, AttemptResponse>(getAttempt, { id });
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'passed':
+        return 'success';
+      case 'failed':
+        return 'error';
+      case 'pending':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  };
 
   if (!data || !data.status || !data.submission) return null;
 
@@ -36,7 +49,18 @@ export const Result = ({ id }: { id: string }) => {
               <TableCell>{formatDatetimeLocale(data.submission.start_time)}</TableCell>
               <TableCell>{formatDatetimeLocale(data.submission.end_time)}</TableCell>
               <TableCell>{toFixedHuman(data.score, 1)}</TableCell>
-              <TableCell>{t(data.status)}</TableCell>
+              <TableCell>
+                <Chip
+                  label={t(data.status)}
+                  color={getStatusColor(data.status)}
+                  sx={{
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    py: 0.5,
+                    px: 1,
+                  }}
+                />
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
