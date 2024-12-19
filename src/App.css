@@ -1,0 +1,158 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+@media print {
+  div {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* remove browser default margin */
+
+p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+/* tiptap styles */
+
+.ProseMirror p:empty::before,
+p:empty:not(.MuiFormHelperText-root)::before {
+  content: '\00a0'; /* Non-breaking space */
+  display: inline-block;
+}
+[data-type='taskList'] {
+  list-style-type: none;
+  padding: 0;
+}
+[data-type='taskItem'] {
+  display: flex;
+  align-items: center;
+}
+
+.tiptap-content {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.tiptap-content h1,
+.tiptap-content h2,
+.tiptap-content h3,
+.tiptap-content h4,
+.tiptap-content h5,
+.tiptap-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.tiptap-content h1 {
+  font-size: 2.5em;
+}
+.tiptap-content h2 {
+  font-size: 2em;
+}
+.tiptap-content h3 {
+  font-size: 1.75em;
+}
+.tiptap-content h4 {
+  font-size: 1.5em;
+}
+.tiptap-content h5 {
+  font-size: 1.25em;
+}
+.tiptap-content h6 {
+  font-size: 1em;
+}
+
+/*
+.tiptap-content p {
+  margin-bottom: 1em;
+}
+*/
+
+.tiptap-content ul,
+.tiptap-content ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.tiptap-content li {
+  margin-bottom: 0.5em;
+}
+
+.tiptap-content a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.tiptap-content a:hover {
+  text-decoration: underline;
+}
+
+.tiptap-content blockquote {
+  margin: 1em 0;
+  padding-left: 1em;
+  border-left: 4px solid #ddd;
+  color: #666;
+  font-style: italic;
+}
+
+.tiptap-content pre {
+  background-color: #f5f5f5;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.tiptap-content code {
+  background-color: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.tiptap-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.tiptap-content th,
+.tiptap-content td {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+
+.tiptap-content th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.tiptap-content img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+  display: block;
+}
+
+.tiptap-content hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 2em 0;
+}
+
+.tiptap-content strong {
+  font-weight: bold;
+}
+
+.tiptap-content em {
+  font-style: italic;
+}

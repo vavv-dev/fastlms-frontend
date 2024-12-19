@@ -1,0 +1,21 @@
+{
+  "%{browseFiles}": "%{browseFiles}",
+  "%{file} exceeds maximum allowed size of %{size}": "%{file} 파일이 허용된 최대 크기인 %{size}를 초과합니다",
+  "%{smart_count} file selected": "%{smart_count} 파일 선택됨",
+  "%{smart_count} files selected": "%{smart_count} 파일 선택됨",
+  "Add more": "추가 하기",
+  "Add more files": "파일 추가",
+  "Adding more files": "파일 추가 중",
+  "Cancel": "취소",
+  "Cannot add the duplicate file '%{fileName}', it already exists": "중복 파일 '%{fileName}'을 추가할 수 없습니다. 이미 존재합니다",
+  "Complete": "완료",
+  "Done": "완료",
+  "Drop your files here": "여기에 파일을 놓으세요",
+  "Remove file": "파일 제외",
+  "Retry upload": "업로드 다시 시도",
+  "The total size of the files exceeds the limit of {{ max }}MB.": "파일의 총 크기가 {{ max }}MB 제한을 초과합니다.",
+  "Upload %{smart_count} file": "%{smart_count} 파일 업로드",
+  "Upload %{smart_count} files": "%{smart_count} 파일 업로드",
+  "Upload complete": "업로드 완료",
+  "browse files": "파일 찾기. 클릭하거나 파일을 여기에 드래그&드랍 하세요."
+}

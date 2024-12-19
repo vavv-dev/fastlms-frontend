@@ -1,0 +1,21 @@
+{
+  "%{browseFiles}": "%{browseFiles}",
+  "%{file} exceeds maximum allowed size of %{size}": "%{file} exceeds maximum allowed size of %{size}",
+  "%{smart_count} file selected": "%{smart_count} file selected",
+  "%{smart_count} files selected": "%{smart_count} files selected",
+  "Add more": "Add more",
+  "Add more files": "Add more files",
+  "Adding more files": "Adding more files",
+  "Cancel": "Cancel",
+  "Cannot add the duplicate file '%{fileName}', it already exists": "Cannot add the duplicate file '%{fileName}', it already exists",
+  "Complete": "Complete",
+  "Done": "Done",
+  "Drop your files here": "Drop your files here",
+  "Remove file": "Remove file",
+  "Retry upload": "Retry upload",
+  "The total size of the files exceeds the limit of {{ max }}MB.": "The total size of the files exceeds the limit of {{ max }}MB.",
+  "Upload %{smart_count} file": "Upload %{smart_count} file",
+  "Upload %{smart_count} files": "Upload %{smart_count} files",
+  "Upload complete": "Upload complete",
+  "browse files": "browse files"
+}
