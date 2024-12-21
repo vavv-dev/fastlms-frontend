@@ -1,7 +1,7 @@
 export const checkResourceAccessible = (
   key: string,
   indices: Record<string, number>,
-  metas: Record<string, { passed: boolean | null }>,
+  metas: Record<string, { passed: boolean | null; status: string | null }>,
   sequentialLearning: boolean,
 ): boolean => {
   if (!sequentialLearning) return true;
@@ -14,7 +14,8 @@ export const checkResourceAccessible = (
   if (currentIndex === 0) return true;
 
   for (let i = 0; i < currentIndex; i++) {
-    if (!metas[orderedKeys[i]]?.passed) {
+    const meta = metas[orderedKeys[i]];
+    if (!meta?.passed && meta?.status !== 'grading') {
       return false;
     }
   }

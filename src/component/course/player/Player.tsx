@@ -8,34 +8,16 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { playerMessageState } from '..';
-import { useSaveLearning } from '../useSaveLearning';
+import { useCourseState } from '../useCourseState';
 import { Drawer } from './Drawer';
 import { Message } from './Message';
 import { NextNotification } from './NextNotification';
 import { useNavigation } from './useNavigation';
 
-import {
-  CourseDisplayResponse as DisplayResponse,
-  CourseGetViewData as GetViewData,
-  CourseGetViewResponse as GetViewResponse,
-  LessonDisplayResponse,
-  LessonGetDisplaysData,
-  LessonGetDisplaysResponse,
-  ResourceLocation,
-  VideoDisplayResponse,
-  courseGetDisplays as getDisplays,
-  courseGetView as getView,
-  lessonGetDisplays,
-} from '@/api';
+import { LessonDisplayResponse, ResourceLocation, VideoDisplayResponse } from '@/api';
 import { AssetView } from '@/component/asset';
 import { ChatDrawer, chatDrawerState } from '@/component/chat';
-import {
-  GradientCircularProgress,
-  WindowButton,
-  updateInfiniteCache,
-  useInfinitePagination,
-  useServiceImmutable,
-} from '@/component/common';
+import { GradientCircularProgress, WindowButton } from '@/component/common';
 import { ExamView } from '@/component/exam';
 import { GlobalAlert } from '@/component/layout';
 import { QuizView } from '@/component/quiz';
@@ -55,17 +37,9 @@ export const Player = () => {
   const [open, setOpen] = useState(mdlUp);
 
   const { id } = useParams() as { id: string };
-  const { data: course, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
-  const {
-    data: _lessons,
-    isLoading,
-    isValidating,
-  } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
-    apiService: lessonGetDisplays,
-    apiOptions: course?.enrolled ? { course: id } : {},
-  });
+  const [validLocation, setValidLocation] = useState<ResourceLocation | null>(null);
+  const { course, lessons, isLoading, isValidating } = useCourseState(id, validLocation);
 
-  const lessons = useMemo(() => _lessons?.[0]?.items || [], [_lessons]);
   const { resources, types, metas, indices } = useMemo(() => createResourceMaps(lessons), [lessons]);
   const resourceCount = Object.keys(resources).length;
 
@@ -74,75 +48,13 @@ export const Player = () => {
     return stateLocation || course?.resource_location || null;
   }, [course, location.state?.resourceLocation]);
 
-  const { resourceLocation, setCurrentResource, handleForward, canGoForward, canGoBackward, handleBackward } = useNavigation(
+  const { resourceLocation, setResourceLocation, handleForward, canGoForward, canGoBackward, handleBackward } = useNavigation(
     indices,
     metas,
     resourceCount,
     startLocation,
     !!course?.sequential_learning,
   );
-
-  const learningState = useMemo(() => calculateLearningStats(course, lessons), [course, lessons]);
-
-  useSaveLearning(
-    course && {
-      courseId: course.id,
-      progress: course.progress,
-      score: course.score,
-      passed: course.passed,
-      resourceLocation,
-      onSuccess: (resourceLocation) => {
-        mutate((prev) => prev && { ...prev, resource_location: resourceLocation }, { revalidate: false });
-        // update course list cache
-        updateInfiniteCache<DisplayResponse>(
-          getDisplays,
-          {
-            id: course.id,
-            progress: course.progress,
-            score: course.score,
-            passed: course.passed,
-            resource_location: resourceLocation,
-          },
-          'update',
-        );
-      },
-    },
-  );
-
-  useEffect(() => {
-    if (
-      !course ||
-      (course.progress === learningState.progress &&
-        course.score === learningState.score &&
-        course.passed === learningState.passed)
-    )
-      return;
-
-    mutate(
-      (prev) => prev && { ...prev, progress: learningState.progress, score: learningState.score, passed: learningState.passed },
-      { revalidate: false },
-    );
-  }, [learningState, course, mutate]);
-
-  useEffect(() => {
-    if (!course) return;
-    if (resourceLocation) return;
-    if (course.resource_location) {
-      setCurrentResource(course.resource_location);
-      return;
-    }
-    const firstKey = Object.keys(indices).find((key) => indices[key] === 0);
-    if (firstKey) {
-      setCurrentResource(createResourceFromKey(firstKey));
-    }
-  }, [course, indices, resourceLocation, setCurrentResource]);
-
-  useEffect(() => {
-    if (playerMessage) {
-      const timer = setTimeout(() => setPlayerMessage(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [playerMessage, setPlayerMessage]);
 
   const handleDrawerClose = useCallback(() => {
     if (!mdlUp) setOpen(false);
@@ -160,14 +72,38 @@ export const Player = () => {
   };
 
   useEffect(() => {
-    if (location.state?.resourceLocation) {
-      setCurrentResource(location.state.resourceLocation as ResourceLocation);
+    if (!course) return;
+    if (resourceLocation) return;
+    if (course.resource_location) {
+      setResourceLocation(course.resource_location);
+      return;
     }
-  }, [location.state?.resourceLocation, setCurrentResource]);
+    const firstKey = Object.keys(indices).find((key) => indices[key] === 0);
+    if (firstKey) {
+      setResourceLocation(createResourceFromKey(firstKey));
+    }
+  }, [course, indices, resourceLocation, setResourceLocation]);
+
+  useEffect(() => {
+    if (playerMessage) {
+      const timer = setTimeout(() => setPlayerMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [playerMessage, setPlayerMessage]);
+
+  useEffect(() => {
+    if (location.state?.resourceLocation) {
+      setResourceLocation(location.state.resourceLocation as ResourceLocation);
+    }
+  }, [location.state?.resourceLocation, setResourceLocation]);
 
   useEffect(() => {
     if (location.state?.resourceLocation) delete location.state.resourceLocation;
   }, [resourceLocation]); // eslint-disable-line
+
+  useEffect(() => {
+    if (resourceLocation) setValidLocation(resourceLocation);
+  }, [resourceLocation]);
 
   if (!course) return null;
 
@@ -177,7 +113,7 @@ export const Player = () => {
         <Drawer
           course={course}
           lessons={lessons}
-          onResourceSelect={setCurrentResource}
+          onResourceSelect={setResourceLocation}
           open={open}
           setOpen={setOpen}
           types={types}
@@ -315,6 +251,7 @@ interface ResourceMeta {
   title: string;
   thumbnail: string;
   passed: boolean | null;
+  status: string | null;
 }
 
 const createResourceKey = (resource: ResourceLocation | null): string | null => {
@@ -370,51 +307,12 @@ const createResourceMaps = (lessons: LessonDisplayResponse[]): ResourceMaps => {
         title: resource.title,
         thumbnail: resource.thumbnail,
         passed: resource.passed,
+        status: 'status' in resource ? resource.status : null,
       };
+
       indices[key] = index++;
     });
   });
 
   return { resources, types, metas, indices };
-};
-
-interface LearningStats {
-  progress: number;
-  score: number;
-  passed: boolean;
-}
-
-const calculateLearningStats = (
-  course: GetViewResponse | undefined,
-  lessons: LessonDisplayResponse[] | undefined,
-): LearningStats => {
-  if (!course || !lessons?.length) return { progress: 0, score: 0, passed: false };
-
-  const result = lessons.reduce(
-    (acc, lesson) => {
-      const { grading_method, passed } = lesson;
-      const weight = lesson.weight ?? 0;
-      const progress = lesson.progress ?? 0;
-      const score = lesson.score ?? 0;
-
-      if (grading_method === 'progress') {
-        acc.progressCount++;
-        if (passed) acc.progressPassed++;
-      }
-
-      if (weight > 0) {
-        acc.totalWeight += weight;
-        acc.totalScore += (weight / 100) * (grading_method === 'progress' ? progress : score);
-      }
-
-      return acc;
-    },
-    { progressPassed: 0, progressCount: 0, totalScore: 0, totalWeight: 0 },
-  );
-
-  const progress = result.progressCount ? (result.progressPassed / result.progressCount) * 100 : 0;
-  const score = result.totalWeight ? (result.totalScore / result.totalWeight) * 100 : 0;
-  const passed = progress >= course.cutoff_progress && score >= course.cutoff_score;
-
-  return { progress, score, passed };
 };

@@ -29,7 +29,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
-    }, 100);
+    }, 10);
 
     updateWidth();
     const resizeObserver = new ResizeObserver(updateWidth);
@@ -50,12 +50,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
     return progress >= threshold ? 'left' : 'right';
   }, [containerWidth, progress]);
 
-  const {
-    learning_start: learningStart,
-    learning_end: learningEnd,
-    cutoff_progress: cutoffProgress,
-    cutoff_score: cutoffScore,
-  } = course;
+  const { learning_start: learningStart, learning_end: learningEnd, cutoff_progress: cutoffProgress } = course;
   if (!learningStart || !learningEnd) return null;
 
   const start = new Date(learningStart);
@@ -69,7 +64,7 @@ export const WeightedScore = ({ course, lessons, sx }: Props) => {
   const isAfterEnd = today > end;
 
   const progressColor = progress >= cutoffProgress ? 'success.main' : 'warning.main';
-  const scoreColor = score >= cutoffScore ? 'success.main' : 'warning.main';
+  const scoreColor = course.passed ? 'success.main' : 'warning.main';
 
   const labelStyle =
     labelPosition === 'right' ? { left: `calc(${progress}% + 20px)` } : { right: `calc(${100 - progress}% + 20px)` };

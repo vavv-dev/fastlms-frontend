@@ -1,5 +1,5 @@
-import { ArrowRight, CheckBox, CheckBoxOutlineBlank, Lock, Menu, MenuOpen } from '@mui/icons-material';
-import { Button, useMediaQuery } from '@mui/material';
+import { ArrowRight, CheckBox, CheckBoxOutlineBlank, IndeterminateCheckBox, Lock, Menu, MenuOpen } from '@mui/icons-material';
+import { Button, Tooltip, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import MuiDrawer from '@mui/material/Drawer';
@@ -29,7 +29,7 @@ export interface DrawerProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   types: Record<string, { kind: string; subKind?: string }>;
-  metas: Record<string, { title: string; passed: boolean | null }>;
+  metas: Record<string, { title: string; passed: boolean | null; status: string | null }>;
   currentKey: string | null;
   indices: Record<string, number>;
   sequentialLearning: boolean;
@@ -71,11 +71,17 @@ export const Drawer = ({
     [indices, metas, sequentialLearning],
   );
 
-  const renderResourceIcon = (key: string, meta: { passed: boolean | null }) => {
+  const renderResourceIcon = (key: string, meta: { passed: boolean | null; status: string | null }) => {
     if (meta.passed === true) {
       return <CheckBox fontSize="small" sx={{ color: 'success.main' }} />;
     }
     if (isResourceAccessible(key)) {
+      if (meta.status === 'grading')
+        return (
+          <Tooltip title={t('Grading')}>
+            <IndeterminateCheckBox fontSize="small" sx={{ color: 'warning.main' }} />
+          </Tooltip>
+        );
       return <CheckBoxOutlineBlank fontSize="small" sx={{ color: 'text.secondary' }} />;
     }
     return <Lock fontSize="small" sx={{ color: 'text.secondary' }} />;

@@ -25,23 +25,10 @@ import { ActionMenu } from './ActionMenu';
 import { CertificateRequest } from './CertificateRequest';
 import { EnrollDialog } from './EnrollDialog';
 import { WeightedScore } from './WeightedScore';
+import { useCourseState } from './useCourseState';
 
-import {
-  CourseGetViewData as GetViewData,
-  CourseGetViewResponse as GetViewResponse,
-  LessonDisplayResponse,
-  LessonGetDisplaysData,
-  LessonGetDisplaysResponse,
-  courseGetView as getView,
-  lessonGetDisplays,
-} from '@/api';
-import {
-  EmptyMessage,
-  GradientCircularProgress,
-  WithAvatar,
-  useInfinitePagination,
-  useServiceImmutable,
-} from '@/component/common';
+import { LessonDisplayResponse } from '@/api';
+import { EmptyMessage, GradientCircularProgress, WithAvatar } from '@/component/common';
 import { spacerRefState } from '@/component/layout';
 import { LessonCard } from '@/component/lesson';
 import { textEllipsisCss, toFixedHuman } from '@/helper/util';
@@ -53,16 +40,8 @@ export const View = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams() as { id: string };
-  const { data, mutate } = useServiceImmutable<GetViewData, GetViewResponse>(getView, { id });
-  const {
-    data: _lessons,
-    mutate: lessonMutate,
-    isLoading,
-    isValidating,
-  } = useInfinitePagination<LessonGetDisplaysData, LessonGetDisplaysResponse>({
-    apiService: lessonGetDisplays,
-    apiOptions: data?.enrolled ? { course: id } : {},
-  });
+  const { course, courseMutate, lessons, lessonsMutate, isLoading, isValidating } = useCourseState(id);
+
   const [showAll, setShowAll] = useState(false);
   const [activeStep, setActiveStep] = useAtom(activeStepFamily(id));
   const spacerRef = useAtomValue(spacerRefState);
@@ -80,22 +59,19 @@ export const View = () => {
     }
   }, [location.state?.activeStep, setActiveStep]);
 
-  // _lessons?.[0]?.items is all lessons with size 100 limit
-  const lessons = _lessons?.[0]?.items || [];
+  useEffect(() => {
+    if (!course?.enrolled) setEnrollDialogOpen(true);
+  }, [course?.enrolled, course, navigate]);
 
   useEffect(() => {
-    if (!data?.enrolled) setEnrollDialogOpen(true);
-  }, [data?.enrolled, data, navigate]);
-
-  useEffect(() => {
-    if (data?.certificates.length) {
+    if (course?.certificates.length) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [data?.certificates.length]);
+  }, [course?.certificates.length]);
 
   const refresh = () => {
-    mutate();
-    lessonMutate();
+    courseMutate();
+    lessonsMutate();
   };
 
   const openCoursePlayer = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -116,7 +92,7 @@ export const View = () => {
     }
   };
 
-  if (!id || !data) return null;
+  if (!id || !course) return null;
 
   return (
     <Box sx={{ display: 'block', width: '100%', p: 3 }}>
@@ -126,20 +102,20 @@ export const View = () => {
             variant="h5"
             sx={{ mx: 'auto', maxWidth: 'md', textAlign: 'center', ...(smDown && (textEllipsisCss(1) as SxProps)) }}
           >
-            {data.title}
+            {course.title}
           </Typography>
         </Box>
-        {!data.description && (
+        {!course.description && (
           <Typography
             variant="caption"
             sx={{ lineHeight: 1.5, color: 'text.secondary', whiteSpace: 'pre-wrap', maxWidth: 'sm', ...textEllipsisCss(1) }}
             className="tiptap-content"
-            dangerouslySetInnerHTML={{ __html: data.description }}
+            dangerouslySetInnerHTML={{ __html: course.description }}
           />
         )}
-        <WithAvatar variant="small" {...data.owner} sx={{ mx: 'auto' }} />
+        <WithAvatar variant="small" {...course.owner} sx={{ mx: 'auto' }} />
 
-        {data.enrolled ? (
+        {course.enrolled ? (
           <>
             <Box
               ref={stickyPanelRef}
@@ -158,8 +134,8 @@ export const View = () => {
                 gap: { xs: 2, md: 5 },
               }}
             >
-              <WeightedScore course={data} lessons={lessons} sx={{ pt: 3 }} />
-              {certificateStatus != 'issued' && <CertificateRequest course={data} />}
+              <WeightedScore course={course} lessons={lessons} sx={{ pt: 3 }} />
+              {certificateStatus != 'issued' && <CertificateRequest course={course} />}
 
               <Box sx={{ display: 'flex', gap: 1, flexGrow: 1, justifyContent: 'flex-end' }}>
                 <Button
@@ -169,7 +145,7 @@ export const View = () => {
                   sx={{ whiteSpace: 'nowrap' }}
                   startIcon={<PlaylistPlayOutlined />}
                 >
-                  {data.resource_location ? t('Resume') : t('Start learning')}
+                  {course.resource_location ? t('Resume') : t('Start learning')}
                 </Button>
                 {!smDown && (
                   <IconButton color="primary" onClick={() => setShowAll(!showAll)}>
@@ -179,7 +155,7 @@ export const View = () => {
                 <IconButton color="primary" onClick={refresh}>
                   <Refresh />
                 </IconButton>
-                <ActionMenu data={data} />
+                <ActionMenu data={course} />
               </Box>
             </Box>
             <Box sx={{ position: 'relative', mt: 3 }} onClickCapture={(e) => openCoursePlayer(e)}>
@@ -188,7 +164,7 @@ export const View = () => {
                   <GradientCircularProgress />
                 </Box>
               )}
-              {certificateStatus == 'issued' && <CertificateRequest course={data} />}
+              {certificateStatus == 'issued' && <CertificateRequest course={course} />}
               <Stepper
                 nonLinear
                 activeStep={activeStep}
@@ -212,7 +188,7 @@ export const View = () => {
           <EmptyMessage Icon={NotificationImportantOutlined} message={t('You are not enrolled in this course')} />
         )}
       </Box>
-      {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={data.id} />}
+      {enrollDialogOpen && <EnrollDialog open={enrollDialogOpen} setOpen={setEnrollDialogOpen} id={id} />}
     </Box>
   );
 };

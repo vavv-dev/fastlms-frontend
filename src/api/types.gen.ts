@@ -340,10 +340,10 @@ export type CourseEnrollResponse = {
 };
 
 export type CourseLearningRequest = {
-    progress?: (number | null);
-    score?: (number | null);
-    passed?: (boolean | null);
-    resource_location?: ResourceLocation;
+    progress: number;
+    score: number;
+    passed: boolean;
+    resource_location: ResourceLocation;
 };
 
 export type CourseLessonOutlineSchema = {
@@ -419,7 +419,7 @@ export type CourseResourceCreateRequest = {
     closed: boolean;
     sequential_learning: boolean;
     certificate_templates: (Array<CertificateTemplateSchema> | null);
-    lessons: Array<CourseLessonResource>;
+    lessons: (Array<CourseLessonResource> | null);
 };
 
 export type CourseResourceResponse = {
@@ -445,7 +445,7 @@ export type CourseResourceResponse = {
     closed: boolean;
     sequential_learning: boolean;
     certificate_templates: (Array<CertificateTemplateSchema> | null);
-    lessons: Array<CourseLessonResource>;
+    lessons: (Array<CourseLessonResource> | null);
     id: string;
     owner: CourseOwner;
     modified: string;
@@ -474,7 +474,7 @@ export type CourseResourceUpdateRequest = {
     closed?: boolean;
     sequential_learning?: boolean;
     certificate_templates?: (Array<CertificateTemplateSchema> | null);
-    lessons?: Array<CourseLessonResource>;
+    lessons?: (Array<CourseLessonResource> | null);
 };
 
 export type ExamAttemptContext = {

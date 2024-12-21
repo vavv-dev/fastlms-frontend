@@ -18,7 +18,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollRestoration, useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -123,24 +123,15 @@ export const Outline = () => {
     }
   }, [location.state?.enrolled, mutate]); // eslint-disable-line
 
-  const preview = useMemo(() => {
-    if (!data) return null;
-    if (data.preview) return data.preview;
-    // Find first video resource in lessons
-    const firstVideo = data.lessons.reduce<{ id: string } | null>((found, lesson) => {
-      if (found) return found;
-      const videoResource = lesson.resources.find((resource) => resource.kind === 'video');
-      return videoResource || null;
-    }, null);
-    if (!firstVideo) return null;
-    return `<iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/${firstVideo.id}"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-    ></iframe>`;
-  }, [data]);
+  const firstVideo = useMemo(
+    () =>
+      data?.lessons.reduce<{ id: string } | null>((found, lesson) => {
+        if (found) return found;
+        const videoResource = lesson.resources.find((resource) => resource.kind === 'video');
+        return videoResource || null;
+      }, null),
+    [data],
+  );
 
   if (!data) return null;
 
@@ -229,30 +220,13 @@ export const Outline = () => {
 
           {/* Course Details */}
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {(data.preview || preview) && (
-              <Section title={t('Preview')} collapsed={collapsed.preview} onToggle={() => toggleSection('preview')}>
-                <Box
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    maxWidth: '-webkit-fill-available',
-                    height: 'auto',
-                    aspectRatio: '16 / 9',
-                    overflow: 'hidden',
-                    '& iframe': {
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 3,
-                      border: 0,
-                    },
-                  }}
-                  dangerouslySetInnerHTML={{ __html: (data.preview || preview) as string }}
-                />
-              </Section>
-            )}
+            <Section title={t('Preview')} collapsed={collapsed.preview} onToggle={() => toggleSection('preview')}>
+              {data.preview ? (
+                <Box dangerouslySetInnerHTML={{ __html: data.preview }} />
+              ) : (
+                <Preview videoId={firstVideo?.id || ''} />
+              )}
+            </Section>
 
             <Section title={t('Description')} collapsed={collapsed.description} onToggle={() => toggleSection('description')}>
               {data.description ? (
@@ -325,7 +299,7 @@ export const Outline = () => {
           </Box>
 
           {/* Sidebar */}
-          <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: 350 }, display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: 350 }, display: 'flex', flexDirection: 'column', gap: 5 }}>
             <Box
               sx={{
                 mt: 2,
@@ -407,3 +381,31 @@ export const Outline = () => {
     </Box>
   );
 };
+
+const Preview = memo(({ videoId }: { videoId: string }) => (
+  <Box
+    sx={{
+      position: 'relative',
+      width: '100%',
+      maxWidth: '-webkit-fill-available',
+      height: 'auto',
+      aspectRatio: '16 / 9',
+      overflow: 'hidden',
+    }}
+  >
+    <iframe
+      src={`https://www.youtube.com/embed/${videoId}`}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerPolicy="strict-origin-when-cross-origin"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '12px',
+        border: 0,
+      }}
+    />
+  </Box>
+));

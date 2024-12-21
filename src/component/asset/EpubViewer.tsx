@@ -82,10 +82,7 @@ export const EpubViewer = ({ url }: { url: string }) => {
       if (resizeHandler.current) {
         window.removeEventListener('resize', resizeHandler.current);
       }
-      // Ensure cleanup happens after all other effects
-      setTimeout(() => {
-        cleanupRendition();
-      }, 0);
+      cleanupRendition();
     };
   }, []);
 

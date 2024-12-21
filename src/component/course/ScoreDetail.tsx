@@ -88,12 +88,15 @@ export const ScoreDetail = ({ course, lessons, sx }: Props) => {
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                 {t('Completion requirements for this course')}
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
+              <Box component="ul" sx={{ display: 'flex', flexDirection: 'column', gap: 1, m: 0, pl: 3 }}>
+                <Typography component="li" variant="body2">
                   {t('Progress must be {{cutoff}}% or higher.', { cutoff: cutoffProgress })}
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                <Typography component="li" variant="body2">
                   {t('Total score must be {{cutoff}} points or higher.', { cutoff: cutoffScore })}
+                </Typography>
+                <Typography component="li" variant="body2">
+                  {t('All lessons within the course must be passed.')}
                 </Typography>
               </Box>
             </Box>
@@ -113,7 +116,7 @@ export const ScoreDetail = ({ course, lessons, sx }: Props) => {
                         elevation={3}
                         component="img"
                         src={template.thumbnail}
-                        sx={{ maxHeight: '120px', width: 'auto', borderRadius: 1 }}
+                        sx={{ maxHeight: '120px', height: '120px', width: 'auto', borderRadius: 1 }}
                       />
                     </Box>
                   ))}

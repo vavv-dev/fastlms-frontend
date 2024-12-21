@@ -9,7 +9,6 @@ import { textEllipsisCss } from '@/helper/util';
 interface ResourceMeta {
   title: string;
   thumbnail: string;
-  passed: boolean | null;
 }
 
 interface NextNotificationProps {

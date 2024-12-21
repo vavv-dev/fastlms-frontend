@@ -10,6 +10,7 @@ import { ResourceLocation } from '@/api';
 interface ResourceMeta {
   title: string;
   passed: boolean | null;
+  status: string | null;
 }
 
 const createResourceKey = (resource: ResourceLocation | null): string | null => {
@@ -17,14 +18,16 @@ const createResourceKey = (resource: ResourceLocation | null): string | null => 
   return `${resource.lesson_id}::${resource.resource_id}`;
 };
 
-const createResourceFromKey = (key: string): ResourceLocation => {
-  const [lessonId, resourceId] = key.split('::');
+const createResourceFromKey = (key: string): ResourceLocation | null => {
+  const parts = key.split('::');
+  if (parts.length !== 2) return null;
+  const [lessonId, resourceId] = parts;
   return { lesson_id: lessonId, resource_id: resourceId };
 };
 
 interface NavigationHookResult {
   resourceLocation: ResourceLocation | null;
-  setCurrentResource: (resource: ResourceLocation | null, showMessage?: boolean) => void;
+  setResourceLocation: (resource: ResourceLocation | null, showMessage?: boolean) => void;
   handleForward: () => void;
   handleBackward: () => void;
   canGoForward: boolean;
@@ -59,7 +62,10 @@ const getInitialResource = (
     return startLocation;
   }
 
-  const firstIncompleteKey = Object.keys(indices).find((k) => metas[k]?.passed !== true);
+  const firstIncompleteKey = Object.keys(indices).find((k) => {
+    const meta = metas[k];
+    return meta?.passed !== true && meta?.status !== 'grading';
+  });
   return firstIncompleteKey ? createResourceFromKey(firstIncompleteKey) : null;
 };
 
@@ -74,7 +80,7 @@ export const useNavigation = (
   const setPlayerMessage = useSetAtom(playerMessageState);
   const setCourseResourceLocation = useSetAtom(courseResourceLocationState);
 
-  const [resourceLocation, setResourceLocation] = useState<ResourceLocation | null>(() => {
+  const [resourceLocation, _setResourceLocation] = useState<ResourceLocation | null>(() => {
     const initial = getInitialResource(startLocation, indices, metas, sequentialLearning);
     if (sequentialLearning && initial !== startLocation) {
       setPlayerMessage(t('You must proceed in order.'));
@@ -92,10 +98,10 @@ export const useNavigation = (
     [indices, metas, sequentialLearning],
   );
 
-  const setCurrentResource = useCallback(
+  const setResourceLocation = useCallback(
     (newLocation: ResourceLocation | null, showWarning = true) => {
       if (!newLocation) {
-        setResourceLocation(null);
+        _setResourceLocation(null);
         setCourseResourceLocation(null);
         return;
       }
@@ -110,7 +116,7 @@ export const useNavigation = (
         return;
       }
 
-      setResourceLocation(newLocation);
+      _setResourceLocation(newLocation);
       setCourseResourceLocation(newLocation);
     },
     [indices, checkPreviousResourceCompleted, t, setPlayerMessage, setCourseResourceLocation],
@@ -121,18 +127,18 @@ export const useNavigation = (
     const currentIndex = indices[currentKey];
     const nextKey = Object.keys(indices).find((key) => indices[key] === currentIndex + 1);
     if (nextKey) {
-      setCurrentResource(createResourceFromKey(nextKey));
+      setResourceLocation(createResourceFromKey(nextKey));
     }
-  }, [currentKey, indices, setCurrentResource]);
+  }, [currentKey, indices, setResourceLocation]);
 
   const handleBackward = useCallback(() => {
     if (!currentKey) return;
     const currentIndex = indices[currentKey];
     const prevKey = Object.keys(indices).find((key) => indices[key] === currentIndex - 1);
     if (prevKey) {
-      setCurrentResource(createResourceFromKey(prevKey));
+      setResourceLocation(createResourceFromKey(prevKey));
     }
-  }, [currentKey, indices, setCurrentResource]);
+  }, [currentKey, indices, setResourceLocation]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -161,12 +167,13 @@ export const useNavigation = (
   const canGoForward = useMemo(() => {
     if (!currentKey || indices[currentKey] >= resourceCount - 1) return false;
     if (!sequentialLearning) return true;
-    return metas[currentKey]?.passed === true;
+    const meta = metas[currentKey];
+    return meta?.passed === true || meta?.status === 'grading';
   }, [currentKey, indices, resourceCount, sequentialLearning, metas]);
 
   return {
     resourceLocation,
-    setCurrentResource,
+    setResourceLocation,
     handleForward,
     handleBackward,
     canGoForward,

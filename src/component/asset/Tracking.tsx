@@ -139,7 +139,7 @@ export const Tracking = ({ data, hidden, sx }: { data: DisplayResponse; hidden?:
   useEffect(() => {
     if (trackingImpossible) return;
 
-    let intervalId: number | null = null;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
 
     if (progress < 100) {
       intervalId = setInterval(() => {

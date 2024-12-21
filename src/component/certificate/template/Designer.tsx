@@ -128,10 +128,19 @@ export const Designer = ({ id }: { id?: string }) => {
 
   // background image
   const background = watch('background');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const setBackground = async (file: FileList | null) => {
     const options = { shouldDirty: true, shouldValidate: true };
-    if (file && file[0]) setValue('background', await imageToBase64(file[0]), options);
-    else setValue('background', '', options);
+    if (file && file[0]) {
+      setValue('background', await imageToBase64(file[0]), options);
+    } else {
+      setValue('background', '', options);
+      // Reset the file input value when clearing
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   // page size
@@ -265,6 +274,10 @@ export const Designer = ({ id }: { id?: string }) => {
   const handleControlReset = (id?: string) => {
     if (!id) {
       reset();
+      // Reset the file input value after form reset
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       return;
     }
 
@@ -341,7 +354,7 @@ export const Designer = ({ id }: { id?: string }) => {
               }}
             >
               {t('Select background image')}
-              <input type="file" hidden accept="image/*" onChange={(e) => setBackground(e.target.files)} />
+              <input type="file" hidden accept="image/*" onChange={(e) => setBackground(e.target.files)} ref={fileInputRef} />
               {background && (
                 <Close
                   onClick={(e) => {
