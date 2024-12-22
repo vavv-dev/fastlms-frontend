@@ -84,7 +84,7 @@ export const Form = ({ onSubmit, formState, setError, children, disabled, id }: 
     <form id={id} onSubmit={!disabled && formState.isSubmitting ? undefined : onSubmit} noValidate>
       <Collapse in={noneFieldErrors.length > 0}>
         <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setNoneFieldErrors([])}>
-          {noneFieldErrors.join('\n\r')}
+          <Box dangerouslySetInnerHTML={{ __html: noneFieldErrors.join('\n\r') }} />
         </Alert>
       </Collapse>
       <fieldset disabled={disabled || formState.isSubmitting} style={{ border: 'none', padding: 0, margin: 0 }}>

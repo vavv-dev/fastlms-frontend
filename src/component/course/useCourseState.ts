@@ -118,7 +118,7 @@ export const calculateLearningStats = (
 
       if (weight > 0) {
         acc.totalWeight += weight;
-        acc.totalScore += (weight / 100) * (grading_method === 'progress' ? progress : score);
+        acc.totalScore += (weight / 100) * (grading_method === 'progress' ? progress : grading_method === 'score' ? score : 100);
       }
 
       return acc;
@@ -132,7 +132,6 @@ export const calculateLearningStats = (
   const passed =
     progress >= course.cutoff_progress &&
     score >= course.cutoff_score &&
-    lessons.every((l) => l.passed == true || !l.grading_method);
-
+    lessons.every((l) => l.passed == true || l.grading_method === 'none');
   return { progress, score, passed };
 };

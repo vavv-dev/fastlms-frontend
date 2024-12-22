@@ -11,7 +11,7 @@ import { LanguageSelector } from './LanguageSelector';
 
 import { LoginButton } from '@/component/account';
 import { chatDrawerState } from '@/component/chat';
-import { NotificationButton } from '@/component/notification';
+import { NotificationBox } from '@/component/notification';
 import { userState } from '@/store';
 import { modeState } from '@/theme';
 
@@ -51,7 +51,7 @@ export const TopBar = ({ searchBar }: { searchBar?: React.ReactNode }) => {
                 </IconButton>
               </Tooltip>
             )}
-            <NotificationButton />
+            <NotificationBox />
             {!user && <LanguageSelector />}
             <IconButton onClick={() => setThemeMode(themeMode === 'dark' ? 'light' : 'dark')}>
               {themeMode === 'dark' ? <Brightness7 /> : <Brightness4 />}

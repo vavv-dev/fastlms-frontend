@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, createTheme } from '@mui/material';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
@@ -10,8 +10,7 @@ import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  useLocation,
-  useNavigate,
+  useLocation
 } from 'react-router-dom';
 
 import './App.css';
@@ -28,6 +27,7 @@ import {
   UserHistory,
   UserLayout,
   UserProfile,
+  useForceLogout,
 } from '@/component/account';
 import { AssetDisplays } from '@/component/asset';
 import { ChannelHome, ChannelLayout, ChannelRoot, ChannelSetting, HomeChannel, UserChannel } from '@/component/channel';
@@ -63,18 +63,12 @@ const USER_MESSAGE_URL = import.meta.env.VITE_USER_MESSAGE_URL || '';
 
 const Protected = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [user, setUser] = useAtom(userState);
-  const [loginExpire, setLoginExpire] = useAtom(loginExpireState);
+  const user = useAtomValue(userState);
+  const loginExpire = useAtomValue(loginExpireState);
   const setUserMessage = useSetAtom(userMessageState);
   const socketRef = useRef<WebSocket | null>(null);
   const setAlert = useSetAtom(alertState);
-
-  const forceLogout = useCallback(() => {
-    setUser(null);
-    setLoginExpire(null);
-    navigate('/login', { state: { from: location.pathname }, replace: true });
-  }, [setUser, navigate, location.pathname, setLoginExpire]);
+  const forceLogout = useForceLogout();
 
   /**
    *

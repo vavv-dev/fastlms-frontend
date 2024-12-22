@@ -90,8 +90,8 @@ export const UserCourse = () => {
                                 src={certificate.thumbnail}
                                 key={i}
                                 sx={{
-                                  width: '60px',
-                                  height: '60px',
+                                  width: '50px',
+                                  height: '50px',
                                   objectFit: 'contain',
                                   filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.3))',
                                 }}

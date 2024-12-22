@@ -17,6 +17,7 @@ import {
   messageGetMessages as getMessages,
   messageReadMessage as readMessage,
 } from '@/api';
+import { useForceLogout } from '@/component/account';
 import { updateInfiniteCache } from '@/component/common';
 import { formatRelativeTime, stripHtml, textEllipsisCss } from '@/helper/util';
 import { userMessageState, userState } from '@/store';
@@ -27,12 +28,13 @@ import { userMessageState, userState } from '@/store';
 
 const readItems: Record<string, string> = {};
 
-export const NotificationButton = () => {
+export const NotificationBox = () => {
   const user = useAtomValue(userState);
   const [notifications, setNotifications] = useAtom(notificationsState);
   const userMessage = useAtomValue(userMessageState);
   const newNotificationCount = notifications.filter((notification) => !notification.read_time).length;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const forceLogout = useForceLogout();
 
   const { mutate } = useSWRConfig();
 
@@ -42,10 +44,15 @@ export const NotificationButton = () => {
         const data = JSON.parse(e.data);
         const messages = (Array.isArray(data) ? data : [data]) as UserMessageResponse[];
         const newMessages = messages.filter((message) => !notifications.find((notification) => notification.id === message.id));
+
         if (newMessages.length) {
           setNotifications((notifications) => [...newMessages, ...notifications]);
           newMessages.forEach((message) => {
-            updateInfiniteCache<UserMessageResponse>(getMessages, message, 'create');
+            // temporary parcel: force logout
+            const logout = message.parcel?.force_logout;
+            if (logout) {
+              forceLogout();
+            }
 
             // temporary parcel: newly issuded certificates
             const certificates = (message.parcel?.certificates || []) as CertificateResponse[];
@@ -69,6 +76,9 @@ export const NotificationButton = () => {
                 { revalidate: false },
               );
             }
+
+            // update cache
+            updateInfiniteCache<UserMessageResponse>(getMessages, message, 'create');
           });
         }
       };
@@ -78,7 +88,7 @@ export const NotificationButton = () => {
         userMessage.onmessage = null;
       };
     }
-  }, [userMessage, notifications, setNotifications, mutate]);
+  }, [userMessage, notifications, setNotifications, mutate, forceLogout]);
 
   if (!user) return null;
 
@@ -89,7 +99,7 @@ export const NotificationButton = () => {
           <NotificationsOutlined />
         </Badge>
       </IconButton>
-      {anchorEl && <NotificationBox anchorEl={anchorEl} setAnchorEl={setAnchorEl} notifications={notifications} />}
+      {anchorEl && <InBox anchorEl={anchorEl} setAnchorEl={setAnchorEl} notifications={notifications} />}
     </>
   );
 };
@@ -100,7 +110,7 @@ interface NotificationBoxProps {
   notifications: UserMessageResponse[];
 }
 
-const NotificationBox = ({ anchorEl, setAnchorEl, notifications }: NotificationBoxProps) => {
+const InBox = ({ anchorEl, setAnchorEl, notifications }: NotificationBoxProps) => {
   const { t } = useTranslation('notification');
   const theme = useTheme();
   const navigate = useNavigate();

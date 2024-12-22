@@ -13,6 +13,7 @@ export { UserBookmark } from './u/UserBookmark';
 export { UserHistory } from './u/UserHistory';
 export { UserLayout } from './u/UserLayout';
 export { UserProfile } from './u/UserProfile';
+export { useForceLogout } from './useForceLogout';
 
 export const accountProcessingState = atom<boolean>(false);
 

@@ -32,7 +32,7 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       mangle: {
-        // cf. component.common.swr.ts, component.notification.NotificationButton.tsx
+        // cf. component.common.swr.ts, component.notification.NotificationBox.tsx
         reserved: ['lessonGetDisplays', 'sharedGetDisplays', 'courseGetView'],
       },
       compress: {
