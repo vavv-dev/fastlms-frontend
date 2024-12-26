@@ -377,12 +377,14 @@ const DrawField = <T extends FieldValues>({
     );
   }
 
+  const readOnly = baseProps.readOnly;
+
   if (lazy && !isActive && typeof field.value !== 'boolean') {
     return (
       <Box
-        onClick={handleActivation}
+        onClick={readOnly ? undefined : handleActivation}
         onKeyDown={handleKeyDown}
-        tabIndex={0}
+        tabIndex={readOnly ? undefined : 0}
         sx={{
           fontSize: '13px',
           width: '100%',

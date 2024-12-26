@@ -36,8 +36,9 @@ const createSchema = (t: (key: string) => string) => {
         ],
         readOnly: true,
       }),
+    sub_kind: yup.string().label(t('Sub kind')).meta({ readOnly: true, control: 'text' }),
     thumbnail: yup.string().default('').meta({ readOnly: true, control: 'thumbnail' }),
-    id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
+    id: yup.string().required(REQUIRED).label(t('ID')).meta({ hidden: true }),
     title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
     username: yup.string().required(REQUIRED).default('').meta({ hidden: true }),
   });

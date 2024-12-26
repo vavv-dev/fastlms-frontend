@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 import {
   CertificateTemplateSchema,
-  CourseLessonResource as Resource,
+  CourseResourceLesson as Lesson,
   CourseResourceResponse as ResourceResponse,
   CourseResourceUpdateRequest as ResourceUpdateRequest,
   certificateTemplateSelector,
@@ -22,7 +22,7 @@ const createSchema = (t: (key: string, options?: Record<string, unknown>) => str
   const INVALID_URL = t('Invalid URL.');
   const INVALID_IFRAME = t('Invalid iframe code.');
 
-  const lessonSchema: yup.ObjectSchema<Resource> = yup.object({
+  const lessonSchema: yup.ObjectSchema<Lesson> = yup.object({
     id: yup.string().required(REQUIRED).label(t('ID')).meta({ control: 'text', readOnly: true }),
     title: yup.string().required(REQUIRED).default('').label(t('Title')).meta({ control: 'text', readOnly: true }),
     weight: yup

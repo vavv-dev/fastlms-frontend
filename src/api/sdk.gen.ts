@@ -2702,7 +2702,7 @@ export const examGetAttempt = (data: ExamGetAttemptData): CancelablePromise<Exam
             refresh_token: data.refreshToken
         },
         errors: {
-            409: 'Another exam is in progress',
+            409: '다른 시험이 진행 중입니다.',
             422: 'Validation Error'
         }
     });

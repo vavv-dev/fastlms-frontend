@@ -117,10 +117,11 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
 
   const markAsRead = (e: React.MouseEvent) => {
     e.stopPropagation();
-    readItemsRef.current[row.id] = new Date().toISOString();
-    setLocalRead(true);
-    // update topbar
-    setNotifications((notifications) => notifications.filter((n) => n.id !== row.id));
+    if (!hasRead && !row.read_time) {
+      readItemsRef.current[row.id] = new Date().toISOString();
+      setLocalRead(true);
+      setNotifications((notifications) => notifications.filter((n) => n.id !== row.id));
+    }
   };
 
   const onClick = (e: React.MouseEvent) => {
@@ -132,6 +133,19 @@ const NotificationRow = ({ row, index }: NotificationRowProps) => {
       case 'quiz':
       case 'survey':
       case 'exam':
+        if (row.parcel && row.parcel.course_id && row.parcel.lesson_id) {
+          navigate(`/course/${row.parcel.course_id}/player`, {
+            state: {
+              resourceLocation: {
+                lesson_id: row.parcel.lesson_id,
+                resource_id: row.object_id,
+              },
+            },
+          });
+          break;
+        }
+        setViewDialog(true);
+        break;
       case 'lesson':
         setViewDialog(true);
         break;

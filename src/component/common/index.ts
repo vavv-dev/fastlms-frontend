@@ -70,5 +70,10 @@ void [
   i18next.t('number_input'),
   i18next.t('essay'),
 
+  i18next.t('midterm_exam'),
+  i18next.t('final_exam'),
+  i18next.t('general_exam'),
+  i18next.t('assignment'),
+
   i18next.t('Not Found'),
 ];

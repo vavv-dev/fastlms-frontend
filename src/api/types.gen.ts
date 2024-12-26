@@ -352,12 +352,6 @@ export type CourseLessonOutlineSchema = {
     resources: Array<ResourceSchema>;
 };
 
-export type CourseLessonResource = {
-    id: string;
-    title: string;
-    weight?: number;
-};
-
 export type CourseLevel = 'beginner' | 'intermediate' | 'advanced' | 'general';
 
 export type CourseOutlineReponse = {
@@ -419,7 +413,13 @@ export type CourseResourceCreateRequest = {
     closed: boolean;
     sequential_learning: boolean;
     certificate_templates: (Array<CertificateTemplateSchema> | null);
-    lessons: (Array<CourseLessonResource> | null);
+    lessons: (Array<CourseResourceLesson> | null);
+};
+
+export type CourseResourceLesson = {
+    id: string;
+    title: string;
+    weight?: number;
 };
 
 export type CourseResourceResponse = {
@@ -445,7 +445,7 @@ export type CourseResourceResponse = {
     closed: boolean;
     sequential_learning: boolean;
     certificate_templates: (Array<CertificateTemplateSchema> | null);
-    lessons: (Array<CourseLessonResource> | null);
+    lessons: (Array<CourseResourceLesson> | null);
     id: string;
     owner: CourseOwner;
     modified: string;
@@ -474,7 +474,7 @@ export type CourseResourceUpdateRequest = {
     closed?: boolean;
     sequential_learning?: boolean;
     certificate_templates?: (Array<CertificateTemplateSchema> | null);
-    lessons?: (Array<CourseLessonResource> | null);
+    lessons?: (Array<CourseResourceLesson> | null);
 };
 
 export type ExamAttemptContext = {
@@ -1503,6 +1503,7 @@ export type ResourceLocation = {
 
 export type ResourceSchema = {
     kind: 'video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'lesson' | 'course' | 'channel';
+    sub_kind?: (string | null);
     id: string;
     title: string;
     thumbnail: string;

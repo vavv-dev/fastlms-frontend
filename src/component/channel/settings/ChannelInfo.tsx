@@ -35,6 +35,7 @@ const createSchema = (t: (key: string) => string) => {
 
   const resourceSchema: yup.ObjectSchema<ResourceSchema> = yup.object({
     kind: yup.mixed<'video' | 'channel'>().default('video'),
+    sub_kind: yup.string(),
     thumbnail: yup.string().default(''),
     id: yup.string().required(REQUIRED).label(t('ID')),
     title: yup.string().required(REQUIRED).default('').label(t('Title')),
@@ -91,7 +92,6 @@ export const ChannelInfo: React.FC = () => {
 
   const MEMBER_FIELD_OPTIONS = useMemo(
     () => [
-      { label: t('Birth Date'), value: 'birthdate' },
       { label: t('Company'), value: 'company' },
       { label: t('Department'), value: 'department' },
       { label: t('Position'), value: 'position' },
@@ -105,6 +105,7 @@ export const ChannelInfo: React.FC = () => {
       { label: t('Name'), value: 'name' },
       { label: t('Email'), value: 'email' },
       { label: t('Cellphone'), value: 'cellphone' },
+      { label: t('Birth Date'), value: 'birthdate' },
     ],
     [t],
   );
@@ -140,7 +141,7 @@ export const ChannelInfo: React.FC = () => {
   return (
     <Form onSubmit={handleSubmit(updateChannel)} formState={formState} setError={setError}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="body2" sx={{ mb: 2 }}>
+        <Typography variant="body2" sx={{ my: 1 }}>
           {t('Update your channel information.')}
         </Typography>
         <Text

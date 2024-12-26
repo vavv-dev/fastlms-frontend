@@ -82,9 +82,9 @@ export const useNavigation = (
 
   const [resourceLocation, _setResourceLocation] = useState<ResourceLocation | null>(() => {
     const initial = getInitialResource(startLocation, indices, metas, sequentialLearning);
-    if (sequentialLearning && initial !== startLocation) {
-      setPlayerMessage(t('You must proceed in order.'));
-    }
+    // if (sequentialLearning && initial !== startLocation) {
+    //   setPlayerMessage(t('You must proceed in order.'));
+    // }
     setCourseResourceLocation(initial);
     return initial;
   });
