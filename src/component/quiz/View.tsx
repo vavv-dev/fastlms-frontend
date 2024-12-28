@@ -52,6 +52,7 @@ export const View = ({ id }: { id: string }) => {
     <Box
       sx={{
         p: 3,
+        pt: 2,
         width: '100%',
         maxWidth: 'smm',
         display: 'flex',
@@ -70,9 +71,6 @@ export const View = ({ id }: { id: string }) => {
         },
       }}
     >
-      <Typography variant="h6" sx={{ fontWeight: 600, my: 3 }}>
-        {data.title}
-      </Typography>
       <Box
         sx={{
           width: '100%',
@@ -85,7 +83,7 @@ export const View = ({ id }: { id: string }) => {
         }}
       >
         {videoId && (
-          <Box sx={{ width: '100%', mb: 3 }}>
+          <Box sx={{ width: '100%', mb: 3, '& .player-wrapper': { maxWidth: '100%' } }}>
             <VideoPlayer id={videoId} sx={{ aspectRatio: '16/9' }} />
             <VideoTracking id={videoId} hidden />
             <Button
@@ -98,6 +96,10 @@ export const View = ({ id }: { id: string }) => {
             </Button>
           </Box>
         )}
+
+        <Typography variant="h6" sx={{ fontWeight: 600, my: 3 }}>
+          {data.title}
+        </Typography>
 
         {data.status == null ? (
           <>

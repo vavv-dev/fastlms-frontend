@@ -7,6 +7,7 @@ import i18next from '@/i18n';
 
 export { BaseLayout } from './BaseLayout';
 export { GlobalAlert } from './GlobalAlert';
+export { StrictTabControl } from './StrictTabControl';
 
 export const navState = atomWithStorage<boolean>('navOpen', parseLocalStorage('navOpen', false));
 export const spacerRefState = atom<HTMLElement | null>(null);

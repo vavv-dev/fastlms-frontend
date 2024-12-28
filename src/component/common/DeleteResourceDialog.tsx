@@ -58,7 +58,7 @@ export const DeleteResourceDialog = ({ title, open, setOpen, resourceId, destroy
       setOpen={setOpen}
       renderContent={() => (
         <>
-          <Typography variant="subtitle1" sx={{ mt: 3 }}>
+          <Typography variant="subtitle1" sx={{ mt: 1 }}>
             {t('Are you sure you want to delete? This action will delete all related data.')}
             <br />
             {t('This action cannot be undone.')}

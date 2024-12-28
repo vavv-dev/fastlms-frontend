@@ -1,5 +1,6 @@
 {
   "AI help": "AI help",
+  "Another tab is already running.": "Another tab is already running.",
   "Channel": "Channel",
   "Close": "Close",
   "English": "English",
@@ -9,5 +10,6 @@
   "Me": "Me",
   "My channel": "My channel",
   "Profile": "Profile",
-  "Video": "Video"
+  "Video": "Video",
+  "You can only have one tab open at a time.": "You can only have one tab open at a time."
 }

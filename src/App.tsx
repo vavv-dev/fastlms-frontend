@@ -10,7 +10,7 @@ import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  useLocation
+  useLocation,
 } from 'react-router-dom';
 
 import './App.css';
@@ -35,7 +35,7 @@ import { CommentDisplays, QnADisplays, UserComment } from '@/component/comment';
 import { CourseDisplays, CourseOutline, CoursePlayer, CourseView, UserCourse } from '@/component/course';
 import { NotFound, Unauthorized } from '@/component/error';
 import { ExamDisplays, ExamMessage, ExamViewDialog, GradingDisplays } from '@/component/exam';
-import { BaseLayout, alertState } from '@/component/layout';
+import { BaseLayout, StrictTabControl, alertState } from '@/component/layout';
 import { LessonDisplays } from '@/component/lesson';
 import { InvitationAccept, MemberDisplays } from '@/component/member';
 import { UserNotification } from '@/component/notification';
@@ -256,7 +256,9 @@ export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <RouterProvider router={router} />
+      <StrictTabControl allowedPatterns={[/^\/password-reset-confirm/, /^\/invitation-accept/, /^\/login/]}>
+        <RouterProvider router={router} />
+      </StrictTabControl>
     </ThemeProvider>
   );
 };

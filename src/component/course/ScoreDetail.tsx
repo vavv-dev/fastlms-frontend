@@ -1,5 +1,6 @@
 import { HelpOutlineOutlined } from '@mui/icons-material';
 import {
+  Badge,
   Box,
   ClickAwayListener,
   IconButton,
@@ -12,6 +13,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -162,9 +164,16 @@ export const ScoreDetail = ({ course, lessons, sx }: Props) => {
                 </TableHead>
                 <TableBody>
                   {stats.lessons.map((lesson, i) => (
-                    <TableRow key={lesson.title} sx={lesson.method === 'score' ? { '& td': { bgcolor: 'action.hover' } } : {}}>
+                    <TableRow key={lesson.id}>
                       <TableCell>{i + 1}</TableCell>
-                      <TableCell>{lesson.title}</TableCell>
+                      <TableCell sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                        {lesson.title}
+                        {lesson.method === 'score' && (
+                          <Tooltip title={t('Exam')} placement="top">
+                            <Badge variant="dot" color="info" />
+                          </Tooltip>
+                        )}
+                      </TableCell>
                       <TableCell align="right">{lesson.method === 'progress' ? t('Progress') : t('Score')}</TableCell>
                       <TableCell align="right">
                         {`${toFixedHuman(lesson.method === 'progress' ? Math.min(lesson.progress, 100) : lesson.score, 1)}%`}
@@ -196,6 +205,7 @@ export const ScoreDetail = ({ course, lessons, sx }: Props) => {
 type GradingMethod = 'progress' | 'score' | 'none';
 
 interface LessonStats {
+  id: string;
   title: string;
   weight: number;
   method: GradingMethod;
@@ -225,7 +235,7 @@ const textStats = (
       const progress = lesson.progress ?? 0;
       const score = lesson.score ?? 0;
 
-      acc.lessons.push({ title, weight, method: grading_method, progress, score });
+      acc.lessons.push({ id: lesson.id, title, weight, method: grading_method, progress, score });
 
       if (grading_method === 'progress') {
         acc.progressCount++;

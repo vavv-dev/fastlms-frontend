@@ -108,7 +108,7 @@ export const ReportDialog = ({ open, setOpen, data }: Props) => {
                             <WithAvatar {...watch.user} variant="small" />
                           </TableCell>
                           <TableCell>{formatDatetimeLocale(watch.first_watch)}</TableCell>
-                          <TableCell>{formatDatetimeLocale(watch.created)}</TableCell>
+                          <TableCell>{formatDatetimeLocale(watch.modified)}</TableCell>
                           <TableCell>{toFixedHuman(watch.progress, 1)}%</TableCell>
                           <TableCell>{watch.passed ? t('Passed') : ''}</TableCell>
                         </TableRow>

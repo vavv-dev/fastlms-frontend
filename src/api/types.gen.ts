@@ -21,6 +21,7 @@ export type AssetDisplayResponse = {
     last_position: (number | null);
     modified: string;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -42,7 +43,7 @@ export type AssetOwner = {
 export type AssetReportResponse = {
     user: AssetReportUser;
     first_watch: (string | null);
-    created: (string | null);
+    modified: (string | null);
     progress: (number | null);
     passed: (boolean | null);
 };
@@ -569,6 +570,7 @@ export type ExamDisplayResponse = {
     };
     thumbnail: string;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -775,7 +777,7 @@ export type ExamSubmissionUser = {
     use_channel: boolean;
 };
 
-export type GradingEnum = 'none' | 'progress' | 'score';
+export type GradingMethodEnum = 'none' | 'progress' | 'score';
 
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
@@ -813,7 +815,7 @@ export type LessonDisplayResponse = {
     modified: string;
     thumbnail: string;
     kind: LearningResourceKind;
-    grading_method: GradingEnum;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -841,7 +843,7 @@ export type LessonResourceCreateRequest = {
     end_date?: (string | null);
     resources: Array<ResourceSchema>;
     thumbnail?: (string | null);
-    grading_method: GradingEnum;
+    grading_method: GradingMethodEnum;
 };
 
 export type LessonResourceResponse = {
@@ -854,7 +856,7 @@ export type LessonResourceResponse = {
     end_date?: (string | null);
     resources: Array<ResourceSchema>;
     thumbnail?: (string | null);
-    grading_method: GradingEnum;
+    grading_method: GradingMethodEnum;
     id: string;
     owner: LessonOwner;
 };
@@ -869,7 +871,7 @@ export type LessonResourceUpdateRequest = {
     end_date?: (string | null);
     resources?: Array<ResourceSchema>;
     thumbnail?: (string | null);
-    grading_method?: GradingEnum;
+    grading_method?: GradingMethodEnum;
 };
 
 export type LoginResponse = {
@@ -1359,6 +1361,7 @@ export type QuizDisplayResponse = {
     modified: string;
     thumbnail: string;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -1602,6 +1605,7 @@ export type SurveyDisplayResponse = {
     modified: string;
     thumbnail: string;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -1909,6 +1913,7 @@ export type VideoDisplayResponse = {
     modified: string;
     sub_kind: VideoKind;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -1930,7 +1935,7 @@ export type VideoOwner = {
 export type VideoReportResponse = {
     user: VideoReportUser;
     first_watch: (string | null);
-    created: (string | null);
+    modified: (string | null);
     progress: (number | null);
     passed: (boolean | null);
 };
@@ -1986,6 +1991,7 @@ export type VideoSearchResultResponse = {
     modified: string;
     sub_kind: VideoKind;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmark_count: number;
     like_count: number;
     flag_count: number;
@@ -2028,6 +2034,7 @@ export type VideoViewResponse = {
     thumbnail: string;
     tag_names: Array<(string)>;
     kind: LearningResourceKind;
+    grading_method: GradingMethodEnum;
     bookmarked: boolean;
     liked: boolean;
     flagged: boolean;
@@ -2315,7 +2322,7 @@ export type VideoGetVideoReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'first_watch' | 'last_watch';
+    orderBy?: 'first_watch' | 'modified';
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2329,7 +2336,7 @@ export type VideoDownloadVideoReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'first_watch' | 'last_watch';
+    orderBy?: 'first_watch' | 'modified';
     refreshToken?: (string | null);
     search?: (string | null);
     upTo?: (string | null);
@@ -2562,7 +2569,7 @@ export type AssetGetAssetReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'first_watch' | 'last_watch';
+    orderBy?: 'first_watch' | 'modified';
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);
@@ -2576,7 +2583,7 @@ export type AssetDownloadAssetReportData = {
     accessToken?: (string | null);
     asOf?: (string | null);
     id: string;
-    orderBy?: 'first_watch' | 'last_watch';
+    orderBy?: 'first_watch' | 'modified';
     refreshToken?: (string | null);
     search?: (string | null);
     upTo?: (string | null);
@@ -3185,7 +3192,7 @@ export type SharedGetDisplaysData = {
     excludes?: Array<('video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'course')>;
     filter?: 'history' | 'featured';
     kinds?: Array<('video' | 'playlist' | 'asset' | 'quiz' | 'survey' | 'exam' | 'course')>;
-    orderBy?: "created";
+    orderBy?: "modified";
     page?: number;
     refreshToken?: (string | null);
     search?: (string | null);

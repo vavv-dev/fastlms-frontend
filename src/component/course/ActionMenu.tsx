@@ -90,7 +90,7 @@ export const ActionMenu = ({ data }: { data: DisplayResponse }) => {
       {saveDialogOpen && <SaveDialog open={saveDialogOpen} setOpen={setSaveDialogOpen} id={data.id} />}
       {deleteDialogOpen && (
         <DeleteResourceDialog
-          title={t('Course')}
+          title=""
           open={deleteDialogOpen}
           setOpen={setDeleteDialogOpen}
           resourceId={data.id}

@@ -1,5 +1,6 @@
 import { ArrowDropDown, ArrowDropUp, NotificationImportantOutlined, PlaylistPlayOutlined, Refresh } from '@mui/icons-material';
 import {
+  Badge,
   Box,
   Button,
   IconButton,
@@ -9,6 +10,7 @@ import {
   Stepper,
   SxProps,
   Theme,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from '@mui/material';
@@ -242,8 +244,13 @@ const LessonStep = ({ lesson, stepIndex, activeStep, setActiveStep, showAll, ...
           stepIcon: lesson.grading_method === 'none' ? NoGradingStepIcon : undefined,
         }}
       >
-        <Typography variant="h6" sx={{ lineHeight: 1.4 }}>
+        <Typography variant="h6" sx={{ lineHeight: 1.4, display: 'flex', gap: 1.5, alignItems: 'center' }}>
           {lesson.title}
+          {lesson.grading_method === 'score' && (
+            <Tooltip title={t('Exam')} placement="top">
+              <Badge variant="dot" color="info" />
+            </Tooltip>
+          )}
         </Typography>
         {!!lesson.score && (
           <Typography variant="subtitle2" color={lesson.passed ? 'success' : 'warning'}>

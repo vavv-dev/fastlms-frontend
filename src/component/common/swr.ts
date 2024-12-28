@@ -1,6 +1,12 @@
 import { INFINITE_PREFIX, cache as globalCache, mutate as globalMutate } from 'swr/_internal';
 
-import { GradingEnum, LessonGetDisplaysResponse, SharedGetDisplaysResponse, lessonGetDisplays, sharedGetDisplays } from '@/api';
+import {
+  GradingMethodEnum,
+  LessonGetDisplaysResponse,
+  SharedGetDisplaysResponse,
+  lessonGetDisplays,
+  sharedGetDisplays,
+} from '@/api';
 
 type NestedItem<T> = T & { [field: string]: Array<T> };
 type UpdaterFunction<T> = (item: T) => T;
@@ -11,11 +17,12 @@ interface ResourceDisplay {
   progress?: number;
   score?: number;
   passed?: boolean;
+  grading_method: GradingMethodEnum;
 }
 
 interface Lesson {
   id: number | string;
-  grading_method: GradingEnum;
+  grading_method: GradingMethodEnum;
   resource_displays: ResourceDisplay[];
   progress?: number | null;
   score?: number | null;
@@ -32,8 +39,7 @@ const calculateLessonMetrics = (lesson: Lesson): Partial<Lesson> => {
     };
   }
 
-  const gradingKinds = lesson.grading_method === 'progress' ? ['video', 'asset'] : ['quiz', 'exam'];
-  const relevantDisplays = lesson.resource_displays.filter((r) => gradingKinds.includes(r.kind));
+  const relevantDisplays = lesson.resource_displays.filter((r) => r.grading_method === lesson.grading_method);
 
   if (relevantDisplays.length === 0) {
     return {

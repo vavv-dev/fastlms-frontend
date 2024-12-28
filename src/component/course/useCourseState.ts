@@ -36,28 +36,18 @@ export const useCourseState = (id: string, validLocation?: ResourceLocation | nu
 
   const lessons = useMemo(() => lessonsData?.[0]?.items || [], [lessonsData]);
   const learningState = useMemo(() => calculateLearningStats(course, lessons), [course, lessons]);
-  const location = useMemo(
-    () =>
-      validLocation ||
-      course?.resource_location || {
-        lesson_id: lessons[0]?.id,
-        resource_id: lessons[0]?.resources[0]?.id,
-      },
-    [validLocation, course, lessons],
-  );
+  const location = useMemo(() => validLocation || course?.resource_location, [validLocation, course]);
 
   useEffect(() => {
-    if (!location) return;
+    if (!location || !course || !learningState) return;
 
-    if (
-      !course ||
-      !learningState ||
-      (course.progress === learningState.progress &&
-        course.score === learningState.score &&
-        course.passed === learningState.passed &&
-        isEqual(course.resource_location, location))
-    )
-      return;
+    const changed =
+      course.progress !== learningState.progress ||
+      course.score !== learningState.score ||
+      course.passed !== learningState.passed ||
+      !isEqual(course.resource_location, location);
+
+    if (!changed) return;
 
     // sync learning state with server
     updateLearning({
